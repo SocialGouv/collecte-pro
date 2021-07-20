@@ -1,0 +1,280 @@
+/* General */
+/* IE specific fix */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .card--ie-773px {
+     width: 773px;
+  }
+}
+
+/* Flex : shadows the classes in tabler.io, but adds the display:flex for them to work. */
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+ }
+
+/* IE10+ CSS styles */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    /*
+    Bug on IE : display:flex on a flex column messes up the text wrapping.
+    This fix might mess up the alignment of the items in the columns, but solves text wrapping.
+    */
+    .ie-flex-column-fix {
+        display: block;
+    }
+
+    /*
+    Add explicit margin for IE to fix layout
+    */
+    .ie-margin-for-footer {
+        margin-bottom: 30em !important;
+    }
+
+    /*
+    Flex bug in IE : sometimes children of flex-row spread out horizontally instead of having the
+    appropriate width. (It caused some pages to display wider than the screen for example)
+    */
+    .ie-flex-row-child {
+        width:100%;
+    }
+}
+
+/* Non-IE styles here. Should work for Edge. */
+@supports not (-ms-high-contrast: none) {
+}
+
+/*********************************/
+/* Fixes and additions to tabler */
+/*********************************/
+.btn-primary.disabled, .btn-primary:disabled, .btn.disabled, .btn:disabled {
+    cursor: not-allowed;
+}
+
+/* sticky-top already exists in tabler. Add sticky-bottom. */
+.sticky-bottom {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index: 99;
+}
+
+.fg-success {
+    color: #5EBB00;
+}
+
+/* Secondary button : you can't see it's disabled */
+.btn-secondary.disabled {
+    color: #aab0b6; /* gray-light */
+    background-color: #F3F4FE; /* gray-lightest */
+    border: none;
+}
+
+/* Extend margin system to one more size (tabler stops at 9) */
+.m-10 {
+    margin: 10rem !important;
+}
+
+.mt-10,
+.my-10 {
+    margin-top: 10rem !important;
+}
+
+.mr-10,
+.mx-10 {
+    margin-right: 10rem !important;
+}
+
+.mb-10,
+.my-10 {
+    margin-bottom: 10rem !important;
+}
+
+.ml-10,
+.mx-10 {
+    margin-left: 10rem !important;
+}
+
+/* Top bar */
+.nav-tabs .nav-link-thick-line {
+    border-bottom-width: 4px;
+}
+
+.page-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.text-large {
+    font-size: 2em;
+}
+
+.btn-rounded-right {
+    border-radius: 3px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 0px;
+}
+
+.btn-rounded-left {
+    border-radius: 3px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 3px;
+}
+
+/********************/
+/* Footer : at the bottom of viewport, and if content fills viewport vertically, then bottom of content. */
+#page {
+    position: relative;
+    min-height: 100vh;
+}
+#non-footer {
+    min-height: 100vh;
+    padding-bottom: 140px; /* Footer height */
+}
+#footer {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 140px;
+    z-index: 99;
+}
+
+.big-icon {
+    font-size: 4rem;
+}
+
+.form-control-h3 {
+    font-size: 1.125rem;
+    font-weight: 400;
+}
+.form-label-h3 {
+    margin-bottom: 0px;
+}
+
+.preview {
+    background: rgba(70, 127, 207, 0.04) url(../img/apercu.png);
+    padding: 1.5rem;
+}
+
+/* various */
+.with-line-breaks {
+    white-space: pre-wrap;
+}
+
+/* control_detail.html */
+.draft {
+    background: rgba(70, 127, 207, 0.04)
+}
+
+/* datepicker : make it blue */
+.blue .vdp-datepicker__calendar .cell.selected,
+.blue .vdp-datepicker__calendar .cell.selected.highlighted,
+.blue .vdp-datepicker__calendar .cell.selected:hover {
+    background: #467fcf;
+    color: #fff;
+}
+
+.blue .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).day:hover,
+.blue .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).month:hover,
+.blue .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).year:hover {
+    border: 1px solid #467fcf;
+}
+
+/* ResponseFileList.vue */
+table.response-file-list {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.response-file-list td, .response-file-list th {
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center
+}
+
+/* trash.html */
+table.trash-list {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.trash-list td, .trash-list th {
+    white-space: normal;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+/* Elements in QuestionBox collapsed part */
+.question-box-child {
+    /* Same as card-body, but with no padding-top */
+    flex: 1 1 auto;
+    margin: 0;
+    padding-right: 1.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+/* Welcome/CGU */
+.scrollbox {
+    overflow-y: scroll;
+    border: 1px solid black;
+    height: 25em;
+    padding: 1.5rem;
+}
+
+/* Login page */
+.max-width-250 {
+    max-width: 250px;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+.text-large-paragraph {
+    font-size: 1.25em;
+}
+
+.white {
+    background-color: white;
+}
+
+.resize-bug {
+    flex: 0 0 auto;  /* IE */
+    object-fit: scale-down; /* FF */
+}
+
+/* Tags for Brouillon */
+.tag {
+    transform: translate(0rem,-1px);
+}
+
+.big-tag {
+    font-size: 1rem;
+}
+
+.round-tag {
+    border-radius: 10rem;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+/* Image displayed on top of icon (fake icon). Used for WebdavTip button. */
+.parent-fake-icon {
+    position: relative;
+}
+.fake-icon {
+    position: absolute;
+    top: 2px;
+    left: 5px;
+}

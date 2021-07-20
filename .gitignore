@@ -1,0 +1,34 @@
+*.log
+*.pot
+*.mo
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+node_modules/
+staticfiles/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Sphinx documentation
+docs/_build/
+
+# mkdocs documentation
+/site
+
+# celery beat schedule file
+celerybeat-schedule
+
+# Environment
+venv/

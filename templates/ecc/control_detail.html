@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{% load control_tags %}
+
+{% block page_main_container_with_sidebar %}
+  <!-- No mixing of server templates + vue templates. Pass the server data outside of vue element-->
+  <div id="controls-data" style="display: none">
+    {{ controls_json }}
+  </div>
+  <div id="user-data" style="display: none">
+    {{ user_json }}
+  </div>
+  <!-- Vue element -->
+  <div id="control-detail-vm">
+    <control-detail>
+    </control-detail>
+  </div>
+{% endblock page_main_container_with_sidebar %}
+
+{% block js_bundle %}
+<link href="{% static 'dist/control-detail-bundle.css' %}" rel="stylesheet" />
+<script src="{% static 'dist/control-detail-bundle.js' %}"></script>
+{% endblock js_bundle %}

@@ -1,0 +1,49 @@
+{% extends "tos/tos.html" %}
+{% load static %}
+
+{% block nav_items %}
+  <!-- No nav items, leave empty div for layout to stay the same apart from nav items -->
+  <div></div>
+{% endblock nav_items %}
+
+{% block page_title %}
+  Bienvenue sur e.contrôle
+{% endblock page_title %}
+
+{% block subtitle %}
+  <div class="card-title">
+    Conditions générales d'utilisation
+  </div>
+{% endblock subtitle %}
+
+{% block approval %}
+  <form class="p-5" method="post"> {% csrf_token %}
+    {% if messages %}
+      <div class="text-center" role="alert">
+        {% for message in messages %}
+          <p {% if message.tags %}class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="form-group">
+      <label>
+        <input type="checkbox"
+               name="agree"
+               id="id_agree"
+               {% if user.profile.agreed_to_tos %}checked{% endif %}
+               required>
+        <span class="custom-control-label">
+          J'ai lu et j'accepte les conditions générales d'utilisation.
+        </span>
+      </label>
+    </div>
+    <div class="flex-row justify-content-center m-3">
+      <button type="submit" class="btn btn-primary">Aller à e-contrôle</button>
+    </div>
+  </form>
+{% endblock approval %}
+
+
+{% block js_bundle %}
+  <!-- No js bundle -->
+{% endblock js_bundle %}

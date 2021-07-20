@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_static_header %}
+{{ block.super }}
+{% endblock extra_static_header %}
+
+{% block page_main_container %}
+<div class="mx-3">
+  <!-- Code from Breadcrumbs.vue -->
+  <h5 class="flex-row mb-5 text-muted">
+    <div class="mx-2">
+      <i class="fa fa-archive"></i>
+    </div>
+    <div class="mx-2">
+      <i class="fa fa-chevron-right"></i>
+    </div>
+    <div class="mx-2">
+      <a href="{% url 'control-detail' %}#control-{{ questionnaire.control.id }}">
+        {{ questionnaire.control.reference_code }} -
+        {% if questionnaire.control.depositing_organization is not None %}
+          {{ questionnaire.control.depositing_organization }}
+        {% else %}
+          {{ questionnaire.control.title }}
+        {% endif %}
+      </a>
+    </div>
+  </h5>
+
+  <div class="page-header">
+    <div class="page-title">
+      <i class="fe fe-trash-2 mr-2"></i>
+      <span class="mr-1">Corbeille du</span>
+      <a href="{% url 'questionnaire-detail' questionnaire.id %}">
+        questionnaire {{ questionnaire.numbering }} : {{ questionnaire.title }}
+      </a>
+    </div>
+  </div>
+
+  <div>
+    <div class="alert alert-info alert-icon alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert"></button>
+      <i class="fe fe-info" aria-hidden="true"></i>
+      Les fichiers mis à la corbeille sont toujours visibles par l'équipe de contrôle. Ils peuvent toujours être utilisés pour la procédure.
+    </div>
+
+    <table class="trash-list table table-hover table-outline table-vcenter text-nowrap card-table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Date de mise à la corbeille</th>
+          <th>Nom du document</th>
+          <th>Utilisateur qui a mis à la corbeille</th>
+          <th>Date de dépôt</th>
+          <th>Utilisateur qui a déposé</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for response_file in response_file_list %}
+          <tr>
+            <td>
+              <div>{{ response_file.question_number }}</div>
+            </td>
+            <td>
+              <div>{{ response_file.deletion_date }}</div>
+            </td>
+            <td>
+              <div>
+                <a target="_blank" rel="noopener noreferrer" href="{{ response_file.url }}">
+                  {{ response_file.basename }}
+                </a>
+              </div>
+            </td>
+            <td>
+              <div>{{ response_file.deletion_user.first_name }} {{ response_file.deletion_user.last_name }}</div>
+            </td>
+            <td>
+              <div>{{ response_file.created }}</div>
+            </td>
+            <td>
+              <div>{{ response_file.author.first_name }} {{ response_file.author.last_name }}</div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td></td>
+            <td></td>
+            <td>Rien dans la corbeille.</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock page_main_container %}
+
+{% block js_bundle %}
+{% endblock js_bundle %}
