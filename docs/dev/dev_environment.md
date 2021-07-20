@@ -1,18 +1,5 @@
 # Environnement de développement
 
-## Variables d'environnement
-
-Certaines variables d'environnement doivent être positionnées pour que l'application
-fonctionne.
-
-On définit les variables d'environnement dans le fichier `.env`.
-On peut utiliser le fichier d'exemple comme ceci:
-
-    cp .env.sample .env
-
-Les variables d'environnement sont automatiquement intégrées au process uWSGI via le
-fichier `ecc/wsgi.py` - de même pour le fichier `ecc/manage.py`.
-
 ## Postgres
 
 Installer postgres, et créer un user nommé `ecc` et une database nommée `ecc`.
@@ -33,22 +20,32 @@ Cloner le dépôt :
 
 **Attention**, il faut avoir créer une clef SSH et l'avoir spécifiée sur github.
 
+On se déplace dans le répertoire :
+
+    cd ecollecte
+
 ## Node
 
 Installer node et npm.
 
 Installer les dependances node : `npm install`
 
-Builder le front : `npm bun build-all` (pour developper par la suite, on pourra utiliser
+Builder le front : `npm run build-all` (pour developper par la suite, on pourra utiliser
 les commandes `watch` qui rebuildent au fur et à mesure des modifications. Voir
 `package.json`)
 
-## Python et Django
+## Variables d'environnement
 
-    python3 -m venv venv
-    source venv/bin/activate
-    python3 -m pip install --upgrade pip
-    pip install -r requirements.txt
+Certaines variables d'environnement doivent être positionnées pour que l'application
+fonctionne.
+
+On définit les variables d'environnement dans le fichier `.env`.
+On peut utiliser le fichier d'exemple comme ceci:
+
+    cp .env.sample .env
+
+Les variables d'environnement sont automatiquement intégrées au process uWSGI via le
+fichier `ecc/wsgi.py` - de même pour le fichier `ecc/manage.py`.
 
 Dans le fichier `.env`, modifier l'adresse de la db :
 ```
@@ -57,6 +54,13 @@ export DATABASE_URL=postgres://ecc:ecc@localhost:5432/ecc
 ```
 
 Puis sourcer l'environnement : `source .env`
+
+## Python et Django
+
+    python3 -m venv venv
+    source venv/bin/activate
+    python3 -m pip install --upgrade pip
+    pip install -r requirements.txt
 
 Migrer la db : `python manage.py migrate`
 
