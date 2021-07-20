@@ -7,6 +7,8 @@ db.sqlite3
 media/
 node_modules/
 staticfiles/
+.env
+static/dist/
 
 # Unit test / coverage reports
 htmlcov/
