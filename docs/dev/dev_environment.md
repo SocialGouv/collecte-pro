@@ -17,6 +17,22 @@ fichier `ecc/wsgi.py` - de même pour le fichier `ecc/manage.py`.
 
 Installer postgres, et créer un user nommé `ecc` et une database nommée `ecc`.
 
+    CREATE USER ecc PASSWORD 'ecc';
+    CREATE DATABASE ecc OWNER ecc;
+    ALTER ROLE ecc WITH CREATEDB;
+    \q
+
+La dernière commande permet à l'utilisateur d'être utilisé pour les tests (et donc créer
+une base temporaire).
+
+## Code source
+
+Cloner le dépôt :
+
+    git clone git@github.com:SocialGouv/ecollecte.git
+
+**Attention**, il faut avoir créer une clef SSH et l'avoir spécifiée sur github.
+
 ## Node
 
 Installer node et npm.
@@ -29,13 +45,10 @@ les commandes `watch` qui rebuildent au fur et à mesure des modifications. Voir
 
 ## Python et Django
 
-Installer Python 3.7 minimum.
-
-Installer un environnement virtuel python (venv) : `python3 -m venv venv`
-
-Activer l'environnement : `source venv/bin/activate`
-
-Installer les dépendences python : `pip install -r requirements.txt`
+    python3 -m venv venv
+    source venv/bin/activate
+    python3 -m pip install --upgrade pip
+    pip install -r requirements.txt
 
 Dans le fichier `.env`, modifier l'adresse de la db :
 ```
@@ -49,37 +62,31 @@ Migrer la db : `python manage.py migrate`
 
 Collecter les fichiers statiques : `python manage.py collectstatic --noinput`
 
-Lancer le serveur local sur le port 8080 : `python manage.py runserver 0:8080`
+Créer un super utilisateur : `python3 manage.py createsuperuser`
 
-Aller sur `http://localhost:8080/admin` et se logger avec un des utilisateurs mentionnés
-ci-dessous.
+Lancer le serveur local : `python manage.py runserver 0:8080`
+
+Aller sur `http://localhost:8080/admin` et se logger avec le compte super-utilisateur.
 
 
 # Restaurer/Sauvegarder la base de données en dev
 
 Aucun dump n'est actuellement fourni par défaut car l'ancien était obsolète.
 
+Le mot de passe est `ecc` (si créé comme signalé plus haut).
+
+## Créer un nouveau dump
+
+    pg_dump --verbose --clean --no-acl --no-owner -h postgres -U ecc -d ecc > db.dump
+
 ## Charger le dump dans la base
 
     psql -h localhost -U ecc -d ecc < db.dump
 
-Le mot de passe est `ecc` (créé plus haut)
-
-Voilà des utilisateurs admin qui existent par défaut quand on utilise le dump :
-- Admin: admin@demo.com / demo12345
-- Controlé: robert@demo.com / demo12345
-- Contrôleur: martine@demo.com / demo12345
-
-Note : Pour créer un nouveau dump :
-
-    pg_dump --verbose --clean --no-acl --no-owner -h postgres -U ecc -d ecc > db.dump
-
-Ensuite, ajouter les fichiers de `media.zip` dans un dossier `media` à la racine de ce
-projet.
 
 # Login et envoi d'emails
 
-Les utlisateurs admin peuvent se logger sans envoi d'email à http://localhost:8080/admin.
+Les utlisateurs admin peuvent se logger à http://localhost:8080/admin.
 
 Les utilisateurs non-admin doivent d'abord être créés via un utilisateur admin.
 
@@ -111,13 +118,6 @@ lève une erreur c'est qu'il faut l'installer à la main sur votre machine.
 Instructions d'installation données par django-magic, le package que nous utilisons :
 https://github.com/ahupp/python-magic#installation
 
-
-# Des commandes utiles
-
-    # lancer les tests unitaires :
-    pytest
-
-
 # Définition des locales
 
 Cette plateforme utilise l'encodage UTF-8 à plusieurs endroit, notamment pour les nom de
@@ -130,11 +130,12 @@ comme ceci :
     export LANG=fr_FR.UTF-8
     export LC_ALL=fr_FR.UTF-8
 
+
 # Envoi d'emails périodiques
 
 On utilise Celery Beat et Redis pour gérer l'envoi d'emails périodiques.
 
-La fréquence des envois est configurée dans django admin, avec l'applicaiton
+La fréquence des envois est configurée dans django admin, avec l'application
 'django_celery_beat'.
 
 Pour démarrer celery beat, il y a la commande suivante:
@@ -151,14 +152,14 @@ Un autre façon de faire, est d'installer un service systemd:
 
 Si le serveur Redis n'est pas fourni, on peut l'installer:
 
-    yum -y install redis
+    apt-get install redis
     systemctl start redis
     systemctl enable redis
     redis-cli ping
 
 # uWSGI
 
-Le server d'application uWSGI est utilisé sur Heroku.
+Le server d'application uWSGI est utilisé en production.
 Pour plus de détail : https://uwsgi-docs.readthedocs.io/en/latest/
 
 # Parcel : Bundler JS
