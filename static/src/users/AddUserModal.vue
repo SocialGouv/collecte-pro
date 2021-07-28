@@ -273,12 +273,17 @@ export default Vue.extend({
       }
     },
     validateEmail() {
-      const expectedEndingsArray = this.expected_inspector_email_endings.split(',')
-      const isInspectorEmail = email => {
-        // At least one ending should match.
-        return expectedEndingsArray.some(ending => {
-          return email.endsWith(ending)
-        })
+      // If no ending defined, skip this test
+      if (typeof this.expected_inspector_email_endings !== 'undefined') {
+        const expectedEndingsArray = this.expected_inspector_email_endings.split(',')
+        const isInspectorEmail = email => {
+          // At least one ending should match.
+          return expectedEndingsArray.some(ending => {
+            return email.endsWith(ending)
+          })
+        }
+      } else {
+        const expectedEndingsArray = []
       }
 
       if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
