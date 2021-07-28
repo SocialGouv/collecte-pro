@@ -14,8 +14,4 @@ class ConfigViewSet(viewsets.ViewSet):
             'static_files_url': settings.STATIC_URL,
             'support_team_email': settings.SUPPORT_TEAM_EMAIL
         }
-        if request.user.profile.is_inspector:
-            config.update({
-                'webdav_url': settings.WEBDAV_URL,
-            })
         return Response(config)
