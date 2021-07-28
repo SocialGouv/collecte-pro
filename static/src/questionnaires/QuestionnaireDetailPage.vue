@@ -27,27 +27,6 @@
       <questionnaire-metadata :questionnaire="questionnaire" :with-trash="!questionnaire.is_draft">
       </questionnaire-metadata>
 
-      <div v-if="isLoaded && user.is_inspector && !questionnaire.is_draft"
-           class="alert alert-info alert-icon">
-        <i class="fe fe-info" aria-hidden="true"></i>
-        <div class="flex-row justify-content-end">
-          <div>
-            <p>
-              Toutes les réponses déposées sont automatiquement classées et renomées dans un dossier
-              dans votre Explorateur Windows. Découvrez comment les consulter !
-            </p>
-          </div>
-          <div class="col-3 text-right pr-0">
-            <button class="btn btn-primary parent-fake-icon" @click="showWebdavTip">
-              <i class="fe fe-folder mr-3"></i>
-              <img :src="'/static/img/file-explorer.png'"
-                  alt="Explorateur Windows"
-                  class="fake-icon" />
-              Voir les réponses
-            </button>
-          </div>
-        </div>
-      </div>
       <div>
         <theme-box v-for="(theme, themeIndex) in questionnaire.themes"
                    :key="theme.id"
@@ -77,11 +56,6 @@
 
       </div>
     </div>
-    <webdav-tip v-if="!questionnaire.is_draft"
-                ref="webdavTip"
-                :control-id="questionnaire.control"
-                :reference-code="control.reference_code">
-    </webdav-tip>
   </div>
 
 </template>
@@ -100,7 +74,6 @@ import ResponseDropzone from '../questions/ResponseDropzone'
 import ResponseFileList from '../questions/ResponseFileList'
 import SuccessBar from '../utils/SuccessBar'
 import ThemeBox from '../themes/ThemeBox'
-import WebdavTip from '../controls/WebdavTip'
 
 export default Vue.extend({
   name: 'QuestionnaireDetailPage',
@@ -128,11 +101,6 @@ export default Vue.extend({
       return this.userLoadStatus === loadStatuses.SUCCESS
     },
   },
-  methods: {
-    showWebdavTip() {
-      this.$refs.webdavTip.start()
-    },
-  },
   components: {
     Breadcrumbs,
     QuestionBox,
@@ -143,7 +111,6 @@ export default Vue.extend({
     ResponseFileList,
     SuccessBar,
     ThemeBox,
-    WebdavTip,
   },
 })
 

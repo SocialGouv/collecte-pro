@@ -146,20 +146,6 @@
         </div>
 
         <div v-if="sessionUser.is_inspector" class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
-          <div class="mb-6 flex-column ie-flex-column-fix align-items-end">
-            <div class="text-muted card-title mb-1 break-word text-right">
-              <strong>../{{control.reference_code}}</strong>
-            </div>
-            <a class="btn btn-secondary parent-fake-icon"
-               @click="showWebdavTip">
-              <i class="fe fe-folder mr-3"></i>
-              <img :src="'/static/img/file-explorer.png'"
-                   alt="Explorateur Windows"
-                   class="fake-icon" />
-              Comment voir les réponses ?
-            </a>
-          </div>
-
           <div class="btn-group">
             <button type="button"
                     class="btn btn-secondary"
@@ -205,10 +191,6 @@
     </template>
 
     <control-delete-flow ref="controlDeleteFlow" :control="control"></control-delete-flow>
-    <webdav-tip :control-id="control.id"
-                :ref="'webdavTip' + control.id"
-                :reference-code="control.reference_code">
-    </webdav-tip>
 
   </div>
 </template>
@@ -219,7 +201,6 @@ import { mapFields } from 'vuex-map-fields'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import Vue from 'vue'
-import WebdavTip from '../controls/WebdavTip'
 import ControlDeleteFlow from './ControlDeleteFlow'
 
 import ConfirmModal from '../utils/ConfirmModal'
@@ -265,7 +246,6 @@ export default Vue.extend({
   components: {
     InfoBar,
     ErrorBar,
-    WebdavTip,
     ControlDeleteFlow,
     ConfirmModal,
   },
@@ -499,9 +479,6 @@ export default Vue.extend({
           this.errors = error.response.data
           this.hasErrors = true
         })
-    },
-    showWebdavTip() {
-      this.$refs['webdavTip' + this.control.id].start()
     },
     startControlDeleteFlow() {
       this.$refs.controlDeleteFlow.start()
