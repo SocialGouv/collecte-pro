@@ -158,7 +158,7 @@
             </button>
             <a class="btn btn-primary ml-2"
                 :href="'mailto:' + postResult.email +
-                      '?subject=Bienvenue sur e-controle' +
+                      '?subject=Bienvenue sur e-collecte' +
                       '&body=' + emailBody"
                 target="_blank"
                 rel="noopener noreferrer"

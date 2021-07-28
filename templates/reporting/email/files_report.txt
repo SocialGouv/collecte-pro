@@ -14,4 +14,4 @@ Votre notification quotidienne
 
 {% endfor %}
 
-Continuer sur e-contrôle: https://{{ site.domain }}/
+Continuer sur e-collecte: https://{{ site.domain }}/

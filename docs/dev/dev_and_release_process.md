@@ -89,7 +89,7 @@ Pour créer une branche de release, on suivra le processus suivant :
 ```
 
 Il y a 2 tâches à faire dans cette nouvelle branche (on peut regarder
-[ce commit](https://github.com/betagouv/e-controle/commit/85a165b8) pour avoir un
+[ce commit](https://github.com/SocialGouve/ecollecte/commit/85a165b8) pour avoir un
 exemple) :
 
 - Ajouter des release notes dans le dossier docs/releases. On peut imiter le format des
@@ -200,7 +200,7 @@ On commit le fix dans la branche (ou plusieurs commits) :
 Le fix doit aussi changer le numéro de version et faire des release notes pour cette
 nouvelle version. Si on était précédemment à la version 1.20, alors on fait une version
 1.20.1 (version "patch"). S'inspirer de
-[ce commit](https://github.com/betagouv/e-controle/commit/85a165b8) (les release notes
+[ce commit](https://github.com/SocialGouve/ecollecte/commit/85a165b8) (les release notes
 sont faciles : il n'y a que le fix qui a changé!)
 
 ## Tester le hotfix

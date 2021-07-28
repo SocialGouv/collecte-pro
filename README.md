@@ -39,10 +39,10 @@ Voir https://github.com/SocialGouv/ecollecte/blob/develop/docs/dev/architecture.
 Notre code review process pour collaborer dans la bonne humeur :
 https://github.com/SocialGouv/ecollecte/blob/develop/docs/Processus de revue de code.odt
 
-Comment installer son environnement pour développer e-controle :
-https://github.com/betagouv/e-controle/blob/develop/docs/dev/dev_environment.md
+Comment installer son environnement pour développer e-collecte :
+https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/dev_environment.md
 
 Nous utilisons [github-flow](https://guides.github.com/introduction/flow/).
 Pour plus de détails sur comment commencer une nouvelle feature, et pour le processus de
 release, voir
-https://github.com/betagouv/e-controle/blob/develop/docs/dev/dev_and_release_process.md
+https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/dev_and_release_process.md
