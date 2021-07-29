@@ -19,7 +19,7 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
         'control': control,
         'inspectors': inspectors
     }
-    subject = f'e.contrôle - Suppression de l\'espace - {control.title_display}'
+    subject = f"e-collecte - Suppression de l'espace - {control.title_display}"
 
     send_email(
         to=inspectors_emails,

@@ -229,7 +229,7 @@ export default Vue.extend({
           ? 'l\'équipe de contrôle.'
           : 'l\'organisme contrôlé.') +
         newline + newline +
-        'Pour vous connecter, rendez-vous sur le site d\'e.contrôle :' +
+        'Pour vous connecter, rendez-vous sur le site d\'e-collecte :' +
         newline + newline +
         this.site_url +
         newline + newline +

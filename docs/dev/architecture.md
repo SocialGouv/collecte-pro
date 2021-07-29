@@ -1,6 +1,6 @@
 # Architecture de ecollecte
 
-Créé le 9 Décembre 2019 - Des choses ayant pu changé depuis lors, désolés :)
+Créé le 9 Décembre 2019 - Des choses ayant pu changé depuis lors, désolé :)
 Merci d'ajouter une date lorsque vous modifiez une section de ce document. Placer la
 date directement dans la section mise à jour.
 
@@ -15,7 +15,7 @@ https://github.com/SocialGouve/ecollecte/blob/develop/control/models.py et
 https://github.com/SocialGouve/ecollecte/blob/develop/user_profiles/models.py pour les
 tables principales.
 
-Voici un schéma de la base qui date de décember 2019 :
+Voici un schéma de la base qui date de décembre 2019 :
 https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/ecollecte-database.png
 
 ## Partie serveur
