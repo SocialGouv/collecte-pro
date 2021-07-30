@@ -15,8 +15,6 @@ from control import views as control_views
 from demo import views as demo_views
 from editor import api_views as editor_api_views
 from faq import views as faq_views
-from magicauth import views as magicauth_views
-from magicauth.urls import urlpatterns as magicauth_urls
 from session import api_views as session_api_views
 from soft_deletion import api_views as deletion_api_views
 from tos import views as tos_views
@@ -38,7 +36,9 @@ router.register(r'deletion', deletion_api_views.DeleteViewSet, basename='deletio
 
 
 urlpatterns = [
-    path('', magicauth_views.LoginView.as_view(), name='login'),
+
+    path('', include('django.contrib.auth.urls'), name='login'),
+
     path('cgu/', tos_views.tos, name='tos'),
     path(settings.ADMIN_URL + 'login/',
          backoffice_views.AdminLoginView.as_view(),
@@ -80,9 +80,8 @@ urlpatterns = [
     path('api/questionnaire/<int:pk>/changer-redacteur/',
          editor_api_views.UpdateEditor.as_view(),
          name='update-editor'),
-]
 
-urlpatterns.extend(magicauth_urls)
+]
 
 urlpatterns += [
     path('api/', include((router.urls, 'api'))),
