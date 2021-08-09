@@ -5,23 +5,20 @@
 <div id="page" class="page white">
   <div id="non-footer" class="container">
     <div class="row"
-         id="connectez-vous-a-e-controle">
+         id="connectez-vous-a-e-collecte">
       <div class="col-md d-none d-md-block">
         <img src="{% static 'img/photo_cour_des_comptes.jpg' %}" alt="Photo de la Cour des comptes" />
       </div>
       <div class="col-md d-flex flex-column justify-content-between align-items-center">
         <div class="mt-8 mt-md-2 mt-lg-8 mb-2 d-flex flex-column justify-content-center align-items-center">
           <div class="mb-5">
-            <img src="{% static 'img/logo_white_back.png' %}" alt="logo e.contrôle" />
+            <img src="{% static 'img/logo_white_back.png' %}" alt="logo e.collecte" />
           </div>
           <h3 class="mb-lg-5 text-center">
             La plateforme d'échange de <br/> documents durant les contrôles
           </h3>
           <div class="mt-5 mt-md-5 mt-lg-7 mt-xl-8 mb-5 mb-md-5 mb-lg-7 mb-xl-8 d-flex flex-column justify-content-center align-items-center">
-            
-
-            <!-- test login -->
-            <label class="form-label text-center"><h4>Connectez-vous à e.contrôle</h4></label>
+            <label class="form-label text-center"><h4>Connectez-vous à e.collecte</h4></label>
             <form method="post">
               {% csrf_token %}
               {% if user.is_authenticated %}
@@ -48,8 +45,6 @@
               <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
             </form>
             {% endif %}
-            <!-- test login -->
-
             <div class="text-center text-muted small mt-2 mt-lg-5">
               Vous rencontrez des difficultés pour vous connecter?
             </div>
@@ -62,17 +57,17 @@
             </div>
           </div>
         </div>
-        <a href="#a-quoi-sert-e-controle" class="mb-4 btn btn-secondary btn-pill">
-          En savoir plus sur e.contrôle
+        <a href="#a-quoi-sert-e-collecte" class="mb-4 btn btn-secondary btn-pill">
+          En savoir plus sur e.collecte
         </a>
         <img src="{% static 'img/logo-cc.png' %}" class="img resize-bug" alt="logo-cc"/>
       </div>
     </div>
     <div class="mt-9"
-         id="a-quoi-sert-e-controle">
+         id="a-quoi-sert-e-collecte">
       <div class="row">
         <div class="col-sm text-center">
-          <h1>À quoi sert e-contrôle ?</h1>
+          <h1>À quoi sert e-collecte ?</h1>
         </div>
       </div>
       <div class="row">
@@ -138,7 +133,7 @@
             Foire aux Questions
           </a>
           ou
-          <a href="#connectez-vous-a-e-controle">
+          <a href="#connectez-vous-a-e-collecte">
             connectez-vous
           </a>
           !
@@ -149,4 +144,3 @@
   {% include "footer.html" %}
 </div>
 {% endblock content %}
-
