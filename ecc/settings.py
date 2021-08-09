@@ -329,3 +329,6 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 LOGIN_REDIRECT_URL = 'control-detail'
 LOGOUT_REDIRECT_URL = 'login'
+
+# Ip adress
+SAVE_IP_ADRESS = env('SAVE_IP_ADRESS', default=False)
