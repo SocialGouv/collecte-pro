@@ -370,14 +370,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "django-magicauth"
-version = "0.5"
-description = "Password-less authentication: login by clicking on a magic link received by email."
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "django-model-utils"
 version = "4.0.0"
 description = "Django model mixins and utilities"
@@ -1283,9 +1275,6 @@ django-http-referrer-policy = [
 django-js-asset = [
     {file = "django-js-asset-1.2.2.tar.gz", hash = "sha256:c163ae80d2e0b22d8fb598047cd0dcef31f81830e127cfecae278ad574167260"},
     {file = "django_js_asset-1.2.2-py2.py3-none-any.whl", hash = "sha256:8ec12017f26eec524cab436c64ae73033368a372970af4cf42d9354fcb166bdd"},
-]
-django-magicauth = [
-    {file = "django-magicauth-0.5.tar.gz", hash = "sha256:66fefe5302675826ea778f94f5bdb1e094d842ff3463aa6f745e627b5cb49bb2"},
 ]
 django-model-utils = [
     {file = "django-model-utils-4.0.0.tar.gz", hash = "sha256:adf09e5be15122a7f4e372cb5a6dd512bbf8d78a23a90770ad0983ee9d909061"},

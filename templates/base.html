@@ -32,8 +32,8 @@
                 </div>
               {% else %}
                 <div class="nav-item mx-6">
-                  {% url 'login' as login_url %}
-                  <a class="nav-link nav-link-thick-line {% if request.path == login_url %}active{% endif %}"
+                  {% url 'login' as login_redirect_url %}
+                  <a class="nav-link nav-link-thick-line {% if request.path == login_redirect_url %}active{% endif %}"
                     href="{% url 'login'%}">
                     Se connecter
                   </a>

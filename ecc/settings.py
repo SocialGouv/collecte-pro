@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'demo',
     'editor',
     'faq',
-    'magicauth',
     'reporting',
     'user_profiles',
     'utils',
@@ -209,16 +208,8 @@ SEND_EMAIL_WHEN_USER_REMOVED = env('SEND_EMAIL_WHEN_USER_REMOVED', default=False
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 SUPPORT_TEAM_EMAIL = env('SUPPORT_TEAM_EMAIL', default='support@e-collecte.gouv.fr')
 
-MAGICAUTH_FROM_EMAIL = DEFAULT_FROM_EMAIL
-MAGICAUTH_LOGGED_IN_REDIRECT_URL_NAME = 'control-detail'
-MAGICAUTH_EMAIL_SUBJECT = 'Connexion e.collecte'
-MAGICAUTH_EMAIL_HTML_TEMPLATE = 'login/email.html'
-MAGICAUTH_EMAIL_TEXT_TEMPLATE = 'login/email.txt'
-MAGICAUTH_LOGIN_VIEW_TEMPLATE = 'login/login.html'
-MAGICAUTH_EMAIL_SENT_VIEW_TEMPLATE = 'login/email_sent.html'
-MAGICAUTH_WAIT_VIEW_TEMPLATE = 'login/wait.html'
-
-LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'control-detail'
+LOGOUT_REDIRECT_URL = 'login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -327,8 +318,5 @@ ALLOW_DEMO_LOGIN = env('ALLOW_DEMO_LOGIN', default=False)
 SESSION_EXPIRE_SECONDS = env('SESSION_EXPIRE_SECONDS', default=24*60*60)
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
-LOGIN_REDIRECT_URL = 'control-detail'
-LOGOUT_REDIRECT_URL = 'login'
-
 # Ip adress
-SAVE_IP_ADRESS = env('SAVE_IP_ADRESS', default=False)
+SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)

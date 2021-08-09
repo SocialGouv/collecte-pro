@@ -28,11 +28,11 @@ def get_user_form_ad(user_email):
     mail_regex = r'^[a-zA-Z0-9_.+-]+@(crtc\.)?ccomptes.fr$'
     if re.match(mail_regex, user_email):
         try:
-            logging.info(f'Basic magicauth: LDAP Sever (username: {user_email})')
+            logging.info(f'Basic auth: LDAP Sever (username: {user_email})')
             server = Server(settings.LDAP_SERVER, get_info=ALL)
             conn = Connection(server, user=settings.LDAP_DOMAIN + "\\" + settings.LDAP_USER,
                               password=settings.LDAP_PASSWORD, authentication=NTLM)
-            logging.debug('Basic magicauth: LDAP Binding')
+            logging.debug('Basic auth: LDAP Binding')
             if conn.bind():
                 conn.search(settings.LDAP_DC,
                             f'(&(objectClass=user)(mail={user_email}))',
@@ -42,7 +42,7 @@ def get_user_form_ad(user_email):
                                         'department',
                                         'mail'
                                         ])
-                logging.debug('Basic magicauth: LDAP search')
+                logging.debug('Basic auth: LDAP search')
                 if len(conn.entries) > 0:
                     return conn.entries[0]
         except Exception as e:
