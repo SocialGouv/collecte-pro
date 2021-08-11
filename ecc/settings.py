@@ -165,14 +165,14 @@ CSRF_COOKIE_SECURE = True
 # CSRF_COOKIE_SAMESITE: We have to use Lax and not Strict, otherwise login is broken when you login
 # by clicking the magic link from gmail, orange mail, or other mail website with specific
 # referer-policy.
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Strict'
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 # SESSION_COOKIE_SAMESITE: We have to use Lax and not Strict, otherwise CRSF is broken when you
 # login by clicking the magic link from gmail, orange mail, or other mail website with specific
 # referer-policy.
-SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Strict'
 X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 30
 # Content-Security-Policy
@@ -208,8 +208,7 @@ SEND_EMAIL_WHEN_USER_REMOVED = env('SEND_EMAIL_WHEN_USER_REMOVED', default=False
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 SUPPORT_TEAM_EMAIL = env('SUPPORT_TEAM_EMAIL', default='support@e-collecte.gouv.fr')
 
-LOGIN_REDIRECT_URL = 'control-detail'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

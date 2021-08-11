@@ -18,8 +18,7 @@
             La plateforme d'échange de <br/> documents durant les contrôles
           </h3>
           <div class="mt-5 mt-md-5 mt-lg-7 mt-xl-8 mb-5 mb-md-5 mb-lg-7 mb-xl-8 d-flex flex-column justify-content-center align-items-center">
-            <label class="form-label text-center"><h4>Connectez-vous à e.collecte</h4></label>
-            <form method="post">
+            <form action="{% url 'login' %}" method="post">
               {% csrf_token %}
               {% if user.is_authenticated %}
                 <div class="alert alert-info text-center" role="alert">
@@ -38,13 +37,38 @@
                   </div>
                 {% endif %}
 
-              <div class="form-group">
-                {{ form.as_p }}
-              </div>  
-              
-              <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                <div class="form-group">
+                  <label class="form-label text-center"><h4>Connectez-vous à e.collecte</h4></label>
+                  <input type="text"
+                          name="username"
+                          size="40"
+                          class="form-control {% if form.errors %}state-invalid {% endif %}"
+                          id="username"
+                          aria-describedby="usernameHelp"
+                          placeholder="Votre identifiant"
+                          required />
+                    {% for error in form.username.errors %}
+                      <div class="alert alert-danger text-center">
+                        {{ error }}
+                      </div>
+                    {% endfor %}
+                  <input type="password"
+                          name="password"
+                          size="40"
+                          class="form-control {% if form.errors %}state-invalid {% endif %}"
+                          id="password"
+                          aria-describedby="passwordHelp"
+                          placeholder="Votre mot de passe"
+                          required />
+                    {% for error in form.password.errors %}
+                      <div class="alert alert-danger text-center">
+                        {{ error }}
+                      </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+              {% endif %}
             </form>
-            {% endif %}
             <div class="text-center text-muted small mt-2 mt-lg-5">
               Vous rencontrez des difficultés pour vous connecter?
             </div>

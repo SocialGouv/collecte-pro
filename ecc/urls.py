@@ -13,6 +13,7 @@ from control import admin as admin_views
 from control import api_views as control_api_views
 from control import views as control_views
 from demo import views as demo_views
+from ecc import views as ecc_views
 from editor import api_views as editor_api_views
 from faq import views as faq_views
 from session import api_views as session_api_views
@@ -36,7 +37,7 @@ router.register(r'deletion', deletion_api_views.DeleteViewSet, basename='deletio
 
 
 urlpatterns = [
-    path('', include('django.contrib.auth.urls'), name='login'),
+    path('', ecc_views.home, name='login'),
     path('cgu/', tos_views.tos, name='tos'),
     path(settings.ADMIN_URL + 'login/',
          backoffice_views.AdminLoginView.as_view(),
