@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from user_profiles.models import UserIpAddress
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
+from django.conf import settings
 
 from actstream import action
 
@@ -21,7 +22,8 @@ def save_ip_address(request):
 
 @receiver(user_logged_in, sender=User)
 def add_action_log_for_login(sender, user, request, **kwargs):
-    save_ip_address(request)
+    if settings.SAVE_IP_ADDRESS:
+        save_ip_address(request)
 
     action_details = {
         'sender': user,
