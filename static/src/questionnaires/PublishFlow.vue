@@ -88,9 +88,9 @@
           Bravo, votre questionnaire est publié!
         </h4>
         <div class="mt-5">
-            <p>Pensez à informer l'organisme contrôlé.</p>
+            <p>Pensez à informer l'organisme interrogé.</p>
             <p>Si des réponses sont déposées par l'organisme interrogé, vous recevrez un email de
-          notification dès le lendemain 8 heures.</p>
+          notification.</p>
         </div>
       </div>
       <div class="modal-body text-center">
@@ -170,7 +170,7 @@ export default Vue.extend({
       const expiryDateString = this.questionnaire.end_date === null ? '' : `${newline}${newline}La date limite de réponse est le ${this.questionnaire.end_date}.`
 
       if (currentControl) {
-        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté au contrôle ${currentControl.title}. Il s'agit du questionnaire numéro ${this.questionnaire.id} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à e-collecte pour le voir et apporter vos réponses, au lien ci-dessous :${newline}${newline}https://e-collecte.gouv.fr${newline}${newline}Cordialement,`
+        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.id} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à e-collecte pour le consulter et apporter vos réponses : https://e-collecte.gouv.fr${newline}${newline}Cordialement,`
       }
 
       return ''

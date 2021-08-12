@@ -5,7 +5,7 @@
       <request-editor-button :questionnaire='questionnaire' v-if="questionnaire.is_draft">
       </request-editor-button>
       <success-bar v-else>
-        Ce questionnaire est publié : il est visible par l'organisme contrôlé et n'est donc plus
+        Ce questionnaire est publié : il est visible par l'organisme interrogé et n'est plus
         modifiable.
       </success-bar>
     </template>
