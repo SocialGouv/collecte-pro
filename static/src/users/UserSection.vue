@@ -13,7 +13,7 @@
         <div class="card-header justify-content-between">
           <h3 class="card-title">
             <i class="fa fa-university mr-2"></i>
-            <strong>Équipe de contrôle</strong>
+            <strong>Équipe d'instruction</strong>
           </h3>
           <button v-if="sessionUser.is_inspector"
                   data-toggle="modal"
@@ -21,7 +21,7 @@
                   @click="updateEditingState('inspector')"
                   class="btn btn-primary">
             <i class="fe fe-plus"></i>
-            Ajouter un contrôleur
+            Ajouter un demandeur
           </button>
         </div>
         <user-list :users="inspectorUsers()" profile-type="inspector" :control="control">

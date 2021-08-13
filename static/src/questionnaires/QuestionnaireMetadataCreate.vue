@@ -67,11 +67,11 @@ import fr from '../utils/vuejs-datepicker-locale-fr'
 import reportValidity from 'report-validity'
 
 // eslint-disable-next-line no-multi-str
-const DESCRIPTION_DEFAULT = 'À l’occasion de ce contrôle, \
-je vous demande de me transmettre des renseignements et des justifications \
-sur les points énumérés dans ce questionnaire.\nVous voudrez bien me faire \
+const DESCRIPTION_DEFAULT = 'À l’occasion de cette procédure, \
+nous vous demandons de nous transmettre des renseignements et des justifications \
+sur les points énumérés dans ce questionnaire.\nVous voudrez bien nous faire \
 parvenir au fur et à mesure votre réponse. \
-\nJe reste à votre disposition ainsi qu’à celle de vos \
+\nNous restons à votre disposition ainsi qu’à celle de vos \
 services pour toute information complémentaire qu’appellerait ce questionnaire.'
 
 const QuestionnaireMetadataCreate = Vue.extend({
