@@ -96,8 +96,8 @@ Création d'un lien symbolique vers le fichier de configuration de l'application
 
 ## Lancer les services
 
-    systemctl ecollecte start
-    systemctl celery start
+    systemctl start ecollecte
+    systemctl start celery
 
 
 ## Configurer le reverse proxy nginx
@@ -145,5 +145,5 @@ Création d'un lien symbolique vers le fichier de configuration de l'application
 
 ## Redémarrer les services
 
-    systemctl restart ecc
+    systemctl restart ecollecte
     systemctl restart celery

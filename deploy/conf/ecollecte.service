@@ -1,0 +1,16 @@
+[Unit]
+Description=Ecollecte web application
+After=network.target
+
+[Service]
+User=ecollecte
+Group=django
+WorkingDirectory=/opt/ecollecte
+RuntimeDirectory= ecollecte
+EnvironmentFile=-/etc/ecollecte/ecollecte.conf
+ExecStart=/opt/ecollecte/bin/uwsgi --python-path /opt/ecollecte/lib/python3.7/site-packages --ini /etc/ecollecte/uwsgi.ini
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
