@@ -7,7 +7,7 @@
       <div class="card-body pb-6">
         <form ref="form">
           <div class="form-group">
-            <label class="form-label" id="questionnaireTitle">
+            <label class="form-label" id="questionnaireTitle" for="questionnaire_title">
               Quel titre souhaitez vous donner au questionnaire n°{{ questionnaireNumbering }} ?
               <span class="form-required">*</span>
             </label>
@@ -17,7 +17,8 @@
               ou
               <strong>"Suite à la réunion du 7 Mars 2019"</strong>. 255 caractères maximum.
             </span>
-            <input type="text"
+            <input id="questionnaire_title"
+                   type="text"
                    aria-labelledby="questionnaireTitle"
                    aria-describedby="questionnaireTitleHelp"
                    class="form-control"
@@ -26,11 +27,12 @@
                    required>
           </div>
           <div class="form-group">
-            <label class="form-label" id="questionnaireDescription">
+            <label class="form-label" id="questionnaireDescription" for="questionnaire_description">
               Vous pouvez modifier le texte d'introduction du questionnaire
               n°{{ questionnaireNumbering }}, si vous le souhaitez :
             </label>
-            <textarea class="form-control"
+            <textarea id="questionnaire_description"
+                      class="form-control"
                       aria-labelledby="questionnaireDescription"
                       placeholder="Si nécessaire, décrivez votre questionnaire ici"
                       rows="6"
@@ -42,10 +44,11 @@
             </p>
           </div>
           <div class="form-group">
-            <label class="form-label" id="questionnaireEndDate">
+            <label class="form-label" id="questionnaireEndDate" for="questionnaire_enddate">
               Vous pouvez indiquer la date limite de réponse :
             </label>
-            <datepicker class="blue"
+            <datepicker id="questionnaire_enddate"
+                        class="blue"
                         aria-labelledby="questionnaireEndDate"
                         v-model="end_date"
                         :language="fr"
