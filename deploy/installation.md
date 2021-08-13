@@ -145,5 +145,5 @@ Création d'un lien symbolique vers le fichier de configuration de l'application
 
 ## Redémarrer les services
 
-    systemctl ecollecte restart
-    systemctl celery restart
+    systemctl restart ecc
+    systemctl restart celery
