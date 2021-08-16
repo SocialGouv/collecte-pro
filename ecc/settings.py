@@ -273,6 +273,8 @@ SETTINGS_EXPORT = [
     'SESSION_EXPIRE_SECONDS',
     'SUPPORT_TEAM_EMAIL',
     'DEBUG',
+    'LOGO_MARIANNE',
+    'ENTITY_PICTURE',
 ]
 
 REST_FRAMEWORK = {
@@ -319,3 +321,12 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 # Ip adress
 SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
+
+# Logo Marianne
+LOGO_MARIANNE = env('LOGO_MARIANNE', default=None)
+
+#Entity name
+ENTITY_NAME = env('ENTITY_NAME', default=None)
+
+#Entity picture
+ENTITY_PICTURE = env ('ENTITY_PICTURE', default=None)
