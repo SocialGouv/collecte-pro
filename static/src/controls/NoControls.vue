@@ -41,7 +41,7 @@
         <div class="card-body flex-row align-items-center">
           <i class="fa fa-2x fa-rocket text-muted mr-4 p-4 border rounded"></i>
           <div class="card-title">
-            4. Publiez le questionnaire et visualisez les réponses dans votre Explorateur Windows.
+            4. Publiez le questionnaire.
           </div>
         </div>
       </div>
