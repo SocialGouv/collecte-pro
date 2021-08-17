@@ -20,11 +20,12 @@
         <form @submit.prevent="validateEmail" v-if="stepShown === 1" @keydown.esc="resetFormData">
           <div class="form-fieldset">
             <div class="form-group">
-              <label id="email-label" class="form-label">
+              <label id="email-label" class="form-label" for="email">
                 Email
                 <span class="form-required"></span>
               </label>
-              <input type="email"
+              <input id="email"
+                     type="email"
                      autocapitalize=off
                      autocorrect=off
                      class="form-control"
@@ -34,11 +35,12 @@
                      aria-labelledby="email-label">
             </div>
             <div class='form-group'>
-              <label id="email-confirm-label" class="form-label">
+              <label id="email-confirm-label" class="form-label" for="confirm_email">
                 Confirmer l'Email
                 <span class="form-required"></span>
               </label>
-              <input type="email"
+              <input id="confirm_email"
+                     type="email"
                      autocapitalize=off
                      autocorrect=off
                      class="form-control"
@@ -112,13 +114,13 @@
           </div>
           <fieldset v-else class="form-fieldset">
             <div class="form-group">
-              <label class="form-label">Prénom<span class="form-required"></span></label>
-              <input type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" required>
+              <label class="form-label" for="prenom">Prénom<span class="form-required"></span></label>
+              <input id="prenom" type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" required>
               <p class="text-muted pl-2" v-if="errors.first_name"><i class="fa fa-warning"></i> {{ errors.first_name.join(' / ')}}</p>
             </div>
             <div class="form-group">
-              <label class="form-label">Nom<span class="form-required"></span></label>
-              <input type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" required>
+              <label class="form-label" for="nom">Nom<span class="form-required"></span></label>
+              <input id="nom" type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" required>
               <p class="text-muted pl-2" v-if="errors.last_name"><i class="fa fa-warning"></i> {{ errors.last_name.join(' / ')}}</p>
             </div>
           </fieldset>
