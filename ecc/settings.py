@@ -273,7 +273,8 @@ SETTINGS_EXPORT = [
     'SESSION_EXPIRE_SECONDS',
     'SUPPORT_TEAM_EMAIL',
     'DEBUG',
-    'LOGO_MARIANNE',
+    'LOGO_ACCUEIL',
+    'LOGO_FOOTER',
     'ENTITY_PICTURE',
 ]
 
@@ -322,8 +323,9 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 # Ip adress
 SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
 
-# Logo Marianne
-LOGO_MARIANNE = env('LOGO_MARIANNE', default=None)
+# Logos
+LOGO_ACCUEIL = env('LOGO_ACCUEIL', default='img/logo-gouv.png')
+LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-gouv.png')
 
 #Entity name
 ENTITY_NAME = env('ENTITY_NAME', default=None)
