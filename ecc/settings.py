@@ -67,7 +67,6 @@ INSTALLED_APPS = [
     'reporting',
     'user_profiles',
     'utils',
-    'adauth',
     'session',
     'soft_deletion',
     'tos',
@@ -162,16 +161,10 @@ FEATURE_POLICY = {
 # Strict-Transport-Security
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_SECURE = True
-# CSRF_COOKIE_SAMESITE: We have to use Lax and not Strict, otherwise login is broken when you login
-# by clicking the magic link from gmail, orange mail, or other mail website with specific
-# referer-policy.
 CSRF_COOKIE_SAMESITE = 'Strict'
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_SAMESITE: We have to use Lax and not Strict, otherwise CRSF is broken when you
-# login by clicking the magic link from gmail, orange mail, or other mail website with specific
-# referer-policy.
 SESSION_COOKIE_SAMESITE = 'Strict'
 X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 30
@@ -327,8 +320,8 @@ SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
 LOGO_ACCUEIL = env('LOGO_ACCUEIL', default='img/logo-gouv.png')
 LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-gouv.png')
 
-#Entity name
-ENTITY_NAME = env('ENTITY_NAME', default=None)
+# Entity name
+ENTITY_NAME = env('ENTITY_NAME', default='Entity')
 
-#Entity picture
-ENTITY_PICTURE = env ('ENTITY_PICTURE', default=None)
+# Entity picture
+ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/photo_entite.png')
