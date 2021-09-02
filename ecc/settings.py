@@ -74,6 +74,10 @@ INSTALLED_APPS = [
 
     # Central app - loaded last
     'ecc',
+
+    # Keycloak apps
+    'bossoidc2',
+    'mozilla_django_oidc',
 ]
 
 
@@ -281,6 +285,11 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'mozilla_django_oidc.contrib.drf.OIDCAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'oidc_auth.authentication.BearerTokenAuthentication',
     )
 }
 
@@ -325,3 +334,32 @@ ENTITY_NAME = env('ENTITY_NAME', default='Entity')
 
 # Entity picture
 ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/photo_entite.png')
+
+# Keycloak authentification
+AUTHENTICATION_BACKENDS = (
+    'bossoidc2.backend.OpenIdConnectBackend',
+)
+
+auth_uri = "http://localhost:8080"
+client_id = "ecollecte" # Client ID configured in the Auth Server - peut etre pas bon
+public_uri = "http://localhost:8080"
+
+OIDC_OP_AUTHORIZATION_ENDPOINT = auth_uri + '/protocol/openid-connect/auth'
+OIDC_OP_TOKEN_ENDPOINT = auth_uri + '/protocol/openid-connect/token'
+OIDC_OP_USER_ENDPOINT = auth_uri + '/protocol/openid-connect/userinfo'
+LOGIN_REDIRECT_URL = public_uri + 'v1/mgmt'
+LOGOUT_REDIRECT_URL = auth_uri + '/protocol/openid-connect/logout?redirect_uri=' + public_uri
+OIDC_RP_CLIENT_ID = client_id
+OIDC_RP_CLIENT_SECRET = ''
+OIDC_RP_SCOPES = 'email openid profile'
+OIDC_RP_SIGN_ALGO = 'RS256'
+OIDC_OP_JWKS_ENDPOINT = auth_uri + '/protocol/openid-connect/certs'
+
+# Fields to look for in the userinfo returned from Keycloak
+OIDC_CLAIMS_VERIFICATION = 'preferred_username sub'
+
+# Allow this user to not have an email address during OIDC claims verification.
+KEYCLOAK_ADMIN_USER = 'admin'
+
+from bossoidc2.settings import *
+configure_oidc(auth_uri, client_id, public_uri)

@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def home(request):
     if request.method == "POST":
         username = request.POST['username']

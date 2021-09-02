@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from django.conf.urls import url
 
 from rest_framework import routers
 
@@ -79,6 +80,7 @@ urlpatterns = [
     path('api/questionnaire/<int:pk>/changer-redacteur/',
          editor_api_views.UpdateEditor.as_view(),
          name='update-editor'),
+    path('oidc/', include('mozilla_django_oidc.urls')),
 
 ]
 
