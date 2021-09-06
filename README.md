@@ -1,13 +1,13 @@
-# ecollecte
+# e-collecte
 
-“ecollecte” est un service numérique permettant de faciliter les échanges de documents
+“e-collecte” est un service numérique permettant de faciliter les échanges de documents
 durant les contrôles, audits ou inspections.
 
 Les activités de transmission et de réception de documents durant les audits ne sont
 facilitées par aucun outil suffisamment adapté, si bien qu’une marge d’optimisation
 existe.
 
-ecollecte propose de répondre aux nombreux problèmes rencontrés par les audités et les
+e-collecte propose de répondre aux nombreux problèmes rencontrés par les audités et les
 auditeurs.
 
 La mise en place d’un outil dédié permet de simplifier la relation entre un organisme de
@@ -16,7 +16,7 @@ activités ayant le plus d’impact pour leurs usagers.
 
 ## Descriptions fonctionnelles :
 
-Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle d’ecollecte.odt).
+Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle d’e-collecte.odt).
 
 ### Les principaux gains pour les utilisateurs :
 
