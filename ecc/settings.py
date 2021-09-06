@@ -266,7 +266,7 @@ SETTINGS_EXPORT = [
     'SESSION_EXPIRE_SECONDS',
     'SUPPORT_TEAM_EMAIL',
     'DEBUG',
-    'LOGO_ACCUEIL',
+    'SAVE_IP_ADDRESS',
     'LOGO_FOOTER',
     'ENTITY_PICTURE',
 ]
@@ -317,11 +317,7 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
 
 # Logos
-LOGO_ACCUEIL = env('LOGO_ACCUEIL', default='img/logo-gouv.png')
-LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-gouv.png')
-
-# Entity name
-ENTITY_NAME = env('ENTITY_NAME', default='Entity')
+LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-footer.png')
 
 # Entity picture
-ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/photo_entite.png')
+ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/picture-Republique-francaise.png')
