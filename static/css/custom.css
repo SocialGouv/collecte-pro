@@ -98,6 +98,10 @@
     margin-left: 10rem !important;
 }
 
+.entity-picture{
+    margin: auto;
+}
+
 /* Top bar */
 .nav-tabs .nav-link-thick-line {
     border-bottom-width: 4px;
@@ -142,8 +146,7 @@
 #footer {
     position: absolute;
     bottom: 0px;
-    left: 0px;
-    width: 100%;
+    width: calc(100% - 0.75rem - 0.75rem);
     height: 140px;
     z-index: 99;
 }

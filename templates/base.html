@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block site_title %}
-  <title>E-collecte</title>
+  <title>e-collecte</title>
 {% endblock site_title %}
 
 {% block extra_static_header %}
@@ -14,9 +14,15 @@
     <div id="non-footer" class="flex-column flex-grow-1">
       {% block page_top_row %}
         <div class="header flex-row justify-content-between"> <!--// opening: top_header  //-->
+          <div class="container flex-row">
+          <div class="text-center">
+            <a href="/accueil">
+            <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo haut de page" style="max-width: 500px; width: 60%;"/>
+            </a>
+          </div>
           <div class="flex-column justify-content-center mx-5">
             <a class="header-brand" href="/accueil">
-              <img src="{% static 'img/e-collecte.png' %}" class="header-brand-img" alt="logo" />
+              <img id="logo" src="{% static 'img/e-collecte.png' %}" class="header-brand-img" alt="logo" />
             </a>
           </div>
 
@@ -44,7 +50,7 @@
 
           {% block current_user %}
             {% if user.is_authenticated %}
-              <div class="dropdown p-3">
+              <div class="flex-row dropdown p-3">
                 <a href="#" class="nav-link" data-toggle="dropdown">
                   <span class="avatar avatar-pink">{{ user.first_name|first }}{{ user.last_name|first }}</span>
                   <span class="ml-2 text-default">
@@ -59,6 +65,7 @@
               </div>
             {% endif %}
           {% endblock current_user %}
+          </div>
         </div>  <!--// closing: top_header  //-->
       {% endblock page_top_row %}
 
