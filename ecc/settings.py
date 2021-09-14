@@ -345,18 +345,18 @@ AUTHENTICATION_BACKENDS = (
 
 auth_uri = "http://ecollecte001.dev.klee.lan.net:8080/auth/realms/ecollecte"
 client_id = "ecollecte" # Client ID configured in the Auth Server - peut etre pas bon
-public_uri = "http://localhost:8080"
+public_uri = "http://localhost:8080/accueil"
 
 OIDC_OP_AUTHORIZATION_ENDPOINT = auth_uri + '/protocol/openid-connect/auth'
 OIDC_OP_TOKEN_ENDPOINT = auth_uri + '/protocol/openid-connect/token'
 OIDC_OP_USER_ENDPOINT = auth_uri + '/protocol/openid-connect/userinfo'
-LOGIN_REDIRECT_URL = public_uri + '/v1/mgmt'
+LOGIN_REDIRECT_URL = public_uri
 LOGOUT_REDIRECT_URL = auth_uri + '/protocol/openid-connect/logout?redirect_uri=' + public_uri
 OIDC_RP_CLIENT_ID = client_id
 OIDC_RP_CLIENT_SECRET = ''
 OIDC_RP_SCOPES = 'email openid profile'
 OIDC_RP_SIGN_ALGO = 'RS256'
-OIDC_RP_IDP_SIGN_KEY = ''
+OIDC_RP_IDP_SIGN_KEY = '9a01ebe5-d211-4638-b2df-df363734bc2e'
 OIDC_OP_JWKS_ENDPOINT = auth_uri + '/protocol/openid-connect/certs'
 
 # Fields to look for in the userinfo returned from Keycloak
