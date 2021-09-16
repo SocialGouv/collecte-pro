@@ -107,6 +107,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'ecc.context_processors.current_site',
+                'ecc.context_processors.env_name',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -269,6 +270,7 @@ SETTINGS_EXPORT = [
     'SAVE_IP_ADDRESS',
     'LOGO_FOOTER',
     'ENTITY_PICTURE',
+    'ENV_NAME',
 ]
 
 REST_FRAMEWORK = {
@@ -321,3 +323,6 @@ LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-footer.png')
 
 # Entity picture
 ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/picture-Republique-francaise.png')
+
+# Environnement name
+ENV_NAME = env ('ENV_NAME', default='DEV')
