@@ -81,7 +81,7 @@ def send_files_report():
         }
         number_of_sent_email = send_email(
             to=recipient_list,
-            subject=settings.ENV_NAME + ' - ' + subject,
+            subject=subject,
             html_template=html_template,
             text_template=text_template,
             extra_context=context,

@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.dispatch import receiver
 from utils.email import send_email
 
@@ -24,7 +23,7 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
 
     send_email(
         to=inspectors_emails,
-        subject=settings.ENV_NAME + ' - ' + subject,
+        subject=subject,
         html_template='soft_deletion/email_delete_control.html',
         text_template='soft_deletion/email_delete_control.txt',
         extra_context=context,
