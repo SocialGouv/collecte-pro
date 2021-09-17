@@ -324,4 +324,4 @@ LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-footer.png')
 ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/picture-Republique-francaise.png')
 
 # Environnement name
-ENV_NAME = env ('ENV_NAME', default='DEV')
+ENV_NAME = env ('ENV_NAME', default='')

@@ -34,7 +34,7 @@ def send_email(
     email = EmailMultiAlternatives(
         to=to,
         cc=cc or [],
-        subject=settings.ENV_NAME + ' - ' + subject,
+        subject=settings.ENV_NAME + ' - ' + subject if settings.ENV_NAME!='' else subject,
         body=text_message,
         from_email=from_email,
     )
