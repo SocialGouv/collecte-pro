@@ -105,7 +105,7 @@
           <a class="btn btn-primary ml-2"
               :href="'mailto:' + emailHeader.audited +
                     '?cc=' + emailHeader.editors +
-                    '&subject=Questionnaire publié' +
+                    '&subject=' + config.env_name + ' - Questionnaire publié' +
                     '&body=' + emailBody"
               target="_blank"
               rel="noopener noreferrer"

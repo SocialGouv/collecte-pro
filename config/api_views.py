@@ -12,6 +12,7 @@ class ConfigViewSet(viewsets.ViewSet):
             'expected_inspector_email_endings': settings.EXPECTED_INSPECTOR_EMAIL_ENDINGS,
             'site_url': f'https://{get_current_site(request).domain}',
             'static_files_url': settings.STATIC_URL,
-            'support_team_email': settings.SUPPORT_TEAM_EMAIL
+            'support_team_email': settings.SUPPORT_TEAM_EMAIL,
+            'env_name': settings.ENV_NAME
         }
         return Response(config)
