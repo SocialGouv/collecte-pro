@@ -214,6 +214,7 @@ export default Vue.extend({
       'editingProfileType',
       'config.expected_inspector_email_endings',
       'config.site_url',
+      'config',
     ]),
     emailBody: function() {
       if (this.stepShown !== 3) {
