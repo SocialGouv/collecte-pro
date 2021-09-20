@@ -160,7 +160,7 @@
             </button>
             <a class="btn btn-primary ml-2"
                 :href="'mailto:' + postResult.email +
-                      '?subject=' + config.env_name + ' - Bienvenue sur e-collecte' +
+                      '?subject=' + emailSubject +
                       '&body=' + emailBody"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -177,6 +177,7 @@
 
 <script lang="ts">
 import { mapFields } from 'vuex-map-fields'
+import { mapState } from 'vuex'
 import axios from 'axios'
 import backend from '../utils/backend'
 import Vue from 'vue'
@@ -216,6 +217,12 @@ export default Vue.extend({
       'config.site_url',
       'config',
     ]),
+    ...mapState({
+      config: 'config',
+    }),
+    emailSubject: function() {
+        return this.config.env_name != '' ? this.config.env_name + ' - Bienvenue sur e-collecte' : 'Bienvenue sur e-collecte'
+    },
     emailBody: function() {
       if (this.stepShown !== 3) {
         return ''
