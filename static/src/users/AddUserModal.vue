@@ -160,7 +160,7 @@
             </button>
             <a class="btn btn-primary ml-2"
                 :href="'mailto:' + postResult.email +
-                      '?subject=Bienvenue sur e-collecte' +
+                      '?subject=' + config.env_name + ' - Bienvenue sur e-collecte' +
                       '&body=' + emailBody"
                 target="_blank"
                 rel="noopener noreferrer"
