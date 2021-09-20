@@ -39,6 +39,7 @@ router.register(r'deletion', deletion_api_views.DeleteViewSet, basename='deletio
 urlpatterns = [
     path('', ecc_views.home, name='login'),
     path('cgu/', tos_views.tos, name='tos'),
+    path('oidc/', include('mozilla_django_oidc.urls')),
     path(settings.ADMIN_URL + 'login/',
          backoffice_views.AdminLoginView.as_view(),
          name='admin-login'),

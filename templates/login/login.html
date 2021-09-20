@@ -17,17 +17,25 @@
             La plateforme d'échange de documents <br/> durant les contrôles, audits, évaluations et inspections
           </h3>
           <div class="mt-5 mt-md-5 mt-lg-7 mt-xl-8 mb-5 mb-md-5 mb-lg-7 mb-xl-8 d-flex flex-column justify-content-center align-items-center">
-            <form action="{% url 'login' %}" method="post">
-              {% csrf_token %}
-              {% if user.is_authenticated %}
-                <div class="alert alert-info text-center" role="alert">
-                  Vous êtes déjà connecté
-                </div>
-                <div class="text-center">
+            {% if user.is_authenticated %}
+              <div class="alert alert-info text-center" role="alert">
+                Vous êtes déjà connecté
+              </div>
+              <div class="text-center">
+                  {%if settings.KEYCLOAK_ACTIVE %}
+                  <form action="{% url 'oidc_logout' %}" method="post">
+                    {% csrf_token %}
+                    <a href="{% url 'control-detail' %}" class="btn btn-success">Accédez à l'accueil</a>
+                    <input type="submit" class="btn btn-warning" value="Déconnectez-vous">
+                  </form>
+                  {%else%}
                   <a href="{% url 'control-detail' %}" class="btn btn-success">Accédez à l'accueil</a>
                   <a href="{% url 'logout' %}" class="btn btn-warning">Déconnectez-vous</a>
-                </div>
-              {% else %}
+                  {%endif%}
+              </div>
+            {% else %}
+              <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
                 {% if messages %}
                   <div class="text-center" role="alert">
                     {% for message in messages %}
@@ -36,38 +44,45 @@
                   </div>
                 {% endif %}
 
-                <div class="form-group">
-                  <label class="form-label text-center"><h4>Connectez-vous à e-collecte</h4></label>
-                  <input type="text"
-                          name="username"
-                          size="40"
-                          class="form-control {% if form.errors %}state-invalid {% endif %}"
-                          id="username"
-                          aria-describedby="usernameHelp"
-                          placeholder="Votre identifiant"
-                          required />
-                    {% for error in form.username.errors %}
-                      <div class="alert alert-danger text-center">
-                        {{ error }}
-                      </div>
-                    {% endfor %}
-                  <input type="password"
-                          name="password"
-                          size="40"
-                          class="form-control {% if form.errors %}state-invalid {% endif %}"
-                          id="password"
-                          aria-describedby="passwordHelp"
-                          placeholder="Votre mot de passe"
-                          required />
-                    {% for error in form.password.errors %}
-                      <div class="alert alert-danger text-center">
-                        {{ error }}
-                      </div>
-                    {% endfor %}
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
-              {% endif %}
+                {%if settings.KEYCLOAK_ACTIVE %}
+                  <div class="form-group">
+                    <label class="form-label text-center"><h4>Connectez-vous à e-collecte</h4></label>
+                  </div>
+                  <a href="{% url 'oidc_authentication_init' %}" class="btn btn-primary btn-block">Se connecter</a>
+                {%else%}
+                  <div class="form-group">
+                    <label class="form-label text-center"><h4>Connectez-vous à e-collecte</h4></label>
+                    <input type="text"
+                            name="username"
+                            size="40"
+                            class="form-control {% if form.errors %}state-invalid {% endif %}"
+                            id="username"
+                            aria-describedby="usernameHelp"
+                            placeholder="Votre identifiant"
+                            required />
+                      {% for error in form.username.errors %}
+                        <div class="alert alert-danger text-center">
+                          {{ error }}
+                        </div>
+                      {% endfor %}
+                    <input type="password"
+                            name="password"
+                            size="40"
+                            class="form-control {% if form.errors %}state-invalid {% endif %}"
+                            id="password"
+                            aria-describedby="passwordHelp"
+                            placeholder="Votre mot de passe"
+                            required />
+                      {% for error in form.password.errors %}
+                        <div class="alert alert-danger text-center">
+                          {{ error }}
+                        </div>
+                      {% endfor %}
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+                {%endif%}
             </form>
+            {% endif %}
             <div class="text-center text-muted small mt-2 mt-lg-5">
               Vous rencontrez des difficultés pour vous connecter?
             </div>

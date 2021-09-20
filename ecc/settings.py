@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'mozilla_django_oidc',  # Load after auth
 
     # Third-party apps
     'debug_toolbar',
@@ -75,6 +76,28 @@ INSTALLED_APPS = [
     # Central app - loaded last
     'ecc',
 ]
+
+# Keycloak configuration
+KEYCLOAK_ACTIVE = env('KEYCLOAK_ACTIVE', default=False)
+if KEYCLOAK_ACTIVE:
+    KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/auth')
+    KEYCLOAK_REALM = env('KEYCLOAK_REALM', default='ecollecte')
+    OPENID_PREFIX = f'{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect'
+    OIDC_OP_JWKS_ENDPOINT = f'{OPENID_PREFIX}/certs'
+    OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OPENID_PREFIX}/auth'
+    OIDC_OP_TOKEN_ENDPOINT = f'{OPENID_PREFIX}/token'
+    OIDC_OP_USER_ENDPOINT = f'{OPENID_PREFIX}/userinfo'
+    OIDC_OP_LOGOUT_ENDPOINT= f'{OPENID_PREFIX}/logout'
+    OIDC_OP_LOGOUT_URL_METHOD = env('OIDC_OP_LOGOUT_URL_METHOD', default='ecc.provider_logout')
+    OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default='')
+    OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default='')
+    OIDC_VERIFY_SSL = env('OIDC_VERIFY_SSL', default=True)
+    OIDC_RP_SIGN_ALGO = env('OIDC_RP_SIGN_ALGO', default='RS256')
+    LOGIN_REDIRECT_URL = "/accueil"
+    LOGOUT_REDIRECT_URL = "/"
+    AUTHENTICATION_BACKENDS = (
+        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+    )
 
 
 MIDDLEWARE = [
@@ -165,7 +188,8 @@ CSRF_COOKIE_SAMESITE = 'Strict'
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'
+# Can't use Strict mode in order to use Keycloak
+SESSION_COOKIE_SAMESITE = 'Lax'
 X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 30
 # Content-Security-Policy
@@ -270,6 +294,7 @@ SETTINGS_EXPORT = [
     'LOGO_FOOTER',
     'ENTITY_PICTURE',
     'ENV_NAME',
+    'KEYCLOAK_ACTIVE',
 ]
 
 REST_FRAMEWORK = {

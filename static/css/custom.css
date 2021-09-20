@@ -134,6 +134,10 @@
     border-bottom-left-radius: 3px;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 /********************/
 /* Footer : at the bottom of viewport, and if content fills viewport vertically, then bottom of content. */
 #page {

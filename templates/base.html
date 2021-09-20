@@ -58,9 +58,18 @@
                   </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                  {%if settings.KEYCLOAK_ACTIVE %}
+                  <form action="{% url 'oidc_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="dropdown-item clickable">
+                      <i class="dropdown-icon fe fe-log-out"></i> Se déconnecter
+                    </button>
+                  </form>
+                  {%else%}
                   <a class="dropdown-item" href="{% url 'logout' %}">
                     <i class="dropdown-icon fe fe-log-out"></i> Se déconnecter
                   </a>
+                  {%endif%}
                 </div>
               </div>
             {% endif %}
