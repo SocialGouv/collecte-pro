@@ -93,12 +93,12 @@ if KEYCLOAK_ACTIVE:
     OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default='')
     OIDC_VERIFY_SSL = env('OIDC_VERIFY_SSL', default=True)
     OIDC_RP_SIGN_ALGO = env('OIDC_RP_SIGN_ALGO', default='RS256')
-    LOGIN_REDIRECT_URL = "/accueil"
-    LOGOUT_REDIRECT_URL = "/"
     AUTHENTICATION_BACKENDS = (
-        'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+        'ecc.auth.EccOIDCAuthenticationBackend',
     )
 
+LOGIN_REDIRECT_URL = "/accueil"
+LOGOUT_REDIRECT_URL = "/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
