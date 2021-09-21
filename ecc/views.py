@@ -9,7 +9,5 @@ def home(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            if user.is_superuser:
-                return redirect("admin/")
             return redirect("control-detail")
     return render(request, 'login/login.html')
