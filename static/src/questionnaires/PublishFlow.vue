@@ -105,7 +105,7 @@
           <a class="btn btn-primary ml-2"
               :href="'mailto:' + emailHeader.audited +
                     '?cc=' + emailHeader.editors +
-                    '&subject=Questionnaire publié' +
+                    '&subject=' + emailSubject +
                     '&body=' + emailBody"
               target="_blank"
               rel="noopener noreferrer"
@@ -151,7 +151,11 @@ export default Vue.extend({
     ]),
     ...mapState({
       controls: 'controls',
+      config: 'config',
     }),
+    emailSubject: function() {
+        return this.config.env_name != '' ? this.config.env_name + ' - Questionnaire publié' : 'Questionnaire publié'
+    },
     emailHeader: function() {
       const uniq = (arrArg) => arrArg.filter((elem, pos, arr) => arr.indexOf(elem) === pos)
       const currentControl = this.controls.find(control => control.id === this.questionnaire.control)
