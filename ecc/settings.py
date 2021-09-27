@@ -96,6 +96,8 @@ if KEYCLOAK_ACTIVE:
     AUTHENTICATION_BACKENDS = (
         'ecc.auth.EccOIDCAuthenticationBackend',
     )
+    KEYCLOAK_ADMIN_USERNAME = env('KEYCLOAK_ADMIN_USERNAME', default='admin')
+    KEYCLOAK_ADMIN_PASSWORD = env('KEYCLOAK_ADMIN_PASSWORD', default='admin')
 
 LOGIN_REDIRECT_URL = "/accueil"
 LOGOUT_REDIRECT_URL = "/"
