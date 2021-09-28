@@ -37,18 +37,13 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             'organization', 'control', 'is_audited', 'is_inspector')
 
     def create(self, validated_data):
-        print(settings.KEYCLOAK_URL)
-        print(settings.KEYCLOAK_REALM)
-        print(settings.OIDC_RP_CLIENT_SECRET)
-        print(settings.KEYCLOAK_ADMIN_USERNAME)
-        print(settings.KEYCLOAK_ADMIN_PASSWORD)
         keycloak_admin = KeycloakAdmin(server_url=settings.KEYCLOAK_URL,
                                username=settings.KEYCLOAK_ADMIN_USERNAME,
                                password=settings.KEYCLOAK_ADMIN_PASSWORD,
                                realm_name=settings.KEYCLOAK_REALM,
                                client_id=settings.OIDC_RP_CLIENT_ID,
+                               client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
                                verify=False)
-        print("On est juste après")
         profile_data = validated_data
         control = profile_data.pop('control', None)
         user_data = profile_data.pop('user')
@@ -70,7 +65,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
             should_receive_email_report = True
         if profile:
-            print("On est dedans")
             profile.user.first_name = user_data.get('first_name')
             profile.user.last_name = user_data.get('last_name')
             profile.organization = profile_data.get('organization')
@@ -78,16 +72,17 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             profile.send_files_report = should_receive_email_report
             profile.user.save()
             profile.save()
-            keycloak_admin.create_user({"email": email,
-                    "username": email,
-                    "enabled": True,
-                    "firstName": profile.user.first_name,
-                    "lastName": profile.user.last_name}) 
         else:
             user = User.objects.create(**user_data)
             profile_data['user'] = user
             profile_data['send_files_report'] = should_receive_email_report
             profile = UserProfile.objects.create(**profile_data)
+            keycloak_admin.create_user({"email": email,
+                    "username": email,
+                    "enabled": True,
+                    "firstName": profile.user.first_name,
+                    "lastName": profile.user.last_name},
+                    exist_ok=True) 
         if control:
             profile.controls.add(control)
         if control:

@@ -80,9 +80,9 @@ INSTALLED_APPS = [
 # Keycloak configuration
 KEYCLOAK_ACTIVE = env('KEYCLOAK_ACTIVE', default=False)
 if KEYCLOAK_ACTIVE:
-    KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/auth')
+    KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/auth/')
     KEYCLOAK_REALM = env('KEYCLOAK_REALM', default='ecollecte')
-    OPENID_PREFIX = f'{KEYCLOAK_URL}/realms/{KEYCLOAK_REALM}/protocol/openid-connect'
+    OPENID_PREFIX = f'{KEYCLOAK_URL}realms/{KEYCLOAK_REALM}/protocol/openid-connect'
     OIDC_OP_JWKS_ENDPOINT = f'{OPENID_PREFIX}/certs'
     OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OPENID_PREFIX}/auth'
     OIDC_OP_TOKEN_ENDPOINT = f'{OPENID_PREFIX}/token'
