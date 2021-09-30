@@ -98,6 +98,7 @@ if KEYCLOAK_ACTIVE:
     )
     KEYCLOAK_ADMIN_USERNAME = env('KEYCLOAK_ADMIN_USERNAME', default='admin')
     KEYCLOAK_ADMIN_PASSWORD = env('KEYCLOAK_ADMIN_PASSWORD', default='admin')
+    KEYCLOAK_URL_CLIENT_ID = env('KEYCLOAK_URL_CLIENT_ID', default='url_client_id')
 
 LOGIN_REDIRECT_URL = "/accueil"
 LOGOUT_REDIRECT_URL = "/"
