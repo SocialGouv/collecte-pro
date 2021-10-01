@@ -17,7 +17,11 @@
           <div class="container flex-row">
           <div class="text-center">
             <a href="/accueil">
+            {% if settings.LOGO_FOOTER|slice:":4" == "http" %}
+            <img src="{{ settings.LOGO_FOOTER }}" class="img" alt="logo haut de page" style="max-width: 500px; width: 60%;"/>
+            {% else %}
             <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo haut de page" style="max-width: 500px; width: 60%;"/>
+            {% endif %}
             </a>
           </div>
           <div class="flex-column justify-content-center mx-5">

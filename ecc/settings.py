@@ -199,6 +199,7 @@ SECURE_HSTS_SECONDS = 30
 CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'",))
 CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
+CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
 
 if DEBUG:
     CSRF_COOKIE_SECURE = False
