@@ -73,20 +73,20 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             profile.user.save()
             profile.save()
         else:
+            new_user = keycloak_admin.create_user({"email": user_data['username'],
+                    "username": user_data['username'],
+                    "enabled": True,
+                    "firstName": user_data['first_name'],
+                    "lastName": user_data['last_name']},
+                    exist_ok=True)
             user = User.objects.create(**user_data)
             profile_data['user'] = user
             profile_data['send_files_report'] = should_receive_email_report
             profile = UserProfile.objects.create(**profile_data)
-            new_user = keycloak_admin.create_user({"email": email,
-                    "username": email,
-                    "enabled": True,
-                    "firstName": profile.user.first_name,
-                    "lastName": profile.user.last_name},
-                    exist_ok=True)
             if should_receive_email_report:
                 role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
-                keycloak_admin.assign_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, 
-                                                user_id=new_user, 
+                keycloak_admin.assign_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID,
+                                                user_id=new_user,
                                                 roles=[role])
         if control:
             profile.controls.add(control)
