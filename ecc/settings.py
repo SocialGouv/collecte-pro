@@ -354,3 +354,6 @@ ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/picture-Republique-francais
 
 # Environnement name
 ENV_NAME = env ('ENV_NAME', default='')
+
+# Url of ecollecte in questionnaire
+QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
