@@ -236,7 +236,7 @@ export default Vue.extend({
         this.editingControl.depositing_organization +
         '", en tant que membre de ' +
         (this.editingProfileType === 'inspector'
-          ? 'l\'équipe de contrôle.'
+          ? 'l\'équipe d\'instruction.'
           : 'l\'organisme contrôlé.') +
         newline + newline +
         'Pour vous connecter, rendez-vous sur le site d\'e-collecte :' +

@@ -2,9 +2,9 @@ Bonjour,
 
 {{ deleter_user.first_name }} {{ deleter_user.last_name }} vient de supprimer l'espace de dépôt "{{ control.title_display }}".
 
-Cet espace n'est donc plus accessible pour les personnes qui y avaient accès, qu'elles soient membres de l'équipe de contrôle ou de l'organisme interrogé.
+Cet espace n'est donc plus accessible pour les personnes qui y avaient accès, qu'elles soient membres de l'équipe d'instruction ou de l'organisme interrogé.
 
-  Personnes concernées de l'équipe de contrôle :
+  Personnes concernées de l'équipe d'instruction :
   {% for profile in inspectors %}
    -  {{ profile.user.first_name }} {{ profile.user.last_name }}
   {% endfor %}
