@@ -78,9 +78,9 @@
             </div>
             <div> Cet email ne finit pas par
               <template v-for="(ending, index) in expectedEndingsArray">
-                <strong>{{ ending }}</strong>
-                <span v-if="index < expectedEndingsArray.length - 2">,</span>
-                <span v-if="index === expectedEndingsArray.length - 2" class="mr-1">ou</span>
+                <strong :key="index">{{ ending }}</strong>
+                <span v-if="index < expectedEndingsArray.length - 2" :key="index">,</span>
+                <span v-if="index === expectedEndingsArray.length - 2" class="mr-1" :key="index">ou</span>
               </template>
               .
             </div>
@@ -283,19 +283,18 @@ export default Vue.extend({
       }
     },
     validateEmail() {
-      // If no ending defined, skip this test
-      if (typeof this.expected_inspector_email_endings !== 'undefined') {
-        const expectedEndingsArray = this.expected_inspector_email_endings.split(',')
-        const isInspectorEmail = email => {
+      let expectedEndingsArray = [];
+      const isInspectorEmail = email => {
           // At least one ending should match.
           return expectedEndingsArray.some(ending => {
             return email.endsWith(ending)
           })
         }
-      } else {
-        const expectedEndingsArray = []
+      // If no ending defined, skip this test
+      if (typeof this.expected_inspector_email_endings !== 'undefined') {
+        expectedEndingsArray = this.expected_inspector_email_endings.split(',')
       }
-
+      
       if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
         this.expectedEndingsArray = expectedEndingsArray
         this.stepShown = 1.5
