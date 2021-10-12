@@ -49,7 +49,7 @@
 
               <div class="card">
                 <div class="card-header justify-content-between">
-                  <h3 class="card-title"><i class="fa fa-university mr-2"></i><strong>Équipe de contrôle</strong></h3>
+                  <h3 class="card-title"><i class="fa fa-university mr-2"></i><strong>Équipe d'instruction</strong></h3>
                 </div>
 
                 <editor-list :users="inspectorUsers()"

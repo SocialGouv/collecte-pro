@@ -11,7 +11,7 @@
           L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
-            <h4><i class="fa fa-university mr-2"></i><strong>Équipe de contrôle</strong></h4>
+            <h4><i class="fa fa-university mr-2"></i><strong>Équipe d'instruction</strong></h4>
         </div>
         <div v-if="editingProfileType==='audited'" class="text-center">
             <h4><i class="fa fa-building mr-2"></i><strong>Organisme interrogé</strong></h4>
