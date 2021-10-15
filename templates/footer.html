@@ -5,9 +5,9 @@
     <div class="flex-row justify-content-between align-items-center">
       <div class="text-center">
         {% if settings.LOGO_FOOTER|slice:":4" == "http" %}
-        <img src="{{ settings.LOGO_FOOTER }}" class="img" alt="logo bas de page" style="max-width: 500px; width: 60%;"/>
+        <img src="{{ settings.LOGO_FOOTER }}" class="img" alt="logo bas de page" style="max-height: 110px; max-width: 500px"/>
         {% else %}
-        <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo bas de page" style="max-width: 500px; width: 60%;"/>
+        <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo bas de page" style="max-height: 110px; max-width: 500px"/>
         {% endif %}
       </div>
       <div class="flex-grow">

@@ -18,9 +18,9 @@
           <div class="text-center">
             <a href="/accueil">
             {% if settings.LOGO_FOOTER|slice:":4" == "http" %}
-            <img src="{{ settings.LOGO_FOOTER }}" class="img" alt="logo haut de page" style="max-width: 500px; width: 60%;"/>
+            <img src="{{ settings.LOGO_FOOTER }}" class="img" alt="logo haut de page" style="max-height: 110px; max-width: 500px"/>
             {% else %}
-            <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo haut de page" style="max-width: 500px; width: 60%;"/>
+            <img src="{% static settings.LOGO_FOOTER %}" class="img" alt="logo haut de page" style="max-height: 110px; max-width: 500px"/>
             {% endif %}
             </a>
           </div>
