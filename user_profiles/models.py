@@ -20,7 +20,7 @@ class UserProfile(models.Model):
     INSPECTOR = 'inspector'
     PROFILE_TYPE = (
         (AUDITED, 'Organisme interrogé'),
-        (INSPECTOR, 'Contrôleur'),
+        (INSPECTOR, 'Demandeur'),
     )
     user = AutoOneToOneField(
         settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE,
@@ -30,7 +30,7 @@ class UserProfile(models.Model):
         to='control.Control', verbose_name='controles', related_name='user_profiles', blank=True)
     organization = models.CharField("Organisme", max_length=255, blank=True, null=True)
     send_files_report = models.BooleanField(
-        verbose_name="Envoie Rapport de Fichiers", default=False,
+        verbose_name="Envoi Rapport de Fichiers", default=False,
         help_text="Envoyer par email le rapport des fichiers uplodés ?")
     agreed_to_tos = models.BooleanField(
         default=False, verbose_name="accepté CGU",
@@ -39,8 +39,8 @@ class UserProfile(models.Model):
     objects = UserProfileQuerySet.as_manager()
 
     class Meta:
-        verbose_name = "Profile Utilisateur"
-        verbose_name_plural = "Profiles Utilisateurs"
+        verbose_name = "Profil Utilisateur"
+        verbose_name_plural = "Profils Utilisateurs"
 
     @property
     def is_inspector(self):
