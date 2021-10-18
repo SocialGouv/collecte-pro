@@ -230,7 +230,7 @@ export default Vue.extend({
 
       const newline = '%0d%0a'
       const body = 'Bonjour ' + this.postResult.first_name + ' ' + this.postResult.last_name + ',' +
-        newline + newline + 'Je viens de vous ajouter au contrôle "' +
+        newline + newline + 'Je viens de vous ajouter à la procédure "' +
         this.editingControl.title +
         '" pour l\'organisme "' +
         this.editingControl.depositing_organization +

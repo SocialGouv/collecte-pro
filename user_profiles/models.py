@@ -27,7 +27,7 @@ class UserProfile(models.Model):
         related_name='profile')
     profile_type = models.CharField(max_length=255, choices=PROFILE_TYPE)
     controls = models.ManyToManyField(
-        to='control.Control', verbose_name='controles', related_name='user_profiles', blank=True)
+        to='control.Control', verbose_name='procédures', related_name='user_profiles', blank=True)
     organization = models.CharField("Organisme", max_length=255, blank=True, null=True)
     send_files_report = models.BooleanField(
         verbose_name="Envoi Rapport de Fichiers", default=False,

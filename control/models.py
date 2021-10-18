@@ -92,8 +92,8 @@ class Control(SoftDeleteModel):
     objects = DeletableQuerySet.as_manager()
 
     class Meta:
-        verbose_name = "Contrôle"
-        verbose_name_plural = "Contrôles"
+        verbose_name = "Procédure"
+        verbose_name_plural = "Procédures"
 
     def data(self):
         return {
@@ -149,7 +149,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         help_text=(
             "Ce fichier est généré automatiquement quand le questionnaire est enregistré."))
     control = models.ForeignKey(
-        to='Control', verbose_name='contrôle', related_name='questionnaires',
+        to='Control', verbose_name='procédure', related_name='questionnaires',
         null=True, blank=True, on_delete=models.CASCADE)
     order_with_respect_to = 'control'
     order = models.PositiveIntegerField('order', db_index=True)
@@ -210,7 +210,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     @property
     def is_published(self):
         return not self.is_draft
-    
+
     @property
     def site_url(self):
         return settings.QUESTIONNAIRE_SITE_URL

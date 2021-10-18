@@ -60,7 +60,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         session_user = self.context['request'].user
         if control and control not in session_user.profile.controls.active():
             raise serializers.ValidationError(
-                f"{session_user} n'est pas authorisé à modifier ce contrôle: {control}")
+                f"{session_user} n'est pas authorisé à modifier cette procédure : {control}")
         should_receive_email_report = False
         # Find keycloak inspector role
         role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)

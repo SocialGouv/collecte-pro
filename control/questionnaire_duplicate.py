@@ -71,7 +71,7 @@ class QuestionnaireDuplicateMixin(object):
     def megacontrol_admin_action(self, request, queryset):
         if queryset.count() > 1:
             self.message_user(request,
-                              "Megacontrôle : selectionnez un seul questionnaire à la fois.",
+                              "Megaprocédure : selectionnez un seul questionnaire à la fois.",
                               level=messages.ERROR)
             return
 
@@ -80,4 +80,4 @@ class QuestionnaireDuplicateMixin(object):
         return HttpResponseRedirect(reverse('megacontrol-confirm', args=[questionnaire_id]))
 
     megacontrol_admin_action.short_description = \
-        "Mégacontrôle : copier ce questionnaire dans tous les espaces de la procédure"
+        "Megaprocédure : copier ce questionnaire dans tous les espaces de la procédure"
