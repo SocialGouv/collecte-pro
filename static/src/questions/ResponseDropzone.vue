@@ -4,7 +4,7 @@
       <div class="form-label">Déposer vos réponses</div>
       <error-bar v-if="hasErrors" @dismissed="clearErrors">
         <div>
-          Une erreur s'est produite lors de la transmision d'un fichier.
+          Une erreur s'est produite lors de la transmission d'un fichier.
         </div>
       </error-bar>
       <form class="dropzone"
