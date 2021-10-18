@@ -18,13 +18,16 @@ class UserProfileViewSet(
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
     serializer_class = UserProfileSerializer
-    search_fields = ('=user__username',)
+    search_fields = ('=user__email',)
     permission_classes = (OnlyInspectorCanChange,)
 
     def get_queryset(self):
-        queryset = UserProfile.objects.filter(
-            controls__in=self.request.user.profile.controls.active()).distinct()
-        return queryset
+        queryset = UserProfile.objects
+        if self.request.user.profile.profile_type != UserProfile.INSPECTOR:
+            queryset = queryset.filter(
+                controls__in=self.request.user.profile.controls.active()
+            )
+        return queryset.distinct()
 
     @decorators.action(detail=True, methods=['post'], url_path='remove-control')
     def remove_control(self, request, pk):

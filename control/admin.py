@@ -182,7 +182,7 @@ class ResponseFileAdmin(ReadOnlyModelAdmin, admin.ModelAdmin, ParentLinksMixin):
     readonly_fields = ('file_name', 'is_active', 'link_to_question', 'link_to_questionnaire', 'link_to_control')
     search_fields = (
         'file', 'question__description', 'author__first_name', 'author__last_name',
-        'author__username')
+        'author__username', 'author__email')
 
 
 @admin.register(QuestionFile)

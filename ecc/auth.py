@@ -19,6 +19,7 @@ class EccOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         """
         user.first_name = claims.get("given_name", "")
         user.last_name = claims.get("family_name", "")
+        user.username = claims.get("email", "")
         # Gestion des droits administrateurs
         if "superuser" in claims.get("roles", []):
             user.is_superuser = True

@@ -55,7 +55,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         user_data['username'] = email
 
         # Find if user already exists.
-        profile = UserProfile.objects.filter(user__username=email).first()
+        profile = UserProfile.objects.filter(user__email=email).first()
 
         session_user = self.context['request'].user
         if control and control not in session_user.profile.controls.active():
@@ -64,19 +64,12 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         should_receive_email_report = False
         # Find keycloak inspector role
         role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
-        # Test creation user if exist
-        new_user = keycloak_admin.create_user({"email": user_data['username'],
-                    "username": user_data['username'],
-                    "enabled": True,
-                    "firstName": user_data['first_name'],
-                    "lastName": user_data['last_name']},
-                    exist_ok=True)
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
             should_receive_email_report = True
         if profile:
             user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
             # Update keycloak user data if exist
-            keycloak_admin.update_user(user_id=user_id_keycloak, 
+            keycloak_admin.update_user(user_id=user_id_keycloak,
                                       payload={'firstName': user_data.get('first_name'),
                                                 'lastName': user_data.get('last_name')})
             if should_receive_email_report:
@@ -85,7 +78,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                                                 user_id=user_id_keycloak,
                                                 roles=[role])
             else:
-                # Remove inspector role 
+                # Remove inspector role
                 keycloak_admin.delete_client_roles_of_user(user_id=user_id_keycloak,
                                                         client_id=settings.KEYCLOAK_URL_CLIENT_ID,
                                                         roles=[role])

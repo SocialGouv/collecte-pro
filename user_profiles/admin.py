@@ -11,7 +11,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_filter = ('profile_type', 'controls')
     raw_id_fields = ('user',)
     filter_horizontal = ('controls',)
-    search_fields = ('user__username',)
+    search_fields = ('user__username', 'user__email')
 
 
 class UserProfileInline(admin.StackedInline):
@@ -23,7 +23,7 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (UserProfileInline,)
-    list_display = ('id', 'username', 'first_name', 'last_name', 'is_staff', 'date_joined')
+    list_display = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'date_joined')
     list_filter = ('profile__profile_type', 'profile__controls')
 
 @admin.register(UserIpAddress)
