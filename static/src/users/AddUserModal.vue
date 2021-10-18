@@ -73,7 +73,7 @@
               Vous allez ajouter
               <strong>{{ formData.email }}</strong>
               comme
-              <strong>contrôleur</strong>
+              <strong>Demandeur</strong>
               .
             </div>
             <div> Cet email ne finit pas par
@@ -294,7 +294,7 @@ export default Vue.extend({
       if (typeof this.expected_inspector_email_endings !== 'undefined') {
         expectedEndingsArray = this.expected_inspector_email_endings.split(',')
       }
-      
+
       if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
         this.expectedEndingsArray = expectedEndingsArray
         this.stepShown = 1.5
