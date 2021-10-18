@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'soft_deletion',
     'tos',
     'logs',
+    'parametres',
 
     # Central app - loaded last
     'ecc',
@@ -299,6 +300,7 @@ SETTINGS_EXPORT = [
     'ENTITY_PICTURE',
     'ENV_NAME',
     'KEYCLOAK_ACTIVE',
+    'SITE_GOUVERNEMENT_URL_LIST',
 ]
 
 REST_FRAMEWORK = {
@@ -357,3 +359,6 @@ ENV_NAME = env ('ENV_NAME', default='')
 
 # Url of ecollecte in questionnaire
 QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
+
+# Urls governemental websites
+SITE_GOUVERNEMENT_URL_LIST = env('SITE_GOUVERNEMENT_URL_LIST', default='')
