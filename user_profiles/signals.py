@@ -74,7 +74,8 @@ def bake_and_send_email(
     context = {
         'control': control,
         'user': session_user,
-        'target_user': user_profile.user
+        'target_user': user_profile.user,
+        'support_team_email': settings.SUPPORT_TEAM_EMAIL,
     }
     send_email(
         to=recipients,

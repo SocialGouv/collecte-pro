@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.dispatch import receiver
 from utils.email import send_email
 
@@ -17,7 +18,8 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
     context = {
         'deleter_user': session_user,
         'control': control,
-        'inspectors': inspectors
+        'inspectors': inspectors,
+        'support_team_email': settings.SUPPORT_TEAM_EMAIL,
     }
     subject = f"e-collecte - Suppression de l'espace - {control.title_display}"
 
