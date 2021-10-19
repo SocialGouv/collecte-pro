@@ -1,4 +1,5 @@
 {% load static %}
+{% load parametres_tags %}
 
 <div id="footer" class="footer pb-0">
   <div class="container">
@@ -11,10 +12,10 @@
         {% endif %}
       </div>
       <div class="flex-grow">
-        {{ settings.SITE_GOUVERNEMENT_URL_LIST }}
-        {% for url in settings.SITE_GOUVERNEMENT_URL_LIST %}
+        {% get_parametre_items as liens_footer %}
+        {% for lien in liens_footer %}
         <span style="margin-right: 10px">
-          <a href="{{ url.link }}"><b>{{ url.name }}</b></a>
+          <a href="{{ lien.url }}" title="{{lien.nom}}"><b>{{ lien.url }}</b></a>
         </span>
         {% endfor %}
       </div>

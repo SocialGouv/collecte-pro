@@ -359,6 +359,3 @@ ENV_NAME = env ('ENV_NAME', default='')
 
 # Url of ecollecte in questionnaire
 QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
-
-# Urls governemental websites
-SITE_GOUVERNEMENT_URL_LIST = env('SITE_GOUVERNEMENT_URL_LIST', default='')
