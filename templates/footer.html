@@ -15,7 +15,7 @@
         {% get_parametre_items as liens_footer %}
         {% for lien in liens_footer %}
         <span style="margin-right: 10px">
-          <a href="{{ lien.url }}" title="{{lien.nom}}"><b>{{ lien.url }}</b></a>
+          <a href="{{ lien.url }}" title="{{ lien.title }}"><b>{{ lien.nom }}</b></a>
         </span>
         {% endfor %}
       </div>

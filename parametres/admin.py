@@ -9,8 +9,8 @@ from .models import Parametre
 
 @admin.register(Parametre)
 class ParametreAdmin(SoftDeletedAdmin, OrderedModelAdmin):
-    list_display = ('code', 'nom',  'url', 'ordre')
+    list_display = ('code', 'title', 'nom', 'url', 'ordre')
     list_filter = (IsActiveFilter,)
-    search_fields = ('code', 'nom')
+    search_fields = ('code', 'nom', 'title')
     ordering = ('code',)
 
