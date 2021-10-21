@@ -32,17 +32,29 @@ new Vue({ // eslint-disable-line no-new
   },
   methods: {
     ...mapActions(['fetchConfig', 'fetchControls']),
+    updateControls() {
+      this.fetchControls()
+
+      // Store the controls in the Vuex store, for use for other components (e.g. Sidebar)
+      this.$store.commit('updateControls', controls)
+      this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+    },
+    onQuestionCreated(data) {
+      this.updateControls()
+    }
   },
   created() {
     // Ask the store to fetch the config from server and store it.
     this.fetchConfig()
-    this.fetchControls()
-
-    // Store the controls in the Vuex store, for use for other components (e.g. Sidebar)
-    this.$store.commit('updateControls', controls)
-    this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+    this.updateControls()
+    
     // Store the current user in the Vuex store, for use for other components (e.g. Sidebar)
     this.$store.commit('updateSessionUser', user)
     this.$store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
+
+    this.$root.$on('questionnaire-created', this.onQuestionCreated);
   },
+  destroyed() {
+    this.$root.$off('questionnaire-created', this.onQuestionCreated);
+  }
 })

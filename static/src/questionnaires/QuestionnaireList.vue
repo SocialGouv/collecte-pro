@@ -285,6 +285,7 @@ export default Vue.extend({
       $(this.$refs.modal.$el).modal('show')
     },
     cloneQuestionnaire() {
+      let self = this;
       const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 
@@ -292,7 +293,7 @@ export default Vue.extend({
         const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
         const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
 
-        destCtrls.map(ctrl => {
+        destCtrls.forEach(ctrl => {
           const themes = curQ.themes.map(t => {
             const qq = t.questions.map(q => {
               return { description: q.description }
@@ -308,12 +309,14 @@ export default Vue.extend({
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
 
-              curQ.themes.map(t => {
-                t.questions.map(q => {
+              // Update questionnaires list render when duplicated
+              self.$root.$emit('questionnaire-created')
+              curQ.themes.forEach(t => {
+                t.questions.forEach(q => {
                   const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
                     .questions.find(updatedQ => updatedQ.order === q.order).id
 
-                  q.question_files.map(qf => {
+                  q.question_files.forEach(qf => {
                     axios.get(qf.url, { responseType: 'blob' }).then(response => {
                       const formData = new FormData()
                       formData.append('file', response.data, qf.basename)
@@ -330,7 +333,7 @@ export default Vue.extend({
               })
             })
           })
-        })
+        });
       }
     },
   },
