@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 {% load email_obfuscator %}
+{% load parametres_tags %}
 {% block content %}
 <div id="page" class="page white">
   <div id="non-footer" class="container">
     <div class="row" id="connectez-vous-a-e-collecte">
       <div class="col-md d-none d-md-block entity-picture">
-        {% if settings.ENTITY_PICTURE|slice:":4" == "http" %}
-        <img src="{{ settings.ENTITY_PICTURE }}" alt="Photo de l'entité" />
+        {% get_entity_picture_item as entity_picture %}
+        {% if entity_picture|slice:":4" == "http" %}
+        <img src="{{ entity_picture.url }}" alt="{{ entity_picture.title }}" />
         {% else %}
-        <img src="{% static settings.ENTITY_PICTURE %}" alt="Photo de l'entité" />
+        <img src="{% static entity_picture.url %}" alt="{{ entity_picture.title }}" />
         {% endif %}
       </div>
       <div class="col-md d-flex flex-column justify-content-between align-items-center">

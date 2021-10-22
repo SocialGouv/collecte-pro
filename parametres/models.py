@@ -6,10 +6,10 @@ from softdelete.models import SoftDeleteModel
 
 class Parametre(OrderedModel, SoftDeleteModel):
     code = models.CharField("code", max_length=255)
-    title = models.CharField("title", max_length=255)
-    nom = models.CharField("nom", max_length=255)
-    url = models.CharField("url", max_length=255)
-    ordre = models.PositiveIntegerField("ordre")
+    title = models.CharField("title", max_length=255, null=True)
+    nom = models.CharField("nom", max_length=255, null=True)
+    url = models.CharField("url", max_length=255, null=True)
+    ordre = models.PositiveIntegerField("ordre", null=True)
 
     class Meta:
         ordering = ('order',)

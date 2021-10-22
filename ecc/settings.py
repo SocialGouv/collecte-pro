@@ -296,8 +296,6 @@ SETTINGS_EXPORT = [
     'SUPPORT_TEAM_EMAIL',
     'DEBUG',
     'SAVE_IP_ADDRESS',
-    'LOGO_FOOTER',
-    'ENTITY_PICTURE',
     'ENV_NAME',
     'KEYCLOAK_ACTIVE',
 ]
@@ -346,12 +344,6 @@ SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 # Ip adress
 SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
-
-# Logos
-LOGO_FOOTER = env('LOGO_FOOTER', default='img/logo-footer.png')
-
-# Entity picture
-ENTITY_PICTURE = env ('ENTITY_PICTURE', default='img/picture-Republique-francaise.png')
 
 # Environnement name
 ENV_NAME = env ('ENV_NAME', default='')
