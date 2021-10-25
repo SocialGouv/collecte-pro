@@ -6,7 +6,7 @@
     <div class="flex-row justify-content-between align-items-center">
       <div class="text-center">
         {% get_logo_footer_item as logo_footer %}
-        {% if logo_footer|slice:":4" == "http" %}
+        {% if logo_footer.url|slice:":4" == "http" %}
         <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; max-width: 500px"/>
         {% else %}
         <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; max-width: 500px"/>
