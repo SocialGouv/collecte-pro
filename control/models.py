@@ -211,10 +211,6 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     def is_published(self):
         return not self.is_draft
 
-    @property
-    def site_url(self):
-        return settings.QUESTIONNAIRE_SITE_URL
-
     def __str__(self):
         display_text = f'[ID{self.id}]'
         if self.control:
