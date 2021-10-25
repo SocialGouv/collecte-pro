@@ -52,9 +52,8 @@ new Vue({ // eslint-disable-line no-new
     this.$store.commit('updateSessionUser', user)
     this.$store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
 
-    this.$root.$on('questionnaire-created', this.onQuestionCreated);
+    this.$root.$on('questionnaire-created', function(){
+      window.location.reload()
+    });
   },
-  destroyed() {
-    this.$root.$off('questionnaire-created', this.onQuestionCreated);
-  }
 })
