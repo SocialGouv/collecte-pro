@@ -5,11 +5,29 @@ from softdelete.models import SoftDeleteModel
 
 
 class Parametre(OrderedModel, SoftDeleteModel):
-    code = models.CharField("code", max_length=255)
-    title = models.CharField("title", max_length=255, null=True)
-    nom = models.CharField("nom", max_length=255, null=True)
-    url = models.CharField("url", max_length=255, null=True)
-    ordre = models.PositiveIntegerField("ordre", null=True)
+    code = models.CharField(
+        "code",
+        help_text="LIEN_FOOTER, LOGO_FOOTER, ou ENTITY_PICTURE",
+        max_length=255,
+    )
+    title = models.CharField(
+        "title",
+        help_text="attribut 'title' des paramètres de type 'lien'",
+        max_length=255,
+        null=True,
+    )
+    name = models.CharField(
+        "name",
+        help_text="Texte affiché pour les paramètres de type 'lien' et texte alternatif pour les paramètres de type 'image'",
+        max_length=255,
+        null=True,
+    )
+    url = models.CharField(
+        "url",
+        help_text="url de destination pour les paramètres de type 'lien' et url de l'image pour les paramètres de type 'image'",
+        max_length=255,
+        null=True,
+    )
 
     class Meta:
         ordering = ('order',)

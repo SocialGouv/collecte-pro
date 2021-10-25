@@ -12,29 +12,29 @@
         <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; max-width: 500px"/>
         {% endif %}
       </div>
-      <div class="flex-grow">
-        {% get_liens_footer_items as liens_footer %}
-        {% for lien in liens_footer %}
-        <span style="margin-right: 10px">
-          <a href="{{ lien.url }}" title="{{ lien.title }}"><b>{{ lien.nom }}</b></a>
-        </span>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    <div class="flex-row justify-content-between align-items-center">
-      <div class="flex-grow">
-        e-collecte
-        <span>
-          <a href="https://github.com/SocialGouv/ecollecte/blob/main/docs/releases/1.2.0.md">v1.2.0</a>
-        </span>
-      </div>
-      <div class="flex-grow">
-        <span>Accessibilité : Non conforme</span>
-      </div>
-      <div class="flex-grow">
-        <a href="{% url 'tos' %}">Conditions générales d'utilisation</a>
+      <div class="container">
+        <div class="flex-row justify-content-end">
+          {% get_liens_footer_items as liens_footer %}
+          {% for lien in liens_footer %}
+          <div class="flex-grow" style="margin-left: 2em">
+            <a href="{{ lien.url }}" title="{{lien.title}}"><b>{{ lien.name }}</b></a>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="flex-row justify-content-between align-items-center">
+          <div class="flex-grow">
+            e-collecte
+            <span>
+              <a href="https://github.com/SocialGouv/ecollecte/blob/main/docs/releases/1.2.0.md">v1.2.0</a>
+            </span>
+          </div>
+          <div class="flex-grow">
+            <span>Accessibilité : Non conforme</span>
+          </div>
+          <div class="flex-grow">
+            <a href="{% url 'tos' %}">Conditions générales d'utilisation</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
