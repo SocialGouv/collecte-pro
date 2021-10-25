@@ -269,12 +269,13 @@ export default Vue.extend({
       return backendUrls['questionnaire-edit'](questionnaireId)
     },
     startQuestionnaireDeleteFlow(questionnaireId) {
+      let self = this;
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
       const curQ = this.control.questionnaires.find(q => q.id === questionnaireId)
       const newQ = { ...curQ, control: null }
 
-      getUpdateMethod(questionnaireId)(newQ).then(response => {
-        console.log(response.data)
+      getUpdateMethod(questionnaireId)(newQ).then(() => {
+        self.$root.$emit('questionnaire-created')
       })
     },
     exportUrl(questionnaire) {
