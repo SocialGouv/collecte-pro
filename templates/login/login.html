@@ -8,7 +8,7 @@
     <div class="row" id="connectez-vous-a-e-collecte">
       <div class="col-md d-none d-md-block entity-picture">
         {% get_entity_picture_item as entity_picture %}
-        {% if entity_picture|slice:":4" == "http" %}
+        {% if entity_picture.url|slice:":4" == "http" %}
         <img src="{{ entity_picture.url }}" alt="{{ entity_picture.title }}" />
         {% else %}
         <img src="{% static entity_picture.url %}" alt="{{ entity_picture.title }}" />
