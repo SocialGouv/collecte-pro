@@ -20,9 +20,9 @@
             <a href="/accueil">
             {% get_logo_footer_item as logo_footer %}
             {% if logo_footer.url|slice:":4" == "http" %}
-            <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; max-width: 500px"/>
+            <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
             {% else %}
-            <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; max-width: 500px"/>
+            <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
             {% endif %}
             </a>
           </div>
