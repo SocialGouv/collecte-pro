@@ -310,8 +310,6 @@ export default Vue.extend({
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
 
-              // Update questionnaires list render when duplicated
-              self.$root.$emit('questionnaire-created')
               curQ.themes.forEach(t => {
                 t.questions.forEach(q => {
                   const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
@@ -333,6 +331,9 @@ export default Vue.extend({
                 })
               })
             })
+          }).then(() => {
+              // Update questionnaires list render when duplicated - voir Promise.all()
+              self.$root.$emit('questionnaire-created')
           })
         });
       }
