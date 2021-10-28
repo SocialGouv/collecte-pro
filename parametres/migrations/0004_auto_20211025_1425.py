@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('parametres', '0004_permissions'),
+        ('parametres', '0003_auto_20211022_1129'),
     ]
 
     operations = [

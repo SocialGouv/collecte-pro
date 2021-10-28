@@ -8,35 +8,9 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('auth', '__latest__'),
     ]
 
     operations = [
         migrations.RunSQL("insert into auth_group values (nextval('auth_group_id_seq'), 'admin_metier');"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_userprofile'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_useripaddress'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_cguitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_logentry'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_user'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_action'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_follow'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_control'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_question'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'add_questionfile'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_questionfile'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'delete_questionfile'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_questionfile'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_questionnaire'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_theme'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'add_faqitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_faqitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'delete_faqitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'view_faqitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'add_cguitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_cguitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'delete_cguitem'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_user'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_theme'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_question'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_questionnaire'));"),
-        migrations.RunSQL("insert into auth_group_permissions values (nextval('auth_group_permissions_id_seq'), (select id from auth_group where name = 'admin_metier'), (select id from auth_permission where codename = 'change_control'));"),
     ]
