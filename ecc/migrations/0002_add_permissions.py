@@ -5,62 +5,44 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 PERMISSIONS = [
-                'add_faqitem',
-                'change_faqitem',
-                'delete_faqitem',
-                'view_faqitem',
-                'view_userprofile', 
-	            'view_useripaddress',
-                'view_cguitem',
-                'add_cguitem',
-                'change_cguitem',
-                'delete_cguitem',
-                'view_logentry', 
-                'view_user', 
-                'view_action', 
-                'view_follow',
-                'change_user',
-                'view_control',
-                'change_control',
-                'view_question',
-                'change_question',
-                'add_questionfile', 
-                'change_questionfile', 
-                'delete_questionfile', 
-                'view_questionfile', 
-                'view_theme',
-                'change_theme',
-                'change_questionnaire',
-                'add_crontabschedule',
-                'change_crontabschedule',
-                'delete_crontabschedule',
-                'view_crontabschedule',
-                'add_intervalschedule',
-                'change_intervalschedule',
-                'delete_intervalschedule',
-                'view_intervalschedule',
-                'add_periodictask',
-                'change_periodictask',
-                'delete_periodictask',
-                'view_periodictask',
-                'add_periodictasks',
-                'change_periodictasks',
-                'delete_periodictasks',
-                'view_periodictasks',
-                'add_solarschedule',
-                'change_solarschedule',
-                'delete_solarschedule',
-                'view_solarschedule',
-                'add_clockedschedule',
-                'change_clockedschedule',
-                'delete_clockedschedule',
-                'view_clockedschedule',
-                'change_site',
-                'add_parametre',
-                'change_parametre',
-                'delete_parametre',
-                'view_parametre',
-              ]
+    # Action
+    'view_action',
+    # Celery tasks
+    'add_crontabschedule', 'change_crontabschedule', 'delete_crontabschedule', 'view_crontabschedule',
+    'add_intervalschedule', 'change_intervalschedule', 'delete_intervalschedule', 'view_intervalschedule',
+    'add_periodictask', 'change_periodictask', 'delete_periodictask', 'view_periodictask',
+    'add_periodictasks', 'change_periodictasks', 'delete_periodictasks', 'view_periodictasks',
+    'add_solarschedule', 'change_solarschedule', 'delete_solarschedule', 'view_solarschedule',
+    'add_clockedschedule', 'change_clockedschedule', 'delete_clockedschedule', 'view_clockedschedule',
+    # CGU
+    'add_cguitem', 'change_cguitem', 'delete_cguitem', 'view_cguitem',
+    # Control
+    'change_control', 'view_control',
+    # FAQ
+    'add_faqitem', 'change_faqitem', 'delete_faqitem', 'view_faqitem',
+    # Follow
+    'view_follow',
+    # LogEntry
+    'view_logentry',
+    # Parametre
+    'add_parametre', 'change_parametre', 'delete_parametre', 'view_parametre',
+    # Question
+    'change_question', 'view_question',
+    # QuestionFile
+    'add_questionfile', 'change_questionfile', 'delete_questionfile', 'view_questionfile',
+    # Questionnaire
+    'change_questionnaire',
+    # Site
+    'change_site',
+    # Theme
+    'change_theme', 'view_theme',
+    # User
+    'change_user', 'view_user',
+    # UserIpAddress
+    'view_useripaddress',
+    # UserProfile
+    'view_userprofile',
+]
 
 def add_permissions(apps, schema_editor):
     for app_config in apps.get_app_configs():
