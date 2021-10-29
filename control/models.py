@@ -150,7 +150,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
             "Ce fichier est généré automatiquement quand le questionnaire est enregistré."))
     control = models.ForeignKey(
         to='Control', verbose_name='procédure', related_name='questionnaires',
-        null=True, blank=True, on_delete=models.CASCADE)
+        null=False, blank=True, on_delete=models.CASCADE)
     order_with_respect_to = 'control'
     order = models.PositiveIntegerField('order', db_index=True)
     is_draft = models.BooleanField(

@@ -44,7 +44,24 @@ def test_logged_in_user_can_search_user_by_username():
     assert response.data[0]['email'] == target_user.user.username
 
 
-def test_cannot_search_user_by_username_if_associated_with_deleted_control():
+def test_cannot_search_audited_user_by_username_if_associated_with_deleted_control():
+    audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
+    login_user = audited.user
+    target_user = factories.UserProfileFactory()
+    control = factories.ControlFactory()
+    audited.controls.add(control)
+    target_user.controls.add(control)
+    control.delete()
+    control.save()
+
+    response = search_user_by_username(login_user, target_user.user.username)
+
+    # Sucessful query with no results
+    assert response.status_code == 200
+    assert len(response.data) == 0
+
+
+def test_can_search_inspector_user_by_username_if_associated_with_deleted_control():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     login_user = inspector.user
     target_user = factories.UserProfileFactory()
@@ -58,7 +75,7 @@ def test_cannot_search_user_by_username_if_associated_with_deleted_control():
 
     # Sucessful query with no results
     assert response.status_code == 200
-    assert len(response.data) == 0
+    assert len(response.data) == 1
 
 
 def test_inspector_can_create_user():
