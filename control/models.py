@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
@@ -179,6 +180,10 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     @property
     def file_url(self):
         return reverse('send-questionnaire-file', args=[self.id])
+
+    @property
+    def site_url(self):
+        return "https://" + Site.objects.all()[0].domain + "/"
 
     @property
     def basename(self):
