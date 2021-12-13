@@ -21,11 +21,17 @@ class ICAPHandler(BaseICAPRequestHandler):
 		self.no_adaptation_required()
 
 	def icap_RESPMOD(self):
-		self.no_adaptation_required()
+		print("respomoddde")
+		self.set_icap_response(200)
+		self.set_icap_header('Methods', 'RESPMOD, REQMOD')
+		self.set_icap_header('Service', 'ICAP Server' + ' ' + self._server_version)
+		self.set_icap_header('Options-TTL', '3600')
+		self.set_icap_header('Preview', '0')
+		self.send_headers(False)
 
 class ICAPExampleServer():
 
-	def __init__(self, addr='', port=13440):
+	def __init__(self, addr='0.0.0.0', port=13440):
 		self.addr = addr
 		self.port = port
 

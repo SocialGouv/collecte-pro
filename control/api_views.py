@@ -1,5 +1,6 @@
 from actstream import action
 from functools import partial
+import icapclient
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework import serializers
 from rest_framework import decorators
@@ -20,6 +21,9 @@ from user_profiles.serializers import UserProfileSerializer
 # This signal is triggered after the questionnaire is saved via the API
 questionnaire_api_post_save = django.dispatch.Signal(providing_args=["instance"])
 
+icapclient.set_debug_stdout(True)
+icapclient.set_debug_level(10)
+conn = icapclient.ICAPConnection('127.0.0.1', 13440)
 
 class ControlViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
@@ -54,6 +58,7 @@ class ControlViewSet(mixins.CreateModelMixin,
         return response
 
     def update(self, request, *args, **kwargs):
+        print("doudou")
         response = super(ControlViewSet, self).update(request, *args, **kwargs)
         control = self.get_queryset().get(id=response.data['id'])
         self.add_log_entry(control=control, verb='updated control')
@@ -93,7 +98,17 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
         # Before creating the QuestionFile, let's check that permission are ok for
         # the associated Question object.
         self.check_object_permissions(self.request, question)
-        serializer.save(file=self.request.data.get('file'))
+        instance = self.get_queryset()
+        print(instance)
+        print(question)
+        print(serializer)
+        print(self.request.data.get('file'))
+        toto =serializer.save(file=self.request.data.get('file'))
+        print('/home/almorin/ecollecte/ecollecte/media/' + str(toto.file))
+        conn.request('RESPMOD', '/home/almorin/ecollecte/ecollecte/media/' + str(toto.file), service='icap')
+        resp = conn.getresponse()
+        print("fin")
+        print(resp.icap_status)
 
 
 class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
@@ -110,6 +125,7 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def perform_update(self, serializer):
         instance = self.get_object()
+        print("on va delete")
 
         if not serializer.validated_data['is_deleted']:
             # un-trash : not implemented yet
@@ -133,6 +149,7 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
 
         # Delete file left at old path
         instance.file.delete(False)
+        print("c'est fait bro")
 
 
 class ThemeViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
