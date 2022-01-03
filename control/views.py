@@ -10,6 +10,8 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 from actstream import action
@@ -22,7 +24,12 @@ from .export_response_files import generate_response_file_list_in_xlsx
 from .models import Control, Questionnaire, QuestionFile, ResponseFile, Question
 from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDraft
 from .serializers import ControlSerializer, ControlDetailControlSerializer
+import icapclient
+import tempfile
 
+icapclient.set_debug_stdout(True)
+icapclient.set_debug_level(10)
+conn = icapclient.ICAPConnection(settings.ICAP_SERVER_ADRESS, settings.ICAP_PORT)
 
 class WithListOfControlsMixin(object):
 
@@ -232,6 +239,15 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             return HttpResponseForbidden(
                 f"La taille du fichier dépasse la limite autorisée "
                 f"de {settings.UPLOAD_FILE_MAX_SIZE_MB}Mo.")
+        # Traitement ICAP
+        if settings.ICAP_ACTIVE:
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                file_path = os.path.join(str(tmpdirname) + '/', str(file_object.file))
+                print(file_path)
+                with open(file_path, "wb") as f:
+                    f.write(file_object.file.read())
+                    conn.request(settings.ICAP_TYPE_REQUETE, file_path, service=settings.ICAP_TYPE_SERVICE)
+                    resp = conn.getresponse()
         self.object.save()
         self.add_upload_action_log()
         data = {'status': 'success'}

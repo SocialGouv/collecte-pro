@@ -350,3 +350,11 @@ ENV_NAME = env ('ENV_NAME', default='')
 
 # Url of ecollecte in questionnaire
 QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
+
+# ICAP configuration
+ICAP_ACTIVE = env('ICAP_ACTIVE', default=False)
+if ICAP_ACTIVE:
+    ICAP_SERVER_ADRESS = env('ICAP_SERVER_ADRESS', default='127.0.0.1')
+    ICAP_PORT = env('ICAP_PORT', default=13440)
+    ICAP_TYPE_REQUETE = env('ICAP_TYPE_REQUETE', default='RESPMOD')
+    ICAP_TYPE_SERVICE = env('ICAP_TYPE_SERVICE', default='icap')
