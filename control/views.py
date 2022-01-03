@@ -248,6 +248,8 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
                     f.write(file_object.file.read())
                     conn.request(settings.ICAP_TYPE_REQUETE, file_path, service=settings.ICAP_TYPE_SERVICE)
                     resp = conn.getresponse()
+                    if resp.icap_status != 200:
+                        return HttpResponseForbidden("Le fichier n'est pas sûr, il ne pourra pas être importé")
         self.object.save()
         self.add_upload_action_log()
         data = {'status': 'success'}
