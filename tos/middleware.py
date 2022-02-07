@@ -10,7 +10,7 @@ class WelcomeMiddleware:
                 request.path == reverse('logout') or \
                 request.path == reverse('oidc_logout') or \
                 request.user.is_anonymous or \
-                request.user.is_admin or \
+                request.user.is_staff or \
                 request.user.is_superuser or \
                 request.user.profile.agreed_to_tos:
             # Don't redirect welcome, to avoid an infinite redirect loop.
