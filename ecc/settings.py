@@ -350,3 +350,6 @@ ENV_NAME = env ('ENV_NAME', default='')
 
 # Url of ecollecte in questionnaire
 QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
+
+# Mise à jour pour Django>=3.2
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
