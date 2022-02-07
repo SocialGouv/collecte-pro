@@ -65,7 +65,7 @@
           {% block current_user %}
             {% if user.is_authenticated %}
               <div class="flex-row dropdown p-3">
-                <a href="#" class="nav-link" data-toggle="dropdown">
+                <a href="#" class="nav-link" data-toggle="dropdown" id="user_access">
                   <span class="avatar avatar-pink">{{ user.first_name|first }}{{ user.last_name|first }}</span>
                   <span class="ml-2 text-default">
                     {{ user.get_full_name }}
