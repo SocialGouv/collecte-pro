@@ -27,7 +27,7 @@ django-excel-base==1.0.4
 django-excel-response2==3.0.2
 django-extensions==2.2.9
 django-feature-policy==3.0.0; python_version >= "3.5"
-django-filter==2.3.0; python_version >= "3.5"
+django-filter==2.4.0; python_version >= "3.5"
 django-http-referrer-policy==1.0.1; python_full_version >= "3.5.0"
 django-js-asset==1.2.2
 django-magicauth==0.5
