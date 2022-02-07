@@ -151,12 +151,18 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
             "Ce fichier est généré automatiquement quand le questionnaire est enregistré."))
     control = models.ForeignKey(
         to='Control', verbose_name='procédure', related_name='questionnaires',
-        null=False, blank=True, on_delete=models.CASCADE)
+        null=False, default=0, blank=True, on_delete=models.CASCADE)
     order_with_respect_to = 'control'
     order = models.PositiveIntegerField('order', db_index=True)
     is_draft = models.BooleanField(
         verbose_name="brouillon", default=False,
         help_text="Ce questionnaire est-il encore au stade de brouillon?")
+    is_replied = models.BooleanField(
+        verbose_name="répondu", default=False,
+        help_text="Ce questionnaire a-t-il obtenu toutes les réponses de l'organisme répondant ?")
+    is_finalized = models.BooleanField(
+        verbose_name="finalisé", default=False,
+        help_text="Ce questionnaire a-t-il été finalisé par le demandeur ?")
     modified = models.DateTimeField('modifié', auto_now=True, null=True)
 
     class Meta:
