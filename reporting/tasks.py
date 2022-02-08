@@ -6,7 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from actstream import action
-from celery import task
+from ecc.celery import app
 from celery.utils.log import get_task_logger
 
 from control.models import Control, ResponseFile
@@ -52,7 +52,7 @@ def get_files(control):
     return files
 
 
-@task
+@app.task
 def send_files_report():
     html_template = 'reporting/email/files_report.html'
     text_template = 'reporting/email/files_report.txt'

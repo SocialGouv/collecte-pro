@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'ckeditor',
     'django_filters',
     'django_admin',
-    'django_http_referrer_policy',
     'email_obfuscator',
     'softdelete',
 
@@ -106,7 +105,6 @@ LOGOUT_REDIRECT_URL = "/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django_http_referrer_policy.middleware.ReferrerPolicyMiddleware',
     'django_feature_policy.FeaturePolicyMiddleware',
     'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -173,7 +171,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # HTTP Security
 SECURE_CONTENT_TYPE_NOSNIFF = True
-REFERRER_POLICY = 'same-origin'
+SECURE_REFERRER_POLICY = 'same-origin'
 FEATURE_POLICY = {
     'geolocation': 'none',
     'autoplay': ['self', ],
