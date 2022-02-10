@@ -33,4 +33,4 @@ docs/_build/
 celerybeat-schedule
 
 # Environment
-venv/
+venv*/
