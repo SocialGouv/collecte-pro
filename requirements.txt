@@ -38,7 +38,7 @@ django-session-timeout==0.1.0
 django-settings-export==1.2.1
 django-six==1.0.4
 django-timezone-field==4.2.1; python_version >= "3.5"
-django==3.2.7; python_version >= "3.6"
+django==3.2.12; python_version >= "3.6"
 djangorestframework==3.13.1; python_version >= "3.5"
 docxtpl==0.10.0
 et-xmlfile==1.1.0; python_version >= "3.6"
