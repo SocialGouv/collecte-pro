@@ -57,7 +57,6 @@ Mako==1.1.6
 MarkupSafe==2.0.1
 mozilla-django-oidc==2.0.0
 oic==0.10.0.0
-pkg_resources==0.0.0
 prompt-toolkit==3.0.27
 psycopg2-binary==2.9.3
 pyasn1==0.4.8
