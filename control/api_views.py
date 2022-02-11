@@ -18,7 +18,7 @@ from user_profiles.serializers import UserProfileSerializer
 
 
 # This signal is triggered after the questionnaire is saved via the API
-questionnaire_api_post_save = django.dispatch.Signal(providing_args=["instance"])
+questionnaire_api_post_save = django.dispatch.Signal()
 
 
 class ControlViewSet(mixins.CreateModelMixin,

@@ -10,7 +10,7 @@ from control.models import Control
 from control.permissions import OnlyInspectorCanAccess
 
 
-soft_delete_signal = Signal(providing_args=['obj'])
+soft_delete_signal = Signal()
 
 
 class DeleteViewSet(viewsets.ViewSet):

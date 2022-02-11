@@ -14,8 +14,8 @@ from keycloak import KeycloakAdmin
 User = get_user_model()
 
 # These signals are triggered after the user is created/updated via the API
-user_api_post_add = Signal(providing_args=['user_profile', 'control'])
-user_api_post_update = Signal(providing_args=['user_profile'])
+user_api_post_add = Signal()
+user_api_post_update = Signal()
 
 
 class RemoveControlSerializer(serializers.Serializer):
