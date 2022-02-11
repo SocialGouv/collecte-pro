@@ -1,3 +1,4 @@
+from datetime import datetime
 import magic
 import os
 
@@ -18,7 +19,10 @@ from sendfile import sendfile
 import json
 
 from .docx import generate_questionnaire_file
+from docx import Document
 from .export_response_files import generate_response_file_list_in_xlsx
+import openpyxl
+from pdfrw import PdfReader, PdfWriter
 from .models import Control, Questionnaire, QuestionFile, ResponseFile, Question
 from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDraft
 from .serializers import ControlSerializer, ControlDetailControlSerializer
@@ -190,6 +194,12 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             }
         action.send(**action_details)
 
+    def file_extension_is_metadata(self, extension):
+        whitelist = (".docx", ".xlsx", ".pdf")
+        if any(match.lower() == extension.lower() for match in whitelist):
+            return extension
+        return False
+
     def file_extension_is_valid(self, extension):
         blacklist = settings.UPLOAD_FILE_EXTENSION_BLACKLIST
         if any(match.lower() == extension.lower() for match in blacklist):
@@ -219,6 +229,26 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         self.object.author = self.request.user
         file_object = self.object.file
         file_extension = os.path.splitext(file_object.name)[1]
+
+        # Set metadata
+        metadata_type = self.file_extension_is_metadata(file_extension)
+        if metadata_type == ".docx":
+            document = Document(self.object.file)
+            prop = document.core_properties
+            prop.author = self.object.author
+            prop.modified = datetime.now()
+            document.save(self.object.file)
+        elif metadata_type == ".xlsx":
+            wb = openpyxl.load_workbook(self.object.file)
+            wb.properties.creator = self.object.author
+            wb.properties.modified = datetime.now()
+            wb.save(self.object.file)
+        elif metadata_type == ".pdf":
+            pdf = PdfReader(self.object.file)
+            pdf.Info.Author = str(self.object.author)
+            pdf.Info.ModDate = str(datetime.now())
+            PdfWriter(trailer=pdf).write(self.object.file)
+
         if not self.file_extension_is_valid(file_extension):
             self.add_invalid_extension_log(file_extension)
             return HttpResponseForbidden(

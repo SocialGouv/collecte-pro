@@ -36,26 +36,26 @@
 </template>
 
 <script>
-import EmptyModal from './EmptyModal'
-import ErrorBar from './ErrorBar'
-import reportValidity from 'report-validity'
-import Vue from 'vue'
+import EmptyModal from "./EmptyModal";
+import ErrorBar from "./ErrorBar";
+import reportValidity from "report-validity";
+import Vue from "vue";
 
 export default Vue.extend({
   props: [
-    'cancel-button',
-    'confirm-button',
-    'no-close',
-    'title',
-    'submitCallback',
-    'errorCallback',
-    'successCallback',
+    "cancel-button",
+    "confirm-button",
+    "no-close",
+    "title",
+    "submitCallback",
+    "errorCallback",
+    "successCallback",
   ],
   data: function() {
     return {
-      errorMessage: '',
+      errorMessage: "",
       processing: false,
-    }
+    };
   },
   components: {
     EmptyModal,
@@ -63,45 +63,42 @@ export default Vue.extend({
   },
   methods: {
     confirmClicked () {
-      this.errorMessage = ''
+      this.errorMessage = "";
       if (!this.validateForm()) {
-        return
+        return;
       }
 
       const processingDoneCallback = (errorMessage, successMessage) => {
         if (errorMessage) {
-          console.log('error!', errorMessage)
-          this.errorMessage = errorMessage
-          this.processing = false
-          return
+          console.log("error!", errorMessage);
+          this.errorMessage = errorMessage;
+          this.processing = false;
+          return;
         }
-        console.debug('ConfirmModalWithWait : processing done', successMessage)
-      }
+        console.debug("ConfirmModalWithWait : processing done", successMessage);
+      };
 
-      this.processing = true
-      this.$emit('confirm', processingDoneCallback)
+      this.processing = true;
+      this.$emit("confirm", processingDoneCallback);
     },
     cancelClicked () {
-      this.processing = false
-      this.errorMessage = ''
-      this.$emit('cancel')
+      this.processing = false;
+      this.errorMessage = "";
+      this.$emit("cancel");
     },
     closeModal () {
-      this.processing = false
-      this.errorMessage = ''
-      this.$emit('close')
+      this.processing = false;
+      this.errorMessage = "";
+      this.$emit("close");
     },
     validateForm () {
-      const forms = this.$el.getElementsByTagName('form')
+      const forms = this.$el.getElementsByTagName("form");
       if (forms.length > 0) {
-        return reportValidity(forms[0])
+        return reportValidity(forms[0]);
       }
-      return true
+      return true;
     },
-
   },
-})
+});
 
 </script>
-
-<style></style>
