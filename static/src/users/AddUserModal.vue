@@ -221,7 +221,7 @@ export default Vue.extend({
       config: 'config',
     }),
     emailSubject: function() {
-        return this.config.env_name != '' ? this.config.env_name + ' - Bienvenue sur e-collecte' : 'Bienvenue sur e-collecte'
+        return this.config.env_name != '' ? this.config.env_name + ' - Bienvenue sur collecte-pro' : 'Bienvenue sur collecte-pro'
     },
     emailBody: function() {
       if (this.stepShown !== 3) {
@@ -239,7 +239,7 @@ export default Vue.extend({
           ? 'l\'équipe d\'instruction.'
           : 'l\'organisme contrôlé.') +
         newline + newline +
-        'Pour vous connecter, rendez-vous sur le site d\'e-collecte :' +
+        'Pour vous connecter, rendez-vous sur le site de collecte-pro :' +
         newline + newline +
         this.site_url +
         newline + newline +

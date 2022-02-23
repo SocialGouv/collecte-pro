@@ -174,7 +174,7 @@ export default Vue.extend({
       const expiryDateString = this.questionnaire.end_date === null ? '' : `${newline}${newline}La date limite de réponse est le ${this.questionnaire.end_date}.`
 
       if (currentControl) {
-        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.id} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à e-collecte pour le consulter et apporter vos réponses : ${this.config.site_url}${newline}${newline}Cordialement,`
+        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.id} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à collecte-pro pour le consulter et apporter vos réponses : ${this.config.site_url}${newline}${newline}Cordialement,`
       }
 
       return ''

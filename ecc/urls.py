@@ -22,7 +22,7 @@ from tos import views as tos_views
 from user_profiles import api_views as user_profiles_api_views
 
 
-admin.site.site_header = 'e-collecte Administration'
+admin.site.site_header = 'collecte-pro Administration'
 
 router = routers.DefaultRouter()
 router.register(r'annexe', control_api_views.QuestionFileViewSet, basename='annexe')
@@ -91,7 +91,7 @@ if settings.DEBUG:
     from rest_framework.documentation import include_docs_urls
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += [path('admin/docs/', include('django.contrib.admindocs.urls'))]
-    urlpatterns += [path('api/docs/', include_docs_urls(title='e-collecte API'))]
+    urlpatterns += [path('api/docs/', include_docs_urls(title='collecte-pro API'))]
 
 if settings.DEBUG and settings.ALLOW_DEMO_LOGIN:
     urlpatterns += path(

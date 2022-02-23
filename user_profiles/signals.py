@@ -95,7 +95,7 @@ def send_email_for_user_add(session_user, user_profile, control, **kwargs):
         session_user=session_user,
         user_profile=user_profile,
         control=control,
-        email_subject=f'e-collecte - Nouvel utilisateur - {control}',
+        email_subject=f'collecte-pro - Nouvel utilisateur - {control}',
         html_template='user_profiles/email_add_user.html',
         text_template='user_profiles/email_add_user.txt',
     )
@@ -109,7 +109,7 @@ def send_email_for_user_remove(session_user, user_profile, control, **kwargs):
         session_user=session_user,
         user_profile=user_profile,
         control=control,
-        email_subject=f'e-collecte - Suppression utilisateur - {control}',
+        email_subject=f'collecte-pro - Suppression utilisateur - {control}',
         html_template='user_profiles/email_remove_user.html',
         text_template='user_profiles/email_remove_user.txt',
     )

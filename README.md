@@ -1,13 +1,13 @@
-# e-collecte
+# collecte-pro
 
-“e-collecte” est un service numérique permettant de faciliter les échanges de documents
+“collecte-pro” est un service numérique permettant de faciliter les échanges de documents
 durant les contrôles, audits ou inspections.
 
 Les activités de transmission et de réception de documents durant les audits ne sont
 facilitées par aucun outil suffisamment adapté, si bien qu’une marge d’optimisation
 existe.
 
-e-collecte propose de répondre aux nombreux problèmes rencontrés par les audités et les
+collecte-pro propose de répondre aux nombreux problèmes rencontrés par les audités et les
 auditeurs.
 
 La mise en place d’un outil dédié permet de simplifier la relation entre un organisme de
@@ -16,7 +16,7 @@ activités ayant le plus d’impact pour leurs usagers.
 
 ## Descriptions fonctionnelles :
 
-Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle d’e-collecte.odt).
+Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle d’collecte-pro.odt).
 
 ### Les principaux gains pour les utilisateurs :
 
@@ -39,7 +39,7 @@ Voir https://github.com/SocialGouv/ecollecte/blob/develop/docs/dev/architecture.
 Notre code review process pour collaborer dans la bonne humeur :
 https://github.com/SocialGouv/ecollecte/blob/develop/docs/Processus de revue de code.odt
 
-Comment installer son environnement pour développer e-collecte :
+Comment installer son environnement pour développer collecte-pro :
 https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/dev_environment.md
 
 Nous utilisons [github-flow](https://guides.github.com/introduction/flow/).

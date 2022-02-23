@@ -226,7 +226,7 @@ SEND_EMAIL_WHEN_USER_ADDED = env('SEND_EMAIL_WHEN_USER_ADDED', default=False)
 SEND_EMAIL_WHEN_USER_REMOVED = env('SEND_EMAIL_WHEN_USER_REMOVED', default=False)
 
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
-SUPPORT_TEAM_EMAIL = env('SUPPORT_TEAM_EMAIL', default='support@e-collecte.gouv.fr')
+SUPPORT_TEAM_EMAIL = env('SUPPORT_TEAM_EMAIL', default='support@collecte-pro.gouv.fr')
 
 LOGIN_URL = 'login'
 

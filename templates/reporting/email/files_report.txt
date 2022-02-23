@@ -14,4 +14,4 @@ Votre notification quotidienne
 
 {% endfor %}
 
-Continuer sur e-collecte: https://{{ site.domain }}/
+Continuer sur collecte-pro: https://{{ site.domain }}/
