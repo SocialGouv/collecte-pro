@@ -20,7 +20,7 @@ from session import api_views as session_api_views
 from soft_deletion import api_views as deletion_api_views
 from tos import views as tos_views
 from user_profiles import api_views as user_profiles_api_views
-from declaration_non_conformite import views as declarationNonConformite_views
+from declaration_conformite import views as declarationConformite_views
 
 
 admin.site.site_header = 'collecte-pro Administration'
@@ -73,7 +73,7 @@ urlpatterns = [
     path('megacontrole/<int:pk>/',
          admin_views.Megacontrol.as_view(),
          name='megacontrol-done'),
-    path('declaration-non-conformite/', declarationNonConformite_views.DeclarationNonConformite.as_view(), name='declarationNonConformite'),
+    path('declaration-conformite/', declarationConformite_views.DeclarationConformite.as_view(), name='declarationConformite'),
 
     # Custom-made api endoints
     path('api/fichier-reponse/corbeille/<int:pk>/',
