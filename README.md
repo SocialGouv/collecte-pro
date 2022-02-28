@@ -16,7 +16,7 @@ activités ayant le plus d’impact pour leurs usagers.
 
 ## Descriptions fonctionnelles :
 
-Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle d’collecte-pro.odt).
+Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle de collecte-pro.odt).
 
 ### Les principaux gains pour les utilisateurs :
 
