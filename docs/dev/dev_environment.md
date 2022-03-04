@@ -16,13 +16,13 @@ une base temporaire).
 
 Cloner le dépôt :
 
-    git clone git@github.com:SocialGouv/ecollecte.git
+    git clone git@github.com:SocialGouv/ecollecte.git collectepro
 
 **Attention**, il faut avoir créer une clef SSH et l'avoir spécifiée sur github.
 
 On se déplace dans le répertoire :
 
-    cd ecollecte
+    cd collectepro
 
 ## Node
 
@@ -70,7 +70,7 @@ Créer un super utilisateur : `python3 manage.py createsuperuser`
 
 Lancer le serveur local : `python manage.py runserver 0:8080`
 
-Aller sur `http://localhost:8080/admin` et se logger avec le compte super-utilisateur.
+Aller sur `http://localhost:8080/admin` et se logger avec le compte super utilisateur.
 
 
 # Restaurer/Sauvegarder la base de données en dev

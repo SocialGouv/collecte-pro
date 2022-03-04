@@ -18,7 +18,7 @@
     \q
 
 
-## Connexion au serveur web avec un utilisateur ecollecte
+## Connexion au serveur web avec un utilisateur collecte-pro
 
     cd ~
 
@@ -32,8 +32,8 @@
 
 ## On récupère les sources
 
-    git clone --depth 1 --single-branch --branch main https://github.com/SocialGouv/ecollecte.git
-    cd ecollecte
+    git clone --depth 1 --single-branch --branch main https://github.com/SocialGouv/ecollecte.git collectepro
+    cd collectepro
 
 
 ## Installation de la partie node via npm
@@ -86,23 +86,23 @@ Puis sourcer le fichier
     # J'utilise admin / admin
 
 
-## Mise en place des services spécifiques à ecollecte
+## Mise en place des services spécifiques à collecte-pro
 
 Création d'un lien symbolique vers le fichier de configuration de l'application
 
-    ln -s /home/ecollecte/ecollecte/deploy/conf/ecollecte.service /etc/systemd/system
-    ln -s /home/ecollecte/ecollecte/deploy/conf/celery.service /etc/systemd/system
+    ln -s /home/collectepro/collectepro/deploy/conf/collectepro.service /etc/systemd/system
+    ln -s /home/collectepro/collectepro/deploy/conf/celery.service /etc/systemd/system
 
 
 ## Lancer les services
 
-    systemctl start ecollecte
+    systemctl start collectepro
     systemctl start celery
 
 
 ## Configurer le reverse proxy nginx
 
-    ln -s ~/ecollecte/deploy/conf/ecollecte.conf /etc/nginx/sites-enabled
+    ln -s ~/collectepro/deploy/conf/collectepro.conf /etc/nginx/sites-enabled
     nginx -
 
 
@@ -116,7 +116,7 @@ Création d'un lien symbolique vers le fichier de configuration de l'application
 
 ## Récupérer la dernière version du code source
 
-    cd ~/ecollecte
+    cd ~/collectepro
     git pull
 
 
@@ -145,5 +145,5 @@ Création d'un lien symbolique vers le fichier de configuration de l'application
 
 ## Redémarrer les services
 
-    systemctl restart ecollecte
+    systemctl restart collectepro
     systemctl restart celery

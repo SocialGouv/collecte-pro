@@ -6,14 +6,14 @@ from user_profiles.models import UserProfile
 class EccOIDCAuthenticationBackend(OIDCAuthenticationBackend):
     def create_user(self, claims):
         user = super(EccOIDCAuthenticationBackend, self).create_user(claims)
-        self.user_ecollecte(user, claims)
+        self.user_collectepro(user, claims)
         return user
 
     def update_user(self, user, claims):
-        self.user_ecollecte(user, claims)
+        self.user_collectepro(user, claims)
         return user
 
-    def user_ecollecte(self, user, claims):
+    def user_collectepro(self, user, claims):
         """
         Mise à jour des utilisateurs depuis les informations KeyCloak.
         """

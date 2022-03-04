@@ -10,7 +10,7 @@ env = environ.Env(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -81,7 +81,7 @@ INSTALLED_APPS = [
 KEYCLOAK_ACTIVE = env('KEYCLOAK_ACTIVE', default=False)
 if KEYCLOAK_ACTIVE:
     KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/auth/')
-    KEYCLOAK_REALM = env('KEYCLOAK_REALM', default='ecollecte')
+    KEYCLOAK_REALM = env('KEYCLOAK_REALM', default='collectepro')
     OPENID_PREFIX = f'{KEYCLOAK_URL}realms/{KEYCLOAK_REALM}/protocol/openid-connect'
     OIDC_OP_JWKS_ENDPOINT = f'{OPENID_PREFIX}/certs'
     OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OPENID_PREFIX}/auth'
@@ -145,14 +145,14 @@ WSGI_APPLICATION = 'ecc.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {'default': env.db()}
 
 SITE_ID = 1
 
 # Password validation
-# https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -231,7 +231,7 @@ SUPPORT_TEAM_EMAIL = env('SUPPORT_TEAM_EMAIL', default='support@collecte-pro.gou
 LOGIN_URL = 'login'
 
 # Internationalization
-# https://docs.djangoproject.com/en/1.11/topics/i18n/
+# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'fr-fr'
 TIME_ZONE = 'Europe/Paris'
@@ -247,7 +247,7 @@ except locale.Error as e:
     pass  # setlocale can crash, for instance when running on Heroku.
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.11/howto/static-files/
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 ADMIN_URL = env('ADMIN_URL', default='admin/')
 
@@ -346,7 +346,7 @@ SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
 # Environnement name
 ENV_NAME = env ('ENV_NAME', default='')
 
-# Url of ecollecte in questionnaire
+# Url of collecte-pro in questionnaire
 QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
 
 # Mise à jour pour Django>=3.2
