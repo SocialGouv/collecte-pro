@@ -10,7 +10,7 @@ from .serializers import UserProfileSerializer, RemoveControlSerializer
 
 
 # These signals are triggered after the user is deleted via the API
-user_api_post_remove = Signal(providing_args=['user_profile', 'control'])
+user_api_post_remove = Signal()
 
 
 class UserProfileViewSet(

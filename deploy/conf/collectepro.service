@@ -1,0 +1,16 @@
+[Unit]
+Description=Collectepro web application
+After=network.target
+
+[Service]
+User=collectepro
+Group=django
+WorkingDirectory=/opt/collectepro
+RuntimeDirectory= collectepro
+EnvironmentFile=-/etc/collectepro/collectepro.conf
+ExecStart=/opt/collectepro/bin/uwsgi --python-path /opt/collectepro/lib/python3.7/site-packages --ini /etc/collectepro/uwsgi.ini
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

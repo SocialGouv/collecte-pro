@@ -14,8 +14,8 @@ from keycloak import KeycloakAdmin
 User = get_user_model()
 
 # These signals are triggered after the user is created/updated via the API
-user_api_post_add = Signal(providing_args=['user_profile', 'control'])
-user_api_post_update = Signal(providing_args=['user_profile'])
+user_api_post_add = Signal()
+user_api_post_update = Signal()
 
 
 class RemoveControlSerializer(serializers.Serializer):
@@ -37,13 +37,16 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             'organization', 'control', 'is_audited', 'is_inspector')
 
     def create(self, validated_data):
-        keycloak_admin = KeycloakAdmin(server_url=settings.KEYCLOAK_URL,
-                               username=settings.KEYCLOAK_ADMIN_USERNAME,
-                               password=settings.KEYCLOAK_ADMIN_PASSWORD,
-                               realm_name=settings.KEYCLOAK_REALM,
-                               client_id=settings.OIDC_RP_CLIENT_ID,
-                               client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
-                               verify=False)
+        if settings.KEYCLOAK_ACTIVE:
+            keycloak_admin = KeycloakAdmin(
+                server_url=settings.KEYCLOAK_URL,
+                username=settings.KEYCLOAK_ADMIN_USERNAME,
+                password=settings.KEYCLOAK_ADMIN_PASSWORD,
+                realm_name=settings.KEYCLOAK_REALM,
+                client_id=settings.OIDC_RP_CLIENT_ID,
+                client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
+                verify=False,
+            )
         profile_data = validated_data
         control = profile_data.pop('control', None)
         user_data = profile_data.pop('user')
@@ -62,26 +65,34 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             raise serializers.ValidationError(
                 f"{session_user} n'est pas authorisé à modifier cette procédure : {control}")
         should_receive_email_report = False
-        # Find keycloak inspector role
-        role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
+        if settings.KEYCLOAK_ACTIVE:
+            # Find keycloak inspector role
+            role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
             should_receive_email_report = True
         if profile:
-            user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
-            # Update keycloak user data if exist
-            keycloak_admin.update_user(user_id=user_id_keycloak,
-                                      payload={'firstName': user_data.get('first_name'),
-                                                'lastName': user_data.get('last_name')})
-            if should_receive_email_report:
-                # Assign inspector role
-                keycloak_admin.assign_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                                                user_id=user_id_keycloak,
-                                                roles=[role])
-            else:
-                # Remove inspector role
-                keycloak_admin.delete_client_roles_of_user(user_id=user_id_keycloak,
-                                                        client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                                                        roles=[role])
+            if settings.KEYCLOAK_ACTIVE:
+                user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
+                # Update keycloak user data if exist
+                keycloak_admin.update_user(
+                    user_id=user_id_keycloak,
+                    payload={'firstName': user_data.get('first_name'),
+                    'lastName': user_data.get('last_name')}
+                )
+                if should_receive_email_report:
+                    # Assign inspector role
+                    keycloak_admin.assign_client_role(
+                        client_id=settings.KEYCLOAK_URL_CLIENT_ID,
+                        user_id=user_id_keycloak,
+                        roles=[role,],
+                    )
+                else:
+                    # Remove inspector role
+                    keycloak_admin.delete_client_roles_of_user(
+                        user_id=user_id_keycloak,
+                        client_id=settings.KEYCLOAK_URL_CLIENT_ID,
+                        roles=[role,],
+                    )
             profile.user.first_name = user_data.get('first_name')
             profile.user.last_name = user_data.get('last_name')
             profile.organization = profile_data.get('organization')
@@ -90,21 +101,28 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             profile.user.save()
             profile.save()
         else:
-            # Create keycloak user if doesn't exist
-            new_user = keycloak_admin.create_user({"email": user_data['username'],
-                    "username": user_data['username'],
-                    "enabled": True,
-                    "firstName": user_data['first_name'],
-                    "lastName": user_data['last_name']},
-                    exist_ok=True)
+            if settings.KEYCLOAK_ACTIVE:
+                # Create keycloak user if doesn't exist
+                new_user = keycloak_admin.create_user(
+                    {
+                        "email": user_data['username'],
+                        "username": user_data['username'],
+                        "enabled": True,
+                        "firstName": user_data['first_name'],
+                        "lastName": user_data['last_name']
+                    },
+                    exist_ok=True
+                )
             user = User.objects.create(**user_data)
             profile_data['user'] = user
             profile_data['send_files_report'] = should_receive_email_report
             profile = UserProfile.objects.create(**profile_data)
-            if should_receive_email_report:
-                keycloak_admin.assign_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                                                user_id=new_user,
-                                                roles=[role])
+            if should_receive_email_report and settings.KEYCLOAK_ACTIVE:
+                keycloak_admin.assign_client_role(
+                    client_id=settings.KEYCLOAK_URL_CLIENT_ID,
+                    user_id=new_user,
+                    roles=[role,],
+                )
         if control:
             profile.controls.add(control)
         if control:

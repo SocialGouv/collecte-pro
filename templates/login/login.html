@@ -5,7 +5,7 @@
 {% block content %}
 <div id="page" class="page white">
   <div id="non-footer" class="container">
-    <div class="row" id="connectez-vous-a-e-collecte">
+    <div class="row" id="connectez-vous-a-collecte-pro">
       <div class="col-md d-none d-md-block entity-picture">
         {% get_entity_picture_item as entity_picture %}
         {% if entity_picture.url|slice:":4" == "http" %}
@@ -16,8 +16,8 @@
       </div>
       <div class="col-md d-flex flex-column justify-content-between align-items-center">
         <div class="mt-8 mt-md-2 mt-lg-8 mb-2 d-flex flex-column justify-content-center align-items-center">
-          <div class="mb-5">
-            <img src="{% static 'img/logo_e-collecte.png' %}" alt="logo e-collecte" />
+          <div class="mb-5 text-center" style="font-family: Trebuchet MS; font-size: 5em;">
+            <span>collecte-pro</span>
           </div>
           <h3 class="mb-lg-5 text-center">
             La plateforme d'échange de documents <br/> durant les contrôles, audits, évaluations et inspections
@@ -52,12 +52,12 @@
 
                 {%if settings.KEYCLOAK_ACTIVE %}
                   <div class="form-group">
-                    <label class="form-label text-center"><h4>Connectez-vous à e-collecte</h4></label>
+                    <label class="form-label text-center"><h4>Connectez-vous à collecte-pro</h4></label>
                   </div>
                   <a href="{% url 'oidc_authentication_init' %}" class="btn btn-primary btn-block">Se connecter</a>
                 {%else%}
                   <div class="form-group">
-                    <label class="form-label text-center"><h4>Connectez-vous à e-collecte</h4></label>
+                    <label class="form-label text-center"><h4>Connectez-vous à collecte-pro</h4></label>
                     <input type="text"
                             name="username"
                             size="40"
@@ -103,10 +103,10 @@
         </div>
       </div>
     </div>
-    <div class="" id="a-quoi-sert-e-collecte">
+    <div class="" id="a-quoi-sert-collecte-pro">
       <div class="row">
         <div class="col-sm text-center">
-          <h1>e-collecte est un service qui simplifie l’échange de documents entre l’administration et les organismes qu’elle sollicite</h1>
+          <h1>collecte-pro est un service qui simplifie l’échange de documents entre l’administration et les organismes qu’elle sollicite</h1>
         </div>
       </div>
       <div class="row">
@@ -172,7 +172,7 @@
             Foire aux Questions
           </a>
           ou
-          <a href="#connectez-vous-a-e-collecte">
+          <a href="#connectez-vous-a-collecte-pro">
             connectez-vous
           </a>
           !

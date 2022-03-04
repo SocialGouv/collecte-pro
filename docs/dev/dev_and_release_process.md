@@ -89,8 +89,8 @@ Pour créer une branche de release, on suivra le processus suivant :
 ```
 
 Il y a 2 tâches à faire dans cette nouvelle branche (on peut regarder
-[ce commit](https://github.com/SocialGouve/ecollecte/commit/85a165b8) pour avoir un
-exemple) :
+[ce commit](https://github.com/SocialGouv/ecollecte/commit/0d8e703cd95d6ee8cd1f7868d66a199dde992b07)
+pour avoir un exemple) :
 
 - Ajouter des release notes dans le dossier docs/releases. On peut imiter le format des
     releases précédentes. On peut décider d'un nom pour la release dans ce fichier.
@@ -152,7 +152,7 @@ Pour garder la trace de cette release, on merge la branche release dans la branc
 ```
 
 On va aussi tagger le commit de *main* : ça fait apparaitre [une release dans la page de
-github](https://github.com/SocialGouv/ecollecte/releases), et ca nous permet de garder
+github](https://github.com/SocialGouv/ecollecte/tags), et ca nous permet de garder
 des traces. On crée le tag en local, puis on le push sur github.
 ```
     $ git tag -a 1.20
@@ -200,8 +200,8 @@ On commit le fix dans la branche (ou plusieurs commits) :
 Le fix doit aussi changer le numéro de version et faire des release notes pour cette
 nouvelle version. Si on était précédemment à la version 1.20, alors on fait une version
 1.20.1 (version "patch"). S'inspirer de
-[ce commit](https://github.com/SocialGouve/ecollecte/commit/85a165b8) (les release notes
-sont faciles : il n'y a que le fix qui a changé!)
+[ce commit](https://docs.google.com/spreadsheets/d/1YAj0BITC4nq3_IDijhncNniTphC55zr3uBrLyzeFE1A/edit#gid=638845062)
+(les release notes sont faciles : il n'y a que le fix qui a changé!)
 
 ## Tester le hotfix
 

@@ -60,16 +60,16 @@ def add_permissions(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('actstream', '__latest__'),
-        ('admin', '__latest__'),
-        ('auth', '__latest__'),
+        ('actstream', '0003_add_follow_flag'),
+        ('admin', '0003_logentry_add_action_flag_choices'),
+        ('auth', '0010_alter_group_name_max_length'),
         ('ecc', '0001_initial'),
-        ('faq', '__latest__'),
-        ('user_profiles', '__latest__'),
-        ('tos', '__latest__'),
-        ('control', '__latest__'),
-        ('sites', '__latest__'),
-        ('parametres', '__latest__'),
+        ('faq', '0005_faqitem_update_default_data'),
+        ('user_profiles', '0018_auto_20211018_1512'),
+        ('tos', '0002_auto_20210913_1618'),
+        ('control', '0042_auto_20211018_1504'),
+        ('sites', '0002_alter_domain_unique'),
+        ('parametres', '0005_auto_20211025_1434'),
     ]
 
     operations = [

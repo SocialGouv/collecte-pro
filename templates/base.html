@@ -3,7 +3,7 @@
 {% load parametres_tags %}
 
 {% block site_title %}
-  <title>e-collecte</title>
+  <title>collecte-pro</title>
 {% endblock site_title %}
 
 {% block extra_static_header %}
@@ -26,9 +26,9 @@
             {% endif %}
             </a>
           </div>
-          <div class="flex-column justify-content-center mx-5">
+          <div class="flex-column justify-content-center mx-5" style="font-family: Trebuchet MS;">
             <a class="header-brand" href="/accueil">
-              <img id="logo" src="{% static 'img/e-collecte.png' %}" class="header-brand-img" alt="logo" />
+              <span>collecte-pro</span>
             </a>
           </div>
 
@@ -65,7 +65,7 @@
           {% block current_user %}
             {% if user.is_authenticated %}
               <div class="flex-row dropdown p-3">
-                <a href="#" class="nav-link" data-toggle="dropdown">
+                <a href="#" class="nav-link" data-toggle="dropdown" id="user_access">
                   <span class="avatar avatar-pink">{{ user.first_name|first }}{{ user.last_name|first }}</span>
                   <span class="ml-2 text-default">
                     {{ user.get_full_name }}

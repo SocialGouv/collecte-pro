@@ -21,7 +21,7 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
         'inspectors': inspectors,
         'support_team_email': settings.SUPPORT_TEAM_EMAIL,
     }
-    subject = f"e-collecte - Suppression de l'espace - {control.title_display}"
+    subject = f"collecte-pro - Suppression de l'espace - {control.title_display}"
 
     send_email(
         to=inspectors_emails,

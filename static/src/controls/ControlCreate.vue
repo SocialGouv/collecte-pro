@@ -122,7 +122,7 @@ export default Vue.extend({
   },
   methods: {
     showModal() {
-      $(this.$refs.modal.$el).modal('show')
+      $(this.$refs.modal.$el).modal('show');
     },
     createControl: function(processingDoneCallback) {
       const payload = {
@@ -132,9 +132,11 @@ export default Vue.extend({
       }
       axios.post(backendUrls.control(), payload)
         .then(response => {
-          console.debug(response)
-          processingDoneCallback(null, response)
-          window.location.href = backendUrls.home()
+          console.debug(response);
+          processingDoneCallback(null, response);
+          setTimeout(() => {
+            window.location.href = backendUrls.home();
+          }, 500);
         })
         .catch((error) => {
           console.error('Error creating control', error)

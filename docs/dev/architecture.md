@@ -1,4 +1,4 @@
-# Architecture d'e-collecte
+# Architecture de collecte-pro
 
 Créé le 9 Décembre 2019 - Des choses ayant pu changé depuis lors, désolé :)
 Merci d'ajouter une date lorsque vous modifiez une section de ce document. Placer la
@@ -182,7 +182,7 @@ Il s'agit des composants Vue.js situés dans le répertoire *static/src*.
 
 ## WSGI
 
-E-collecte est une application python qui utilise une interface WSGI pour communiquer
+Collecte-pro est une application python qui utilise une interface WSGI pour communiquer
 avec le serveur proxy (Apache ou Nginx), voir le fichier *ecc/wsgi.py*.
 Lorsqu'une requête arrive sur le proxy, celui-ci redirige la requête vers l'application
 Django pour sa prise en compte.
