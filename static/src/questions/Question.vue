@@ -8,22 +8,28 @@
       <div class="with-line-breaks">{{ question.description }}</div>
       <div class="tags">
         <template v-if="questionFileCount > 0">
-          <span class="tag tag-orange pull-left cursor-pointer">
+          <button
+            type="button"
+            class="btn tag tag-orange pull-left btn-file"
+          >
             {{ questionFileCount }} fichier{{ questionFileCount === 1 ? '': 's' }}
             annexe{{ questionFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
               <i class="fe fe-paperclip"></i>
             </span>
-          </span>
+          </button>
         </template>
         <template v-if="responseFileCount">
-          <span class="tag tag-azure pull-left cursor-pointer">
+          <button
+            type="button"
+            class="btn tag tag-azure pull-left btn-file"
+          >
             {{ responseFileCount }} fichier{{ responseFileCount === 1 ? '': 's' }}
             déposé{{ responseFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
               <i class="fe fe-file"></i>
             </span>
-          </span>
+          </button>
         </template>
       </div>
     </div>
@@ -67,5 +73,8 @@ export default Vue.extend({
 <style scoped>
   .cursor-pointer {
     cursor: pointer;
+  }
+  .btn-file {
+    border: 0px;
   }
 </style>
