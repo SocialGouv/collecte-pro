@@ -52,6 +52,9 @@
                         aria-labelledby="questionnaireEndDate"
                         v-model="end_date"
                         :language="fr"
+                        :typeable="true"
+                        :placeholder="placeholder"
+                        :format="format"
                         :monday-first="true">
             </datepicker>
           </div>
@@ -85,6 +88,8 @@ const QuestionnaireMetadataCreate = Vue.extend({
     return {
       errors: [],
       fr: fr, // locale for datepicker
+      format: "yyyy-MM-dd", // format for datepicker
+      placeholder: "yyyy-mm-dd", // Placeholder for datepicker
     }
   },
   computed: {
