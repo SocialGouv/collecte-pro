@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django_filters',
     'django_admin',
     'email_obfuscator',
-    'softdelete',
+    'django_softdelete',
 
     # Project's apps
     'backoffice',

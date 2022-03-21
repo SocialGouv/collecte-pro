@@ -9,7 +9,7 @@ from django.urls import reverse
 from django_cleanup import cleanup
 from model_utils.models import TimeStampedModel
 from ordered_model.models import OrderedModel
-from softdelete.models import SoftDeleteModel
+from django_softdelete.models import SoftDeleteModel
 
 from soft_deletion.managers import DeletableQuerySet
 

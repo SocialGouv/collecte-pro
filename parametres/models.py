@@ -1,7 +1,7 @@
 from django.db import models
 
 from ordered_model.models import OrderedModel
-from softdelete.models import SoftDeleteModel
+from django_softdelete.models import SoftDeleteModel
 
 
 class Parametre(OrderedModel, SoftDeleteModel):

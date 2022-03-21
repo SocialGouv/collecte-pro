@@ -52,7 +52,7 @@ class ControlIsNotDeleted(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not hasattr(obj, 'control'):
             raise ParseError(detail='Missing attribute "control" during permission check')
-        return not obj.control.is_deleted()
+        return not obj.control.is_deleted
 
 
 class QuestionnaireIsDraft(permissions.BasePermission):

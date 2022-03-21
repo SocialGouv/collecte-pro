@@ -37,6 +37,7 @@ django-sendfile==0.3.11
 django-session-timeout==0.1.0
 django-settings-export==1.2.1
 django-six==1.0.4
+django-soft-delete==0.9.18
 django-timezone-field==4.2.3
 djangorestframework==3.13.1
 docxcompose==1.3.4
@@ -71,7 +72,6 @@ requests==2.27.1
 rsa==4.8
 screen==1.0.1
 six==1.16.0
-soft-delete==0.2.2
 sqlparse==0.4.2
 typing_extensions==4.0.1
 uritemplate==4.1.1

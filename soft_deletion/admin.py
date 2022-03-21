@@ -52,7 +52,7 @@ class SoftDeletedAdmin(object):
     actions = [soft_delete, undelete]
 
     def is_active(self, instance):
-        return not instance.is_deleted()
+        return not instance.is_deleted
     is_active.boolean = True
     is_active.short_description = "active"
 

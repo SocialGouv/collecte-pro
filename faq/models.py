@@ -2,7 +2,7 @@ from django.db import models
 
 from ckeditor.fields import RichTextField
 from ordered_model.models import OrderedModel
-from softdelete.models import SoftDeleteModel
+from django_softdelete.models import SoftDeleteModel
 
 
 class FAQItem(OrderedModel, SoftDeleteModel):
