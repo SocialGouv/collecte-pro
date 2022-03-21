@@ -1,7 +1,8 @@
+coverage
 factory-boy
 faker
 pytest
-pytest-cov==2.5.1
+pytest-cov
 pytest-django
 pytest-dotenv
 pytest-factoryboy

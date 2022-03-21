@@ -83,7 +83,7 @@ class Control(SoftDeleteModel):
         help_text='Ce code est utilisé notamment pour le dossier de stockage des réponses',
         validators=[
             RegexValidator(
-                regex='^[\.\s\w-]+$',
+                regex=r'^[\.\s\w-]+$',
                 message=INVALID_ERROR_MESSAGE,
             ),
         ],
