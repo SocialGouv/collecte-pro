@@ -363,6 +363,9 @@ export default Vue.extend({
       }
       this.isList = !this.isList;
     },
+    changeView(currentView){
+      this.currentView = currentView;
+    },
     cloneQuestionnaire() {
       let self = this;
       const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
