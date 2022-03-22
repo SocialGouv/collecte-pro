@@ -32,6 +32,7 @@
     "report-validity": "^1.0.1",
     "store": "^2.0.12",
     "vue": "^2.6.14",
+    "vue-ads-table-tree": "^2.4.2",
     "vue-hot-reload-api": "^2.3.4",
     "vue-sidebar-menu": "^4.8.1",
     "vuejs-datepicker": "^1.6.2",
