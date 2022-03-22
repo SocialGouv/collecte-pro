@@ -23,13 +23,17 @@
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
+      <div class="card-title mr-4">
+        <i class="fe fe-list mr-2"></i>
+        <button @click="changeView('questions')">Questionnaires</button>
+      </div>
       <div class="card-title">
         <i class="fe fe-list mr-2"></i>
-        <span>Questionnaires</span>
+        <button @click="changeView('tree')">TreeView</button>
       </div>
     </div>
 
-    <div>
+    <div v-if="currentView === 'questions'">
       <div
         v-if="accessibleQuestionnaires.length === 0"
         class="alert alert-icon alert-secondary m-2"
@@ -249,6 +253,10 @@
       </table>
     </div>
 
+    <div v-if="currentView === 'tree'">
+      <questionnaire-tree-view></questionnaire-tree-view>
+    </div>
+
     <div
       v-if="user.is_inspector"
       class="card-footer flex-row justify-content-end"
@@ -270,6 +278,7 @@ import InfoBar from '../utils/InfoBar'
 import ConfirmModal from '../utils/ConfirmModal'
 import Vue from 'vue'
 import Vuex, { mapState } from 'vuex'
+import QuestionnaireTreeView from '../questionnaires/QuestionnaireTreeView'
 
 Vue.use(Vuex)
 
@@ -282,11 +291,13 @@ export default Vue.extend({
     HelpTooltip,
     InfoBar,
     ConfirmModal,
+    QuestionnaireTreeView,
   },
   data: function() {
     return {
       questionnaireId: null,
       checkedCtrls: [],
+      currentView: 'questions',
     }
   },
   computed: {
@@ -347,6 +358,9 @@ export default Vue.extend({
       getUpdateMethod(qId)(newQ).then(() => {
         window.location.reload();
       })
+    },
+    changeView(currentView){
+      this.currentView = currentView;
     },
     cloneQuestionnaire() {
       let self = this;
