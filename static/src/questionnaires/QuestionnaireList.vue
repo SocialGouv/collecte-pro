@@ -254,7 +254,7 @@
     </div>
 
     <div v-if="currentView === 'tree'">
-      <questionnaire-tree-view></questionnaire-tree-view>
+      <questionnaire-tree-view :control="control"></questionnaire-tree-view>
     </div>
 
     <div
