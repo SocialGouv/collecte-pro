@@ -2,12 +2,14 @@
     <div id="app">
         <vue-ads-table
             :columns="columns"
-            :rows="rows"
+            :rows="accessibleQuestionnaires"
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
+            <template slot="name_file" slot-scope="props"><a href="">{{ props.row.name }}</a></template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
-            <template slot="repondant" slot-scope="props">{{ props.row.redacteur }}</template>
+            <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
+            <template slot="checkbox" slot-scope="props" v-html="props.row.input"></template>
             <template slot="no-rows">Pas de résultats</template>
             <template slot="toggle-children-icon" slot-scope="props"> [{{ props.expanded ? '-' : '+' }}] </template>
         </vue-ads-table>
@@ -17,46 +19,18 @@
 <script>
 import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
+import Vue from 'vue';
 import { VueAdsTable } from 'vue-ads-table-tree';
 
-export default {
+export default Vue.extend({
+    props: {
+        control: {type: Object, default: () => ({})}
+    },
     components: {
         VueAdsTable,
     },
 
     data () {
-        let rows = [
-            {
-                name: 'Questionnaire 1',
-                dateDepot: '20/03/2022',
-                redacteur: 'Alexandre MORIN',
-                _hasChildren: false,
-            },
-            {
-                name: 'Questionnaire 2',
-                dateDepot: '21/03/2022',
-                redacteur: 'Alexandre MORIN',
-                _showChildren: true,
-                _children: [
-                    {
-                        name: 'Question 2.1',
-                        dateDepot: '22/03/2022',
-                        redacteur: 'Alexandre MORIN',
-                        _showChildren: true,
-                        _children: [
-                            {
-                                name: 'Fichier 2.1.1',
-                                dateDepot: '22/03/2022',
-                                redacteur: 'Thomas BOUCHET',
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        
-        rows.length = 4;
-        
         let columns = [
             {
                 property: 'name',
@@ -69,6 +43,10 @@ export default {
             {
                 property: 'repondant',
                 title: 'Répondant',
+            },
+            {
+                property: 'checkbox',
+                title: '',
             },
         ];
         
@@ -103,7 +81,6 @@ export default {
         };
 
         return {
-            rows,
             columns,
             classes,
             filter: '',
@@ -111,11 +88,81 @@ export default {
             end: 2,
         };
     },
+
+    computed: {
+        accessibleQuestionnaires() {
+            const qstnr = this.control.questionnaires.filter((questionnaire) => !questionnaire.is_draft);
+
+            return qstnr.map(element => {
+                const objQuestionnaire = this.getTreeViewLevel(element);
+
+                if (
+                    Object.prototype.hasOwnProperty.call(element, 'themes') &&
+                    element.themes.length
+                ) {
+                    objQuestionnaire._children = element.themes.map(theme => {
+                        const objTheme = this.getTreeViewLevel(theme);
+
+                        if (
+                            Object.prototype.hasOwnProperty.call(theme, 'questions') &&
+                            theme.questions.length
+                        ) {
+                            objTheme._children = theme.questions.map(question => {
+                                const objQuestion = this.getTreeViewLevel(question);
+
+                                if (
+                                    Object.prototype.hasOwnProperty.call(question, 'response_files') &&
+                                    question.response_files.length
+                                ) {
+                                    objQuestion._children = question.response_files.map(responseFile => this.getTreeViewLevel(responseFile, true));
+
+                                    objQuestion._showChildren = true;
+                                    objQuestion._selectable = true;
+                                } else {
+                                    objQuestion._showChildren = false;
+                                }
+
+                                return objQuestion;
+                            });
+                        }
+
+                        return objTheme;
+                    });
+                }
+
+                return objQuestionnaire;
+            });
+        },
+    },
     
     methods: {
+        /**
+         * get formatted item for treeview plugin
+         */
+        getTreeViewLevel(item, hasFiles = false) {
+            const objectTreeView = {
+                name: '',
+                dateDepot: '',
+                repondant: '',
+                _showChildren: true,
+                _children: [],
+                _id: ''
+            };
 
+            if (hasFiles) {
+                objectTreeView.name = item.basename;
+                objectTreeView.dateDepot = item.created;
+                objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
+                objectTreeView._id = 'file';
+            } else {
+                objectTreeView.name = item.title || item.description;
+                objectTreeView._children = [];
+            }
+
+            return objectTreeView;
+        }
     },
-};
+});
 </script>
 
 <style>
