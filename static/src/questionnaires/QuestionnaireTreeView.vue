@@ -9,9 +9,47 @@
             <template slot="name_file" slot-scope="props"><a href="">{{ props.row.name }}</a></template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
-            <template slot="checkbox" slot-scope="props" v-html="props.row.input"></template>
+            <template slot="action_questionnaire" slot-scope="props">
+                <div class="btn-group">
+                    <a
+                      href=""
+                      title="Voir le questionnaire publié"
+                      class="btn btn-secondary"
+                    >
+                      <i class="fe fe-eye"></i>
+                      Consulter
+                    </a>
+                    <button
+                      type="button"
+                      class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                        <span class="sr-only">Menu d'actions</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <button
+                        class="dropdown-item"
+                        type="button"
+                      >
+                        <i class="fe fe-copy"></i>
+                        Dupliquer
+                      </button>
+                    </div>
+                </div>
+            </template>
+            <template slot="action_file" slot-scope="props">
+                <button
+                    class="btn btn-secondary"
+                    type="button"
+                >
+                    <i class="fas fa-file-export"></i>
+                    Télécharger
+                </button>
+            </template>
             <template slot="no-rows">Pas de résultats</template>
-            <template slot="toggle-children-icon" slot-scope="props"> [{{ props.expanded ? '-' : '+' }}] </template>
+            <template slot="toggle-children-icon" slot-scope="props"></template>
         </vue-ads-table>
     </div>
 </template>
@@ -45,8 +83,8 @@ export default Vue.extend({
                 title: 'Répondant',
             },
             {
-                property: 'checkbox',
-                title: '',
+                property: 'action',
+                title: 'Action',
             },
         ];
         
@@ -94,7 +132,7 @@ export default Vue.extend({
             const qstnr = this.control.questionnaires.filter((questionnaire) => !questionnaire.is_draft);
 
             return qstnr.map(element => {
-                const objQuestionnaire = this.getTreeViewLevel(element);
+                const objQuestionnaire = this.getTreeViewLevel(element, false, true);
 
                 if (
                     Object.prototype.hasOwnProperty.call(element, 'themes') &&
@@ -139,7 +177,7 @@ export default Vue.extend({
         /**
          * get formatted item for treeview plugin
          */
-        getTreeViewLevel(item, hasFiles = false) {
+        getTreeViewLevel(item, hasFiles = false, isQuestionnaire = false) {
             const objectTreeView = {
                 name: '',
                 dateDepot: '',
@@ -154,6 +192,10 @@ export default Vue.extend({
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView._id = 'file';
+            } else if (isQuestionnaire) {
+                objectTreeView.name = item.title || item.description;
+                objectTreeView._children = [];
+                objectTreeView._id = 'questionnaire';
             } else {
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
