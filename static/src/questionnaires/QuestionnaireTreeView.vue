@@ -6,13 +6,12 @@
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
-            <template slot="name_file" slot-scope="props"><a href="">{{ props.row.name }}</a></template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
             <template slot="action_questionnaire" slot-scope="props">
                 <div class="btn-group">
                     <a
-                      href=""
+                      :href="questionnaireDetailUrl(props.row.id)"
                       title="Voir le questionnaire publié"
                       class="btn btn-secondary"
                     >
@@ -40,13 +39,13 @@
                 </div>
             </template>
             <template slot="action_file" slot-scope="props">
-                <button
+                <a
+                    :href="props.row.url"
                     class="btn btn-secondary"
-                    type="button"
                 >
                     <i class="fas fa-file-export"></i>
                     Télécharger
-                </button>
+                </a>
             </template>
             <template slot="no-rows">Pas de résultats</template>
             <template slot="toggle-children-icon" slot-scope="props"></template>
@@ -59,6 +58,7 @@ import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
 import Vue from 'vue';
 import { VueAdsTable } from 'vue-ads-table-tree';
+import backendUrls from '../utils/backend';
 
 export default Vue.extend({
     props: {
@@ -184,7 +184,9 @@ export default Vue.extend({
                 repondant: '',
                 _showChildren: true,
                 _children: [],
-                _id: ''
+                _id: '',
+                id: '',
+                url: ''
             };
 
             if (hasFiles) {
@@ -192,16 +194,22 @@ export default Vue.extend({
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView._id = 'file';
+                objectTreeView.url = item.url;
             } else if (isQuestionnaire) {
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
                 objectTreeView._id = 'questionnaire';
+                objectTreeView.id = item.id;
             } else {
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
             }
 
             return objectTreeView;
+        },
+
+        questionnaireDetailUrl(questionnaireId) {
+            return backendUrls['questionnaire-detail'](questionnaireId)
         }
     },
 });
