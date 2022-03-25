@@ -27,7 +27,6 @@
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
-            <template slot="name_file" slot-scope="props"><a href="">{{ props.row.name }}</a></template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
             <template slot="action_questionnaire" slot-scope="props">
@@ -86,6 +85,7 @@ import ConfirmModal from '../utils/ConfirmModal'
 import Vue from 'vue';
 import Vuex, { mapState } from 'vuex'
 import { VueAdsTable } from 'vue-ads-table-tree';
+import backendUrls from '../utils/backend';
 
 export default Vue.extend({
     props: {
