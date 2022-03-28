@@ -85,7 +85,6 @@ import ConfirmModal from '../utils/ConfirmModal'
 import Vue from 'vue';
 import Vuex, { mapState } from 'vuex'
 import { VueAdsTable } from 'vue-ads-table-tree';
-import backendUrls from '../utils/backend';
 
 export default Vue.extend({
     props: {
