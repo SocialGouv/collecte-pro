@@ -363,8 +363,13 @@ export default Vue.extend({
       }
       this.isList = !this.isList;
     },
-    changeView(currentView){
-      this.currentView = currentView;
+    toggleView(){
+      if (this.isList) {
+        this.currentView = 'tree';
+      } else {
+        this.currentView = 'questions';
+      }
+      this.isList = !this.isList;
     },
     cloneQuestionnaire() {
       let self = this;
