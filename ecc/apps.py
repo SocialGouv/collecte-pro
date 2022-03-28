@@ -19,6 +19,7 @@ class EccConfig(AppConfig):
         registry.register(apps.get_model('control.Question'))
         registry.register(apps.get_model('control.Questionnaire'))
         registry.register(apps.get_model('control.Theme'))
+        registry.register(apps.get_model('auth.Group'))
         registry.register(apps.get_model('user_profiles.UserProfile'))
         registry.register(apps.get_model('faq.FAQItem'))
         registry.register(apps.get_model('admin.LogEntry'))
