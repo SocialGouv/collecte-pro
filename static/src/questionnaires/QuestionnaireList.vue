@@ -23,13 +23,8 @@
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
-      <div class="card-title mr-4">
-        <i class="fe fe-list mr-2"></i>
-        <button @click="changeView('questions')">Questionnaires</button>
-      </div>
-      <div class="card-title">
-        <i class="fe fe-list mr-2"></i>
-        <button @click="changeView('tree')">TreeView</button>
+      <div class="card-title btn btn-secondary mr-4">
+        <button @click="toggleView()"><i class="fe fe-folder mr-2" :class="{'fe-list':isList}"></i> Questionnaires</button>
       </div>
     </div>
 
@@ -298,6 +293,7 @@ export default Vue.extend({
       questionnaireId: null,
       checkedCtrls: [],
       currentView: 'questions',
+      isList: true,
     }
   },
   computed: {
@@ -359,8 +355,13 @@ export default Vue.extend({
         window.location.reload();
       })
     },
-    changeView(currentView){
-      this.currentView = currentView;
+    toggleView(){
+      if (this.isList) {
+        this.currentView = 'tree';
+      } else {
+        this.currentView = 'questions';
+      }
+      this.isList = !this.isList;
     },
     cloneQuestionnaire() {
       let self = this;
