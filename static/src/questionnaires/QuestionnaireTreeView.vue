@@ -1,5 +1,26 @@
 <template>
-    <div id="app">
+    <div id="app" class="card">
+        <confirm-modal
+          ref="modal"
+          cancel-button="Annuler"
+          confirm-button="Dupliquer le questionnaire"
+          title="Dupliquer un questionnaire"
+          @confirm="cloneQuestionnaire"
+        >
+          <info-bar>
+            Veuillez sélectionner les espaces de dépôt vers lesquels vous souhaitez dupliquer ce questionnaire.
+          </info-bar>
+          <form>
+            <div class="form-group mb-6">
+              <label v-for="ctrl in accessibleControls"
+                    :key="ctrl.id"
+                    class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
+                <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
+              </label>
+            </div>
+          </form>
+        </confirm-modal>
         <vue-ads-table
             :columns="columns"
             :rows="accessibleQuestionnaires"
@@ -31,6 +52,7 @@
                       <button
                         class="dropdown-item"
                         type="button"
+                        @click="showModal(props.row.id)"
                       >
                         <i class="fe fe-copy"></i>
                         Dupliquer
@@ -54,17 +76,23 @@
 </template>
 
 <script>
+import axios from 'axios';
+import backendUrls from '../utils/backend';
 import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
+import InfoBar from '../utils/InfoBar'
+import ConfirmModal from '../utils/ConfirmModal'
 import Vue from 'vue';
+import Vuex, { mapState } from 'vuex'
 import { VueAdsTable } from 'vue-ads-table-tree';
-import backendUrls from '../utils/backend';
 
 export default Vue.extend({
     props: {
         control: {type: Object, default: () => ({})}
     },
     components: {
+        InfoBar,
+        ConfirmModal,
         VueAdsTable,
     },
 
@@ -87,7 +115,7 @@ export default Vue.extend({
                 title: 'Action',
             },
         ];
-        
+
         let classes = {
             group: {
                 'vue-ads-font-bold': true,
@@ -124,10 +152,17 @@ export default Vue.extend({
             filter: '',
             start: 0,
             end: 2,
+            checkedCtrls: [],
         };
     },
 
     computed: {
+        ...mapState({
+          controls: 'controls',
+        }),
+        accessibleControls() {
+          return this.controls
+        },
         accessibleQuestionnaires() {
             const qstnr = this.control.questionnaires.filter((questionnaire) => !questionnaire.is_draft);
 
@@ -172,7 +207,7 @@ export default Vue.extend({
             });
         },
     },
-    
+
     methods: {
         /**
          * get formatted item for treeview plugin
@@ -210,7 +245,68 @@ export default Vue.extend({
 
         questionnaireDetailUrl(questionnaireId) {
             return backendUrls['questionnaire-detail'](questionnaireId)
-        }
+        },
+
+        showModal(qId) {
+          this.questionnaireId = qId
+          $(this.$refs.modal.$el).modal('show')
+        },
+
+        cloneQuestionnaire() {
+          let self = this;
+          const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
+          const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
+
+          console.log(this.checkedCtrls);
+          console.log(this.checkedCtrls.length);
+          if (this.checkedCtrls.length) {
+            const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
+            const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
+            console.log(destCtrls);
+
+            destCtrls.forEach(ctrl => {
+              const themes = curQ.themes.map(t => {
+                const qq = t.questions.map(q => {
+                  return { description: q.description }
+                })
+                return { title: t.title, questions: qq }
+              })
+
+              let newQ = { ...curQ, control: ctrl.id, is_draft: true, id: null, themes: [] }
+              getCreateMethod()(newQ).then(response => {
+                const qId = response.data.id
+                newQ = { ...newQ, themes: themes }
+
+                getUpdateMethod(qId)(newQ).then(response => {
+                  const updatedQ = response.data
+
+                  // Update questionnaires list render when duplicated
+                  self.$root.$emit('questionnaire-created')
+                  curQ.themes.forEach(t => {
+                    t.questions.forEach(q => {
+                      const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
+                        .questions.find(updatedQ => updatedQ.order === q.order).id
+
+                      q.question_files.forEach(qf => {
+                        axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                          const formData = new FormData()
+                          formData.append('file', response.data, qf.basename)
+                          formData.append('question', qId)
+
+                          axios.post(backendUrls.annexe(), formData, {
+                            headers: {
+                              'Content-Type': 'multipart/form-data',
+                            },
+                          })
+                        })
+                      })
+                    })
+                  })
+                })
+              })
+            });
+          }
+        },
     },
 });
 </script>
