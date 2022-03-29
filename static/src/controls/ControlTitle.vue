@@ -75,6 +75,15 @@
         </div>
       </form>
     </confirm-modal>
+    <div
+      v-if="this.loaderActive"
+      class="loader-container"
+    >
+      <div class="loader-wrapper">
+        <div class="loader"></div>
+        <p>Téléchargement en cours</p>
+      </div>
+    </div>
     <div class="card-status card-status-top bg-blue"></div>
     <template v-if="editMode">
       <div class="card-body">
@@ -235,6 +244,7 @@ export default Vue.extend({
       allChecked: false,
       checkedQuestionnaires: [],
       users: [],
+      loaderActive: false,
     }
   },
   computed: {
@@ -391,6 +401,7 @@ export default Vue.extend({
         return;
       }
 
+      this.loaderActive = true;
       const formatFilename = (rf) => {
         const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
         const themeId = String(rf.themeId + 1).padStart(2, '0')
@@ -442,6 +453,7 @@ export default Vue.extend({
           cnt++
           if (cnt === responseFiles.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => {
+              this.loaderActive = false;
               saveAs(content, zipFilename)
             })
           }
@@ -504,5 +516,42 @@ export default Vue.extend({
 <style scoped>
   .break-word {
     word-break: break-all;
+  }
+  .loader-container {
+    text-align: center;
+    z-index:9999;
+    padding-top:100px;
+    position:fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    overflow:auto;
+    background-color:rgba(0,0,0,.4);
+  }
+  .loader-wrapper {
+    background-color:rgba(255,255,255,.9);
+    width: 200px;
+    margin: auto;
+    padding: 6px;
+    border-radius: 6px;
+  }
+  .loader {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .loader div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #6916a0;
+    border-radius: 50%;
+    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #6916a0 transparent transparent transparent;
   }
 </style>
