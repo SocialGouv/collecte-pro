@@ -4,12 +4,7 @@
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
         <h4 class="modal-title">
-          <div class="mb-4">
-            Vous êtes sur le point de supprimer l'espace de dépôt :
-          </div>
-          <div>
-            "{{ control.title }}"
-          </div>
+          Vous êtes sur le point de supprimer l'espace de dépôt "{{ control.title }}"
         </h4>
       </div>
 

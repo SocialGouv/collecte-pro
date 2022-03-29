@@ -102,10 +102,10 @@
                 <small>
                   {{ questionnaire.editor.first_name }}
                   {{ questionnaire.editor.last_name }}
-                  <div v-if="questionnaire.modified_date" class="text-muted">
+                  <span v-if="questionnaire.modified_date" class="text-muted editor-date">
                     {{ questionnaire.modified_date }} à
                     {{ questionnaire.modified_time }}
-                  </div>
+                  </span>
                 </small>
               </div>
             </td>
@@ -429,6 +429,10 @@ export default Vue.extend({
 
 .editor-column {
   min-width: 9em;
+}
+
+.editor-date {
+  display: block;
 }
 
 .end-date-column {
