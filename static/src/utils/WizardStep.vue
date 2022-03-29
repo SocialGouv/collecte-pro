@@ -78,17 +78,17 @@ export default Vue.extend({
     text-decoration-line: none;
 }
 .wizard-step a:hover .wizard-step-bubble, .wizard-step a:hover .wizard-step-thread {
-    background-color: #45aaf2;
+    background-color: #0e7ac7;
     color: white;
 }
 
 /* Active step */
 .active .wizard-step-thread {
-    background-color: #45aaf2;
+    background-color: #0c7bc6;
     color: #fff;
 }
 .active .wizard-step-bubble {
-    background-color: #45aaf2;
+    background-color: #0c7bc6;
     color: #fff;
 }
 

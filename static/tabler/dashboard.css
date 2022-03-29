@@ -20,12 +20,12 @@ Dashboard UI
   --teal: #2bcbba;
   --cyan: #17a2b8;
   --white: #fff;
-  --gray: #868e96;
+  --gray: #6f777f;
   --gray-dark: #343a40;
   --azure: #45aaf2;
   --lime: #7bd235;
   --primary: #3473cb;
-  --secondary: #868e96;
+  --secondary: #6f777f;
   --success: #5eba00;
   --info: #45aaf2;
   --warning: #f1c40f;
@@ -476,7 +476,7 @@ mark,
 .blockquote-footer {
   display: block;
   font-size: 80%;
-  color: #868e96;
+  color: #6f777f;
 }
 
 .blockquote-footer::before {
@@ -508,7 +508,7 @@ mark,
 
 .figure-caption {
   font-size: 90%;
-  color: #868e96;
+  color: #6f777f;
 }
 
 code,
@@ -2401,8 +2401,8 @@ fieldset:disabled a.btn {
 
 .btn-secondary {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6f777f;
+  border-color: #6f777f;
 }
 
 .btn-secondary:hover {
@@ -2417,8 +2417,8 @@ fieldset:disabled a.btn {
 
 .btn-secondary.disabled, .btn-secondary:disabled {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6f777f;
+  border-color: #6f777f;
 }
 
 .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
@@ -2672,16 +2672,16 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-secondary {
-  color: #868e96;
+  color: #6f777f;
   background-color: transparent;
   background-image: none;
-  border-color: #868e96;
+  border-color: #6f777f;
 }
 
 .btn-outline-secondary:hover {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6f777f;
+  border-color: #6f777f;
 }
 
 .btn-outline-secondary:focus, .btn-outline-secondary.focus {
@@ -2689,15 +2689,15 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-secondary.disabled, .btn-outline-secondary:disabled {
-  color: #868e96;
+  color: #6f777f;
   background-color: transparent;
 }
 
 .btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-outline-secondary.dropdown-toggle {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6f777f;
+  border-color: #6f777f;
 }
 
 .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
@@ -2929,7 +2929,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-link:disabled, .btn-link.disabled {
-  color: #868e96;
+  color: #6f777f;
   pointer-events: none;
 }
 
@@ -3174,7 +3174,7 @@ input[type="button"].btn-block {
 }
 
 .dropdown-item.disabled, .dropdown-item:disabled {
-  color: #868e96;
+  color: #6f777f;
   background-color: transparent;
 }
 
@@ -3187,7 +3187,7 @@ input[type="button"].btn-block {
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
   font-size: 0.875rem;
-  color: #868e96;
+  color: #6f777f;
   white-space: nowrap;
 }
 
@@ -3515,7 +3515,7 @@ input[type="button"].btn-block {
 }
 
 .custom-control-input:disabled ~ .custom-control-label {
-  color: #868e96;
+  color: #6f777f;
 }
 
 .custom-control-input:disabled ~ .custom-control-label::before {
@@ -3634,7 +3634,7 @@ input[type="button"].btn-block {
 }
 
 .custom-select:disabled {
-  color: #868e96;
+  color: #6f777f;
   background-color: #e9ecef;
 }
 
@@ -3853,7 +3853,7 @@ input[type="button"].btn-block {
 }
 
 .nav-link.disabled {
-  color: #868e96;
+  color: #6f777f;
 }
 
 .nav-tabs {
@@ -3875,7 +3875,7 @@ input[type="button"].btn-block {
 }
 
 .nav-tabs .nav-link.disabled {
-  color: #868e96;
+  color: #6f777f;
   background-color: transparent;
   border-color: transparent;
 }
@@ -4617,7 +4617,7 @@ input[type="button"].btn-block {
 .breadcrumb-item + .breadcrumb-item::before {
   display: inline-block;
   padding-right: 0.5rem;
-  color: #868e96;
+  color: #6f777f;
   content: "/";
 }
 
@@ -4630,7 +4630,7 @@ input[type="button"].btn-block {
 }
 
 .breadcrumb-item.active {
-  color: #868e96;
+  color: #6f777f;
 }
 
 .pagination {
@@ -4768,7 +4768,7 @@ input[type="button"].btn-block {
 
 .badge-secondary {
   color: #fff;
-  background-color: #868e96;
+  background-color: #6f777f;
 }
 
 .badge-secondary[href]:hover, .badge-secondary[href]:focus {
@@ -5124,7 +5124,7 @@ input[type="button"].btn-block {
 }
 
 .list-group-item.disabled, .list-group-item:disabled {
-  color: #868e96;
+  color: #6f777f;
   background-color: #fff;
 }
 
@@ -6037,7 +6037,7 @@ button.bg-primary:focus {
 }
 
 .bg-secondary {
-  background-color: #868e96 !important;
+  background-color: #6f777f !important;
 }
 
 a.bg-secondary:hover, a.bg-secondary:focus,
@@ -6159,7 +6159,7 @@ button.bg-dark:focus {
 }
 
 .border-secondary {
-  border-color: #868e96 !important;
+  border-color: #6f777f !important;
 }
 
 .border-success {
@@ -9696,7 +9696,7 @@ a.text-primary:hover, a.text-primary:focus {
 }
 
 .text-secondary {
-  color: #868e96 !important;
+  color: #6f777f !important;
 }
 
 a.text-secondary:hover, a.text-secondary:focus {
@@ -11362,6 +11362,10 @@ button.bg-blue:focus {
   background-color: #2f66b3 !important;
 }
 
+.bg-blue.stamp {
+  color: #fff;
+}
+
 .text-blue {
   color: #3473cb !important;
 }
@@ -11507,7 +11511,7 @@ button.bg-white:focus {
 }
 
 .bg-gray {
-  background-color: #868e96 !important;
+  background-color: #6f777f !important;
 }
 
 a.bg-gray:hover, a.bg-gray:focus,
@@ -11517,7 +11521,7 @@ button.bg-gray:focus {
 }
 
 .text-gray {
-  color: #868e96 !important;
+  color: #6f777f !important;
 }
 
 .bg-gray-dark {
@@ -12587,8 +12591,8 @@ a.icon:hover {
 
 .btn-gray {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6E787F;
+  border-color: #6E787F;
 }
 
 .btn-gray:hover {
@@ -12603,8 +12607,8 @@ a.icon:hover {
 
 .btn-gray.disabled, .btn-gray:disabled {
   color: #fff;
-  background-color: #868e96;
-  border-color: #868e96;
+  background-color: #6f777f;
+  border-color: #6f777f;
 }
 
 .btn-gray:not(:disabled):not(.disabled):active, .btn-gray:not(:disabled):not(.disabled).active,
@@ -12840,7 +12844,7 @@ a.icon:hover {
 
 .badge-default {
   background: #e9ecef;
-  color: #868e96;
+  color: #6f777f;
 }
 
 .table thead th, .text-wrap table thead th {
@@ -13541,7 +13545,7 @@ Card alert
   background: #ced4da no-repeat center/cover;
   position: relative;
   text-align: center;
-  color: #868e96;
+  color: #6f777f;
   font-weight: 600;
   vertical-align: bottom;
   font-size: .875rem;
@@ -13563,7 +13567,7 @@ Card alert
   width: .75rem;
   height: .75rem;
   border: 2px solid #fff;
-  background: #868e96;
+  background: #6f777f;
   border-radius: 50%;
 }
 
@@ -13603,7 +13607,7 @@ Card alert
 }
 
 .avatar-placeholder {
-  background: #ced4da url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="134" height="134" viewBox="0 0 134 134"><path fill="#868e96" d="M65.92 66.34h2.16c14.802.42 30.928 6.062 29.283 20.35l-1.618 13.32c-.844 6.815-5.208 7.828-13.972 7.866H52.23c-8.764-.038-13.13-1.05-13.973-7.865l-1.62-13.32C34.994 72.4 51.12 66.76 65.92 66.34zM49.432 43.934c0-9.82 7.99-17.81 17.807-17.81 9.82 0 17.81 7.99 17.81 17.81 0 9.82-7.99 17.807-17.81 17.807-9.82 0-17.808-7.987-17.808-17.806z"/></svg>') no-repeat center/80%;
+  background: #ced4da url('data:image/svg+xml;charset=utf8,<svg xmlns="http://www.w3.org/2000/svg" width="134" height="134" viewBox="0 0 134 134"><path fill="#6f777f" d="M65.92 66.34h2.16c14.802.42 30.928 6.062 29.283 20.35l-1.618 13.32c-.844 6.815-5.208 7.828-13.972 7.866H52.23c-8.764-.038-13.13-1.05-13.973-7.865l-1.62-13.32C34.994 72.4 51.12 66.76 65.92 66.34zM49.432 43.934c0-9.82 7.99-17.81 17.807-17.81 9.82 0 17.81 7.99 17.81 17.81 0 9.82-7.99 17.807-17.81 17.807-9.82 0-17.808-7.987-17.808-17.806z"/></svg>') no-repeat center/80%;
 }
 
 .avatar-list {
@@ -13685,7 +13689,7 @@ Card alert
 
 .avatar-gray {
   background-color: #dbdde0;
-  color: #868e96;
+  color: #6f777f;
 }
 
 .avatar-gray-dark {
@@ -14339,7 +14343,7 @@ a.chip:hover {
 
 .stamp {
   color: #000;
-  background: #868e96;
+  background: #6f777f;
   display: inline-block;
   min-width: 2rem;
   height: 2rem;
@@ -14622,7 +14626,7 @@ a.tag-addon:hover {
 }
 
 .tag-gray {
-  background-color: #868e96;
+  background-color: #6f777f;
   color: #000;
 }
 
@@ -14647,7 +14651,7 @@ a.tag-addon:hover {
 }
 
 .tag-secondary {
-  background-color: #868e96;
+  background-color: #6f777f;
   color: #fff;
 }
 
