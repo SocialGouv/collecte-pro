@@ -167,14 +167,14 @@ sup {
 }
 
 a {
-  color: #3473cb;
+  color: #3371c7;
   text-decoration: none;
   background-color: transparent;
   -webkit-text-decoration-skip: objects;
 }
 
 a:hover {
-  color: #295a9f;
+  color: #3371c7;
   text-decoration: underline;
 }
 
@@ -227,7 +227,7 @@ table {
 caption {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-  color: #6e7787;
+  color: #6a7281;
   text-align: left;
   caption-side: bottom;
 }
@@ -2025,7 +2025,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 }
 
 .form-check-input:disabled ~ .form-check-label {
-  color: #6e7787;
+  color: #6a7281;
 }
 
 .form-check-label {
@@ -9756,7 +9756,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-muted {
-  color: #6e7787 !important;
+  color: #6a7281 !important;
 }
 
 .text-black-50 {
@@ -10175,7 +10175,7 @@ body.fixed-header .page {
 }
 
 .page-title-icon {
-  color: #6e7787;
+  color: #6a7281;
   font-size: 1.25rem;
 }
 
@@ -10366,7 +10366,7 @@ body.fixed-header .header {
   width: 2rem;
   height: 2rem;
   position: relative;
-  color: #6e7787;
+  color: #6a7281;
 }
 
 .header-toggler:hover {
@@ -10391,7 +10391,7 @@ body.fixed-header .header {
   border-top: 1px solid rgba(0, 40, 100, 0.12);
   font-size: 0.875rem;
   padding: 1.25rem 0;
-  color: #6e7787;
+  color: #6a7281;
 }
 
 .footer a:not(.btn) {
@@ -10595,7 +10595,7 @@ button.bg-pink-lightest:focus {
 }
 
 .bg-pink-lighter {
-  background-color: #fcd3e1 !important;
+  background-color: #fdecf2 !important;
 }
 
 a.bg-pink-lighter:hover, a.bg-pink-lighter:focus,
@@ -11563,7 +11563,7 @@ button.bg-lime:focus {
 }
 
 .icon {
-  color: #6e7787 !important;
+  color: #6a7281 !important;
 }
 
 .icon i {
@@ -11625,7 +11625,7 @@ a.icon:hover {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  color: #6e7787;
+  color: #6a7281;
   margin: 0 -.75rem;
 }
 
@@ -11689,7 +11689,7 @@ a.icon:hover {
 .nav-tabs .nav-submenu .nav-item {
   display: block;
   padding: .5rem 1rem;
-  color: #6e7787;
+  color: #6a7281;
   margin: 0 !important;
   cursor: pointer;
   transition: .3s background;
@@ -12723,7 +12723,7 @@ a.icon:hover {
 
 .btn-option {
   background: transparent;
-  color: #6e7787;
+  color: #6a7281;
 }
 
 .btn-option:hover {
@@ -12851,7 +12851,7 @@ a.icon:hover {
 }
 
 .table th, .text-wrap table th {
-  color: #6e7787;
+  color: #6a7281;
   text-transform: uppercase;
   font-size: 0.875rem;
   font-weight: 400;
@@ -12978,7 +12978,7 @@ a.icon:hover {
 }
 
 .page-breadcrumb .breadcrumb-item {
-  color: #6e7787;
+  color: #6a7281;
 }
 
 .page-breadcrumb .breadcrumb-item.active {
@@ -13119,7 +13119,7 @@ a.icon:hover {
 
 .card-title small,
 .card-subtitle {
-  color: #6e7787;
+  color: #6a7281;
   font-size: 0.875rem;
   display: block;
   margin: -.75rem 0 1rem;
@@ -13247,14 +13247,14 @@ a.icon:hover {
   -ms-flex-order: 100;
   order: 100;
   margin-right: -.5rem;
-  color: #6e7787;
+  color: #6a7281;
   -ms-flex-item-align: center;
   align-self: center;
 }
 
 .card-options a:not(.btn) {
   margin-left: .5rem;
-  color: #6e7787;
+  color: #6a7281;
   display: inline-block;
   min-width: 1rem;
 }
@@ -13485,7 +13485,7 @@ Card alert
 }
 
 .dropdown-icon {
-  color: #6e7787;
+  color: #6a7281;
   margin-right: .5rem;
   margin-left: -.5rem;
   width: 1em;
@@ -13644,7 +13644,7 @@ Card alert
 }
 
 .avatar-pink {
-  background-color: #fcd3e1;
+  background-color: #fdecf2;
   color: #d80d50;
 }
 
@@ -14060,7 +14060,7 @@ Icon input
   top: 0;
   bottom: 0;
   left: 0;
-  color: #6e7787;
+  color: #6a7281;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -14108,7 +14108,7 @@ Icon input
   height: 1rem;
   text-align: center;
   line-height: 1rem;
-  color: #6e7787;
+  color: #6a7281;
   background: #f8f9fa;
   border-radius: 50%;
   font-size: 0.75rem;
@@ -14150,7 +14150,7 @@ Icon input
 .social-links li a {
   background: #f8f8f8;
   border-radius: 50%;
-  color: #6e7787;
+  color: #6a7281;
   display: inline-block;
   height: 1.75rem;
   width: 1.75rem;
@@ -14298,7 +14298,7 @@ Icon input
 
 .chart-circle-value small {
   display: block;
-  color: #6e7787;
+  color: #6a7281;
   font-size: 0.9375rem;
 }
 
@@ -14338,7 +14338,7 @@ a.chip:hover {
 }
 
 .stamp {
-  color: #fff;
+  color: #000;
   background: #868e96;
   display: inline-block;
   min-width: 2rem;
@@ -15136,7 +15136,7 @@ a.tag-addon:hover {
   position: relative;
   cursor: pointer;
   border-radius: 3px;
-  color: #6e7787;
+  color: #6a7281;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -15339,7 +15339,7 @@ a.tag-addon:hover {
 .imagecheck-caption {
   text-align: center;
   padding: .25rem .25rem;
-  color: #6e7787;
+  color: #6a7281;
   font-size: 0.875rem;
   transition: .3s color;
 }
@@ -15461,7 +15461,7 @@ a.tag-addon:hover {
 .timeline-time {
   white-space: nowrap;
   margin-left: auto;
-  color: #6e7787;
+  color: #6a7281;
   font-size: 87.5%;
 }
 
