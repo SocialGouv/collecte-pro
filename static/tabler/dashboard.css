@@ -12,7 +12,7 @@ Dashboard UI
   --blue: #467fcf;
   --indigo: #6574cd;
   --purple: #a55eea;
-  --pink: #f66d9b;
+  --pink: #d80d50;
   --red: #cd201f;
   --orange: #fd9644;
   --yellow: #f1c40f;
@@ -11395,7 +11395,7 @@ button.bg-purple:focus {
 }
 
 .bg-pink {
-  background-color: #f66d9b !important;
+  background-color: #d80d50 !important;
 }
 
 a.bg-pink:hover, a.bg-pink:focus,
@@ -11405,7 +11405,7 @@ button.bg-pink:focus {
 }
 
 .text-pink {
-  color: #f66d9b !important;
+  color: #d80d50 !important;
 }
 
 .bg-red {
@@ -12315,8 +12315,8 @@ a.icon:hover {
 
 .btn-pink {
   color: #fff;
-  background-color: #f66d9b;
-  border-color: #f66d9b;
+  background-color: #d80d50;
+  border-color: #d80d50;
 }
 
 .btn-pink:hover {
@@ -12331,8 +12331,8 @@ a.icon:hover {
 
 .btn-pink.disabled, .btn-pink:disabled {
   color: #fff;
-  background-color: #f66d9b;
-  border-color: #f66d9b;
+  background-color: #d80d50;
+  border-color: #d80d50;
 }
 
 .btn-pink:not(:disabled):not(.disabled):active, .btn-pink:not(:disabled):not(.disabled).active,
@@ -13645,7 +13645,7 @@ Card alert
 
 .avatar-pink {
   background-color: #fcd3e1;
-  color: #f66d9b;
+  color: #d80d50;
 }
 
 .avatar-red {
@@ -14582,7 +14582,7 @@ a.tag-addon:hover {
 }
 
 .tag-pink {
-  background-color: #f66d9b;
+  background-color: #d80d50;
   color: #fff;
 }
 
