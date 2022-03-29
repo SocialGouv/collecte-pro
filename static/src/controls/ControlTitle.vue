@@ -260,6 +260,9 @@ export default Vue.extend({
   },
   methods: {
     showCloneModal() {
+      this.allChecked = false;
+      this.reference_code = '';
+      this.checkedQuestionnaires = [];
       $(this.$refs.modal.$el).modal('show')
     },
     hideCloneModal() {
@@ -365,6 +368,8 @@ export default Vue.extend({
       return promise
     },
     showExportModal() {
+      this.allChecked = false;
+      this.checkedQuestionnaires = []
       $(this.$refs.modalexp.$el).modal('show')
     },
     hideExportModal() {
@@ -381,7 +386,10 @@ export default Vue.extend({
       }
     },
     exportControl() {
-      if (!this.checkedQuestionnaires.length) return
+      if (!this.checkedQuestionnaires.length) {
+        this.hideExportModal();
+        return;
+      }
 
       const formatFilename = (rf) => {
         const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
