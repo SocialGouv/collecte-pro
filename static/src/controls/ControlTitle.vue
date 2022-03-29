@@ -162,14 +162,18 @@
               <span class="sr-only">Menu d'actions</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-              <button class="dropdown-item"
+              <button
+                      v-if="this.accessibleQuestionnaires.length > 0"
+                      class="dropdown-item"
                       type="button"
                       @click="showCloneModal"
               >
                 <i class="fas fa-file-export mr-2"></i>
                 Dupliquer
               </button>
-               <button class="dropdown-item"
+               <button
+                      v-if="this.accessibleQuestionnaires.length > 0"
+                      class="dropdown-item"
                       type="button"
                       @click="showExportModal"
               >
