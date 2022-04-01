@@ -14,19 +14,19 @@ def find_parent_control(obj):
 
 def soft_delete(modeladmin, request, queryset):
     for item in queryset:
-        item.soft_delete()
+        item.delete()
         parent = find_parent_control(item)
         add_log_entry(verb='admin soft deleted', session_user=request.user, obj=item, target=parent)
 
 
 def undelete(modeladmin, request, queryset):
     for item in queryset:
-        item.undelete()
+        item.restore()
         add_log_entry(verb='admin undeleted', session_user=request.user, obj=item, target=item)
 
 
-soft_delete.short_description = "Deactivate selected items - soft delete"
-undelete.short_description = "Re-activate seleted items - undelete"
+soft_delete.short_description = "Désactiver les objets sélectionnés"
+undelete.short_description = "Ré-activer les objets sélectionnés"
 
 
 class IsActiveFilter(admin.SimpleListFilter):
