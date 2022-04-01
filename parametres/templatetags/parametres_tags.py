@@ -21,3 +21,10 @@ def get_entity_picture_item():
         "url": "img/picture-Republique-francaise.png",
         "title": "Logo Marianne",
     }
+
+@register.simple_tag
+def get_support_email_item():
+    return Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first() or {
+        "url": "support@collecte-pro.gouv.fr",
+        "title": "Mail de support",
+    }

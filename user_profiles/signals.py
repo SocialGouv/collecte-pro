@@ -7,6 +7,7 @@ from actstream import action
 
 from .api_views import user_api_post_remove
 from .models import UserProfile
+from parametres.templatetags.parametres_tags import get_support_email_item
 from .serializers import user_api_post_add, user_api_post_update
 from utils.email import send_email
 
@@ -75,7 +76,7 @@ def bake_and_send_email(
         'control': control,
         'user': session_user,
         'target_user': user_profile.user,
-        'support_team_email': settings.SUPPORT_TEAM_EMAIL,
+        'support_team_email': get_support_email_item()["url"],
     }
     send_email(
         to=recipients,

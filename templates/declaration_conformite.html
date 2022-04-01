@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load email_obfuscator %}
+{% get_support_email_item as support_email %}
 
 {% block page_main_container_with_sidebar %}
   <div class="page-main flex-row">
@@ -128,7 +129,7 @@
 
           <a name="retour-d-information"></a>
           <h2>Retour d’information et contact</h2>
-          <p>Si vous n’arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter {{ settings.SUPPORT_TEAM_EMAIL|obfuscate_mailto:"l’administrateur du site collecte-pro" }} pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.</p>
+          <p>Si vous n’arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter {{ support_email.url|obfuscate_mailto:"l’administrateur du site collecte-pro" }} pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.</p>
 
           <a name="voies-de-recours"></a>
           <h2>Voies de recours</h2>
