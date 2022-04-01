@@ -335,7 +335,9 @@ export default Vue.extend({
               return this.cloneQuestionnaire(newQ, themes, q.themes)
             })
 
-          Promise.all(promises)
+          Promise.all(promises).then((values) => {
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 500);
+          });
         })
 
         this.hideCloneModal()
