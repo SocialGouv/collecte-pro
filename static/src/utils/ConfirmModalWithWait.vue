@@ -68,7 +68,7 @@ export default Vue.extend({
         return;
       }
 
-      const processingDoneCallback = (errorMessage, successMessage) => {
+      const processingDoneCallback = (errorMessage, successMessage, refreshUrl) => {
         if (errorMessage) {
           console.log("error!", errorMessage);
           this.errorMessage = errorMessage;
@@ -76,6 +76,9 @@ export default Vue.extend({
           return;
         }
         console.debug("ConfirmModalWithWait : processing done", successMessage);
+        if (refreshUrl) {
+          window.location.href = refreshUrl;
+        }
       };
 
       this.processing = true;

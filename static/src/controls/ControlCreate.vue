@@ -131,10 +131,7 @@ export default Vue.extend({
       axios.post(backendUrls.control(), payload)
         .then(response => {
           console.debug(response);
-          processingDoneCallback(null, response);
-          setTimeout(() => {
-            window.location.href = backendUrls.home();
-          }, 500);
+          processingDoneCallback(null, response, backendUrls.home());
         })
         .catch((error) => {
           console.error('Error creating control', error)
