@@ -128,7 +128,7 @@ class Control(SoftDeleteModel):
 class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     title = models.CharField("titre", max_length=255)
     sent_date = models.DateField(
-        verbose_name="date d'envoie", blank=True, null=True,
+        verbose_name="date d'envoi", blank=True, null=True,
         help_text="Date de transmission du questionnaire")
     end_date = models.DateField(
         verbose_name="échéance", blank=True, null=True,
@@ -334,7 +334,7 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
         to=settings.AUTH_USER_MODEL, related_name='response_files', on_delete=models.PROTECT)
     is_deleted = models.BooleanField(
         verbose_name="Supprimé", default=False,
-        help_text="Ce fichier est=il dans la corbeille?")
+        help_text="Ce fichier est-il dans la corbeille ?")
 
     class Meta:
         verbose_name = 'Réponse: Fichier Déposé'
