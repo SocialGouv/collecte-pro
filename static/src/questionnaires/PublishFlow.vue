@@ -104,7 +104,7 @@
           </button>
           <a class="btn btn-primary ml-2"
               :href="'mailto:' + emailHeader.audited +
-                    '?cc=' + emailHeader.editors +
+                    '?cc=' + emailHeader.inspectors +
                     '&subject=' + emailSubject +
                     '&body=' + emailBody"
               target="_blank"
@@ -161,9 +161,9 @@ export default Vue.extend({
       const currentControl = this.controls.find(control => control.id === this.questionnaire.control)
 
       if (currentControl) {
-        const editors = uniq(currentControl.questionnaires.map(q => q.editor.email)).join(',')
+        const inspectors = this.users.filter(u => u.profile_type === 'inspector').map(u => u.email).join(',')
         const audited = this.users.filter(u => u.profile_type === 'audited').map(u => u.email).join(',')
-        return { editors, audited }
+        return { inspectors, audited }
       }
 
       return {}
@@ -174,7 +174,7 @@ export default Vue.extend({
       const expiryDateString = this.questionnaire.end_date === null ? '' : `${newline}${newline}La date limite de réponse est le ${this.questionnaire.end_date}.`
 
       if (currentControl) {
-        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.id} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à collecte-pro pour le consulter et apporter vos réponses : ${this.config.site_url}${newline}${newline}Cordialement,`
+        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.numbering} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à collecte-pro pour le consulter et apporter vos réponses : ${this.config.site_url}${newline}${newline}Cordialement,`
       }
 
       return ''
