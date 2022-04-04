@@ -427,6 +427,31 @@ export default Vue.extend({
                         questionId: q.order,
                         basename: rf.basename,
                         url: rf.url,
+                        is_deleted: rf.is_deleted,
+                      }
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      const questionFiles = this.accessibleQuestionnaires
+        .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+        .flatMap(fq => {
+          if (fq.themes) {
+            return fq.themes.flatMap(t => {
+              if (t.questions) {
+                return t.questions.flatMap(q => {
+                  return q.question_files.flatMap(qf => {
+                    if (qf) {
+                      return {
+                        questionnaireNb: fq.numbering,
+                        themeId: t.order,
+                        questionId: q.order,
+                        basename: qf.basename,
+                        url: qf.url,
+                        is_deleted: qf.is_deleted,
                       }
                     }
                   })
@@ -440,6 +465,20 @@ export default Vue.extend({
       const zip = new JSZip()
       let cnt = 0
 
+      questionFiles.map(qf => {
+        const url = window.location.origin + qf.url
+
+        JSZipUtils.getBinaryContent(url, (err, data) => {
+          if (err) throw err
+
+          const formatted = formatFilename(qf)
+
+          zip.folder(`Q${formatted.questionnaireNb}`)
+            .folder(`ANNEXES-AUX-QUESTIONS`)
+            .file(formatted.filename, data, { binary: true })
+        })
+      })
+
       responseFiles.map(rf => {
         const url = window.location.origin + rf.url
 
@@ -448,9 +487,15 @@ export default Vue.extend({
 
           const formatted = formatFilename(rf)
 
-          zip.folder(`Q${formatted.questionnaireNb}`)
-            .folder(`T${formatted.themeId}`)
-            .file(formatted.filename, data, { binary: true })
+          if (rf.is_deleted) {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`CORBEILLE`)
+              .file(formatted.filename, data, { binary: true })
+          } else {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`T${formatted.themeId}`)
+              .file(formatted.filename, data, { binary: true })
+          }
 
           cnt++
           if (cnt === responseFiles.length) {
