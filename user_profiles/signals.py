@@ -7,7 +7,7 @@ from actstream import action
 
 from .api_views import user_api_post_remove
 from .models import UserProfile
-from parametres.templatetags.parametres_tags import get_support_email_item
+from parametres.models import Parametre
 from .serializers import user_api_post_add, user_api_post_update
 from utils.email import send_email
 
@@ -72,11 +72,16 @@ def bake_and_send_email(
     inspectors = control.user_profiles.filter(profile_type=UserProfile.INSPECTOR)
     inspectors = inspectors.exclude(user=session_user)
     inspectors_emails = inspectors.values_list('user__email', flat=True)
+    support_email = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
+    if isinstance(support_email, dict):
+        support_email = support_email["url"]
+    else:
+        support_email = support_email.url
     context = {
         'control': control,
         'user': session_user,
         'target_user': user_profile.user,
-        'support_team_email': get_support_email_item()["url"],
+        'support_team_email': support_email,
     }
     send_email(
         to=recipients,

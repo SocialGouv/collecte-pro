@@ -4,7 +4,7 @@ from utils.email import send_email
 
 from control.models import Control
 from .api_views import soft_delete_signal
-from parametres.templatetags.parametres_tags import get_support_email_item
+from parametres.models import Parametre
 from user_profiles.models import UserProfile
 
 
@@ -16,11 +16,16 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
     control = obj
     inspectors = control.user_profiles.filter(profile_type=UserProfile.INSPECTOR)
     inspectors_emails = inspectors.values_list('user__email', flat=True)
+    support_email = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
+    if isinstance(support_email, dict):
+        support_email = support_email["url"]
+    else:
+        support_email = support_email.url
     context = {
         'deleter_user': session_user,
         'control': control,
         'inspectors': inspectors,
-        'support_team_email': get_support_email_item()["url"],
+        'support_team_email': support_email,
     }
     subject = f"collecte-pro - Suppression de l'espace - {control.title_display}"
 
