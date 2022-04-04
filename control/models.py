@@ -199,6 +199,13 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         return os.path.basename(self.file.name)
 
     @property
+    def downloadname(self):
+        """
+        Name of file, without path.
+        """
+        return self.basename
+
+    @property
     def title_display(self):
         return f"Questionnaire n°{self.numbering} - {self.title}"
 
@@ -323,6 +330,13 @@ class QuestionFile(OrderedModel, FileInfoMixin):
         """
         return os.path.basename(self.file.name)
 
+    @property
+    def downloadname(self):
+        """
+        Name of file, without path.
+        """
+        return self.basename
+
 
 @cleanup.ignore
 class ResponseFile(TimeStampedModel, FileInfoMixin):
@@ -353,3 +367,10 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
         if self.is_deleted:
             return prefixer.strip_deleted_file_prefix()
         return prefixer.strip_file_prefix()
+
+    @property
+    def downloadname(self):
+        """
+        Name of file for download.
+        """
+        return os.path.basename(self.file.name)
