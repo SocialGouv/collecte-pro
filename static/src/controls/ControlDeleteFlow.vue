@@ -4,7 +4,7 @@
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
         <h4 class="modal-title">
-          Vous êtes sur le point de supprimer l'espace de dépôt "{{ control.title }}"
+          Vous êtes sur le point de supprimer l'espace de dépôt "{{ control.reference_code }}"
         </h4>
       </div>
 
