@@ -229,6 +229,14 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     def is_published(self):
         return not self.is_draft
 
+    @property
+    def has_replies(self):
+        for theme in self.themes.all():
+            for question in theme.questions.all():
+                if len(question.response_files.all()) > 0:
+                    return True
+        return False
+
     def __str__(self):
         display_text = f'[ID{self.id}]'
         if self.control:

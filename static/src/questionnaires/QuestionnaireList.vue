@@ -64,13 +64,13 @@
               <div v-if="questionnaire.is_draft">
                 <div class="tag tag-azure round-tag font-italic">Brouillon</div>
               </div>
-              <div v-else-if="questionnaire_has_replies(questionnaire.id) && !questionnaire_is_replied(questionnaire.id)">
+              <div v-else-if="questionnaire.has_replies && !questionnaire.is_replied">
                 <div class="tag tag-yellow round-tag font-italic">En cours</div>
               </div>
-              <div v-else-if="questionnaire_is_replied(questionnaire.id) && !questionnaire_is_finalized(questionnaire.id)">
+              <div v-else-if="questionnaire.is_replied && !questionnaire.is_finalized">
                 <div class="tag tag-orange round-tag font-italic">Répondu</div>
               </div>
-              <div v-else-if="questionnaire_is_finalized(questionnaire.id)">
+              <div v-else-if="questionnaire.is_finalized">
                 <div class="tag tag-purple round-tag font-italic">Finalisé</div>
               </div>
               <div v-else>
@@ -111,7 +111,7 @@
             </td>
             <td class="w-1 action-column">
               <template v-if="!user.is_inspector">
-                <div v-if="questionnaire_has_replies(questionnaire.id)" class="text-right">
+                <div v-if="questionnaire.has_replies && !questionnaire.is_replied" class="text-right">
                    <div class="btn-group">
                       <a class="btn btn-secondary"
                         :href="questionnaireDetailUrl(questionnaire.id)"
@@ -231,7 +231,7 @@
                         Dupliquer
                       </button>
                       <button
-                        v-if="questionnaire_is_replied(questionnaire.id)"
+                        v-if="questionnaire.is_replied && !questionnaire.is_finalized"
                         class="dropdown-item text-success"
                         type="button"
                         @click="markQuestionnaireAsFinalized(questionnaire.id)"
@@ -332,39 +332,21 @@ export default Vue.extend({
       this.questionnaireId = qId
       $(this.$refs.modal.$el).modal('show')
     },
-    questionnaire_is_replied(qId) {
-      const q = this.control.questionnaires.find(q => q.id === qId)
-      return q.is_replied
-    },
-    questionnaire_is_finalized(qId) {
-      const q = this.control.questionnaires.find(q => q.id === qId)
-      return q.is_finalized
-    },
-    questionnaire_has_replies(qId) {
-      const q = this.control.questionnaires.find(q => q.id === qId)
-      let found_replies = false
-      if(q.themes) {
-        q.themes.map(theme => {
-          theme.questions.map(question => {
-            if(question.response_files.length) {
-              found_replies = true
-            }
-          })
-        })
-      }
-      return found_replies
-    },
     markQuestionnaireAsReplied(qId) {
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
       const curQ = this.control.questionnaires.find(q => q.id === qId)
       const newQ = { ...curQ, is_replied: true }
-      getUpdateMethod(qId)(newQ)
+      getUpdateMethod(qId)(newQ).then(() => {
+        window.location.reload();
+      })
     },
     markQuestionnaireAsFinalized(qId) {
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
       const curQ = this.control.questionnaires.find(q => q.id === qId)
       const newQ = { ...curQ, is_finalized: true }
-      getUpdateMethod(qId)(newQ)
+      getUpdateMethod(qId)(newQ).then(() => {
+        window.location.reload();
+      })
     },
     cloneQuestionnaire() {
       let self = this;
