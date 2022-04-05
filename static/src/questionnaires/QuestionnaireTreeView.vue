@@ -87,8 +87,8 @@
             </template>
             <template slot="action_file" slot-scope="props">
                 <a
-                    :href="props.row.url"
                     class="btn btn-secondary"
+                    @click="exportControl(props.row.id, props.row._id)"
                 >
                     <i class="fas fa-file-export"></i>
                     Exporter
@@ -201,21 +201,21 @@ export default Vue.extend({
         },
         treeViewElements() {
             return this.accessibleQuestionnaires.map(element => {
-                const objQuestionnaire = this.getTreeViewLevel(element, false, true);
+                const objQuestionnaire = this.getTreeViewLevel(element);
 
                 if (
                     Object.prototype.hasOwnProperty.call(element, 'themes') &&
                     element.themes.length
                 ) {
                     objQuestionnaire._children = element.themes.map(theme => {
-                        const objTheme = this.getTreeViewLevel(theme, false, false, true);
+                        const objTheme = this.getTreeViewLevel(theme, element.id);
 
                         if (
                             Object.prototype.hasOwnProperty.call(theme, 'questions') &&
                             theme.questions.length
                         ) {
                             objTheme._children = theme.questions.map(question => {
-                                const objQuestion = this.getTreeViewLevel(question, false, false , false, true);
+                                const objQuestion = this.getTreeViewLevel(question, element.id, theme.id);
 
                                 if (
                                     Object.prototype.hasOwnProperty.call(question, 'response_files') &&
@@ -223,7 +223,7 @@ export default Vue.extend({
                                 ) {
                                     objQuestion._children = question.response_files
                                                                     .filter(responseFile => responseFile.is_deleted === false)
-                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, true));
+                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
                                     objQuestion._showChildren = true;
                                     objQuestion._selectable = true;
                                 } else {
@@ -246,7 +246,7 @@ export default Vue.extend({
         /**
          * get formatted item for treeview plugin
          */
-        getTreeViewLevel(item, hasFiles = false, isQuestionnaire = false, isTheme = false, isQuestion = false) {
+        getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null) {
             const objectTreeView = {
                 name: '',
                 dateDepot: '',
@@ -258,26 +258,27 @@ export default Vue.extend({
                 url: ''
             };
 
-            if (hasFiles) {
+            if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView._id = 'file';
+                objectTreeView.id = questionnaireId + '-' + themeId + '-' + questionId + '-' + item.id;
                 objectTreeView.url = item.url;
-            } else if (isQuestionnaire) {
-                objectTreeView.name = item.title || item.description;
-                objectTreeView._children = [];
-                objectTreeView._id = 'questionnaire';
-                objectTreeView.id = item.id;
-            } else if (isTheme) {
-                objectTreeView.name = item.title || item.description;
-                objectTreeView._children = [];
-                objectTreeView._id = 'theme';
-                objectTreeView.id = item.id;
-            } else if (isQuestion) {
+            } else if (themeId != null && questionId == null) { // Question
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
                 objectTreeView._id = 'question';
+                objectTreeView.id = questionnaireId + '-' + themeId + '-' + item.id;
+            } else if (questionnaireId !== null && themeId === null) { // Theme
+                objectTreeView.name = item.title || item.description;
+                objectTreeView._children = [];
+                objectTreeView._id = 'theme';
+                objectTreeView.id = questionnaireId + '-' + item.id;
+            } else { // Questionnaire
+                objectTreeView.name = item.title || item.description;
+                objectTreeView._children = [];
+                objectTreeView._id = 'questionnaire';
                 objectTreeView.id = item.id;
             }
 
@@ -351,7 +352,11 @@ export default Vue.extend({
 
         exportControl(itemId, type) {
           console.log('coucou ', itemId);
+          this.checkedElements = [];
+          console.log('wak waka');
+          console.log('avant : ', this.checkedElements);
           this.checkedElements.push(itemId);
+          console.log('apres : ', this.checkedElements);
 
           const formatFilename = (rf) => {
             const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
@@ -361,7 +366,15 @@ export default Vue.extend({
             return { questionnaireNb, themeId, filename }
           }
 
-          const responseFiles = this.accessibleQuestionnaires
+          let questionnaireId = '';
+          let themeId = '';
+          let questionId = '';
+          let fileId = '';
+          let responseFiles = '';
+
+          if (type === 'questionnaire') {
+            questionnaireId = itemId.toString().split('-')[0];
+            responseFiles = this.accessibleQuestionnaires
             .filter(aq => this.checkedElements.includes(aq.id))
             .flatMap(fq => {
               if (fq.themes) {
@@ -376,6 +389,7 @@ export default Vue.extend({
                             questionId: q.order,
                             basename: rf.basename,
                             url: rf.url,
+                            is_deleted: rf.is_deleted,
                           }
                         }
                       })
@@ -384,12 +398,114 @@ export default Vue.extend({
                 })
               }
             })
+          } else if (type === 'theme') {
+            questionnaireId = itemId.toString().split('-')[0];
+            themeId = itemId.toString().split('-')[1];
+            responseFiles = this.accessibleQuestionnaires
+            .filter(aq => aq.id.toString() === questionnaireId)
+            .flatMap(fq => {
+              if (fq.themes) {
+                return fq.themes
+                  .filter(t => t.id.toString() === themeId)
+                  .flatMap(t => {
+                  if (t.questions) {
+                    return t.questions.flatMap(q => {
+                      return q.response_files.flatMap(rf => {
+                        if (rf) {
+                          return {
+                            questionnaireNb: fq.numbering,
+                            themeId: t.order,
+                            questionId: q.order,
+                            basename: rf.basename,
+                            url: rf.url,
+                            is_deleted: rf.is_deleted,
+                          }
+                        }
+                      })
+                    })
+                  }
+                })
+              }
+            })
+          } else if (type === 'question') {
+            questionnaireId = itemId.toString().split('-')[0];
+            themeId = itemId.toString().split('-')[1];
+            questionId = itemId.toString().split('-')[2];
+            responseFiles = this.accessibleQuestionnaires
+            .filter(aq => aq.id.toString() === questionnaireId)
+            .flatMap(fq => {
+              if (fq.themes) {
+                return fq.themes
+                  .filter(t => t.id.toString() === themeId)
+                  .flatMap(t => {
+                  if (t.questions) {
+                    return t.questions
+                      .filter(q => q.id.toString() === questionId)
+                      .flatMap(q => {
+                      return q.response_files.flatMap(rf => {
+                        if (rf) {
+                          return {
+                            questionnaireNb: fq.numbering,
+                            themeId: t.order,
+                            questionId: q.order,
+                            basename: rf.basename,
+                            url: rf.url,
+                            is_deleted: rf.is_deleted,
+                          }
+                        }
+                      })
+                    })
+                  }
+                })
+              }
+            })
+          } else {
+            questionnaireId = itemId.split('-')[0];
+            themeId = itemId.split('-')[1];
+            questionId = itemId.split('-')[2];
+            fileId = itemId.split('-')[3];
+            questionnaireId = itemId.split('-')[0];
+            themeId = itemId.split('-')[1];
+            questionId = itemId.split('-')[2];
+            responseFiles = this.accessibleQuestionnaires
+            .filter(aq => aq.id.toString() === questionnaireId)
+            .flatMap(fq => {
+              if (fq.themes) {
+                return fq.themes
+                  .filter(t => t.id.toString() === themeId)
+                  .flatMap(t => {
+                  if (t.questions) {
+                    return t.questions
+                      .filter(q => q.id.toString() === questionId)
+                      .flatMap(q => {
+                      return q.response_files
+                        .filter(rf => rf.id.toString() === fileId)
+                        .flatMap(rf => {
+                        if (rf) {
+                          return {
+                            questionnaireNb: fq.numbering,
+                            themeId: t.order,
+                            questionId: q.order,
+                            basename: rf.basename,
+                            url: rf.url,
+                            is_deleted: rf.is_deleted,
+                          }
+                        }
+                      })
+                    })
+                  }
+                })
+              }
+            })
+          }
 
           const zipFilename = this.control.reference_code + '.zip'
           const zip = new JSZip()
           let cnt = 0
 
-          responseFiles.map(rf => {
+          responseFiles
+                    .filter(respFile => respFile.is_deleted === false)
+                    .map(rf => {
             const url = window.location.origin + rf.url
 
             JSZipUtils.getBinaryContent(url, (err, data) => {
