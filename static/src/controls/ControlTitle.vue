@@ -75,6 +75,15 @@
         </div>
       </form>
     </confirm-modal>
+    <div
+      v-if="this.loaderActive"
+      class="loader-container"
+    >
+      <div class="loader-wrapper">
+        <div class="loader"></div>
+        <p>Téléchargement en cours</p>
+      </div>
+    </div>
     <div class="card-status card-status-top bg-blue"></div>
     <template v-if="editMode">
       <div class="card-body">
@@ -162,14 +171,18 @@
               <span class="sr-only">Menu d'actions</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-              <button class="dropdown-item"
+              <button
+                      v-if="this.accessibleQuestionnaires.length > 0"
+                      class="dropdown-item"
                       type="button"
                       @click="showCloneModal"
               >
                 <i class="fas fa-file-export mr-2"></i>
                 Dupliquer
               </button>
-               <button class="dropdown-item"
+               <button
+                      v-if="this.accessibleQuestionnaires.length > 0"
+                      class="dropdown-item"
                       type="button"
                       @click="showExportModal"
               >
@@ -231,6 +244,7 @@ export default Vue.extend({
       allChecked: false,
       checkedQuestionnaires: [],
       users: [],
+      loaderActive: false,
     }
   },
   computed: {
@@ -256,6 +270,9 @@ export default Vue.extend({
   },
   methods: {
     showCloneModal() {
+      this.allChecked = false;
+      this.reference_code = '';
+      this.checkedQuestionnaires = [];
       $(this.$refs.modal.$el).modal('show')
     },
     hideCloneModal() {
@@ -318,7 +335,9 @@ export default Vue.extend({
               return this.cloneQuestionnaire(newQ, themes, q.themes)
             })
 
-          Promise.all(promises)
+          Promise.all(promises).then((values) => {
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 500);
+          });
         })
 
         this.hideCloneModal()
@@ -361,6 +380,8 @@ export default Vue.extend({
       return promise
     },
     showExportModal() {
+      this.allChecked = false;
+      this.checkedQuestionnaires = []
       $(this.$refs.modalexp.$el).modal('show')
     },
     hideExportModal() {
@@ -377,8 +398,12 @@ export default Vue.extend({
       }
     },
     exportControl() {
-      if (!this.checkedQuestionnaires.length) return
+      if (!this.checkedQuestionnaires.length) {
+        this.hideExportModal();
+        return;
+      }
 
+      this.loaderActive = true;
       const formatFilename = (rf) => {
         const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
         const themeId = String(rf.themeId + 1).padStart(2, '0')
@@ -402,6 +427,31 @@ export default Vue.extend({
                         questionId: q.order,
                         basename: rf.basename,
                         url: rf.url,
+                        is_deleted: rf.is_deleted,
+                      }
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      const questionFiles = this.accessibleQuestionnaires
+        .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+        .flatMap(fq => {
+          if (fq.themes) {
+            return fq.themes.flatMap(t => {
+              if (t.questions) {
+                return t.questions.flatMap(q => {
+                  return q.question_files.flatMap(qf => {
+                    if (qf) {
+                      return {
+                        questionnaireNb: fq.numbering,
+                        themeId: t.order,
+                        questionId: q.order,
+                        basename: qf.basename,
+                        url: qf.url,
+                        is_deleted: qf.is_deleted,
                       }
                     }
                   })
@@ -415,6 +465,20 @@ export default Vue.extend({
       const zip = new JSZip()
       let cnt = 0
 
+      questionFiles.map(qf => {
+        const url = window.location.origin + qf.url
+
+        JSZipUtils.getBinaryContent(url, (err, data) => {
+          if (err) throw err
+
+          const formatted = formatFilename(qf)
+
+          zip.folder(`Q${formatted.questionnaireNb}`)
+            .folder(`ANNEXES-AUX-QUESTIONS`)
+            .file(formatted.filename, data, { binary: true })
+        })
+      })
+
       responseFiles.map(rf => {
         const url = window.location.origin + rf.url
 
@@ -423,13 +487,20 @@ export default Vue.extend({
 
           const formatted = formatFilename(rf)
 
-          zip.folder(`Q${formatted.questionnaireNb}`)
-            .folder(`T${formatted.themeId}`)
-            .file(formatted.filename, data, { binary: true })
+          if (rf.is_deleted) {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`CORBEILLE`)
+              .file(formatted.filename, data, { binary: true })
+          } else {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`T${formatted.themeId}`)
+              .file(formatted.filename, data, { binary: true })
+          }
 
           cnt++
           if (cnt === responseFiles.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => {
+              this.loaderActive = false;
               saveAs(content, zipFilename)
             })
           }
@@ -492,5 +563,42 @@ export default Vue.extend({
 <style scoped>
   .break-word {
     word-break: break-all;
+  }
+  .loader-container {
+    text-align: center;
+    z-index:9999;
+    padding-top:100px;
+    position:fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    overflow:auto;
+    background-color:rgba(0,0,0,.4);
+  }
+  .loader-wrapper {
+    background-color:rgba(255,255,255,.9);
+    width: 200px;
+    margin: auto;
+    padding: 6px;
+    border-radius: 6px;
+  }
+  .loader {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .loader div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #6916a0;
+    border-radius: 50%;
+    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #6916a0 transparent transparent transparent;
   }
 </style>

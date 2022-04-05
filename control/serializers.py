@@ -79,7 +79,7 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'sent_date', 'end_date', 'description', 'control', 'themes',
             'is_draft', 'is_replied', 'is_finalized', 'editor', 'title_display',
-            'numbering', 'modified_date', 'modified_time')
+            'numbering', 'modified_date', 'modified_time', 'has_replies')
 
         extra_kwargs = {'control': {'required': True}}
         # not serialized (yet) : file, order

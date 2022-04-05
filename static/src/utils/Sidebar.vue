@@ -342,4 +342,11 @@ export default Vue.extend({
     height: 80px;
   }
 
+  .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 {
+    background-color: #3473cb;
+    color: #fff;
+  }
+  .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
+    background-color: #3473cb;
+  }
 </style>

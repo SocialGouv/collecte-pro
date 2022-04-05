@@ -16,7 +16,6 @@
           Chaque espace de dépôt n'est visible que par les personnes que vous inviterez.
         </info-bar>
 
-        <form>
           <div class="form-group mb-6">
             <label id="title-label" class="form-label">
               Quel est le nom de la procédure pour laquelle vous ouvrez cet espace de dépôt ?
@@ -85,7 +84,6 @@
             </span>
           </div>
 
-        </form>
       </div>
     </confirm-modal-with-wait>
   </div>
@@ -133,10 +131,7 @@ export default Vue.extend({
       axios.post(backendUrls.control(), payload)
         .then(response => {
           console.debug(response);
-          processingDoneCallback(null, response);
-          setTimeout(() => {
-            window.location.href = backendUrls.home();
-          }, 500);
+          processingDoneCallback(null, response, backendUrls.home());
         })
         .catch((error) => {
           console.error('Error creating control', error)

@@ -128,7 +128,7 @@ class Control(SoftDeleteModel):
 class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     title = models.CharField("titre", max_length=255)
     sent_date = models.DateField(
-        verbose_name="date d'envoie", blank=True, null=True,
+        verbose_name="date d'envoi", blank=True, null=True,
         help_text="Date de transmission du questionnaire")
     end_date = models.DateField(
         verbose_name="échéance", blank=True, null=True,
@@ -199,6 +199,13 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         return os.path.basename(self.file.name)
 
     @property
+    def downloadname(self):
+        """
+        Name of file, without path.
+        """
+        return self.basename
+
+    @property
     def title_display(self):
         return f"Questionnaire n°{self.numbering} - {self.title}"
 
@@ -221,6 +228,14 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     @property
     def is_published(self):
         return not self.is_draft
+
+    @property
+    def has_replies(self):
+        for theme in self.themes.all():
+            for question in theme.questions.all():
+                if len(question.response_files.all()) > 0:
+                    return True
+        return False
 
     def __str__(self):
         display_text = f'[ID{self.id}]'
@@ -323,6 +338,13 @@ class QuestionFile(OrderedModel, FileInfoMixin):
         """
         return os.path.basename(self.file.name)
 
+    @property
+    def downloadname(self):
+        """
+        Name of file, without path.
+        """
+        return self.basename
+
 
 @cleanup.ignore
 class ResponseFile(TimeStampedModel, FileInfoMixin):
@@ -334,7 +356,7 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
         to=settings.AUTH_USER_MODEL, related_name='response_files', on_delete=models.PROTECT)
     is_deleted = models.BooleanField(
         verbose_name="Supprimé", default=False,
-        help_text="Ce fichier est=il dans la corbeille?")
+        help_text="Ce fichier est-il dans la corbeille ?")
 
     class Meta:
         verbose_name = 'Réponse: Fichier Déposé'
@@ -353,3 +375,10 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
         if self.is_deleted:
             return prefixer.strip_deleted_file_prefix()
         return prefixer.strip_file_prefix()
+
+    @property
+    def downloadname(self):
+        """
+        Name of file for download.
+        """
+        return os.path.basename(self.file.name)

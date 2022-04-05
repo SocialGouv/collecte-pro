@@ -287,7 +287,7 @@ class SendFileMixin(SingleObjectMixin):
     """
     Inheriting classes should override :
     - model to specify the data type of the file. The model class should implement
-      a basename property.
+      a downloadname property.
     - (optional) get_queryset() to restrict the accessible files.
     """
     model = None
@@ -298,7 +298,7 @@ class SendFileMixin(SingleObjectMixin):
         # get the object fetched by SingleObjectMixin
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
-        return sendfile(request, obj.file.path, attachment=True, attachment_filename=obj.basename)
+        return sendfile(request, obj.file.path, attachment=True, attachment_filename=obj.downloadname)
 
     def add_access_log_entry(self, accessed_object):
         verb = f'accessed {self.file_type}'

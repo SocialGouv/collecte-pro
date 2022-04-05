@@ -7,7 +7,7 @@ from django_softdelete.models import SoftDeleteModel
 class Parametre(OrderedModel, SoftDeleteModel):
     code = models.CharField(
         "code",
-        help_text="LIEN_FOOTER, LOGO_FOOTER, ou ENTITY_PICTURE",
+        help_text="LIEN_FOOTER, LOGO_FOOTER, ENTITY_PICTURE, SUPPORT_EMAIL",
         max_length=255,
     )
     title = models.CharField(
