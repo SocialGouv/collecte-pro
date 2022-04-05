@@ -23,7 +23,7 @@
         </confirm-modal>
         <vue-ads-table
             :columns="columns"
-            :rows="accessibleQuestionnaires"
+            :rows="treeViewElements"
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
@@ -57,8 +57,33 @@
                         <i class="fe fe-copy"></i>
                         Dupliquer
                       </button>
+                      <button class="dropdown-item"
+                              type="button"
+                              @click="exportControl(props.row.id, props.row._id)"
+                      >
+                        <i class="fas fa-file-export mr-2"></i>
+                        Exporter
+                      </button>
                     </div>
                 </div>
+            </template>
+            <template slot="action_theme" slot-scope="props">
+                <a
+                    class="btn btn-secondary"
+                    @click="exportControl(props.row.id, props.row._id)"
+                >
+                    <i class="fas fa-file-export"></i>
+                    Exporter
+                </a>
+            </template>
+            <template slot="action_question" slot-scope="props">
+                <a
+                    class="btn btn-secondary"
+                    @click="exportControl(props.row.id, props.row._id)"
+                >
+                    <i class="fas fa-file-export"></i>
+                    Exporter
+                </a>
             </template>
             <template slot="action_file" slot-scope="props">
                 <a
@@ -66,7 +91,7 @@
                     class="btn btn-secondary"
                 >
                     <i class="fas fa-file-export"></i>
-                    Télécharger
+                    Exporter
                 </a>
             </template>
             <template slot="no-rows">Pas de résultats</template>
@@ -78,13 +103,20 @@
 <script>
 import axios from 'axios';
 import backendUrls from '../utils/backend';
+
 import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
+
 import InfoBar from '../utils/InfoBar'
 import ConfirmModal from '../utils/ConfirmModal'
+
 import Vue from 'vue';
 import Vuex, { mapState } from 'vuex'
 import { VueAdsTable } from 'vue-ads-table-tree';
+
+import JSZip from 'jszip'
+import JSZipUtils from 'jszip-utils'
+import { saveAs } from 'file-saver'
 
 export default Vue.extend({
     props: {
@@ -153,6 +185,7 @@ export default Vue.extend({
             start: 0,
             end: 2,
             checkedCtrls: [],
+            checkedElements: [],
         };
     },
 
@@ -164,9 +197,10 @@ export default Vue.extend({
           return this.controls
         },
         accessibleQuestionnaires() {
-            const qstnr = this.control.questionnaires.filter((questionnaire) => !questionnaire.is_draft);
-
-            return qstnr.map(element => {
+          return this.control.questionnaires.filter(q => !q.is_draft)
+        },
+        treeViewElements() {
+            return this.accessibleQuestionnaires.map(element => {
                 const objQuestionnaire = this.getTreeViewLevel(element, false, true);
 
                 if (
@@ -174,21 +208,22 @@ export default Vue.extend({
                     element.themes.length
                 ) {
                     objQuestionnaire._children = element.themes.map(theme => {
-                        const objTheme = this.getTreeViewLevel(theme);
+                        const objTheme = this.getTreeViewLevel(theme, false, false, true);
 
                         if (
                             Object.prototype.hasOwnProperty.call(theme, 'questions') &&
                             theme.questions.length
                         ) {
                             objTheme._children = theme.questions.map(question => {
-                                const objQuestion = this.getTreeViewLevel(question);
+                                const objQuestion = this.getTreeViewLevel(question, false, false , false, true);
 
                                 if (
                                     Object.prototype.hasOwnProperty.call(question, 'response_files') &&
                                     question.response_files.length
                                 ) {
-                                    objQuestion._children = question.response_files.map(responseFile => this.getTreeViewLevel(responseFile, true));
-
+                                    objQuestion._children = question.response_files
+                                                                    .filter(responseFile => responseFile.is_deleted === false)
+                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, true));
                                     objQuestion._showChildren = true;
                                     objQuestion._selectable = true;
                                 } else {
@@ -211,7 +246,7 @@ export default Vue.extend({
         /**
          * get formatted item for treeview plugin
          */
-        getTreeViewLevel(item, hasFiles = false, isQuestionnaire = false) {
+        getTreeViewLevel(item, hasFiles = false, isQuestionnaire = false, isTheme = false, isQuestion = false) {
             const objectTreeView = {
                 name: '',
                 dateDepot: '',
@@ -234,9 +269,16 @@ export default Vue.extend({
                 objectTreeView._children = [];
                 objectTreeView._id = 'questionnaire';
                 objectTreeView.id = item.id;
-            } else {
+            } else if (isTheme) {
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
+                objectTreeView._id = 'theme';
+                objectTreeView.id = item.id;
+            } else if (isQuestion) {
+                objectTreeView.name = item.title || item.description;
+                objectTreeView._children = [];
+                objectTreeView._id = 'question';
+                objectTreeView.id = item.id;
             }
 
             return objectTreeView;
@@ -305,6 +347,68 @@ export default Vue.extend({
               })
             });
           }
+        },
+
+        exportControl(itemId, type) {
+          console.log('coucou ', itemId);
+          this.checkedElements.push(itemId);
+
+          const formatFilename = (rf) => {
+            const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
+            const themeId = String(rf.themeId + 1).padStart(2, '0')
+            const questionId = String(rf.questionId + 1).padStart(2, '0')
+            const filename = `Q${questionnaireNb}-T${themeId}-${questionId}-${rf.basename}`
+            return { questionnaireNb, themeId, filename }
+          }
+
+          const responseFiles = this.accessibleQuestionnaires
+            .filter(aq => this.checkedElements.includes(aq.id))
+            .flatMap(fq => {
+              if (fq.themes) {
+                return fq.themes.flatMap(t => {
+                  if (t.questions) {
+                    return t.questions.flatMap(q => {
+                      return q.response_files.flatMap(rf => {
+                        if (rf) {
+                          return {
+                            questionnaireNb: fq.numbering,
+                            themeId: t.order,
+                            questionId: q.order,
+                            basename: rf.basename,
+                            url: rf.url,
+                          }
+                        }
+                      })
+                    })
+                  }
+                })
+              }
+            })
+
+          const zipFilename = this.control.reference_code + '.zip'
+          const zip = new JSZip()
+          let cnt = 0
+
+          responseFiles.map(rf => {
+            const url = window.location.origin + rf.url
+
+            JSZipUtils.getBinaryContent(url, (err, data) => {
+              if (err) throw err
+
+              const formatted = formatFilename(rf)
+
+              zip.folder(`Q${formatted.questionnaireNb}`)
+                .folder(`T${formatted.themeId}`)
+                .file(formatted.filename, data, { binary: true })
+
+              cnt++
+              if (cnt === responseFiles.length) {
+                zip.generateAsync({ type: 'blob' }).then((content) => {
+                  saveAs(content, zipFilename)
+                })
+              }
+            })
+          })
         },
     },
 });
