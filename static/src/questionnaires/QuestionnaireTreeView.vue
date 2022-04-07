@@ -200,6 +200,7 @@ export default Vue.extend({
           return this.control.questionnaires.filter(q => !q.is_draft)
         },
         treeViewElements() {
+            
             return this.accessibleQuestionnaires.map(element => {
                 const objQuestionnaire = this.getTreeViewLevel(element);
 
@@ -207,6 +208,7 @@ export default Vue.extend({
                     Object.prototype.hasOwnProperty.call(element, 'themes') &&
                     element.themes.length
                 ) {
+                        
                     objQuestionnaire._children = element.themes.map(theme => {
                         const objTheme = this.getTreeViewLevel(theme, element.id);
 
@@ -238,6 +240,57 @@ export default Vue.extend({
                     });
                 }
 
+                const objAnnexes = this.getTreeViewLevel(null, null, null, null, true);
+                const objCorbeille = this.getTreeViewLevel(null, null, null, null, false, true);
+                     
+                objAnnexes._children = this.accessibleQuestionnaires
+                  .filter(aq => aq.id === element.id)
+                  .flatMap(fq => {
+                    if (fq.themes) {
+                      return fq.themes.flatMap(t => {
+                        if (t.questions) {
+                          return t.questions.flatMap(q => {
+                            return q.question_files.flatMap(qf => {
+                              if (qf) {
+                                return this.getTreeViewLevel(qf, null, null, null, null, false, false, true);
+                              }
+                            })
+                          })
+                        }
+                      })
+                    }
+                  })
+
+                objCorbeille._children = this.accessibleQuestionnaires
+                  .filter(aq => aq.id === element.id)
+                  .flatMap(fq => {
+                    if (fq.themes) {
+                      return fq.themes.flatMap(t => {
+                        if (t.questions) {
+                          return t.questions.flatMap(q => {
+                            return q.response_files
+                              .filter(rf => rf.is_deleted === true)
+                              .flatMap(rf => {
+                              if (rf) {
+                                return this.getTreeViewLevel(rf, null, null, null, null, false, false, false, true);
+                              }
+                            })
+                          })
+                        }
+                      })
+                    }
+                  })
+
+                if (!objAnnexes._children.length) {
+                  objAnnexes._showChildren = false;
+                }
+
+                if (!objCorbeille._children.length) {
+                  objCorbeille._showChildren = false;
+                }
+
+                objQuestionnaire._children.unshift(objAnnexes, objCorbeille);
+
                 return objQuestionnaire;
             });
         },
@@ -246,7 +299,7 @@ export default Vue.extend({
         /**
          * get formatted item for treeview plugin
          */
-        getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null) {
+        getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null, isAnnexe = false, isCorbeille = false, isFichierAnnexe = false, isFichierCorbeille = false) {
             const objectTreeView = {
                 name: '',
                 dateDepot: '',
@@ -257,8 +310,24 @@ export default Vue.extend({
                 id: '',
                 url: ''
             };
-
-            if (questionId != null) { // Response_file
+            
+            if (isAnnexe) { // Annexes
+                objectTreeView.name = 'Annexes';
+                objectTreeView._children = [];
+                objectTreeView._id = 'annexes';
+            } else if (isCorbeille) { // Corbeille
+                objectTreeView.name = 'Corbeille';
+                objectTreeView._children = [];
+                objectTreeView._id = 'corbeille';
+            } else if (isFichierAnnexe) { // Fichier annexe
+                objectTreeView.name = item.basename;
+                objectTreeView.url = item.url;
+                objectTreeView._showChildren = false;
+            } else if (isFichierCorbeille) { // Fichier corbeille
+                objectTreeView.name = item.basename;
+                objectTreeView.url = item.url;
+                objectTreeView._showChildren = false;
+            } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
@@ -351,12 +420,8 @@ export default Vue.extend({
         },
 
         exportControl(itemId, type) {
-          console.log('coucou ', itemId);
           this.checkedElements = [];
-          console.log('wak waka');
-          console.log('avant : ', this.checkedElements);
           this.checkedElements.push(itemId);
-          console.log('apres : ', this.checkedElements);
 
           const formatFilename = (rf) => {
             const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
