@@ -21,9 +21,28 @@
             </div>
           </form>
         </confirm-modal>
+        <div class="card">
+          <span>
+            <span class="mr-8"> Filtrer par répondant
+              <select v-model="filter" class="col-xs-2">
+                <option></option>
+                <option v-for="option in repondantsListe" :key="option">
+                  {{ option.first_name + ' ' + option.last_name }}
+                </option>
+              </select>
+            </span>
+            <span> Filtrer par date de dépôt de
+              <input placeholder="Date de début">
+              à
+              <input placeholder="Date de fin">
+            </span>
+          </span>
+        </div>
         <vue-ads-table
             :columns="columns"
             :rows="treeViewElements"
+            :filter="filter"
+            @filter-change="filterChanged"
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
@@ -111,7 +130,7 @@ import InfoBar from '../utils/InfoBar'
 import ConfirmModal from '../utils/ConfirmModal'
 
 import Vue from 'vue';
-import Vuex, { mapState } from 'vuex'
+import { mapState } from 'vuex'
 import { VueAdsTable } from 'vue-ads-table-tree';
 
 import JSZip from 'jszip'
@@ -137,10 +156,12 @@ export default Vue.extend({
             {
                 property: 'dateDepot',
                 title: 'Date de dépot',
+                filterable: true,
             },
             {
                 property: 'repondant',
                 title: 'Répondant',
+                filterable: true,
             },
             {
                 property: 'action',
@@ -182,10 +203,9 @@ export default Vue.extend({
             columns,
             classes,
             filter: '',
-            start: 0,
-            end: 2,
             checkedCtrls: [],
             checkedElements: [],
+            repondantsListe: [],
         };
     },
 
@@ -296,6 +316,15 @@ export default Vue.extend({
         },
     },
     methods: {
+        filterChanged (filter) {
+            this.filter = filter;
+        },
+        getUsers() {
+          axios.get(backendUrls.getUsersInControl(this.control.id))
+            .then((response) => {
+              this.repondantsListe = response.data;
+            })
+        },
         /**
          * get formatted item for treeview plugin
          */
@@ -591,6 +620,10 @@ export default Vue.extend({
             })
           })
         },
+    },
+
+    mounted() {
+      this.getUsers();
     },
 });
 </script>
