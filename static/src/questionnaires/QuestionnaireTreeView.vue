@@ -220,7 +220,7 @@ export default Vue.extend({
           return this.control.questionnaires.filter(q => !q.is_draft)
         },
         treeViewElements() {
-            
+
             return this.accessibleQuestionnaires.map(element => {
                 const objQuestionnaire = this.getTreeViewLevel(element);
 
@@ -228,7 +228,7 @@ export default Vue.extend({
                     Object.prototype.hasOwnProperty.call(element, 'themes') &&
                     element.themes.length
                 ) {
-                        
+
                     objQuestionnaire._children = element.themes.map(theme => {
                         const objTheme = this.getTreeViewLevel(theme, element.id);
 
@@ -262,7 +262,7 @@ export default Vue.extend({
 
                 const objAnnexes = this.getTreeViewLevel(null, null, null, null, true);
                 const objCorbeille = this.getTreeViewLevel(null, null, null, null, false, true);
-                     
+
                 objAnnexes._children = this.accessibleQuestionnaires
                   .filter(aq => aq.id === element.id)
                   .flatMap(fq => {
@@ -272,7 +272,7 @@ export default Vue.extend({
                           return t.questions.flatMap(q => {
                             return q.question_files.flatMap(qf => {
                               if (qf) {
-                                return this.getTreeViewLevel(qf, null, null, null, null, false, false, true);
+                                return this.getTreeViewLevel(qf, null, null, null, false, false, true);
                               }
                             })
                           })
@@ -291,9 +291,9 @@ export default Vue.extend({
                             return q.response_files
                               .filter(rf => rf.is_deleted === true)
                               .flatMap(rf => {
-                              if (rf) {
-                                return this.getTreeViewLevel(rf, null, null, null, null, false, false, false, true);
-                              }
+                                if (rf) {
+                                  return this.getTreeViewLevel(rf, null, null, null, false, false, false, true);
+                                }
                             })
                           })
                         }
@@ -341,7 +341,7 @@ export default Vue.extend({
                 id: '',
                 url: ''
             };
-            
+
             if (isAnnexe) { // Annexes
                 objectTreeView.name = 'Annexes';
                 objectTreeView._children = [];
@@ -356,6 +356,8 @@ export default Vue.extend({
                 objectTreeView._showChildren = false;
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
+                objectTreeView.dateDepot = item.created;
+                objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
             } else if (questionId != null) { // Response_file
