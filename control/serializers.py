@@ -32,7 +32,7 @@ class ResponseFileSerializer(serializers.ModelSerializer):
 class ResponseFileTrashSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResponseFile
-        fields = ('id', 'is_deleted')
+        fields = ('id', 'url', 'basename', 'created', 'author', 'is_deleted')
 
 
 class QuestionFileSerializer(serializers.ModelSerializer):
