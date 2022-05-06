@@ -56,6 +56,12 @@
                 Exporter tous les documents
               </button>
             </span>
+            <span>
+              <button type="button" class="btn btn-secondary">Exporter les fichiers sélectionnés</button>
+            </span>
+            <span v-if="filter !== ''">
+              <button type="button" class="btn btn-secondary">Exporter les fichiers filtrés</button>
+            </span>
           </span>
         </div>
         <vue-ads-table
