@@ -36,6 +36,12 @@
               à
               <input placeholder="Date de fin">
             </span>
+            <span>
+              <button type="button" class="btn btn-secondary">Exporter les fichiers sélectionnés</button>
+            </span>
+            <span v-if="filter !== ''">
+              <button type="button" class="btn btn-secondary">Exporter les fichiers filtrés</button>
+            </span>
           </span>
         </div>
         <vue-ads-table
@@ -46,75 +52,29 @@
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
+            <template slot="name_file" slot-scope="props">
+              <a :href="props.row.url" target="_blank"
+                class="btn tag tag-azure pull-left btn-file">
+                {{ props.row.name }}
+                <span class="tag-addon">
+                  <i class="fe fe-file"></i>
+                </span>
+              </a>
+            </template>
+            <template slot="name_fileAnnexe" slot-scope="props">
+              <a :href="props.row.url"
+                class="btn tag tag-orange pull-left btn-file">
+                {{ props.row.name }}
+                <span class="tag-addon">
+                  <i class="fe fe-paperclip"></i>
+                </span>
+              </a>
+            </template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
-            <template slot="action_questionnaire" slot-scope="props">
-                <div class="btn-group">
-                    <a
-                      :href="questionnaireDetailUrl(props.row.id)"
-                      title="Voir le questionnaire publié"
-                      class="btn btn-secondary"
-                    >
-                      <i class="fe fe-eye"></i>
-                      Consulter
-                    </a>
-                    <button
-                      type="button"
-                      class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                        <span class="sr-only">Menu d'actions</span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                      <button
-                        class="dropdown-item"
-                        type="button"
-                        @click="showModal(props.row.id)"
-                      >
-                        <i class="fe fe-copy"></i>
-                        Dupliquer
-                      </button>
-                      <button class="dropdown-item"
-                              type="button"
-                              @click="exportControl(props.row.id, props.row._id)"
-                      >
-                        <i class="fas fa-file-export mr-2"></i>
-                        Exporter
-                      </button>
-                    </div>
-                </div>
-            </template>
-            <template slot="action_theme" slot-scope="props">
-                <a
-                    class="btn btn-secondary"
-                    @click="exportControl(props.row.id, props.row._id)"
-                >
-                    <i class="fas fa-file-export"></i>
-                    Exporter
-                </a>
-            </template>
-            <template slot="action_question" slot-scope="props">
-                <a
-                    class="btn btn-secondary"
-                    @click="exportControl(props.row.id, props.row._id)"
-                >
-                    <i class="fas fa-file-export"></i>
-                    Exporter
-                </a>
-            </template>
-            <template slot="action_file" slot-scope="props">
-                <a
-                    class="btn btn-secondary"
-                    @click="exportControl(props.row.id, props.row._id)"
-                >
-                    <i class="fas fa-file-export"></i>
-                    Exporter
-                </a>
-            </template>
+            <template slot="selection" slot-scope="props"><input type="checkbox" @change="onInputChange(props.row.id)"></template>
             <template slot="no-rows">Pas de résultats</template>
-            <template slot="toggle-children-icon" slot-scope="props"></template>
+            <template slot="toggle-children-icon" slot-scope="props"> [{{ props.expanded ? '-' : '+' }}] </template>
         </vue-ads-table>
     </div>
 </template>
@@ -164,8 +124,8 @@ export default Vue.extend({
                 filterable: true,
             },
             {
-                property: 'action',
-                title: 'Action',
+                property: 'selection',
+                title: '',
             },
         ];
 
@@ -206,6 +166,8 @@ export default Vue.extend({
             checkedCtrls: [],
             checkedElements: [],
             repondantsListe: [],
+            checkedFiles: [],
+            treeViewElements: []
         };
     },
 
@@ -354,12 +316,14 @@ export default Vue.extend({
                 objectTreeView.name = item.basename;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
+                objectTreeView._id = 'fileAnnexe';
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
+                console.log("je suis une corbeille");
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
@@ -624,10 +588,116 @@ export default Vue.extend({
             })
           })
         },
+
+        onInputChange(rowId) {
+          this.checkedFiles.includes(rowId) ?
+            this.checkedFiles = this.checkedFiles.filter(item => item !== rowId) : this.checkedFiles.push(rowId);
+        },
+
+        getTreeViewElements(accessibleQuestionnaires) {
+            console.log(accessibleQuestionnaires);
+            return accessibleQuestionnaires.map(element => {
+                const objQuestionnaire = this.getTreeViewLevel(element);
+
+                if (
+                    Object.prototype.hasOwnProperty.call(element, 'themes') &&
+                    element.themes.length
+                ) {
+
+                    objQuestionnaire._children = element.themes.map(theme => {
+                        const objTheme = this.getTreeViewLevel(theme, element.id);
+
+                        if (
+                            Object.prototype.hasOwnProperty.call(theme, 'questions') &&
+                            theme.questions.length
+                        ) {
+                            objTheme._children = theme.questions.map(question => {
+                                const objQuestion = this.getTreeViewLevel(question, element.id, theme.id);
+
+                                if (
+                                    Object.prototype.hasOwnProperty.call(question, 'response_files') &&
+                                    question.response_files.length
+                                ) {
+                                    objQuestion._children = question.response_files
+                                                                    .filter(responseFile => responseFile.is_deleted === false)
+                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
+                                    objQuestion._showChildren = true;
+                                    objQuestion._selectable = true;
+                                } else {
+                                    objQuestion._showChildren = false;
+                                }
+
+                                return objQuestion;
+                            });
+                        }
+
+                        return objTheme;
+                    });
+                }
+
+                const objAnnexes = this.getTreeViewLevel(null, null, null, null, true);
+                const objCorbeille = this.getTreeViewLevel(null, null, null, null, false, true);
+
+                objAnnexes._children = accessibleQuestionnaires
+                  .filter(aq => aq.id === element.id)
+                  .flatMap(fq => {
+                    if (fq.themes) {
+                      return fq.themes.flatMap(t => {
+                        if (t.questions) {
+                          return t.questions.flatMap(q => {
+                            return q.question_files.flatMap(qf => {
+                              if (qf) {
+                                return this.getTreeViewLevel(qf, null, null, null, false, false, true);
+                              }
+                            })
+                          })
+                        }
+                      })
+                    }
+                  })
+
+                objCorbeille._children = accessibleQuestionnaires
+                  .filter(aq => aq.id === element.id)
+                  .flatMap(fq => {
+                    if (fq.themes) {
+                      return fq.themes.flatMap(t => {
+                        if (t.questions) {
+                          return t.questions.flatMap(q => {
+                            return q.response_files
+                              .filter(rf => rf.is_deleted === true)
+                              .flatMap(rf => {
+                              if (rf) {
+                                return this.getTreeViewLevel(rf, null, null, null, false, false, false, true);
+                              }
+                            })
+                          })
+                        }
+                      })
+                    }
+                  })
+
+                if (!objCorbeille._children.length) {
+                  objCorbeille._showChildren = false;
+                } else {
+                  objQuestionnaire._children.unshift(objCorbeille);
+                }
+
+                if (!objAnnexes._children.length) {
+                  objAnnexes._showChildren = false;
+                } else {
+                  objQuestionnaire._children.unshift(objAnnexes);
+                }
+
+                return objQuestionnaire;
+            });
+        }
     },
 
     mounted() {
       this.getUsers();
+
+      const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
+      this.treeViewElements = this.getTreeViewElements(controlQuestionnaires);
     },
 });
 </script>

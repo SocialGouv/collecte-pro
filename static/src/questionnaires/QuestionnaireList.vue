@@ -24,7 +24,7 @@
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
       <div class="card-title btn btn-secondary mr-4">
-        <button @click="toggleView()"><i class="fe fe-folder mr-2" :class="{'fe-list':isList}"></i> Questionnaires</button>
+        <button @click="toggleView()" :title="isList ? 'Vue en liste' : 'Vue en arbre'"><i class="fe fe-folder mr-2" :class="{'fe-list':isList}"></i> Questionnaires</button>
       </div>
     </div>
 
@@ -229,6 +229,13 @@
                         <i class="fe fe-copy"></i>
                         Dupliquer
                       </button>
+                      <button class="dropdown-item"
+                              type="button"
+                              @click="exportControl(questionnaire.id)"
+                      >
+                        <i class="fas fa-file-export mr-2"></i>
+                        Exporter
+                      </button>
                       <button
                         v-if="questionnaire.is_replied && !questionnaire.is_finalized"
                         class="dropdown-item text-success"
@@ -274,6 +281,10 @@ import ConfirmModal from '../utils/ConfirmModal'
 import Vue from 'vue'
 import Vuex, { mapState } from 'vuex'
 import QuestionnaireTreeView from '../questionnaires/QuestionnaireTreeView'
+
+import JSZip from 'jszip'
+import JSZipUtils from 'jszip-utils'
+import { saveAs } from 'file-saver'
 
 Vue.use(Vuex)
 
@@ -422,6 +433,112 @@ export default Vue.extend({
           })
         });
       }
+    },
+    exportControl(questionnaireId) {
+      this.loaderActive = true;
+
+      const formatFilename = (rf) => {
+        const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
+        const themeId = String(rf.themeId + 1).padStart(2, '0')
+        const questionId = String(rf.questionId + 1).padStart(2, '0')
+        const filename = `Q${questionnaireNb}-T${themeId}-${questionId}-${rf.basename}`
+        return { questionnaireNb, themeId, filename }
+      }
+
+      const responseFiles = this.accessibleQuestionnaires
+        .filter(aq => questionnaireId === aq.id)
+        .flatMap(fq => {
+          if (fq.themes) {
+            return fq.themes.flatMap(t => {
+              if (t.questions) {
+                return t.questions.flatMap(q => {
+                  return q.response_files.flatMap(rf => {
+                    if (rf) {
+                      return {
+                        questionnaireNb: fq.numbering,
+                        themeId: t.order,
+                        questionId: q.order,
+                        basename: rf.basename,
+                        url: rf.url,
+                        is_deleted: rf.is_deleted,
+                      }
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      const questionFiles = this.accessibleQuestionnaires
+        .filter(aq => questionnaireId == aq.id)
+        .flatMap(fq => {
+          if (fq.themes) {
+            return fq.themes.flatMap(t => {
+              if (t.questions) {
+                return t.questions.flatMap(q => {
+                  return q.question_files.flatMap(qf => {
+                    if (qf) {
+                      return {
+                        questionnaireNb: fq.numbering,
+                        themeId: t.order,
+                        questionId: q.order,
+                        basename: qf.basename,
+                        url: qf.url,
+                        is_deleted: qf.is_deleted,
+                      }
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+
+      const zipFilename = this.control.reference_code + '.zip'
+      const zip = new JSZip()
+      let cnt = 0
+
+      questionFiles.map(qf => {
+        const url = window.location.origin + qf.url
+
+        JSZipUtils.getBinaryContent(url, (err, data) => {
+          if (err) throw err
+
+          const formatted = formatFilename(qf)
+
+          zip.folder(`Q${formatted.questionnaireNb}`)
+            .folder(`ANNEXES-AUX-QUESTIONS`)
+            .file(formatted.filename, data, { binary: true })
+        })
+      })
+
+      responseFiles.map(rf => {
+        const url = window.location.origin + rf.url
+
+        JSZipUtils.getBinaryContent(url, (err, data) => {
+          if (err) throw err
+
+          const formatted = formatFilename(rf)
+
+          if (rf.is_deleted) {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`CORBEILLE`)
+              .file(formatted.filename, data, { binary: true })
+          } else {
+            zip.folder(`Q${formatted.questionnaireNb}`)
+              .folder(`T${formatted.themeId}`)
+              .file(formatted.filename, data, { binary: true })
+          }
+
+          cnt++
+          if (cnt === responseFiles.length) {
+            zip.generateAsync({ type: 'blob' }).then((content) => {
+              this.loaderActive = false;
+              saveAs(content, zipFilename)
+            })
+          }
+        })
+      })
     },
   },
 })
