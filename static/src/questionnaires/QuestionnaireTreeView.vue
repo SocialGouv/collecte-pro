@@ -32,23 +32,25 @@
               </select>
             </span>
             <span> Filtrer par date de dépôt de
-              <input placeholder="Date de début">
+              <input v-model="date_filter_start" placeholder="Date de début">
               à
-              <input placeholder="Date de fin">
+              <input v-model="date_filter_end" placeholder="Date de fin">
             </span>
-            <span>
-              <button type="button" class="btn btn-secondary">Exporter les fichiers sélectionnés</button>
+            <span v-if="filter!==''">
+              <button @click="exportFiltered" type="button" class="btn btn-secondary">Exporter les documents filtrés</button>
             </span>
-            <span v-if="filter !== ''">
-              <button type="button" class="btn btn-secondary">Exporter les fichiers filtrés</button>
+            <span v-else-if="this.selected.length">
+              <button @click="exportSelected" type="button" class="btn btn-secondary">Exporter les documents sélectionnés</button>
             </span>
           </span>
         </div>
         <vue-ads-table
             :columns="columns"
+            :classes="classes"
             :rows="treeViewElements"
+            :selectable=true
             :filter="filter"
-            @filter-change="filterChanged"
+            @selection-change="selectionChange"
         >
             <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
@@ -72,9 +74,12 @@
             </template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
-            <template slot="selection" slot-scope="props"><input type="checkbox" @change="onInputChange(props.row.id)"></template>
             <template slot="no-rows">Pas de résultats</template>
-            <template slot="toggle-children-icon" slot-scope="props"><i class="fe fe-folder-minus" v-if="props.expanded"></i><i class="fe fe-folder-plus" v-else></i>&nbsp;</template>
+            <template slot="toggle-children-icon" slot-scope="props">
+              <i class="fe fe-folder-minus" v-if="props.expanded"></i>
+              <i class="fe fe-folder-plus" v-else></i>
+              &nbsp;
+            </template>
         </vue-ads-table>
     </div>
 </template>
@@ -123,50 +128,47 @@ export default Vue.extend({
                 title: 'Répondant',
                 filterable: true,
             },
-            {
-                property: 'selection',
-                title: '',
-            },
         ];
 
         let classes = {
-            group: {
-                'vue-ads-font-bold': true,
-                'vue-ads-border-b': true,
-                'vue-ads-italic': true,
+            selected: {
+              'selected_row': true,
             },
-            '0/all': {
-                'vue-ads-py-3': true,
-                'vue-ads-px-2': true,
+            group: {
+              'vue-ads-font-bold': true,
+              'vue-ads-border-b': true,
+              'vue-ads-italic': true,
+            },
+            'all/': {
+              'vue-ads-border-b': true,
+              'vue-ads-border-l': true,
+              'vue-ads-text-left': true,
             },
             'even/': {
-                'vue-ads-bg-blue-lighter': true,
+              'vue-ads-bg-white': true,
             },
             'odd/': {
-                'vue-ads-bg-blue-lightest': true,
+              'vue-ads-bg-gray-100': true,
             },
             '0/': {
-                'vue-ads-bg-blue-lighter': false,
-                'vue-ads-bg-blue-dark': true,
-                'vue-ads-text-white': false,
-                'vue-ads-font-bold': true,
+              'vue-ads-border-t': true,
             },
-            '1_/': {
-                'hover:vue-ads-bg-red-lighter': true,
+            '/0_': {
+              'vue-ads-border-r': true,
+              'vue-ads-text-sm': true,
+              'vue-ads-py-2': true,
+              'vue-ads-px-4': true,
             },
-            '1_/0': {
-                'leftAlign': true
-            }
         };
 
         return {
             columns,
             classes,
             filter: '',
+            selected: [],
             checkedCtrls: [],
             checkedElements: [],
             repondantsListe: [],
-            checkedFiles: [],
             treeViewElements: []
         };
     },
@@ -181,105 +183,28 @@ export default Vue.extend({
         accessibleQuestionnaires() {
           return this.control.questionnaires.filter(q => !q.is_draft)
         },
-        treeViewElements() {
+    },
 
-            return this.accessibleQuestionnaires.map(element => {
-                const objQuestionnaire = this.getTreeViewLevel(element);
-
-                if (
-                    Object.prototype.hasOwnProperty.call(element, 'themes') &&
-                    element.themes.length
-                ) {
-
-                    objQuestionnaire._children = element.themes.map(theme => {
-                        const objTheme = this.getTreeViewLevel(theme, element.id);
-
-                        if (
-                            Object.prototype.hasOwnProperty.call(theme, 'questions') &&
-                            theme.questions.length
-                        ) {
-                            objTheme._children = theme.questions.map(question => {
-                                const objQuestion = this.getTreeViewLevel(question, element.id, theme.id);
-
-                                if (
-                                    Object.prototype.hasOwnProperty.call(question, 'response_files') &&
-                                    question.response_files.length
-                                ) {
-                                    objQuestion._children = question.response_files
-                                                                    .filter(responseFile => responseFile.is_deleted === false)
-                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
-                                    objQuestion._showChildren = true;
-                                    objQuestion._selectable = true;
-                                } else {
-                                    objQuestion._showChildren = false;
-                                }
-
-                                return objQuestion;
-                            });
-                        }
-
-                        return objTheme;
-                    });
-                }
-
-                const objAnnexes = this.getTreeViewLevel(null, null, null, null, true);
-                const objCorbeille = this.getTreeViewLevel(null, null, null, null, false, true);
-
-                objAnnexes._children = this.accessibleQuestionnaires
-                  .filter(aq => aq.id === element.id)
-                  .flatMap(fq => {
-                    if (fq.themes) {
-                      return fq.themes.flatMap(t => {
-                        if (t.questions) {
-                          return t.questions.flatMap(q => {
-                            return q.question_files.flatMap(qf => {
-                              if (qf) {
-                                return this.getTreeViewLevel(qf, null, null, null, false, false, true);
-                              }
-                            })
-                          })
-                        }
-                      })
-                    }
-                  })
-
-                objCorbeille._children = this.accessibleQuestionnaires
-                  .filter(aq => aq.id === element.id)
-                  .flatMap(fq => {
-                    if (fq.themes) {
-                      return fq.themes.flatMap(t => {
-                        if (t.questions) {
-                          return t.questions.flatMap(q => {
-                            return q.response_files
-                              .filter(rf => rf.is_deleted === true)
-                              .flatMap(rf => {
-                                if (rf) {
-                                  return this.getTreeViewLevel(rf, null, null, null, false, false, false, true);
-                                }
-                            })
-                          })
-                        }
-                      })
-                    }
-                  })
-
-                if (!objAnnexes._children.length) {
-                  objAnnexes._showChildren = false;
-                }
-
-                if (!objCorbeille._children.length) {
-                  objCorbeille._showChildren = false;
-                }
-
-                objQuestionnaire._children.unshift(objAnnexes, objCorbeille);
-
-                return objQuestionnaire;
-            });
+    watch: {
+        'filter': function(val, oldVal) {
+            this.selected = [];
+            console.log("filter changed");
         },
     },
     methods: {
-        filterChanged (filter) {
-            this.filter = filter;
+        selectionChange(rows) {
+          this.selected = rows;
+          console.log("selection changed");
+        },
+        exportFiltered(event) {
+          console.log("filtered");
+          console.log(this.filter);
+          console.log(this.selected);
+        },
+        exportSelected(event) {
+          console.log("selected");
+          console.log(this.filter);
+          console.log(this.selected);
         },
         getUsers() {
           axios.get(backendUrls.getUsersInControl(this.control.id))
@@ -589,11 +514,6 @@ export default Vue.extend({
           })
         },
 
-        onInputChange(rowId) {
-          this.checkedFiles.includes(rowId) ?
-            this.checkedFiles = this.checkedFiles.filter(item => item !== rowId) : this.checkedFiles.push(rowId);
-        },
-
         getTreeViewElements(accessibleQuestionnaires) {
             console.log(accessibleQuestionnaires);
             return accessibleQuestionnaires.map(element => {
@@ -622,7 +542,7 @@ export default Vue.extend({
                                                                     .filter(responseFile => responseFile.is_deleted === false)
                                                                     .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
                                     objQuestion._showChildren = true;
-                                    objQuestion._selectable = true;
+                                    objQuestion._selectable = false;
                                 } else {
                                     objQuestion._showChildren = false;
                                 }
@@ -703,7 +623,8 @@ export default Vue.extend({
 </script>
 
 <style>
-    .leftAlign {
-        text-align: left;
-    }
+.selected_row{
+  color: white;
+  background-color: #3473cb;
+}
 </style>
