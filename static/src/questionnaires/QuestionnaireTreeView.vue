@@ -22,25 +22,39 @@
           </form>
         </confirm-modal>
         <div class="card">
-          <span>
-            <span class="mr-8"> Filtrer par répondant
-              <select v-model="filter" class="col-xs-2">
+          <span class="form-inline">
+            <span class="form-group col-sm-3">
+              <span class="form-label mr-2">Filtrer par répondant</span>
+              <select v-model="filter" class="form-control">
                 <option></option>
                 <option v-for="option in repondantsListe" :key="option">
                   {{ option.first_name + ' ' + option.last_name }}
                 </option>
               </select>
             </span>
-            <span> Filtrer par date de dépôt de
-              <input v-model="date_filter_start" placeholder="Date de début">
-              à
-              <input v-model="date_filter_end" placeholder="Date de fin">
+            <span class="form-group col-sm-6">
+              <span class="form-label mr-2">Filtrer par date de dépôt de</span>
+              <input class="form-control" v-model="date_filter_start" placeholder="Date de début">
+              <span class="form-label mr-2 ml-2">à</span>
+              <input class="form-control" v-model="date_filter_end" placeholder="Date de fin">
             </span>
-            <span v-if="filter!==''">
-              <button @click="exportFiltered" type="button" class="btn btn-secondary">Exporter les documents filtrés</button>
+            <span class="form-group col-sm-3" v-if="filter!==''">
+              <button @click="exportFiltered" type="button" class="btn btn-secondary">
+                <i class="fa-file-export fas mr-2"></i>
+                Exporter les documents filtrés
+              </button>
             </span>
-            <span v-else-if="this.selected.length">
-              <button @click="exportSelected" type="button" class="btn btn-secondary">Exporter les documents sélectionnés</button>
+            <span class="form-group col-sm-2" v-else-if="this.selected.length">
+              <button @click="exportSelected" type="button" class="btn btn-secondary">
+                <i class="fa-file-export fas mr-2"></i>
+                Exporter les documents sélectionnés
+              </button>
+            </span>
+            <span class="form-group col-sm-2" v-else>
+              <button @click="exportAll" type="button" class="btn btn-secondary">
+                <i class="fa-file-export fas mr-2"></i>
+                Exporter tous les documents
+              </button>
             </span>
           </span>
         </div>
@@ -211,6 +225,11 @@ export default Vue.extend({
         },
         exportSelected(event) {
           console.log("selected");
+          console.log(this.filter);
+          console.log(this.selected);
+        },
+        exportAll(event) {
+          console.log("all");
           console.log(this.filter);
           console.log(this.selected);
         },
