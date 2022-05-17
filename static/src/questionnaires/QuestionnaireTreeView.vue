@@ -74,7 +74,7 @@
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
             <template slot="selection" slot-scope="props"><input type="checkbox" @change="onInputChange(props.row.id)"></template>
             <template slot="no-rows">Pas de résultats</template>
-            <template slot="toggle-children-icon" slot-scope="props"> [{{ props.expanded ? '-' : '+' }}] </template>
+            <template slot="toggle-children-icon" slot-scope="props"><i class="fe fe-folder-minus" v-if="props.expanded"></i><i class="fe fe-folder-plus" v-else></i>&nbsp;</template>
         </vue-ads-table>
     </div>
 </template>
