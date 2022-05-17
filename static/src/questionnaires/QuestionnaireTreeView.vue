@@ -56,6 +56,12 @@
                 Exporter tous les documents
               </button>
             </span>
+            <span>
+              <button type="button" class="btn btn-secondary">Exporter les fichiers sélectionnés</button>
+            </span>
+            <span v-if="filter !== ''">
+              <button type="button" class="btn btn-secondary">Exporter les fichiers filtrés</button>
+            </span>
           </span>
         </div>
         <vue-ads-table
@@ -570,7 +576,7 @@ export default Vue.extend({
                                                                     .filter(responseFile => responseFile.is_deleted === false)
                                                                     .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
                                     objQuestion._showChildren = true;
-                                    objQuestion._selectable = false;
+                                    objQuestion._selectable = true;
                                 } else {
                                     objQuestion._showChildren = false;
                                 }
