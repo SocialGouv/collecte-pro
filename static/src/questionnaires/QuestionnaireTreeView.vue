@@ -52,13 +52,12 @@
             :filter="filter"
             @selection-change="selectionChange"
         >
-            <!-- Will be applied on the name column for the rows with an _id of tiger -->
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
             <template slot="name_file" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 class="btn tag tag-azure pull-left btn-file">
                 {{ props.row.name }}
-                <span class="tag-addon">
+                <span class="tag-addon pb-1">
                   <i class="fe fe-file"></i>
                 </span>
               </a>
@@ -67,8 +66,17 @@
               <a :href="props.row.url" target="_blank"
                 class="btn tag tag-orange pull-left btn-file">
                 {{ props.row.name }}
-                <span class="tag-addon">
+                <span class="tag-addon pb-1">
                   <i class="fe fe-paperclip"></i>
+                </span>
+              </a>
+            </template>
+            <template slot="name_fileCorbeille" slot-scope="props">
+              <a :href="props.row.url" target="_blank"
+                class="btn tag tag-azure pull-left btn-file">
+                {{ props.row.name }}
+                <span class="tag-addon pb-1">
+                  <i class="fe fe-trash-2"></i>
                 </span>
               </a>
             </template>
@@ -248,7 +256,7 @@ export default Vue.extend({
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
-                console.log("je suis une corbeille");
+                objectTreeView._id = 'fileCorbeille';
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
