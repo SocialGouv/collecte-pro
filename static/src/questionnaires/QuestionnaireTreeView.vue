@@ -64,7 +64,7 @@
               </a>
             </template>
             <template slot="name_fileAnnexe" slot-scope="props">
-              <a :href="props.row.url"
+              <a :href="props.row.url" target="_blank"
                 class="btn tag tag-orange pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon">
