@@ -14,11 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='questionnaire',
             name='control',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, related_name='questionnaires', to='control.control', verbose_name='procédure'),
-        ),
-        migrations.AlterField(
-            model_name='questionnaire',
-            name='control',
-            field=models.ForeignKey(blank=True, default=0, on_delete=django.db.models.deletion.CASCADE, related_name='questionnaires', to='control.control', verbose_name='procédure'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='questionnaires', to='control.control', verbose_name='procédure'),
         ),
     ]
