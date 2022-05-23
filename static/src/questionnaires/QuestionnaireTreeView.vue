@@ -44,23 +44,17 @@
                 Exporter les documents filtrés
               </button>
             </span>
-            <span class="form-group col-sm-2" v-else-if="this.selected.length">
+            <span class="form-group col-sm-3" v-else-if="this.selected.length">
               <button @click="exportSelected" type="button" class="btn btn-secondary">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter les documents sélectionnés
               </button>
             </span>
-            <span class="form-group col-sm-2" v-else>
+            <span class="form-group col-sm-3" v-else>
               <button @click="exportAll" type="button" class="btn btn-secondary">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter tous les documents
               </button>
-            </span>
-            <span>
-              <button type="button" class="btn btn-secondary">Exporter les fichiers sélectionnés</button>
-            </span>
-            <span v-if="filter !== ''">
-              <button type="button" class="btn btn-secondary">Exporter les fichiers filtrés</button>
             </span>
           </span>
         </div>
