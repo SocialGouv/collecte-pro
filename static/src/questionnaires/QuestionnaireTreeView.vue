@@ -33,12 +33,32 @@
               </select>
             </span>
             <span class="form-group col-sm-6">
-              <span class="form-label mr-2">Filtrer par date de dépôt de</span>
-              <input class="form-control" v-model="date_filter_start" placeholder="Date de début">
-              <span class="form-label mr-2 ml-2">à</span>
-              <input class="form-control" v-model="date_filter_end" placeholder="Date de fin">
+              <label class="form-label mr-2" id="filtre_start_date" for="filtre_startdate">
+                Filtrer par date de dépôt de
+              </label>
+              <datepicker id="filtre_startdate"
+                class="form-control"
+                aria-labelledby="filtre_start_date"
+                v-model="date_filter_start"
+                :language="fr"
+                :typeable="true"
+                :placeholder="placeholder"
+                :format="format"
+                :monday-first="true">
+              </datepicker>
+              <label class="form-label ml-2 mr-2" id="filtre_end_date" for="filtre_enddate">à</label>
+              <datepicker id="filtre_enddate"
+                class="form-control"
+                aria-labelledby="filtre_end_date"
+                v-model="date_filter_end"
+                :language="fr"
+                :typeable="true"
+                :placeholder="placeholder"
+                :format="format"
+                :monday-first="true">
+              </datepicker>
             </span>
-            <span class="form-group col-sm-3" v-if="filter!==''">
+            <span class="form-group col-sm-3" v-if="filter!=='' || !(!this.date_filter_start && !this.date_filter_end)">
               <button @click="exportFiltered" type="button" class="btn btn-secondary">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter les documents filtrés
@@ -96,7 +116,7 @@
             </template>
             <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
-            <template slot="no-rows">Pas de résultats</template>
+            <template slot="no-rows">Pas de résultat</template>
             <template slot="toggle-children-icon" slot-scope="props">
               <i class="fe fe-folder-minus" v-if="props.expanded"></i>
               <i class="fe fe-folder-plus" v-else></i>
@@ -124,6 +144,9 @@ import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
 
+import Datepicker from 'vuejs-datepicker';
+import fr from '../utils/vuejs-datepicker-locale-fr';
+
 export default Vue.extend({
     props: {
         control: {type: Object, default: () => ({})}
@@ -132,6 +155,7 @@ export default Vue.extend({
         InfoBar,
         ConfirmModal,
         VueAdsTable,
+        Datepicker,
     },
 
     data () {
@@ -142,7 +166,7 @@ export default Vue.extend({
             },
             {
                 property: 'dateDepot',
-                title: 'Date de dépot',
+                title: 'Date de dépôt',
                 filterable: true,
             },
             {
@@ -187,6 +211,11 @@ export default Vue.extend({
             columns,
             classes,
             filter: '',
+            date_filter_start: '',
+            date_filter_end: '',
+            fr: fr, // locale for datepicker
+            format: "yyyy-MM-dd", // format for datepicker
+            placeholder: "yyyy-mm-dd", // Placeholder for datepicker
             selected: [],
             checkedCtrls: [],
             checkedElements: [],
@@ -210,13 +239,19 @@ export default Vue.extend({
     watch: {
         'filter': function(val, oldVal) {
             this.selected = [];
-            console.log("filter changed");
         },
+        'date_filter_start': function(val, oldVal) {
+            this.selected = [];
+            this.refreshFiles();
+        },
+        'date_filter_end': function(val, oldVal) {
+            this.selected = [];
+            this.refreshFiles();
+        }
     },
     methods: {
         selectionChange(rows) {
           this.selected = rows;
-          console.log("selection changed");
         },
         exportFiltered(event) {
           console.log("filtered");
@@ -232,6 +267,40 @@ export default Vue.extend({
           console.log("all");
           console.log(this.filter);
           console.log(this.selected);
+        },
+        refreshFiles() {
+          const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
+          this.treeViewElements = this.getTreeViewElements(controlQuestionnaires);
+        },
+        filterByDate(responseFile) {
+          let creation_date = new Date(responseFile.created);
+          if (!this.date_filter_start && !this.date_filter_end) {
+            return true;
+          }
+          if (!responseFile.created) {
+            return false;
+          }
+          try {
+            if (this.date_filter_start && this.date_filter_end) {
+              if (this.date_filter_start <= creation_date && creation_date <= this.date_filter_end) {
+                return true;
+              }
+              return false;
+            } else if (this.date_filter_start) {
+              if (this.date_filter_start <= creation_date) {
+                return true;
+              }
+              return false;
+            } else if (this.date_filter_end) {
+                if (creation_date <= this.date_filter_end) {
+                  return true;
+                }
+                return false;
+            }
+          } catch(error) {
+            return true;
+          }
+          return true;
         },
         getUsers() {
           axios.get(backendUrls.getUsersInControl(this.control.id))
@@ -567,6 +636,7 @@ export default Vue.extend({
                                 ) {
                                     objQuestion._children = question.response_files
                                                                     .filter(responseFile => responseFile.is_deleted === false)
+                                                                    .filter(this.filterByDate)
                                                                     .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
                                     objQuestion._showChildren = true;
                                     objQuestion._selectable = false;
@@ -592,10 +662,12 @@ export default Vue.extend({
                       return fq.themes.flatMap(t => {
                         if (t.questions) {
                           return t.questions.flatMap(q => {
-                            return q.question_files.flatMap(qf => {
-                              if (qf) {
-                                return this.getTreeViewLevel(qf, null, null, null, false, false, true);
-                              }
+                            return q.question_files
+                              .filter(this.filterByDate)
+                              .flatMap(qf => {
+                                if (qf) {
+                                  return this.getTreeViewLevel(qf, null, null, null, false, false, true);
+                                }
                             })
                           })
                         }
@@ -612,6 +684,7 @@ export default Vue.extend({
                           return t.questions.flatMap(q => {
                             return q.response_files
                               .filter(rf => rf.is_deleted === true)
+                              .filter(this.filterByDate)
                               .flatMap(rf => {
                               if (rf) {
                                 return this.getTreeViewLevel(rf, null, null, null, false, false, false, true);
@@ -642,9 +715,7 @@ export default Vue.extend({
 
     mounted() {
       this.getUsers();
-
-      const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
-      this.treeViewElements = this.getTreeViewElements(controlQuestionnaires);
+      this.refreshFiles();
     },
 });
 </script>
