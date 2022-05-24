@@ -59,19 +59,19 @@
               </datepicker>
             </span>
             <span class="form-group col-sm-3" v-if="filter!=='' || !(!this.date_filter_start && !this.date_filter_end)">
-              <button @click="exportFiltered" type="button" class="btn btn-secondary">
+              <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter les documents filtrés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else-if="this.selected.length">
-              <button @click="exportSelected" type="button" class="btn btn-secondary">
+              <button @click="exportSelected" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter les documents sélectionnés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else>
-              <button @click="exportAll" type="button" class="btn btn-secondary">
+              <button @click="exportAll" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
                 <i class="fa-file-export fas mr-2"></i>
                 Exporter tous les documents
               </button>
