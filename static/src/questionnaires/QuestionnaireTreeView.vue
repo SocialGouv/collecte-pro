@@ -254,19 +254,117 @@ export default Vue.extend({
           this.selected = rows;
         },
         exportFiltered(event) {
-          console.log("filtered");
-          console.log(this.filter);
-          console.log(this.selected);
+          if (this.selected.length > 0) {
+            this.exportSelected();
+          }
+          this.exportAll();
         },
         exportSelected(event) {
           console.log("selected");
-          console.log(this.filter);
-          console.log(this.selected);
         },
         exportAll(event) {
-          console.log("all");
-          console.log(this.filter);
-          console.log(this.selected);
+          const formatFilename = (file) => {
+            const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
+            const questionnaireId = `Q${questionnaireNb}`;
+            let themeId = '';
+            let filename = ''
+            if (file.category == 'question_file') {
+              themeId = 'ANNEXES-AUX-QUESTIONS';
+              filename = `Q${questionnaireNb}-${file.basename}`;
+            } else if (file.is_deleted) {
+              themeId = 'CORBEILLE';
+              filename = `Q${questionnaireNb}-${file.basename}`;
+            } else {
+              themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
+              const questionId = String(file.questionId + 1).padStart(2, '0');
+              filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+            }
+            return { questionnaireId, themeId, filename };
+          }
+
+          let filter = '' + this.filter;
+          let files = this.treeViewElements.flatMap(questionnaire => {
+            if (questionnaire._children) {
+              return questionnaire._children.flatMap(theme => {
+                if (theme._id == 'theme' && theme._children) {
+                  return theme._children.flatMap(question => {
+                    if (question._children) {
+                      return question._children.flatMap(file => {
+                        if (file) {
+                          if (!filter || file.repondant == filter) {
+                            return {
+                              questionnaireNb: questionnaire.order,
+                              themeId: theme.order,
+                              questionId: question.order,
+                              category: 'response_file',
+                              basename: file.name,
+                              url: file.url,
+                              is_deleted: file.is_deleted,
+                            }
+                          }
+                        }
+                      })
+                    }
+                  })
+                } else if (theme._id == 'corbeille' && theme._children) {
+                  return theme._children.flatMap(file => {
+                    if (file) {
+                      if (!filter || file.repondant == filter) {
+                        return {
+                          questionnaireNb: questionnaire.order,
+                          themeId: 0,
+                          questionId: 0,
+                          category: 'response_file',
+                          basename: file.name,
+                          url: file.url,
+                          is_deleted: file.is_deleted,
+                        }
+                      }
+                    }
+                  })
+                } else if (theme._id == 'annexes' && theme._children) {
+                  return theme._children.flatMap(file => {
+                    if (file) {
+                      if (!filter) {
+                        return {
+                          questionnaireNb: questionnaire.order,
+                          themeId: 0,
+                          questionId: 0,
+                          category: 'question_file',
+                          basename: file.name,
+                          url: file.url,
+                          is_deleted: file.is_deleted,
+                        }
+                      }
+                    }
+                  })
+                }
+              })
+            }
+          })
+          const zipFilename = this.control.reference_code + '.zip'
+          const zip = new JSZip()
+          let cnt = 0
+
+          files = files.filter(file => typeof(file)!=="undefined");
+          files.map(file => {
+            const url = window.location.origin + file.url;
+            JSZipUtils.getBinaryContent(url, (err, data) => {
+              if (err) throw err;
+              const formatted = formatFilename(file);
+              zip.folder(formatted.questionnaireId)
+                .folder(formatted.themeId)
+                .file(formatted.filename, data, { binary: true });
+
+              cnt++;
+              if (cnt === files.length) {
+                zip.generateAsync({ type: 'blob' }).then((content) => {
+                  this.loaderActive = false;
+                  saveAs(content, zipFilename)
+                })
+              }
+            })
+          })
         },
         refreshFiles() {
           const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
@@ -322,7 +420,9 @@ export default Vue.extend({
                 _children: [],
                 _id: '',
                 id: '',
-                url: ''
+                url: '',
+                order: 0,
+                is_deleted: ''
             };
 
             if (isAnnexe) { // Annexes
@@ -345,6 +445,7 @@ export default Vue.extend({
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
                 objectTreeView._id = 'fileCorbeille';
+                objectTreeView.is_deleted = item.is_deleted;
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
@@ -352,21 +453,25 @@ export default Vue.extend({
                 objectTreeView._id = 'file';
                 objectTreeView.id = questionnaireId + '-' + themeId + '-' + questionId + '-' + item.id;
                 objectTreeView.url = item.url;
+                objectTreeView.is_deleted = item.is_deleted;
             } else if (themeId != null && questionId == null) { // Question
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
                 objectTreeView._id = 'question';
                 objectTreeView.id = questionnaireId + '-' + themeId + '-' + item.id;
+                objectTreeView.order = item.order;
             } else if (questionnaireId !== null && themeId === null) { // Theme
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
                 objectTreeView._id = 'theme';
                 objectTreeView.id = questionnaireId + '-' + item.id;
+                objectTreeView.order = item.order;
             } else { // Questionnaire
                 objectTreeView.name = item.title || item.description;
                 objectTreeView._children = [];
                 objectTreeView._id = 'questionnaire';
                 objectTreeView.id = item.id;
+                objectTreeView.order = item.numbering;
             }
 
             return objectTreeView;
@@ -436,180 +541,6 @@ export default Vue.extend({
             });
           }
         },
-
-        exportControl(itemId, type) {
-          this.checkedElements = [];
-          this.checkedElements.push(itemId);
-
-          const formatFilename = (rf) => {
-            const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
-            const themeId = String(rf.themeId + 1).padStart(2, '0')
-            const questionId = String(rf.questionId + 1).padStart(2, '0')
-            const filename = `Q${questionnaireNb}-T${themeId}-${questionId}-${rf.basename}`
-            return { questionnaireNb, themeId, filename }
-          }
-
-          let questionnaireId = '';
-          let themeId = '';
-          let questionId = '';
-          let fileId = '';
-          let responseFiles = '';
-
-          if (type === 'questionnaire') {
-            questionnaireId = itemId.toString().split('-')[0];
-            responseFiles = this.accessibleQuestionnaires
-            .filter(aq => this.checkedElements.includes(aq.id))
-            .flatMap(fq => {
-              if (fq.themes) {
-                return fq.themes.flatMap(t => {
-                  if (t.questions) {
-                    return t.questions.flatMap(q => {
-                      return q.response_files.flatMap(rf => {
-                        if (rf) {
-                          return {
-                            questionnaireNb: fq.numbering,
-                            themeId: t.order,
-                            questionId: q.order,
-                            basename: rf.basename,
-                            url: rf.url,
-                            is_deleted: rf.is_deleted,
-                          }
-                        }
-                      })
-                    })
-                  }
-                })
-              }
-            })
-          } else if (type === 'theme') {
-            questionnaireId = itemId.toString().split('-')[0];
-            themeId = itemId.toString().split('-')[1];
-            responseFiles = this.accessibleQuestionnaires
-            .filter(aq => aq.id.toString() === questionnaireId)
-            .flatMap(fq => {
-              if (fq.themes) {
-                return fq.themes
-                  .filter(t => t.id.toString() === themeId)
-                  .flatMap(t => {
-                  if (t.questions) {
-                    return t.questions.flatMap(q => {
-                      return q.response_files.flatMap(rf => {
-                        if (rf) {
-                          return {
-                            questionnaireNb: fq.numbering,
-                            themeId: t.order,
-                            questionId: q.order,
-                            basename: rf.basename,
-                            url: rf.url,
-                            is_deleted: rf.is_deleted,
-                          }
-                        }
-                      })
-                    })
-                  }
-                })
-              }
-            })
-          } else if (type === 'question') {
-            questionnaireId = itemId.toString().split('-')[0];
-            themeId = itemId.toString().split('-')[1];
-            questionId = itemId.toString().split('-')[2];
-            responseFiles = this.accessibleQuestionnaires
-            .filter(aq => aq.id.toString() === questionnaireId)
-            .flatMap(fq => {
-              if (fq.themes) {
-                return fq.themes
-                  .filter(t => t.id.toString() === themeId)
-                  .flatMap(t => {
-                  if (t.questions) {
-                    return t.questions
-                      .filter(q => q.id.toString() === questionId)
-                      .flatMap(q => {
-                      return q.response_files.flatMap(rf => {
-                        if (rf) {
-                          return {
-                            questionnaireNb: fq.numbering,
-                            themeId: t.order,
-                            questionId: q.order,
-                            basename: rf.basename,
-                            url: rf.url,
-                            is_deleted: rf.is_deleted,
-                          }
-                        }
-                      })
-                    })
-                  }
-                })
-              }
-            })
-          } else {
-            questionnaireId = itemId.split('-')[0];
-            themeId = itemId.split('-')[1];
-            questionId = itemId.split('-')[2];
-            fileId = itemId.split('-')[3];
-            questionnaireId = itemId.split('-')[0];
-            themeId = itemId.split('-')[1];
-            questionId = itemId.split('-')[2];
-            responseFiles = this.accessibleQuestionnaires
-            .filter(aq => aq.id.toString() === questionnaireId)
-            .flatMap(fq => {
-              if (fq.themes) {
-                return fq.themes
-                  .filter(t => t.id.toString() === themeId)
-                  .flatMap(t => {
-                  if (t.questions) {
-                    return t.questions
-                      .filter(q => q.id.toString() === questionId)
-                      .flatMap(q => {
-                      return q.response_files
-                        .filter(rf => rf.id.toString() === fileId)
-                        .flatMap(rf => {
-                        if (rf) {
-                          return {
-                            questionnaireNb: fq.numbering,
-                            themeId: t.order,
-                            questionId: q.order,
-                            basename: rf.basename,
-                            url: rf.url,
-                            is_deleted: rf.is_deleted,
-                          }
-                        }
-                      })
-                    })
-                  }
-                })
-              }
-            })
-          }
-
-          const zipFilename = this.control.reference_code + '.zip'
-          const zip = new JSZip()
-          let cnt = 0
-
-          responseFiles
-                    .filter(respFile => respFile.is_deleted === false)
-                    .map(rf => {
-            const url = window.location.origin + rf.url
-
-            JSZipUtils.getBinaryContent(url, (err, data) => {
-              if (err) throw err
-
-              const formatted = formatFilename(rf)
-
-              zip.folder(`Q${formatted.questionnaireNb}`)
-                .folder(`T${formatted.themeId}`)
-                .file(formatted.filename, data, { binary: true })
-
-              cnt++
-              if (cnt === responseFiles.length) {
-                zip.generateAsync({ type: 'blob' }).then((content) => {
-                  saveAs(content, zipFilename)
-                })
-              }
-            })
-          })
-        },
-
         getTreeViewElements(accessibleQuestionnaires) {
             console.log(accessibleQuestionnaires);
             return accessibleQuestionnaires.map(element => {
