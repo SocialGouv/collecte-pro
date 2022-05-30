@@ -13,7 +13,7 @@ click-repl==0.2.0
 coreapi==2.3.3
 coreschema==0.0.4
 cryptography==36.0.2
-Django==3.2.12
+Django==3.2.13
 django-activity-stream==1.4.1
 django-admin==2.0.1
 django-annoying==0.10.6
