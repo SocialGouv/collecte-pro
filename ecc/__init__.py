@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.utils.http import urlencode
 
-default_app_config = 'ecc.apps.EccConfig'
 
 def provider_logout(request):
     return settings.OIDC_OP_LOGOUT_ENDPOINT + '?' + urlencode({
