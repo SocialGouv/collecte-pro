@@ -404,15 +404,26 @@ export default Vue.extend({
       }
 
       this.loaderActive = true;
-      const formatFilename = (rf) => {
-        const questionnaireNb = String(rf.questionnaireNb).padStart(2, '0')
-        const themeId = String(rf.themeId + 1).padStart(2, '0')
-        const questionId = String(rf.questionId + 1).padStart(2, '0')
-        const filename = `Q${questionnaireNb}-T${themeId}-${questionId}-${rf.basename}`
-        return { questionnaireNb, themeId, filename }
+      const formatFilename = (file) => {
+        const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
+        const questionnaireId = `Q${questionnaireNb}`;
+        let themeId = '';
+        let filename = ''
+        if (file.category == 'question_file') {
+          themeId = 'ANNEXES-AUX-QUESTIONS';
+          filename = `Q${questionnaireNb}-${file.basename}`;
+        } else if (file.is_deleted) {
+          themeId = 'CORBEILLE';
+          filename = `Q${questionnaireNb}-${file.basename}`;
+        } else {
+          themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
+          const questionId = String(file.questionId + 1).padStart(2, '0');
+          filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+        }
+        return { questionnaireId, themeId, filename };
       }
 
-      const responseFiles = this.accessibleQuestionnaires
+      let files = this.accessibleQuestionnaires
         .filter(aq => this.checkedQuestionnaires.includes(aq.id))
         .flatMap(fq => {
           if (fq.themes) {
@@ -425,6 +436,7 @@ export default Vue.extend({
                         questionnaireNb: fq.numbering,
                         themeId: t.order,
                         questionId: q.order,
+                        category: 'response_file',
                         basename: rf.basename,
                         url: rf.url,
                         is_deleted: rf.is_deleted,
@@ -436,7 +448,9 @@ export default Vue.extend({
             })
           }
         })
-      const questionFiles = this.accessibleQuestionnaires
+      files.push.apply(
+        files,
+        this.accessibleQuestionnaires
         .filter(aq => this.checkedQuestionnaires.includes(aq.id))
         .flatMap(fq => {
           if (fq.themes) {
@@ -449,6 +463,7 @@ export default Vue.extend({
                         questionnaireNb: fq.numbering,
                         themeId: t.order,
                         questionId: q.order,
+                        category: 'question_file',
                         basename: qf.basename,
                         url: qf.url,
                         is_deleted: qf.is_deleted,
@@ -460,45 +475,27 @@ export default Vue.extend({
             })
           }
         })
+      );
 
       const zipFilename = this.control.reference_code + '.zip'
       const zip = new JSZip()
       let cnt = 0
 
-      questionFiles.map(qf => {
-        const url = window.location.origin + qf.url
+      if (files.length==0) {
+        this.loaderActive = false;
+      }
 
+      files.map(file => {
+        const url = window.location.origin + file.url;
         JSZipUtils.getBinaryContent(url, (err, data) => {
-          if (err) throw err
+          if (err) throw err;
+          const formatted = formatFilename(file);
+          zip.folder(formatted.questionnaireId)
+            .folder(formatted.themeId)
+            .file(formatted.filename, data, { binary: true });
 
-          const formatted = formatFilename(qf)
-
-          zip.folder(`Q${formatted.questionnaireNb}`)
-            .folder(`ANNEXES-AUX-QUESTIONS`)
-            .file(formatted.filename, data, { binary: true })
-        })
-      })
-
-      responseFiles.map(rf => {
-        const url = window.location.origin + rf.url
-
-        JSZipUtils.getBinaryContent(url, (err, data) => {
-          if (err) throw err
-
-          const formatted = formatFilename(rf)
-
-          if (rf.is_deleted) {
-            zip.folder(`Q${formatted.questionnaireNb}`)
-              .folder(`CORBEILLE`)
-              .file(formatted.filename, data, { binary: true })
-          } else {
-            zip.folder(`Q${formatted.questionnaireNb}`)
-              .folder(`T${formatted.themeId}`)
-              .file(formatted.filename, data, { binary: true })
-          }
-
-          cnt++
-          if (cnt === responseFiles.length) {
+          cnt++;
+          if (cnt === files.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => {
               this.loaderActive = false;
               saveAs(content, zipFilename)

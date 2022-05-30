@@ -348,6 +348,7 @@ export default Vue.extend({
           );
         },
         zipFiles(files) {
+          this.loaderActive = true;
           const formatFilename = (file) => {
             const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
             const questionnaireId = `Q${questionnaireNb}`;
