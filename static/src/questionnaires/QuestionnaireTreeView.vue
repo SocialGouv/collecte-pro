@@ -256,32 +256,28 @@ export default Vue.extend({
         exportFiltered(event) {
           if (this.selected.length > 0) {
             this.exportSelected();
+          } else {
+            this.exportAll();
           }
-          this.exportAll();
         },
         exportSelected(event) {
-          console.log("selected");
+          function onlyUnique(value, index, self) {
+            for (let i=0;i<self.length;i++) {
+              if (self[i].id == value.id) {
+                return i === index;
+              }
+            }
+          }
+          let files = [];
+          for (let i=0; i< this.selected.length; i++) {
+            files.push.apply(files, this.pickFiles(this.selected[i].id))
+          }
+          this.zipFiles(files.filter(onlyUnique));
         },
         exportAll(event) {
-          const formatFilename = (file) => {
-            const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
-            const questionnaireId = `Q${questionnaireNb}`;
-            let themeId = '';
-            let filename = ''
-            if (file.category == 'question_file') {
-              themeId = 'ANNEXES-AUX-QUESTIONS';
-              filename = `Q${questionnaireNb}-${file.basename}`;
-            } else if (file.is_deleted) {
-              themeId = 'CORBEILLE';
-              filename = `Q${questionnaireNb}-${file.basename}`;
-            } else {
-              themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
-              const questionId = String(file.questionId + 1).padStart(2, '0');
-              filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
-            }
-            return { questionnaireId, themeId, filename };
-          }
-
+          this.zipFiles(this.pickFiles());
+        },
+        pickFiles(selected_id='') {
           let filter = '' + this.filter;
           let files = this.treeViewElements.flatMap(questionnaire => {
             if (questionnaire._children) {
@@ -297,6 +293,7 @@ export default Vue.extend({
                               themeId: theme.order,
                               questionId: question.order,
                               category: 'response_file',
+                              id: file.id,
                               basename: file.name,
                               url: file.url,
                               is_deleted: file.is_deleted,
@@ -315,6 +312,7 @@ export default Vue.extend({
                           themeId: 0,
                           questionId: 0,
                           category: 'response_file',
+                          id: file.id,
                           basename: file.name,
                           url: file.url,
                           is_deleted: file.is_deleted,
@@ -331,6 +329,7 @@ export default Vue.extend({
                           themeId: 0,
                           questionId: 0,
                           category: 'question_file',
+                          id: file.id,
                           basename: file.name,
                           url: file.url,
                           is_deleted: file.is_deleted,
@@ -341,12 +340,36 @@ export default Vue.extend({
                 }
               })
             }
-          })
+          });
+          return files.filter(
+            file => typeof(file)!=="undefined"
+          ).filter(
+            file => file.id.startsWith(selected_id)
+          );
+        },
+        zipFiles(files) {
+          const formatFilename = (file) => {
+            const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
+            const questionnaireId = `Q${questionnaireNb}`;
+            let themeId = '';
+            let filename = ''
+            if (file.category == 'question_file') {
+              themeId = 'ANNEXES-AUX-QUESTIONS';
+              filename = `Q${questionnaireNb}-${file.basename}`;
+            } else if (file.is_deleted) {
+              themeId = 'CORBEILLE';
+              filename = `Q${questionnaireNb}-${file.basename}`;
+            } else {
+              themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
+              const questionId = String(file.questionId + 1).padStart(2, '0');
+              filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+            }
+            return { questionnaireId, themeId, filename };
+          }
           const zipFilename = this.control.reference_code + '.zip'
           const zip = new JSZip()
           let cnt = 0
 
-          files = files.filter(file => typeof(file)!=="undefined");
           files.map(file => {
             const url = window.location.origin + file.url;
             JSZipUtils.getBinaryContent(url, (err, data) => {
@@ -429,15 +452,18 @@ export default Vue.extend({
                 objectTreeView.name = 'Annexes';
                 objectTreeView._children = [];
                 objectTreeView._id = 'annexes';
+                objectTreeView.id = questionnaireId + '-' + 'annexes';
             } else if (isCorbeille) { // Corbeille
                 objectTreeView.name = 'Corbeille';
                 objectTreeView._children = [];
                 objectTreeView._id = 'corbeille';
+                objectTreeView.id = questionnaireId + '-' + 'corbeille';
             } else if (isFichierAnnexe) { // Fichier annexe
                 objectTreeView.name = item.basename;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
                 objectTreeView._id = 'fileAnnexe';
+                objectTreeView.id = questionnaireId + '-' + 'annexes' + '-' + item.id;
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
                 objectTreeView.dateDepot = item.created;
@@ -445,6 +471,7 @@ export default Vue.extend({
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
                 objectTreeView._id = 'fileCorbeille';
+                objectTreeView.id = questionnaireId + '-' + 'corbeille' + '-' + item.id;
                 objectTreeView.is_deleted = item.is_deleted;
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
@@ -491,12 +518,9 @@ export default Vue.extend({
           const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
           const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 
-          console.log(this.checkedCtrls);
-          console.log(this.checkedCtrls.length);
           if (this.checkedCtrls.length) {
             const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
             const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
-            console.log(destCtrls);
 
             destCtrls.forEach(ctrl => {
               const themes = curQ.themes.map(t => {
@@ -542,7 +566,6 @@ export default Vue.extend({
           }
         },
         getTreeViewElements(accessibleQuestionnaires) {
-            console.log(accessibleQuestionnaires);
             return accessibleQuestionnaires.map(element => {
                 const objQuestionnaire = this.getTreeViewLevel(element);
 
@@ -570,7 +593,7 @@ export default Vue.extend({
                                                                     .filter(this.filterByDate)
                                                                     .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
                                     objQuestion._showChildren = true;
-                                    objQuestion._selectable = false;
+                                    objQuestion._selectable = true;
                                 } else {
                                     objQuestion._showChildren = false;
                                 }
@@ -583,8 +606,8 @@ export default Vue.extend({
                     });
                 }
 
-                const objAnnexes = this.getTreeViewLevel(null, null, null, null, true);
-                const objCorbeille = this.getTreeViewLevel(null, null, null, null, false, true);
+                const objAnnexes = this.getTreeViewLevel(null, element.id, null, null, true);
+                const objCorbeille = this.getTreeViewLevel(null, element.id, null, null, false, true);
 
                 objAnnexes._children = accessibleQuestionnaires
                   .filter(aq => aq.id === element.id)
@@ -597,7 +620,7 @@ export default Vue.extend({
                               .filter(this.filterByDate)
                               .flatMap(qf => {
                                 if (qf) {
-                                  return this.getTreeViewLevel(qf, null, null, null, false, false, true);
+                                  return this.getTreeViewLevel(qf, element.id, null, null, false, false, true);
                                 }
                             })
                           })
@@ -618,7 +641,7 @@ export default Vue.extend({
                               .filter(this.filterByDate)
                               .flatMap(rf => {
                               if (rf) {
-                                return this.getTreeViewLevel(rf, null, null, null, false, false, false, true);
+                                return this.getTreeViewLevel(rf, element.id, null, null, false, false, false, true);
                               }
                             })
                           })
