@@ -79,6 +79,7 @@ def test_can_search_inspector_user_by_username_if_associated_with_deleted_contro
 
 
 def test_inspector_can_create_user():
+    parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector.controls.add(control)
@@ -158,6 +159,7 @@ def test_inspector_can_update_an_existing_user_with_different_casing():
 
 
 def test_can_associate_a_control_to_an_existing_user():
+    parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector.controls.add(control)
@@ -247,6 +249,7 @@ def test_inspector_cannot_alter_a_control_that_is_not_accessible_to_him():
 
 
 def test_inspector_can_remove_user_from_control():
+    parameter = factories.ParameterFactory()
     someone = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
@@ -271,6 +274,7 @@ def test_logged_in_user_can_get_current_user():
 
 
 def test_new_audited_user_should_not_have_the_file_reporting_flag_activated():
+    parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector.controls.add(control)

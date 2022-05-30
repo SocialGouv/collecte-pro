@@ -18,6 +18,7 @@ User = get_user_model()
 
 
 def test_inspector_can_delete_a_control():
+    parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector.controls.add(control)

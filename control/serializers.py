@@ -32,7 +32,7 @@ class ResponseFileSerializer(serializers.ModelSerializer):
 class ResponseFileTrashSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResponseFile
-        fields = ('id', 'url', 'basename', 'created', 'author', 'is_deleted')
+        fields = ('id', 'is_deleted')
 
 
 class QuestionFileSerializer(serializers.ModelSerializer):
@@ -139,7 +139,7 @@ class QuestionnaireUpdateSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'control': {
                 'required': True,
-                'allow_null': True,
+                'allow_null': False,
             }
         }
 

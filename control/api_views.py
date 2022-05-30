@@ -150,7 +150,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
     serializer_class = control_serializers.QuestionnaireSerializer
     permission_classes_by_action = {
         "create": (OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
-        "update": (),
+        "update": (OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
     }
 
     def get_permissions(self):

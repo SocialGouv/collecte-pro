@@ -106,3 +106,14 @@ class QuestionFileFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'control.QuestionFile'
+
+
+@register
+class ParameterFactory(factory.django.DjangoModelFactory):
+    code = "SUPPORT_EMAIL"
+    title = "nowhere@example.org"
+    name = "nowhere@example.org"
+    url = "nowhere@example.org"
+
+    class Meta:
+        model = 'parametres.Parametre'

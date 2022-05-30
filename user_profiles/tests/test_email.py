@@ -23,6 +23,7 @@ user_api_post_remove.connect(send_email_for_user_remove, sender=UserProfile)
 
 
 def test_an_email_is_sent_when_user_is_created():
+    parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector.controls.add(control)
@@ -45,6 +46,7 @@ def test_an_email_is_sent_when_user_is_created():
 
 
 def test_an_email_is_sent_when_user_is_removed():
+    parameter = factories.ParameterFactory()
     someone = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
