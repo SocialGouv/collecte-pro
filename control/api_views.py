@@ -3,7 +3,7 @@ from functools import partial
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework import serializers
 from rest_framework import decorators
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
@@ -229,7 +229,16 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         serializer.is_valid(raise_exception=True)
 
         control = serializer.validated_data['control']
-        if control is not None and not request.user.profile.controls.active().filter(id=control.id).exists():
+        if control is None:
+            e = ParseError(
+                detail=(
+                    'Users can only create questionnaires '
+                    'in active controls.'
+                )
+            )
+            raise e
+        elif not request.user.profile.controls.active().filter(id=control.id).exists():
+        # ~ if control is not None and not request.user.profile.controls.active().filter(id=control.id).exists():
             e = PermissionDenied(
                 detail=(
                     'Users can only create questionnaires '
