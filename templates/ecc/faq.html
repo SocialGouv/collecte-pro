@@ -3,7 +3,6 @@
 {% load faq_tags %}
 {% load email_obfuscator %}
 {% load parametres_tags %}
-{% get_support_email_item as support_email %}
 
 {% block page_main_container_with_sidebar %}
   <div class="page-main flex-row">
@@ -27,6 +26,7 @@
         <div class="card">
           <div class="card-body">
             Si vous ne trouvez pas de réponses à vos questions,
+            {% get_support_email_item as support_email %}
             {{ support_email.url|obfuscate_mailto:"contactez-nous par email" }}.
           </div>
         </div>

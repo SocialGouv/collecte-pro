@@ -20,7 +20,7 @@ https://{{ site.domain }}
 Cordialement,
 * * *
 
-Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en écrivant au support : {{ support_team_email }}.
+Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en écrivant au support : {{ support_email_url }}.
 
 Merci beaucoup,
 

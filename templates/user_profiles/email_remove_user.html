@@ -1,4 +1,5 @@
 {% extends "base_email.html" %}
+{% load email_obfuscator %}
 {% block email_content %}
 <p>Bonjour,</p>
 <p> {{ user.first_name }} {{ user.last_name }} vient de retirer une personne d'un espace de dépôt:</p>
@@ -11,7 +12,7 @@
 <hr/>
 
 <p>
-  Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en <a href="mailto:{{ support_team_email }}">écrivant au support</a>.
+  Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en {{ support_email_url|obfuscate_mailto:"écrivant au support" }}.
 </p>
 <p>Merci beaucoup,</p>
 <p>L'équipe collecte-pro</p>

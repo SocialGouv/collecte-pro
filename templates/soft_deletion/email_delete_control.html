@@ -1,4 +1,5 @@
 {% extends "base_email.html" %}
+{% load email_obfuscator %}
 {% block email_content %}
 
 <p>Bonjour,</p>
@@ -26,7 +27,7 @@
 
 <p>
   Si vous pensez ne pas être le bon destinataire de ce message, ou si cette suppression est une
-  erreur, vous pouvez nous contacter en <a href="mailto:{{ support_team_email }}">écrivant au support</a>.
+  erreur, vous pouvez nous contacter en {{ support_email_url|obfuscate_mailto:"écrivant au support" }}.
 </p>
 
 <p>Merci beaucoup,</p>
