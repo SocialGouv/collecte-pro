@@ -27,7 +27,7 @@
       </div>
     </div>
     <div :class="{ preview: questionnaire.is_draft }">
-      <questionnaire-metadata :questionnaire="questionnaire" :with-trash="!questionnaire.is_draft">
+      <questionnaire-metadata :questionnaire="questionnaire" :control="control" :with-trash="!questionnaire.is_draft">
       </questionnaire-metadata>
 
       <div>
