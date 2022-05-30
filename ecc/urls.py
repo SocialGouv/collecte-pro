@@ -82,8 +82,15 @@ urlpatterns = [
     path('api/questionnaire/<int:pk>/changer-redacteur/',
          editor_api_views.UpdateEditor.as_view(),
          name='update-editor'),
-
 ]
+
+# If Keycloak is active, disable administration login page
+if settings.KEYCLOAK_ACTIVE:
+    urlpatterns.insert(
+        0,
+        path(settings.ADMIN_URL + 'login/', ecc_views.home, name='no-admin-login'),
+    )
+
 
 urlpatterns += [
     path('api/', include((router.urls, 'api'))),
