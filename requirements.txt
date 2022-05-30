@@ -1,8 +1,8 @@
-amqp==5.1.0
-asgiref==3.5.0
+amqp==5.1.1
+asgiref==3.5.2
 billiard==3.6.4.0
 cached-property==1.5.2
-celery==5.2.3
+celery==5.2.7
 certifi==2021.10.8
 cffi==1.15.0
 charset-normalizer==2.0.12
@@ -14,7 +14,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==36.0.2
 Django==3.2.12
-django-activity-stream==1.4.0
+django-activity-stream==1.4.1
 django-admin==2.0.1
 django-annoying==0.10.6
 django-celery-beat==2.2.1
@@ -36,7 +36,7 @@ django-sendfile==0.3.11
 django-session-timeout==0.1.0
 django-settings-export==1.2.1
 django-six==1.0.4
-django-soft-delete==0.9.18
+django-soft-delete==0.9.21
 django-timezone-field==4.2.3
 djangorestframework==3.13.1
 docxcompose==1.3.4
@@ -44,7 +44,7 @@ docxtpl==0.15.2
 ecdsa==0.17.0
 et-xmlfile==1.1.0
 idna==3.3
-importlib-metadata==4.11.3
+importlib-metadata==4.11.4
 itypes==1.2.0
 Jinja2==3.0.3
 josepy==1.13.0
@@ -52,9 +52,9 @@ kombu==5.2.4
 lxml==4.8.0
 MarkupSafe==2.1.1
 mozilla-django-oidc==2.0.0
-openpyxl==3.0.9
+openpyxl==3.0.10
 pdfrw==0.4
-prompt-toolkit==3.0.28
+prompt-toolkit==3.0.29
 psycopg2-binary==2.9.3
 pyasn1==0.4.8
 pycparser==2.21
@@ -65,7 +65,7 @@ python-docx==0.8.11
 python-dotenv==0.19.2
 python-jose==3.3.0
 python-keycloak==0.27.0
-python-magic==0.4.25
+python-magic==0.4.26
 pytz==2022.1
 requests==2.27.1
 rsa==4.8
@@ -74,7 +74,7 @@ six==1.16.0
 sqlparse==0.4.2
 typing_extensions==4.1.1
 uritemplate==4.1.1
-urllib3==1.26.8
+urllib3==1.26.9
 uWSGI==2.0.20
 vine==5.0.0
 wcwidth==0.2.5
