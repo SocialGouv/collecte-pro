@@ -39,4 +39,5 @@ class EccOIDCAuthenticationBackend(OIDCAuthenticationBackend):
         user.profile.profile_type = UserProfile.AUDITED
         if UserProfile.INSPECTOR in claims.get("roles", []):
             user.profile.profile_type = UserProfile.INSPECTOR
+            user.profile.send_files_report = True
         user.profile.save()
