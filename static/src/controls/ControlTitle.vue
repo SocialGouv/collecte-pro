@@ -100,7 +100,7 @@
                 <span class="form-required">*</span>
               </label>
               <div class="flex-row align-items-center">
-                <i class="fa fa-building mr-2 text-muted"></i>
+                <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
                 <input id="organisme" type="text" class="form-control" v-model="organization" required aria-labelledby="organization-label" maxlength="255">
               </div>
             </div>
@@ -110,7 +110,7 @@
                 <span class="form-required">*</span>
               </label>
               <div class="flex-row align-items-center">
-                <i class="fa fa-award mr-2 text-muted"></i>
+                <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
                 <input id="procedure" type="text" class="form-control" v-model="title" required aria-labelledby="title-label" maxlength="255">
               </div>
             </div>
@@ -138,14 +138,14 @@
         <div v-if="organization">
           <div class="mb-3">
             <div class="text-muted font-italic">
-              <i class="fa fa-building mr-2"></i>
+              <i class="fa fa-building mr-2" aria-hidden="true"></i>
               Organisme interrogé
             </div>
             <div class="page-title">{{ organization }}</div>
           </div>
           <div class="mb-3">
             <div class="text-muted font-italic">
-              <i class="fa fa-award mr-2"></i>
+              <i class="fa fa-award mr-2" aria-hidden="true"></i>
               Procédure
             </div>
             <div class="card-title">{{ title }}</div>
@@ -160,7 +160,7 @@
             <button type="button"
                     class="btn btn-secondary"
                     @click="enterEditMode">
-              <i class="fe fe-edit mr-2"></i>
+              <i class="fe fe-edit mr-2" aria-hidden="true"></i>
               Modifier
             </button>
             <button type="button"
@@ -177,7 +177,7 @@
                       type="button"
                       @click="showCloneModal"
               >
-                <i class="fas fa-file-export mr-2"></i>
+                <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
                 Dupliquer
               </button>
                <button
@@ -186,14 +186,14 @@
                       type="button"
                       @click="showExportModal"
               >
-                <i class="fas fa-file-export mr-2"></i>
+                <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
                 Exporter (.zip)
               </button>
               <button class="dropdown-item text-danger"
                       type="button"
                       @click="startControlDeleteFlow"
               >
-                <i class="fe fe-trash-2 mr-2"></i>
+                <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>
                 Supprimer cet espace...
               </button>
             </div>

@@ -38,7 +38,7 @@
                 <div class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="{% url 'admin:index'%}">
-                    <i class="fe fe-settings"></i> Administration
+                    <i class="fe fe-settings" aria-hidden="true"></i> Administration
                   </a>
                 </div>
               {% endif %}
@@ -47,7 +47,7 @@
                   {% url 'faq' as faq_url %}
                   <a class="nav-link nav-link-thick-line {% if request.path == faq_url %}active{% endif %}"
                     href="{% url 'faq'%}">
-                    <i class="fe fe-help-circle"></i> FAQ
+                    <i class="fe fe-help-circle" aria-hidden="true"></i> FAQ
                   </a>
                 </div>
               {% else %}
@@ -76,12 +76,12 @@
                   <form action="{% url 'oidc_logout' %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="dropdown-item clickable">
-                      <i class="dropdown-icon fe fe-log-out"></i> Se déconnecter
+                      <i class="dropdown-icon fe fe-log-out" aria-hidden="true"></i> Se déconnecter
                     </button>
                   </form>
                   {%else%}
                   <a class="dropdown-item" href="{% url 'logout' %}">
-                    <i class="dropdown-icon fe fe-log-out"></i> Se déconnecter
+                    <i class="dropdown-icon fe fe-log-out" aria-hidden="true"></i> Se déconnecter
                   </a>
                   {%endif%}
                 </div>

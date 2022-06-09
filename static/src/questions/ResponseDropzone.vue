@@ -10,11 +10,12 @@
       <form class="dropzone"
             :action="uploadUrl"
             method="post"
+
             enctype="multipart/form-data"
             :id="'dropzone-area-' + questionId ">
         <input type="hidden" name="csrfmiddlewaretoken" :value="csrftoken">
         <div class="dz-message" data-dz-message>
-          <span>Cliquer ou glisser-déposer vos fichiers.</span>
+          <button type="button" class="btn">Cliquer ou glisser-déposer vos fichiers.</button>
         </div>
         <input type="hidden" id="idQuestionId" name="question_id" :value="questionId" />
         <div class="fallback">
@@ -22,7 +23,7 @@
         </div>
       </form>
       <div class="text-right">
-        <i class="dropdown-icon fe fe-help-circle"></i>
+        <i class="dropdown-icon fe fe-help-circle" aria-hidden="true"></i>
         <a :href="faqUrl">Des questions sur le dépôt de fichiers ?</a>
       </div>
     </div>

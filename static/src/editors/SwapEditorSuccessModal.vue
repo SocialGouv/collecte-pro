@@ -1,7 +1,7 @@
 <template>
   <empty-modal no-close="true">
     <div class="modal-header pb-0 border-bottom-0 flex-column align-items-center">
-      <i class="fe fe-check-circle fg-success big-icon"></i>
+      <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
     </div>
     <div class="modal-body text-center">
 

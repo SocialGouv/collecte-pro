@@ -46,7 +46,7 @@
                   class="btn btn-primary"
                   title="Forcer le transfert"
           >
-            <i class="fa fa-exchange-alt mr-1"></i>
+            <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>
             Forcer le transfert
           </button>
         </div>

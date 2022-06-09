@@ -3,7 +3,7 @@
       <div class="modal-dialog large-modal" role="document">
         <div class="modal-content">
           <div class="modal-header border-bottom-0">
-            <i class="fa fa-exchange-alt mr-2 mt-3"></i>
+            <i class="fa fa-exchange-alt mr-2 mt-3" aria-hidden="true"></i>
             <div class="modal-title">
               <h3 class="modal-title">
                 Transférer les droits de rédaction du questionnaire
@@ -39,7 +39,7 @@
                         class="btn btn-primary"
                         title="Transférer"
                         @click="unsetEditor()">
-                          <i class="fa fa-lock-open mr-2"></i>
+                          <i class="fa fa-lock-open mr-2" aria-hidden="true"></i>
                           Libérer les droits
                       </button>
                     </div>
@@ -49,7 +49,7 @@
 
               <div class="card">
                 <div class="card-header justify-content-between">
-                  <h3 class="card-title"><i class="fa fa-university mr-2"></i><strong>Équipe d'instruction</strong></h3>
+                  <h3 class="card-title"><i class="fa fa-university mr-2" aria-hidden="true"></i><strong>Équipe d'instruction</strong></h3>
                 </div>
 
                 <editor-list :users="inspectorUsers()"

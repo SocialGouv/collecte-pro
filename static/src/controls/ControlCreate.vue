@@ -1,7 +1,7 @@
 <template>
   <div>
     <button class="btn btn-primary" @click="showModal">
-      <i class="fe fe-plus"></i>
+      <i class="fe fe-plus" aria-hidden="true"></i>
       Ajouter un espace de dépôt
     </button>
 
@@ -26,7 +26,7 @@
               Football. 255 caractères maximum.
             </div>
             <div class="flex-row align-items-center">
-              <i class="fa fa-award mr-2 text-muted"></i>
+              <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
               <input type="text"
                      class="form-control"
                      v-model="title"
@@ -46,7 +46,7 @@
               Exemple : Ministère des Sports. 255 caractères maximum.
             </div>
             <div class="flex-row align-items-center">
-              <i class="fa fa-building mr-2 text-muted"></i>
+              <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
               <input type="text"
                      class="form-control"
                      v-model="organization"

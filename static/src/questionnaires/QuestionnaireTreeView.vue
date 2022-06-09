@@ -60,19 +60,19 @@
             </span>
             <span class="form-group col-sm-3" v-if="filter!=='' || !(!this.date_filter_start && !this.date_filter_end)">
               <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <i class="fa-file-export fas mr-2"></i>
+                <i class="fa-file-export fas mr-2" aria-hidden="true"></i>
                 Exporter les documents filtrés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else-if="this.selected.length">
               <button @click="exportSelected" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <i class="fa-file-export fas mr-2"></i>
+                <i class="fa-file-export fas mr-2" aria-hidden="true"></i>
                 Exporter les documents sélectionnés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else>
               <button @click="exportAll" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <i class="fa-file-export fas mr-2"></i>
+                <i class="fa-file-export fas mr-2" aria-hidden="true"></i>
                 Exporter tous les documents
               </button>
             </span>
@@ -92,7 +92,7 @@
                 class="btn tag tag-azure pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">
-                  <i class="fe fe-file"></i>
+                  <i class="fe fe-file" aria-hidden="true"></i>
                 </span>
               </a>
             </template>
@@ -101,7 +101,7 @@
                 class="btn tag tag-orange pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">
-                  <i class="fe fe-paperclip"></i>
+                  <i class="fe fe-paperclip" aria-hidden="true"></i>
                 </span>
               </a>
             </template>
@@ -110,7 +110,7 @@
                 class="btn tag tag-azure pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">
-                  <i class="fe fe-trash-2"></i>
+                  <i class="fe fe-trash-2" aria-hidden="true"></i>
                 </span>
               </a>
             </template>
@@ -118,8 +118,8 @@
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
             <template slot="no-rows">Pas de résultat</template>
             <template slot="toggle-children-icon" slot-scope="props">
-              <i class="fe fe-folder-minus" v-if="props.expanded"></i>
-              <i class="fe fe-folder-plus" v-else></i>
+              <i class="fe fe-folder-minus" v-if="props.expanded" aria-hidden="true"></i>
+              <i class="fe fe-folder-plus" v-else aria-hidden="true"></i>
               &nbsp;
             </template>
         </vue-ads-table>

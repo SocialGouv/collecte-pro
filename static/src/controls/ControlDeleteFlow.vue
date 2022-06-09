@@ -47,7 +47,7 @@
                 class="btn btn-primary btn-red"
                 title="Supprimer l'espace de dépôt"
         >
-          <i class="fe fe-trash-2 mr-1"></i>
+          <i class="fe fe-trash-2 mr-1" aria-hidden="true"></i>
           Supprimer
         </button>
       </div>
@@ -60,7 +60,7 @@
     <template v-slot:success-modal-body>
       <div class="modal-header border-bottom-0 flex-column align-items-center">
         <p>
-          <i class="fe fe-check-circle fg-success big-icon"></i>
+          <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
         </p>
         <p class="text-center">
           L'espace de dépôt <strong>"{{ control.title }}"</strong> à bien été supprimé.
@@ -71,7 +71,7 @@
                 class="btn btn-primary"
                 @click="goHome"
         >
-          <i class="fa fa-chevron-left mr-2"></i>
+          <i class="fa fa-chevron-left mr-2" aria-hidden="true"></i>
           Revenir à l'accueil
         </button>
       </div>

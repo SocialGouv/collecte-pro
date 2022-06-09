@@ -39,7 +39,8 @@
                           class="btn btn-link"
                           title="Supprimer le thème"
                   >
-                    <i class="fe fe-trash-2"></i>
+                    <i class="fe fe-trash-2" aria-hidden="true"></i>
+                    <span class="sr-only">Supprimer</span>
                   </button>
                   <button v-else
                           class="btn btn-link"
@@ -48,7 +49,8 @@
                           data-toggle="modal"
                           :data-target="'#deleteThemeConfirmModal' + themeIndex"
                   >
-                    <i class="fe fe-trash-2"></i>
+                    <i class="fe fe-trash-2" aria-hidden="true"></i>
+                    <span class="sr-only">Supprimer</span>
                   </button>
                 </span>
               </div>
@@ -98,7 +100,7 @@
                       type="button"
                       title="Déplacer la question vers le haut"
                       @click="moveQuestionUp(themeIndex, qIndex)">
-                      <i class="fa fa-chevron-up"></i>
+                      <i class="fa fa-chevron-up" aria-hidden="true"></i>
                     </button>
                     <div class="my-1">
                       <label v-bind:for="'question' + (themeIndex + 1) + '-' + (qIndex + 1)"
@@ -114,7 +116,7 @@
                       type="button"
                       title="Déplacer la question vers le bas"
                       @click="moveQuestionDown(themeIndex, qIndex)">
-                      <i class="fa fa-chevron-down"></i>
+                      <i class="fa fa-chevron-down" aria-hidden="true"></i>
                     </button>
                   </div>
                   <textarea class="form-control"
@@ -135,7 +137,7 @@
                             type="button"
                             title="Supprimer la question"
                     >
-                      <i class="fe fe-trash-2"></i>
+                      <i class="fe fe-trash-2" aria-hidden="true"></i>
                     </button>
                     <button v-else
                             class="btn btn-link"
@@ -145,7 +147,7 @@
                             data-toggle="modal"
                             :data-target="'#cannot-delete-question' + themeIndex + '-' + qIndex"
                     >
-                      <i class="fe fe-trash-2"></i>
+                      <i class="fe fe-trash-2" aria-hidden="true"></i>
                     </button>
                     <confirm-modal
                             :id="'cannot-delete-question' + themeIndex + '-' + qIndex"
@@ -174,7 +176,7 @@
                       role="button"
                       type="button"
                       title="Ajouter une question">
-                <i class="fe fe-plus"></i> Ajouter une question
+                <i class="fe fe-plus" aria-hidden="true"></i> Ajouter une question
               </button>
             </div>
           </div>
@@ -188,7 +190,7 @@
                       role="button"
                       type="button"
                       title="Ajouter un thème">
-                <i class="fe fe-plus"></i>Ajouter un thème
+                <i class="fe fe-plus" aria-hidden="true"></i>Ajouter un thème
               </button>
             </div>
           </div>

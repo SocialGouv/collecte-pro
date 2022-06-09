@@ -34,7 +34,7 @@
                      required
                      aria-labelledby="first-name-label">
               <p class="text-muted pl-2" v-if="errors.first_name">
-                <i class="fa fa-warning"></i>
+                <i class="fa fa-warning" aria-hidden="true"></i>
                 {{ errors.first_name.join(' / ')}}
               </p>
             </div>
@@ -50,7 +50,7 @@
                      required
                      aria-labelledby="last-name-label">
               <p class="text-muted pl-2" v-if="errors.last_name">
-                <i class="fa fa-warning"></i>
+                <i class="fa fa-warning" aria-hidden="true"></i>
                 {{ errors.last_name.join(' / ')}}
               </p>
             </div>

@@ -8,7 +8,7 @@
     </swap-editor-button>
     <div class="page-header">
       <div class="page-title flex-wrap">
-        <i class="fe fe-list mr-2"></i>
+        <i class="fe fe-list mr-2" aria-hidden="true"></i>
         <span v-if="currentQuestionnaire.is_draft || currentQuestionnaire.id === undefined"
               class="tag tag-azure big-tag round-tag font-italic mr-2">
           Brouillon
@@ -72,7 +72,7 @@
               class="btn btn-secondary"
               @click="saveDraftAndGoHome"
       >
-        <i class="fa fa-chevron-left mr-2"></i>
+        <i class="fa fa-chevron-left mr-2" aria-hidden="true"></i>
         Retour
       </button>
       <div>
@@ -80,7 +80,7 @@
                 id="back-button"
                 @click="back"
                 class="btn btn-secondary">
-          <i class="fa fa-chevron-left mr-2"></i>
+          <i class="fa fa-chevron-left mr-2" aria-hidden="true"></i>
           Etape {{ state - 1 }}
         </button>
         <button v-if="state === STATES.CREATING_BODY"
@@ -90,12 +90,12 @@
                 class="btn btn-secondary"
                 @click="saveAndShowMoveThemesModal"
                 title="Réorganiser les thèmes">
-          <i class="fa fa-exchange-alt fa-rotate-90"></i>
+          <i class="fa fa-exchange-alt fa-rotate-90" aria-hidden="true"></i>
           Réorganiser les thèmes
         </button>
         <button @click="validateFormAndSaveDraft"
                 class="btn btn-primary">
-          <i class="fe fe-save"></i>
+          <i class="fe fe-save" aria-hidden="true"></i>
           Enregistrer
         </button>
         <button v-if="state !== STATES.PREVIEW"
@@ -103,7 +103,7 @@
                 @click="next"
                 class="btn btn-secondary">
           Etape {{ state + 1 }}
-          <i class="fa fa-chevron-right ml-2"></i>
+          <i class="fa fa-chevron-right ml-2" aria-hidden="true"></i>
         </button>
         <button v-if="state === STATES.PREVIEW"
                 id="publishButton"
@@ -111,7 +111,7 @@
                 @click="startPublishFlow()"
                 class="btn btn-primary ml-5"
                 title="Publier le questionnaire à l'organisme interrogé">
-          <i class="fa fa-rocket mr-1"></i>
+          <i class="fa fa-rocket mr-1" aria-hidden="true"></i>
           Publier
         </button>
       </div>
@@ -119,15 +119,15 @@
     <div class="flex-row justify-content-end mt-2">
       <div v-if="saveMessage.isWaitingForMinDisplayTime || saveMessage.isSaveHappening"
            style="min-height: 1.5rem;">
-        <i class="fas fa-sync-alt mr-2"></i>
+        <i class="fas fa-sync-alt mr-2" aria-hidden="true"></i>
         Enregistrement en cours ...
       </div>
       <div v-else
            :class="{ 'text-danger': hasErrors, 'text-muted': !hasErrors }"
            class="flex-row align-items-center"
            style="min-height: 1.5rem;">
-        <i v-if="hasErrors" class="fe fe-alert-triangle mr-2"></i>
-        <i v-else class="fe fe-check-circle mr-2"></i>
+        <i v-if="hasErrors" class="fe fe-alert-triangle mr-2" aria-hidden="true"></i>
+        <i v-else class="fe fe-check-circle mr-2" aria-hidden="true"></i>
         {{ saveMessage.text }}
       </div>
     </div>

@@ -5,7 +5,7 @@
     </span>
 
     <div class="card-text cursor-pointer">
-      <div class="with-line-breaks">{{ question.description }}</div>
+      <button type="button" class="btn btn-secondary">{{ question.description}}</button>
       <div class="tags">
         <template v-if="questionFileCount > 0">
           <button
@@ -15,7 +15,7 @@
             {{ questionFileCount }} fichier{{ questionFileCount === 1 ? '': 's' }}
             annexe{{ questionFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
-              <i class="fe fe-paperclip"></i>
+              <i class="fe fe-paperclip" aria-hidden="true"></i>
             </span>
           </button>
         </template>
@@ -27,7 +27,7 @@
             {{ responseFileCount }} fichier{{ responseFileCount === 1 ? '': 's' }}
             déposé{{ responseFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
-              <i class="fe fe-file"></i>
+              <i class="fe fe-file" aria-hidden="true"></i>
             </span>
           </button>
         </template>

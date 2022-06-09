@@ -5,12 +5,12 @@
         <p class="with-line-breaks">{{ questionnaire.description }}</p>
 
         <p v-if="questionnaire.sent_date">
-          <i class="fe fe-send"></i>
+          <i class="fe fe-send" aria-hidden="true"></i>
           Date de transmission du questionnaire :
           {{ questionnaire.sent_date | DateFormat }}
         </p>
         <p v-if="questionnaire.end_date">
-          <i class="fe fe-clock"></i>
+          <i class="fe fe-clock" aria-hidden="true"></i>
           Date de réponse souhaitée :
           {{ questionnaire.end_date | DateFormat }}
         </p>
@@ -19,7 +19,7 @@
             <a class="btn btn-secondary"
               :href="trashUrl"
               title="Aller à la corbeille">
-              <i class="fe fe-trash-2 mr-2"></i>Aller à la corbeille
+              <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>Aller à la corbeille
             </a>
           </div>
 
@@ -28,7 +28,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false">
-            <i class="fas fa-file-export mr-2"></i>
+            <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
             <span class="mr-2">
               Exporter
             </span>
@@ -40,7 +40,7 @@
               target="_blank"
               rel="noopener noreferrer"
               title="Format Word (.docx)">
-              <i class="fe fe-file-text mr-2"></i>Format Word (.docx)
+              <i class="fe fe-file-text mr-2" aria-hidden="true"></i>Format Word (.docx)
             </a>
             <div v-if="!questionnaire.is_draft">
               <div class="dropdown-divider"></div>
@@ -50,7 +50,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Format Excel (.xlsx)">
-                <i class="far fa-file-excel mr-2"></i>
+                <i class="far fa-file-excel mr-2" aria-hidden="true"></i>
                 Format Excel (.xlsx)
               </a>
             </div>
@@ -61,7 +61,7 @@
                 href="#"
                 @click="exportQuestionnaire()"
               >
-                <i class="fas fa-file-export mr-2"></i>
+                <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
                 Exporter (.zip)
               </button>
             </div>

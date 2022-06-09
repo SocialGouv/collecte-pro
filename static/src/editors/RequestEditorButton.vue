@@ -3,7 +3,7 @@
     <div class="alert alert-secondary" role="alert">
       <div class="flex-row justify-content-between align-items-center">
         <div>
-          <i class="fe fe-users mr-1"></i>
+          <i class="fe fe-users mr-1" aria-hidden="true"></i>
           <span v-if="questionnaire.editor">
             <strong>{{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</strong>
             est actuellement la seule personne qui peut modifier ce questionnaire.
@@ -19,7 +19,7 @@
             title="Obtenir les droits de rédaction..."
             data-toggle="modal"
             data-target="#requestEditorModal">
-            <i class="fa fa-exchange-alt mr-1"></i>
+            <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>
             <span>Obtenir les droits de rédaction...</span>
           </button>
           <button v-else
@@ -28,7 +28,7 @@
             title="Obtenir les droits de rédaction..."
             @click="takeEditorRights"
             >
-            <i class="fa fa-exchange-alt mr-1"></i>
+            <i class="fa fa-exchange-alt mr-1" aria-hidden="true"></i>
             <span>Obtenir les droits de rédaction...</span>
           </button>
         </div>

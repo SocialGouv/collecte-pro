@@ -1,10 +1,12 @@
 <template>
   <h5 class="flex-row mb-5 text-muted">
     <div class="mx-2">
-      <i class="fa fa-archive"></i>
+      <i class="fa fa-archive" aria-hidden="true"></i>
+      <span class="sr-only">Corbeille</span>
     </div>
     <div class="mx-2">
-      <i class="fa fa-chevron-right"></i>
+      <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      <span class="sr-only">&gt;</span>
     </div>
     <div class="mx-2">
       <a :href="controlLink">
