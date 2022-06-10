@@ -4,6 +4,9 @@
 {% block extra_static_header %}
   {{ block.super }}
 {% endblock extra_static_header %}
+{% block site_title %}
+  <title>Questionnaire | collecte-pro</title>
+{% endblock site_title %}
 
 {% block page_main_container_with_sidebar %}
   <!-- No mixing of server templates + vue templates. Pass the server data outside of vue element-->
