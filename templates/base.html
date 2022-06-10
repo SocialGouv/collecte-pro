@@ -30,12 +30,14 @@
 
           {% block nav_items %}
             <div class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end"> <!--// opening: nav_items  //-->
+              {% if user.is_authenticated %}
                 <div class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="#contenu">
                     <i class="fe fe-link" aria-hidden="true"></i> Aller au contenu
                   </a>
                 </div>
+              {% endif %}
               {% if user.is_staff %}
                 <div class="nav-item">
                   <a class="nav-link nav-link-thick-line"
