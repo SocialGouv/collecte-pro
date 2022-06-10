@@ -213,6 +213,14 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         return True
 
     def form_valid(self, form):
+        if (
+            "X-INFECTION-FOUND" in self.request.headers
+            or "X-Virus-Name" in self.request.headers
+        ):
+            return HttpResponseForbidden(
+                "Ce fichier a été notifié comme contenant un virus, merci de vérifier"
+                " celui-ci avant de le déposer à nouveau."
+            )
         if not self.request.user.profile.is_audited:
             return HttpResponseForbidden("User is not authorized to access this ressource")
         try:
