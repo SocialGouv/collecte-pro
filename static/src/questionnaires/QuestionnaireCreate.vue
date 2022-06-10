@@ -1,5 +1,6 @@
 <template>
 <div>
+  <a name="contenu"> </a>
   <div class="mx-3">
     <breadcrumbs v-if="state !== STATES.LOADING" :control="currentControl"></breadcrumbs>
     <swap-editor-button v-if="state !== STATES.LOADING && controlHasMultipleInspectors"

@@ -16,24 +16,26 @@
       {% block page_top_row %}
         <div class="header flex-row justify-content-between"> <!--// opening: top_header  //-->
           <div class="container flex-row">
-          <div class="text-center">
-            <a href="/accueil">
-            {% get_logo_footer_item as logo_footer %}
-            {% if logo_footer.url|slice:":4" == "http" %}
-            <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
-            {% else %}
-            <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
-            {% endif %}
-            </a>
-          </div>
-          <div class="flex-column justify-content-center mx-5" style="font-family: Trebuchet MS;">
-            <a class="header-brand" href="/accueil">
-              <span>collecte-pro</span>
-            </a>
-          </div>
+            <div class="flex-column">
+              <a class="header-brand" href="/accueil">
+                {% get_logo_footer_item as logo_footer %}
+                {% if logo_footer.url|slice:":4" == "http" %}
+                <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+                {% else %}
+                <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+                {% endif %}
+                <span class="mx-5">collecte-pro</span>
+              </a>
+            </div>
 
           {% block nav_items %}
             <div class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end"> <!--// opening: nav_items  //-->
+                <div class="nav-item">
+                  <a class="nav-link nav-link-thick-line"
+                    href="#contenu">
+                    <i class="fe fe-link" aria-hidden="true"></i> Aller au contenu
+                  </a>
+                </div>
               {% if user.is_staff %}
                 <div class="nav-item">
                   <a class="nav-link nav-link-thick-line"
