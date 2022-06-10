@@ -89,6 +89,7 @@
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
             <template slot="name_file" slot-scope="props">
               <a :href="props.row.url" target="_blank"
+                rel="noopener noreferrer"
                 class="btn tag tag-azure pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">
@@ -98,6 +99,7 @@
             </template>
             <template slot="name_fileAnnexe" slot-scope="props">
               <a :href="props.row.url" target="_blank"
+                rel="noopener noreferrer"
                 class="btn tag tag-orange pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">
@@ -107,6 +109,7 @@
             </template>
             <template slot="name_fileCorbeille" slot-scope="props">
               <a :href="props.row.url" target="_blank"
+                rel="noopener noreferrer"
                 class="btn tag tag-azure pull-left btn-file">
                 {{ props.row.name }}
                 <span class="tag-addon pb-1">

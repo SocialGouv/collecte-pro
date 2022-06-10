@@ -17,7 +17,7 @@
           {% get_liens_footer_items as liens_footer %}
           {% for lien in liens_footer %}
           <div class="flex-grow" style="margin-left: 2em">
-            <a href="{{ lien.url }}" title="{{lien.title}}" target="_blank"><b>{{ lien.name }}</b></a>
+            <a href="{{ lien.url }}" title="{{lien.title}}" target="_blank" rel="noopener noreferrer"><b>{{ lien.name }}</b></a>
           </div>
           {% endfor %}
         </div>
