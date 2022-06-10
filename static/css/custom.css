@@ -286,3 +286,6 @@ width: 3em;
 margin-left: 6em;
 }
 
+.no-border {
+border: 0;
+}
