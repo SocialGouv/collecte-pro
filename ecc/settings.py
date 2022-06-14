@@ -105,7 +105,7 @@ LOGOUT_REDIRECT_URL = "/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django_feature_policy.FeaturePolicyMiddleware',
+    'django_permissions_policy.PermissionsPolicyMiddleware',
     'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
