@@ -136,7 +136,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     description = models.TextField("description", blank=True)
     editor = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, related_name='questionnaires', on_delete=models.PROTECT,
-        blank=True, null=True, editable=False)
+        blank=True, null=True)
     uploaded_file = models.FileField(
         verbose_name="fichier du questionnaire", upload_to=questionnaire_file_path,
         null=True, blank=True,

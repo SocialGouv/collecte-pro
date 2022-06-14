@@ -112,7 +112,7 @@ class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMix
         'id', 'numbering', 'title', 'order', 'link_to_control', 'is_draft', 'editor',
         'sent_date', 'end_date')
     list_editable = ('order',)
-    readonly_fields = ('order',)
+    readonly_fields = ('order', 'editor')
     search_fields = ('title', 'description')
     list_filter = ('control', 'is_draft')
     raw_id_fields = ('editor', 'control')
