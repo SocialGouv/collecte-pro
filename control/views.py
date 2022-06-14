@@ -214,8 +214,8 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         if (
-            "X-INFECTION-FOUND" in self.request.headers
-            or "X-Virus-Name" in self.request.headers
+            "x-infection-found" in [header.lower() for header in self.request.headers]
+            or "x-virus-name" in [header.lower() for header in self.request.headers]
         ):
             return HttpResponseForbidden(
                 "Ce fichier a été notifié comme contenant un virus, merci de vérifier"
