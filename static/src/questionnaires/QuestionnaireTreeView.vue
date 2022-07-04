@@ -21,6 +21,14 @@
             </div>
           </form>
         </confirm-modal>
+        <div class="p-4 font-italic text-muted">
+            <p>Cette vue permet de filtrer les fichiers déposés par répondant et par date de dépôt.
+            Il est également possible de sélectionner des fichiers comme dans votre explorateur de fichier
+            (touche Control maintenue pour sélectionner plusieurs fichiers différents;
+            touche Shift maintenue pour sélectionner une liste de fichiers).</p>
+            <p>Enfin, si vous sélectionner un Questionnaire, un Thème ou une Question, tous les fichiers en faisant partie
+            seront automatiquement pris en compte et téléchargés.</p>
+        </div>
         <div class="card">
           <span class="form-inline">
             <span class="form-group col-sm-3">
@@ -486,19 +494,19 @@ export default Vue.extend({
                 objectTreeView.url = item.url;
                 objectTreeView.is_deleted = item.is_deleted;
             } else if (themeId != null && questionId == null) { // Question
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Question ' + (item.order+1) + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'question';
                 objectTreeView.id = questionnaireId + '-' + themeId + '-' + item.id;
                 objectTreeView.order = item.order;
             } else if (questionnaireId !== null && themeId === null) { // Theme
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Thème ' + (item.order+1) + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'theme';
                 objectTreeView.id = questionnaireId + '-' + item.id;
                 objectTreeView.order = item.order;
             } else { // Questionnaire
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Questionnaire ' + item.numbering + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'questionnaire';
                 objectTreeView.id = item.id;

@@ -23,8 +23,10 @@
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
-      <div class="card-title btn btn-secondary mr-4">
-        <button @click="toggleView()" :title="isList ? 'Vue en liste' : 'Vue en arbre'"><i class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></i> Questionnaires</button>
+      <div class="card-title">
+        <i class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></i>
+        <span>{{isList ? 'Questionnaires' : 'Documents'}}</span>
+        <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
     </div>
 
