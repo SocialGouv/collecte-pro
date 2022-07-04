@@ -54,9 +54,7 @@ kombu==5.2.4
 lxml==4.9.0
 MarkupSafe==2.1.1
 mozilla-django-oidc==2.0.0
-openpyxl==3.0.10
 packaging==21.3
-pdfrw==0.4
 prompt-toolkit==3.0.29
 psycopg2-binary==2.9.3
 pyasn1==0.4.8
