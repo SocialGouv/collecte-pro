@@ -22,12 +22,7 @@
           </form>
         </confirm-modal>
         <div class="p-4 font-italic text-muted">
-            <p>Cette vue permet de filtrer les fichiers déposés par répondant et par date de dépôt.
-            Il est également possible de sélectionner des fichiers comme dans votre explorateur de fichier
-            (touche Control maintenue pour sélectionner plusieurs fichiers différents;
-            touche Shift maintenue pour sélectionner une liste de fichiers).</p>
-            <p>Enfin, si vous sélectionner un Questionnaire, un Thème ou une Question, tous les fichiers en faisant partie
-            seront automatiquement pris en compte et téléchargés.</p>
+            Pour sélectionner les éléments à exporter, cliquez sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
         </div>
         <div class="card">
           <span class="form-inline">
