@@ -22,7 +22,7 @@
           </form>
         </confirm-modal>
         <div class="p-4 font-italic text-muted">
-            Pour sélectionner les éléments à exporter, cliquez sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
+            Pour sélectionner les éléments à exporter, cliquer sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
         </div>
         <div class="card">
           <span class="form-inline">
