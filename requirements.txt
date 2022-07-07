@@ -15,7 +15,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==37.0.2
 Deprecated==1.2.13
-Django==3.2.13
+Django==3.2.14
 django-activity-stream==1.4.1
 django-admin==2.0.1
 django-annoying==0.10.6
