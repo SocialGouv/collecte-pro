@@ -30,8 +30,8 @@ class UserProfile(models.Model):
         to='control.Control', verbose_name='procédures', related_name='user_profiles', blank=True)
     organization = models.CharField("Organisme", max_length=255, blank=True, null=True)
     send_files_report = models.BooleanField(
-        verbose_name="Envoi Rapport de Fichiers", default=False,
-        help_text="Envoyer par email le rapport des fichiers uplodés ?")
+        verbose_name="Envoi Rapport de Fichiers", default=True,
+        help_text="Envoyer par email le rapport des fichiers déposés ?")
     agreed_to_tos = models.BooleanField(
         default=False, verbose_name="accepté CGU",
         help_text="Les Conditions Générales d'Utilisation ont-elles été acceptées ?")

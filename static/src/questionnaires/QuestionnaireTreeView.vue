@@ -21,6 +21,9 @@
             </div>
           </form>
         </confirm-modal>
+        <div class="p-4 font-italic text-muted">
+            Pour sélectionner les éléments à exporter, cliquer sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
+        </div>
         <div class="card">
           <span class="form-inline">
             <span class="form-group col-sm-3">
@@ -86,6 +89,15 @@
             :filter="filter"
             @selection-change="selectionChange"
         >
+            <template v-slot:item.data-table-select="{ item, isSelected }">
+                <v-checkbox
+                    :value="isSelected"
+                     hide-details
+                     class="mt-0"
+                     @change="onItemSelect({ item, value: !isSelected })"
+                 >
+                </v-checkbox>
+            </template>
             <template slot="name" slot-scope="props">{{ props.row.name }}</template>
             <template slot="name_file" slot-scope="props">
               <a :href="props.row.url" target="_blank"
@@ -165,7 +177,7 @@ export default Vue.extend({
         let columns = [
             {
                 property: 'name',
-                title: 'Nom du document',
+                title: 'Document',
             },
             {
                 property: 'dateDepot',
@@ -195,9 +207,11 @@ export default Vue.extend({
             },
             'even/': {
               'vue-ads-bg-white': true,
+              'selectable_row': true,
             },
             'odd/': {
               'vue-ads-bg-gray-100': true,
+              'selectable_row': true,
             },
             '0/': {
               'vue-ads-border-t': true,
@@ -396,6 +410,14 @@ export default Vue.extend({
         refreshFiles() {
           const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
           this.treeViewElements = this.getTreeViewElements(controlQuestionnaires);
+          $("table tbody tr").attr("tabindex", 0);
+          $("table tbody tr").off("keyup");
+          $("table tbody tr").keyup(function(event){
+            if (event.which != 13) {
+              return;
+            }
+            event.target.click();
+          });
         },
         filterByDate(responseFile) {
           let creation_date = new Date(responseFile.created);
@@ -486,19 +508,19 @@ export default Vue.extend({
                 objectTreeView.url = item.url;
                 objectTreeView.is_deleted = item.is_deleted;
             } else if (themeId != null && questionId == null) { // Question
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Question ' + (item.order+1) + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'question';
                 objectTreeView.id = questionnaireId + '-' + themeId + '-' + item.id;
                 objectTreeView.order = item.order;
             } else if (questionnaireId !== null && themeId === null) { // Theme
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Thème ' + (item.order+1) + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'theme';
                 objectTreeView.id = questionnaireId + '-' + item.id;
                 objectTreeView.order = item.order;
             } else { // Questionnaire
-                objectTreeView.name = item.title || item.description;
+                objectTreeView.name = 'Questionnaire ' + item.numbering + ' - ' + (item.title || item.description);
                 objectTreeView._children = [];
                 objectTreeView._id = 'questionnaire';
                 objectTreeView.id = item.id;
@@ -682,5 +704,8 @@ export default Vue.extend({
 .selected_row{
   color: white;
   background-color: #3473cb;
+}
+.selectable_row{
+  cursor: pointer
 }
 </style>
