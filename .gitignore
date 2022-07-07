@@ -5,6 +5,7 @@
 __pycache__/
 db.sqlite3
 media/
+media_test/
 node_modules/
 staticfiles/
 .env

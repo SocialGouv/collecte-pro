@@ -27,6 +27,16 @@ dummy_text_file_with_sh_extension = SimpleUploadedFile(
     content=open(settings.BASE_DIR + '/tests/data/test.sh', 'rb').read(),
     content_type='text/plain')
 
+dummy_xlsx_file = SimpleUploadedFile(
+    name='test.xlsx',
+    content=open(settings.BASE_DIR + '/tests/data/test.xlsx', 'rb').read(),
+    content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+dummy_docx_file = SimpleUploadedFile(
+    name='test.docx',
+    content=open(settings.BASE_DIR + '/tests/data/test.docx', 'rb').read(),
+    content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
 
 @register
 class UserFactory(factory.django.DjangoModelFactory):

@@ -183,3 +183,57 @@ def test_audited_cannot_upload_file_if_blaklist_extension(client):
     assert response.status_code == 403
     count_after = ResponseFile.objects.count()
     assert count_after == count_before
+
+
+def test_uploaded_pdf_response_file_is_same_size(client):
+    audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
+    question = factories.QuestionFactory()
+    audited.controls.add(question.theme.questionnaire.control)
+    question.theme.questionnaire.is_draft = False
+    question.theme.questionnaire.save()
+    utils.login(client, user=audited.user)
+    url = reverse("response-upload")
+    dummy_file = factories.dummy_file
+    post_data = {
+        "file": dummy_file.open(),
+        "question_id": [question.id]
+    }
+    response = client.post(url, post_data, format="multipart")
+    response_file = ResponseFile.objects.last()
+    assert response_file.file.size == dummy_file.size
+
+
+def test_uploaded_xls_response_file_is_same_size(client):
+    audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
+    question = factories.QuestionFactory()
+    audited.controls.add(question.theme.questionnaire.control)
+    question.theme.questionnaire.is_draft = False
+    question.theme.questionnaire.save()
+    utils.login(client, user=audited.user)
+    url = reverse("response-upload")
+    dummy_file = factories.dummy_xlsx_file
+    post_data = {
+        "file": dummy_file.open(),
+        "question_id": [question.id]
+    }
+    response = client.post(url, post_data, format="multipart")
+    response_file = ResponseFile.objects.last()
+    assert response_file.file.size == dummy_file.size
+
+
+def test_uploaded_doc_response_file_is_same_size(client):
+    audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
+    question = factories.QuestionFactory()
+    audited.controls.add(question.theme.questionnaire.control)
+    question.theme.questionnaire.is_draft = False
+    question.theme.questionnaire.save()
+    utils.login(client, user=audited.user)
+    url = reverse("response-upload")
+    dummy_file = factories.dummy_docx_file
+    post_data = {
+        "file": dummy_file.open(),
+        "question_id": [question.id]
+    }
+    response = client.post(url, post_data, format="multipart")
+    response_file = ResponseFile.objects.last()
+    assert response_file.file.size == dummy_file.size
