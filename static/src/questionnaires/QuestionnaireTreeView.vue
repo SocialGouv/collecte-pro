@@ -418,6 +418,11 @@ export default Vue.extend({
             }
             event.target.click();
           });
+          window.setTimeout(() => {
+            $("table tbody tr td span:contains('Questionnaire ')").parent().parent().attr("title", "Sélectionner tous les documents du questionnaire");
+            $("table tbody tr td span:contains('Thème ')").parent().parent().attr("title", "Sélectionner tous les documents du thème");
+            $("table tbody tr td span:contains('Question ')").parent().parent().attr("title", "Sélectionner tous les documents de la question");
+          }, 200);
         },
         filterByDate(responseFile) {
           let creation_date = new Date(responseFile.created);
