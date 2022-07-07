@@ -22,11 +22,13 @@
       </form>
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
-    <div class="card-header">
+    <div class="card-header" style="display: block; padding: 1rem">
+      <div class="float-right" v-if="hasAnyAnswer">
+        <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
+      </div>
       <div class="card-title">
         <i class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></i>
         <span>{{isList ? 'Questionnaires' : 'Documents'}}</span>
-        <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
     </div>
 
@@ -327,6 +329,10 @@ export default Vue.extend({
     questionnaireCreateUrl() {
       return backendUrls['questionnaire-create'](this.control.id)
     },
+    hasAnyAnswer() {
+      let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies);
+      return (questionnaires.length > 0);
+    }
   },
   methods: {
     questionnaireDetailUrl(questionnaireId) {
