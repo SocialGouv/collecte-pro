@@ -24,6 +24,9 @@ from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDr
 from .serializers import ControlSerializer, ControlDetailControlSerializer
 
 
+MAX_FILENAME_LENGTH = 50
+
+
 class WithListOfControlsMixin(object):
 
     def get_context_data(self, **kwargs):
@@ -190,11 +193,24 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             }
         action.send(**action_details)
 
+    def add_filename_is_too_long_log(self, filename):
+        action_details = {
+            'sender': self.request.user,
+            'verb': 'uploaded invalid named response-file',
+            'target': self.object.question,
+            'description': f'Detected too long filename: "{filename}"'
+            }
+        action.send(**action_details)
+
     def file_extension_is_valid(self, extension):
         blacklist = settings.UPLOAD_FILE_EXTENSION_BLACKLIST
         if any(match.lower() == extension.lower() for match in blacklist):
             return False
         return True
+
+    def filename_is_too_long(self, filename):
+        if len(filename) > MAX_FILENAME_LENGTH:
+            return True
 
     def file_mime_type_is_valid(self, mime_type):
         blacklist = settings.UPLOAD_FILE_MIME_TYPE_BLACKLIST
@@ -231,16 +247,30 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         if not self.file_extension_is_valid(file_extension):
             self.add_invalid_extension_log(file_extension)
             return HttpResponseForbidden(
-                f"Cette extension de fichier n'est pas autorisée : {file_extension}")
+                f"Cette extension de fichier n'est pas autorisée : {file_extension}"
+            )
+
         mime_type = magic.from_buffer(file_object.read(2048), mime=True)
         if not self.file_mime_type_is_valid(mime_type):
             self.add_invalid_mime_type_log(mime_type)
-            return HttpResponseForbidden(f"Ce type de fichier n'est pas autorisé: {mime_type}")
+            return HttpResponseForbidden(
+                f"Ce type de fichier n'est pas autorisé: {mime_type}"
+            )
+
+        if self.filename_is_too_long(file_object.name):
+            self.add_filename_is_too_long_log(file_object.name)
+            return HttpResponseForbidden(
+                "Le nom du fichier dépasse la limite autorisée "
+                f"de {MAX_FILENAME_LENGTH} caractères. Sa taille est "
+                f"de {len(file_object.name)} caractères."
+            )
+
         MAX_SIZE_BYTES = 1048576 * settings.UPLOAD_FILE_MAX_SIZE_MB
         if file_object.file.size > MAX_SIZE_BYTES:
             return HttpResponseForbidden(
                 f"La taille du fichier dépasse la limite autorisée "
-                f"de {settings.UPLOAD_FILE_MAX_SIZE_MB}Mo.")
+                f"de {settings.UPLOAD_FILE_MAX_SIZE_MB}Mo."
+            )
         self.object.save()
         self.add_upload_action_log()
         data = {'status': 'success'}
