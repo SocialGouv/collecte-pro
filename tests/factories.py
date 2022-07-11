@@ -1,5 +1,7 @@
 import factory
 
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -73,7 +75,9 @@ class UserProfileFactory(factory.django.DjangoModelFactory):
 @register
 class ControlFactory(factory.django.DjangoModelFactory):
     title = factory.LazyFunction(faker.name)
-    reference_code = factory.LazyAttribute(lambda c: slugify(c.title))
+    reference_code = factory.LazyAttribute(
+        lambda c: f"{datetime.today().year}_{slugify(c.title)[:25]}"
+    )
 
     class Meta:
         model = 'control.Control'

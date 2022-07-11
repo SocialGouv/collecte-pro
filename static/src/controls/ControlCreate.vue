@@ -63,8 +63,8 @@
               <span class="form-required">*</span>
             </label>
             <div id="reference-code-help" class="text-muted">
-              Ce nom sera celui du dossier contenant les pièces déposées. Il apparaîtra dans votre
-              explorateur Windows. Nous conseillons un nom court (max 25 caractères) et signifiant,
+              Ce nom sera celui du dossier contenant les pièces déposées. Il apparaîtra lors de
+              l'export de l'espace de dépôt. Nous conseillons un nom court (max 25 caractères) et signifiant,
               pour que vous retrouviez facilement le dossier. Exemple : FFF_MinSports
             </div>
             <div class="input-group">
