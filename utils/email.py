@@ -10,11 +10,11 @@ current_site = Site.objects.get_current()
 
 
 def add_log_entry(site, verb, to, cc, subject, error=''):
-    log_message = f'Sending email "{subject}" to: {to}.'
+    log_message = f'Envoi email "{subject}" à : {to}.'
     if cc:
-        log_message += f' Email CC: {cc}.'
+        log_message += f' Email CC : {cc}.'
     if error:
-        log_message += f' Failed with error: {error}'
+        log_message += f' Erreur : {error}'
     action_details = {
         'sender': site,
         'verb': verb,
@@ -41,10 +41,10 @@ def send_email(
     email.attach_alternative(html_message, "text/html")
     try:
         number_of_sent_email = email.send(fail_silently=False)
-        add_log_entry(site=current_site, verb='email sent', to=to, cc=cc, subject=subject)
+        add_log_entry(site=current_site, verb='email envoyé', to=to, cc=cc, subject=subject)
     except Exception as e:
         add_log_entry(
-            site=current_site, verb='email not sent', to=to, cc=cc, subject=subject,
+            site=current_site, verb='email non envoyé', to=to, cc=cc, subject=subject,
             error=str(e))
         number_of_sent_email = 0
     return number_of_sent_email
