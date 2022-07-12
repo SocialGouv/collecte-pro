@@ -233,7 +233,7 @@ def test_inspector_cannot_alter_a_control_that_is_not_accessible_to_him():
     post_data = {
         'first_name': existing_user.first_name,
         'last_name': existing_user.last_name,
-        'profile_type': 'audited',
+        'profile_type': UserProfile.AUDITED,
         'email': existing_user.email,
         'organization': '',
         'control': control.id
@@ -273,7 +273,7 @@ def test_logged_in_user_can_get_current_user():
     assert response.status_code == 200
 
 
-def test_new_audited_user_should_not_have_the_file_reporting_flag_activated():
+def test_new_audited_user_should_have_the_file_reporting_flag_activated():
     parameter = factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
@@ -281,7 +281,7 @@ def test_new_audited_user_should_not_have_the_file_reporting_flag_activated():
     post_data = {
         'first_name': 'Marcel',
         'last_name': 'Proust',
-        'profile_type': 'audited',
+        'profile_type': UserProfile.AUDITED,
         'email': 'marcel@proust.com',
         'control': control.id
     }
@@ -293,4 +293,27 @@ def test_new_audited_user_should_not_have_the_file_reporting_flag_activated():
     assert count_after == count_before + 1
     assert response.status_code == 201
     new_user = User.objects.get(email='marcel@proust.com')
-    assert not new_user.profile.send_files_report
+    assert new_user.profile.send_files_report
+
+
+def test_new_inspector_user_should_have_the_file_reporting_flag_activated():
+    parameter = factories.ParameterFactory()
+    inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
+    control = factories.ControlFactory()
+    inspector.controls.add(control)
+    post_data = {
+        'first_name': 'Inspector',
+        'last_name': 'Gadget',
+        'profile_type': UserProfile.INSPECTOR,
+        'email': 'inspector@gadget.com',
+        'control': control.id
+    }
+    utils.login(client, user=inspector.user)
+    url = reverse('api:user-list')
+    count_before = User.objects.count()
+    response = client.post(url, post_data)
+    count_after = User.objects.count()
+    assert count_after == count_before + 1
+    assert response.status_code == 201
+    new_user = User.objects.get(email='inspector@gadget.com')
+    assert new_user.profile.send_files_report
