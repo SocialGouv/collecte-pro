@@ -92,7 +92,7 @@
         </error-bar>
 
         <form @submit.prevent="updateControl">
-          <div class="card-title">Modifier l'espace de dépôt</div>
+          <h2 class="card-title">Modifier l'espace de dépôt</h2>
           <fieldset class="form-fieldset">
             <div class="form-group">
               <label id="organization-label" class="form-label" for="organisme">

@@ -26,10 +26,10 @@
       <div class="float-right" v-if="hasAnyAnswer">
         <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
-      <div class="card-title">
+      <h2 class="card-title">
         <i class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></i>
         <span>{{isList ? 'Questionnaires' : 'Documents'}}</span>
-      </div>
+      </h2>
     </div>
 
     <div v-if="currentView === 'questions'">

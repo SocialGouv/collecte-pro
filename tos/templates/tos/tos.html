@@ -40,7 +40,7 @@
             {% get_cgu_items as cgu_items %}
             {% for cgu_item in cgu_items %}
             <div>
-              <h4>{{ forloop.counter }}. {{ cgu_item.title }}</h4>
+              <h2>{{ forloop.counter }}. {{ cgu_item.title }}</h2>
               {{ cgu_item.description|safe }}
             </div>
             {% endfor %}

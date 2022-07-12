@@ -294,3 +294,9 @@ border: 0;
 .alert p{
 margin-bottom: 0;
 }
+
+/* Breadcrumbs */
+.breadcrumbs{
+font-size: 1rem;
+}
+

@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Etape 1 : Renseigner l'introduction</div>
+        <h2 class="card-title">Etape 1 : Renseigner l'introduction</h2>
       </div>
       <div class="card-body pb-6">
         <form ref="form">

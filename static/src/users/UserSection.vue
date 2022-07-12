@@ -2,10 +2,10 @@
   <div class="card">
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
-      <div class="card-title">
+      <h2 class="card-title">
         <i class="fe fe-users mr-2" aria-hidden="true"></i>
         <span>Qui a accès à cet espace ?</span>
-      </div>
+      </h2>
     </div>
 
     <div class="card-body">

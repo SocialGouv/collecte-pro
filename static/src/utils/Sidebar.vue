@@ -19,9 +19,9 @@
         <template v-slot:header>
           <div id="sidebar-title"
                class="card-header flex-row justify-content-center">
-            <div class="card-title text-nowrap text-center">
+            <h1 class="card-title text-nowrap text-center">
               Mes espaces de dépôt
-            </div>
+            </h1>
           </div>
 
           <div v-if="isLoaded && controls.length === 0">

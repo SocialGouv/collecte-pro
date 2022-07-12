@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Etape 2 : Ajouter des questions</div>
+        <h2 class="card-title">Etape 2 : Ajouter des questions</h2>
       </div>
       <div class="card-body pb-6">
         <info-bar>

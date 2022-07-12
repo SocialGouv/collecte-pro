@@ -1,5 +1,5 @@
 <template>
-  <h5 class="flex-row mb-5 text-muted">
+  <h1 class="flex-row mb-5 text-muted breadcrumbs">
     <div class="mx-2">
       <i class="fa fa-archive" aria-hidden="true"></i>
       <span class="sr-only">Corbeille</span>
@@ -15,7 +15,7 @@
               control.depositing_organization : control.title}}
       </a>
     </div>
-  </h5>
+  </h1>
 </template>
 
 <script>

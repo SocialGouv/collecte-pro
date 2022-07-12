@@ -2,7 +2,7 @@
   <div>
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Etape 3 : Aperçu avant publication</div>
+        <h2 class="card-title">Etape 3 : Aperçu avant publication</h2>
       </div>
       <div class="card-body pb-6">
         <questionnaire-detail-for-preview v-bind:questionnaire="currentQuestionnaire">

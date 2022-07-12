@@ -1,8 +1,8 @@
 <template>
   <div class="flex-column align-items-center">
-    <div class="page-title text-large mt-xl-6 mb-2">
+    <h1 class="page-title text-large mt-xl-6 mb-2">
       Bienvenue sur collecte-pro !
-    </div>
+    </h1>
     <div class="card-title mb-xl-8">
       Quelques étapes pour bien démarrer...
     </div>
