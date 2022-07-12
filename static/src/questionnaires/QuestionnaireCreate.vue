@@ -22,7 +22,7 @@
         </span>
       </div>
     </div>
-    <div v-if="hasErrors" class="alert alert-danger" id="questionnaire-create-error">
+    <div v-if="hasErrors" class="alert alert-danger" id="questionnaire-create-error" role="alert">
       {{ errorMessage }}
     </div>
 

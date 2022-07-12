@@ -7,7 +7,7 @@
         <h4 class="modal-title">{{ editingControl.title }}</h4>
       </div>
       <div class="modal-body">
-        <div v-if="hasErrors" class="alert alert-danger">
+        <div v-if="hasErrors" class="alert alert-danger" role="alert">
           L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
@@ -67,7 +67,7 @@
         </form>
 
         <form @submit.prevent="findUser" v-if="stepShown === 1.5" @keydown.esc="resetFormData">
-          <div class="alert alert-warning alert-icon my-8">
+          <div class="alert alert-warning alert-icon my-8" role="alert">
             <i class="fa fa-exclamation-circle mr-2" aria-hidden="true" aria-hidden="true"></i>
             <div class="mb-4">
               Vous allez ajouter

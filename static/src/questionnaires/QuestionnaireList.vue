@@ -36,6 +36,7 @@
       <div
         v-if="accessibleQuestionnaires.length === 0"
         class="alert alert-icon alert-secondary m-2"
+        role="status"
       >
         <i class="fe fe-info mr-2" aria-hidden="true"></i>
         Il n'y a pas encore de questionnaire pour cet espace de dépôt.

@@ -1,5 +1,5 @@
 <template>
-  <div class="alert alert-info alert-icon alert-dismissible">
+  <div class="alert alert-info alert-icon alert-dismissible" role="status">
     <button v-if="!noclose" type="button" class="close" data-dismiss="alert" @click="dismissed">
     </button>
     <i class="fe fe-info" aria-hidden="true"></i>

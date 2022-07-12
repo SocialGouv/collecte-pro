@@ -7,7 +7,7 @@
         <h4 class="modal-title" id="labelForModalAddUser">{{ editingControl.title }}</h4>
       </div>
       <div class="modal-body">
-        <div v-if="hasErrors" class="alert alert-danger">
+        <div v-if="hasErrors" class="alert alert-danger" role="alert">
           La modification d'utilisateur n'a pas fonctionné.
         </div>
 
