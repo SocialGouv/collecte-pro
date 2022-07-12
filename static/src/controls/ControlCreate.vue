@@ -13,9 +13,11 @@
     >
       <div>
         <info-bar>
-          <p>Chaque espace de dépôt n'est visible que par les personnes que vous inviterez.</p>
+          <p>Chaque espace de dépôt ne sera visible que pour les personnes que vous inviterez.</p>
         </info-bar>
-
+        <info-bar>
+          <p>Tous Les champs sont obligatoires.</p>
+        </info-bar>
           <div class="form-group mb-6">
             <label id="title-label" class="form-label">
               Quel est le nom de la procédure pour laquelle vous ouvrez cet espace de dépôt ?

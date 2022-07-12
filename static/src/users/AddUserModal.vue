@@ -17,12 +17,15 @@
             <h4><i class="fa fa-building mr-2" aria-hidden="true"></i><strong>Organisme interrogé</strong></h4>
         </div>
 
+        <info-bar>
+          <p>Tous les champs sont obligatoires.</p>
+        </info-bar>
         <form @submit.prevent="validateEmail" v-if="stepShown === 1" @keydown.esc="resetFormData">
           <div class="form-fieldset">
             <div class="form-group">
               <label id="email-label" class="form-label" for="email">
                 Email
-                <span class="form-required"></span>
+                <span class="form-required">*</span>
               </label>
               <input id="email"
                      type="email"
@@ -32,12 +35,13 @@
                      v-bind:class="{ 'state-invalid': errors.email }"
                      v-model="formData.email"
                      required
-                     aria-labelledby="email-label">
+                     aria-labelledby="email-label"
+                     aria-describedby="erreur-email">
             </div>
             <div class='form-group'>
               <label id="email-confirm-label" class="form-label" for="confirm_email">
                 Confirmer l'Email
-                <span class="form-required"></span>
+                <span class="form-required">*</span>
               </label>
               <input id="confirm_email"
                      type="email"
@@ -47,8 +51,9 @@
                      v-bind:class="{ 'state-invalid': errors.email }"
                      v-model="formData.email_confirm"
                      required
-                     aria-labelledby="email-label">
-              <p class="text-muted pl-2" v-if="errors.email">
+                     aria-labelledby="email-label"
+                     aria-describedby="erreur-email">
+              <p class="text-muted pl-2" v-if="errors.email" id="erreur-email">
                 <i class="fa fa-warning" aria-hidden="true"></i>
                 {{ errors.email.join(' / ')}}
               </p>
@@ -181,6 +186,7 @@ import { mapState } from 'vuex'
 import axios from 'axios'
 import backend from '../utils/backend'
 import Vue from 'vue'
+import InfoBar from '../utils/InfoBar'
 
 import { store } from '../store'
 import EventBus from '../events'
@@ -248,6 +254,9 @@ export default Vue.extend({
       return body
     },
   },
+  components: {
+    InfoBar,
+  },
   methods: {
     cancel() {
       this.resetFormData()
@@ -295,17 +304,15 @@ export default Vue.extend({
         expectedEndingsArray = this.expected_inspector_email_endings.split(',')
       }
 
-      if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
-        this.expectedEndingsArray = expectedEndingsArray
-        this.stepShown = 1.5
+      if (this.formData.email !== this.formData.email_confirm) {
+        this.hasErrors = true;
+        this.errors.email = ['Les deux champs e-mail doivent correspondre.'];
+      } else if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
+        this.expectedEndingsArray = expectedEndingsArray;
+        this.stepShown = 1.5;
       } else {
-        if (this.formData.email !== this.formData.email_confirm) {
-          this.hasErrors = true
-          this.errors.email = ['Les deux champs e-mail doivent correspondre.']
-        } else {
-          this.hasErrors = false
-          this.findUser()
-        }
+        this.hasErrors = false;
+        this.findUser();
       }
     },
     addUser() {
