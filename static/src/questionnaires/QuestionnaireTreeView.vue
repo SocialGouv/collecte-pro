@@ -455,11 +455,9 @@ export default Vue.extend({
           return true;
         },
         getUsers() {
-          axios.get(backendUrls.getUsersInControl(this.control.id))
+          axios.get(backendUrls.getDepositorsInControl(this.control.id))
             .then((response) => {
-              this.repondantsListe = response.data.filter(item => {
-                return item.profile_type === 'audited'
-              });
+              this.repondantsListe = response.data;
             })
         },
         /**

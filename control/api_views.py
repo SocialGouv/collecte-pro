@@ -64,6 +64,17 @@ class ControlViewSet(mixins.CreateModelMixin,
         serialized_users = UserProfileSerializer(self.get_object().user_profiles.all(), many=True)
         return Response(serialized_users.data)
 
+    @decorators.action(detail=True, methods=['get'], url_path='depositors')
+    def depositors(self, request, pk):
+        users = []
+        for questionnaire in self.get_object().questionnaires.all():
+            for theme in questionnaire.themes.all():
+                for question in theme.questions.all():
+                    for response_file in question.response_files.all():
+                        users.append(response_file.author.profile)
+        serialized_users = UserProfileSerializer(list(set(users)), many=True)
+        return Response(serialized_users.data)
+
 
 class QuestionViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = control_serializers.QuestionSerializer
