@@ -69,12 +69,12 @@
           {% block current_user %}
             {% if user.is_authenticated %}
               <div class="flex-row dropdown p-3">
-                <a href="#" class="nav-link" data-toggle="dropdown" id="user_access">
+                <button class="btn btn-user btn-secondary nav-link" data-toggle="dropdown" id="user_access">
                   <span class="avatar avatar-pink">{{ user.first_name|first }}{{ user.last_name|first }}</span>
                   <span class="ml-2 text-default">
                     {{ user.get_full_name }}
                   </span>
-                </a>
+                </button>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
                   {%if settings.KEYCLOAK_ACTIVE %}
                   <form action="{% url 'oidc_logout' %}" method="post">

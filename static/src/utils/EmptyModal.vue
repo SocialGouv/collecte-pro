@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" tabindex="-1" role="dialog" :data-keyboard="!noClose" :data-backdrop="noClose ? 'static' : true">
+  <div class="modal" tabindex="-1" role="dialog" :data-keyboard="!noClose" :data-backdrop="noClose ? 'static' : true"  aria-labelledby="modal_title" aria-modal="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <slot></slot>

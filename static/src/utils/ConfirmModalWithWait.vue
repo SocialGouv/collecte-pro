@@ -2,13 +2,14 @@
   <empty-modal :no-close="noClose">
     <form>
       <div class="modal-header border-bottom-0">
-        <h5 class="modal-title">{{ title }}</h5>
+        <div id="modal_title" class="modal-title">{{ title }}</div>
         <button v-if="!noClose"
                 type="button"
                 class="close"
                 data-dismiss="modal"
                 aria-label="Fermer"
                 @click="closeModal">
+                <span class="sr-only">Fermer</span>
         </button>
       </div>
       <div class="modal-body">

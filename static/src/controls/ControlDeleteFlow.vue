@@ -3,9 +3,9 @@
 
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <h4 class="modal-title">
+        <div id="modal_title" class="modal-title">
           Vous êtes sur le point de supprimer l'espace de dépôt "{{ control.reference_code }}"
-        </h4>
+        </div>
       </div>
 
       <div class="modal-body">
@@ -62,8 +62,8 @@
         <p>
           <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
         </p>
-        <p class="text-center">
-          L'espace de dépôt <strong>"{{ control.title }}"</strong> à bien été supprimé.
+        <p id="modal_title" class="text-center">
+          L'espace de dépôt <strong>"{{ control.title }}"</strong> a bien été supprimé.
         </p>
       </div>
       <div class="modal-footer border-top-0 d-flex justify-content-center">

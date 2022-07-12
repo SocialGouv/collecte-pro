@@ -40,7 +40,7 @@
                           title="Supprimer le thème"
                   >
                     <i class="fe fe-trash-2" aria-hidden="true"></i>
-                    <span class="sr-only">Supprimer</span>
+                    <span class="sr-only">Supprimer le thème</span>
                   </button>
                   <button v-else
                           class="btn btn-link"
@@ -48,9 +48,10 @@
                           type="button"
                           data-toggle="modal"
                           :data-target="'#deleteThemeConfirmModal' + themeIndex"
+                          title="Supprimer le thème"
                   >
                     <i class="fe fe-trash-2" aria-hidden="true"></i>
-                    <span class="sr-only">Supprimer</span>
+                    <span class="sr-only">Supprimer le thème</span>
                   </button>
                 </span>
               </div>
@@ -101,6 +102,7 @@
                       title="Déplacer la question vers le haut"
                       @click="moveQuestionUp(themeIndex, qIndex)">
                       <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                      <span class="sr-only">Déplacer la question vers le haut</span>
                     </button>
                     <div class="my-1">
                       <label v-bind:for="'question' + (themeIndex + 1) + '-' + (qIndex + 1)"
@@ -117,6 +119,7 @@
                       title="Déplacer la question vers le bas"
                       @click="moveQuestionDown(themeIndex, qIndex)">
                       <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                      <span class="sr-only">Déplacer la question vers le bas</span>
                     </button>
                   </div>
                   <textarea class="form-control"
@@ -138,6 +141,7 @@
                             title="Supprimer la question"
                     >
                       <i class="fe fe-trash-2" aria-hidden="true"></i>
+                      <span class="sr-only">Supprimer la question</span>
                     </button>
                     <button v-else
                             class="btn btn-link"
@@ -148,6 +152,7 @@
                             :data-target="'#cannot-delete-question' + themeIndex + '-' + qIndex"
                     >
                       <i class="fe fe-trash-2" aria-hidden="true"></i>
+                      <span class="sr-only">Supprimer la question</span>
                     </button>
                     <confirm-modal
                             :id="'cannot-delete-question' + themeIndex + '-' + qIndex"

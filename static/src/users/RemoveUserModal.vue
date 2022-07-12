@@ -4,12 +4,13 @@
      tabindex="-1"
      role="dialog"
      aria-labelledby="removeUserModal"
-     aria-hidden="true">
+     aria-hidden="true"
+     aria-modal="true">
   <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
     <div class="modal-content text-center">
       <div class="modal-body">
         <div class="alert alert-warning" role="alert">
-          <h4>Confirmer la suppression</h4>
+          <div>Confirmer la suppression</div>
           <error-bar v-if="hasErrors" :noclose="true">
             <p>La suppression d'utilisateur n'a pas fonctionné.</p>
           </error-bar>

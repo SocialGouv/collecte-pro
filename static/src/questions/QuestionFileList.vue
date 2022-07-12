@@ -18,6 +18,7 @@
                     class="btn btn-link"
                     title="Supprimer le fichier">
               <i class="fe fe-trash-2" aria-hidden="true"></i>
+              <span class="sr-only">Supprimer le fichier</span>
             </button>
           </span>
         </li>

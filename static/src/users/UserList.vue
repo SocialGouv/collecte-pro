@@ -19,6 +19,7 @@
                   data-toggle="modal"
                   data-target="#updateUserModal"
                   @click="updateEditingState(user)">
+                  <span class="sr-only">Modifier l'utilisateur</span>
           </button>
           <button class="fe fe-user-x btn btn-outline-primary mr-4"
                   title="Supprimer l'utilisateur"
@@ -26,6 +27,7 @@
                   data-toggle="modal"
                   data-target="#removeUserModal"
                   @click="updateEditingState(user)">
+                  <span class="sr-only">Supprimer l'utilisateur</span>
           </button>
         </template>
       </div>

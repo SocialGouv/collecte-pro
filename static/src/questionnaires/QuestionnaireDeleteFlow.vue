@@ -3,14 +3,14 @@
 
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <h4 class="modal-title">
+        <div id="modal_title" class="modal-title">
           <div class="mb-4">
             Vous êtes sur le point de supprimer :
           </div>
           <div>
             Questionnaire {{ questionnaire.numbering }} : {{ questionnaire.title }}
           </div>
-        </h4>
+        </div>
       </div>
 
       <div class="modal-body">
@@ -52,7 +52,7 @@
         <p>
           <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
         </p>
-        <p class="text-center">
+        <p id="modal_title" class="text-center">
           Le questionnaire a bien été supprimé.
         </p>
       </div>

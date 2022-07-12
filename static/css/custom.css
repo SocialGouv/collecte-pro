@@ -303,3 +303,15 @@ font-size: 1rem;
 ul.links {
 list-style-type: none;
 }
+
+/* Button for user */
+.btn-user {
+border: none;
+box-shadow: none;
+}
+
+/* Modal titles */
+.modal-title {
+font-size: 1rem;
+font-weight: bold;
+}

@@ -2,9 +2,9 @@
   <modal-flow ref="modalFlow" :action-function="publishFunction">
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <h4 class="modal-title">
-          Vous y êtes presque! En cochant ces mentions, vous êtes informés que :
-        </h4>
+        <div id="modal_title" class="modal-title">
+          Vous y êtes presque ! En cochant ces mentions, vous êtes informés que :
+        </div>
       </div>
 
       <div class="modal-body">
@@ -84,9 +84,9 @@
         <p>
           <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
         </p>
-        <h4 class="text-center">
+        <div id="modal_title" class="text-center">
           Bravo, votre questionnaire est publié!
-        </h4>
+        </div>
         <div class="mt-5">
             <p>Pensez à informer l'organisme interrogé.</p>
             <p>Si des réponses sont déposées par l'organisme interrogé, vous recevrez un email de

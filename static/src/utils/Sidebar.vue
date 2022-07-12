@@ -13,7 +13,7 @@
                     :show-one-child="true"
                     theme="white-theme"
                     :collapsed="collapsed"
-                    widthCollapsed="0px"
+                    v-if="!collapsed"
                     role="navigation"
       >
         <template v-slot:header>
@@ -253,7 +253,7 @@ export default Vue.extend({
       this.menu = menu
     },
     toggleCollapse() {
-      this.collapsed = !this.collapsed
+      this.collapsed = !this.collapsed;
     },
   },
 })

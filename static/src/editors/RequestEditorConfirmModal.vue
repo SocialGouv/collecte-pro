@@ -4,10 +4,10 @@
       <form @submit.prevent="confirm">
 
         <div class="modal-header border-bottom-0">
-          <h4 class="modal-title">
+          <div id="modal_title" class="modal-title">
             Vous êtes sur le point de forcer le transfert des droits
             de ce questionnaire, en conséquence :
-          </h4>
+          </div>
         </div>
 
         <div class="modal-body">

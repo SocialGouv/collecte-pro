@@ -1,16 +1,17 @@
 <template>
   <empty-modal :no-close="noClose">
     <div class="modal-header border-bottom-0">
-      <h5 class="modal-title">
+      <div id="modal_title" class="modal-title">
         <i :class="iconClass + ' mr-2'"></i>
         {{ title }}
-      </h5>
+      </div>
       <button v-if="!noClose"
               type="button"
               class="close"
               data-dismiss="modal"
               aria-label="Fermer"
               @click="closeModal">
+              <span class="sr-only">Fermer</span>
       </button>
     </div>
     <div class="modal-body">

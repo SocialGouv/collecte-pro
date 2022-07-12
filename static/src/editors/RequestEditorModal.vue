@@ -2,15 +2,16 @@
   <div class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog large-modal" role="document">
       <div class="modal-content">
-        <div class="modal-header border-bottom-0">
+        <div class="modal-header border-bottom-0" aria-labelledby="modal_title">
           <i class="fa fa-exchange-alt mr-2 mt-3" aria-hidden="true"></i>
-          <div class="modal-title">
-            <h3 class="modal-title">Obtenir les droits de rédaction du questionnaire</h3>
+          <div id="modal_title" class="modal-title">
+            <div class="modal-title">Obtenir les droits de rédaction du questionnaire</div>
           </div>
           <button type="button"
                   class="close"
                   data-dismiss="modal"
                   aria-label="Fermer">
+                  <span class="sr-only">Fermer</span>
           </button>
         </div>
 

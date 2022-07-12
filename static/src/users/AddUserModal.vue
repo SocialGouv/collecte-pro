@@ -1,10 +1,10 @@
 <template>
 
-<div class="modal fade add-user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModal" aria-hidden="true">
+<div class="modal fade add-user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="modal_title" aria-hidden="true" aria-modal="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">{{ editingControl.title }}</h4>
+        <div id="modal_title" class="modal-title">{{ editingControl.title }}</div>
       </div>
       <div class="modal-body">
         <div v-if="hasErrors" class="alert alert-danger" role="alert">
