@@ -193,7 +193,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         def log(saved_object):
             self.__log_action(request.user, verb, saved_object, saved_qr.control)
 
-        validated_themes_and_questions = self.__validate_all(request, pre_existing_qr)
+        validated_themes_and_questions = self.__validate_all(request, verb, pre_existing_qr)
         response = save_questionnaire_func()
         saved_qr = Questionnaire.objects.get(id=response.data['id'])
         saved_qr.editor = request.user
@@ -229,7 +229,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
 
         return self.__create_or_update(request, save_questionnaire_func, is_update=True)
 
-    def __validate_all(self, request, questionnaire_in_db=None):
+    def __validate_all(self, request, verb, questionnaire_in_db=None):
         """
         Validate the themes and questions coming from the request. If it's an update request, we validate that the
         request data is appropriate for updating the questionnaire already in db.
@@ -240,7 +240,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         serializer.is_valid(raise_exception=True)
 
         control = serializer.validated_data['control']
-        if control is None:
+        if verb == "created" and control is None:
             e = ParseError(
                 detail=(
                     'Users can only create questionnaires '
@@ -248,8 +248,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                 )
             )
             raise e
-        elif not request.user.profile.controls.active().filter(id=control.id).exists():
-        # ~ if control is not None and not request.user.profile.controls.active().filter(id=control.id).exists():
+        if control is not None and not request.user.profile.controls.active().filter(id=control.id).exists():
             e = PermissionDenied(
                 detail=(
                     'Users can only create questionnaires '

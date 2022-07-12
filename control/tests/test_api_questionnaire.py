@@ -240,11 +240,23 @@ def test_questionnaire_create_fails_without_control_id():
     response = create_questionnaire(user, payload)
     assert response.status_code == 400
 
+
+def test_questionnaire_create_fails_with_null_control_id():
+    control = factories.ControlFactory()
+    user = utils.make_inspector_user(control)
+    payload = make_create_payload(control.id)
+
     # "control" : "null" : malformed request
     payload['control'] = None
     response = create_questionnaire(user, payload)
     assert response.status_code == 400
     assert_no_data_is_saved()
+
+
+def test_questionnaire_create_fails_with_empty_control_id():
+    control = factories.ControlFactory()
+    user = utils.make_inspector_user(control)
+    payload = make_create_payload(control.id)
 
     # "control" : "" : malformed request
     payload['control'] = ""
@@ -516,6 +528,30 @@ def test_questionnaire_delete():
 
     # Cascade delete : child objects are not deleted
     assert Questionnaire.objects.all().count() == 1
+    assert Theme.objects.all().count() == 1
+    assert Question.objects.all().count() == 1
+
+
+def test_questionnaire__questionnaire_delete():
+    increment_ids()
+    question = factories.QuestionFactory()
+    theme = question.theme
+    questionnaire = theme.questionnaire
+    user = utils.make_inspector_user(questionnaire.control)
+    payload = make_update_payload(questionnaire)
+    payload['control'] = None
+
+    assert Questionnaire.objects.all().count() == 1
+    assert Theme.objects.all().count() == 1
+    assert Question.objects.all().count() == 1
+
+    response = update_questionnaire(user, payload)
+    assert response.status_code == 200
+
+    # Cascade delete : child objects are not deleted
+    assert Questionnaire.objects.all().count() == 1
+    questionnaire = Questionnaire.objects.get(id=questionnaire.id)
+    assert questionnaire.control is None
     assert Theme.objects.all().count() == 1
     assert Question.objects.all().count() == 1
 
