@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar" :class="{ collapsed: collapsed }">
+  <nav class="sidebar" :class="{ collapsed: collapsed }">
     <div v-if="showSidebar">
       <button id="sidebar-toggle-button" class="btn btn-secondary" @click="toggleCollapse" title="Replier le panneau latéral">
         <i v-show="!collapsed" class="fa fa-chevron-left"></i>
@@ -77,7 +77,7 @@
         </template>
       </sidebar-menu>
     </div>
-  </div>
+  </nav>
 </template>
 
 <script>

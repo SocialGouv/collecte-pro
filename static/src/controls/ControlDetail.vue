@@ -3,11 +3,11 @@
     <div id="sidebar-vm" class="border-right">
       <sidebar></sidebar>
     </div>
-    <div class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
+    <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
       <a name="contenu"> </a>
       <control-page>
       </control-page>
-    </div>
+    </main>
   </div>
 </template>
 
