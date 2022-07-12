@@ -8,10 +8,10 @@
       @confirm="cloneControl"
     >
       <info-bar>
-        Veuillez sélectionner les questionnaires que vous souhaitez dupliquer.
+        <p>Veuillez sélectionner les questionnaires que vous souhaitez dupliquer.</p>
       </info-bar>
       <error-bar v-if="referenceError" :noclose="true">
-        Ce nom abrégé est vide ou existe déjà. Veuillez saisir un nouveau nom abrégé.
+        <p>Ce nom abrégé est vide ou existe déjà. Veuillez saisir un nouveau nom abrégé.</p>
       </error-bar>
       <form>
         <div class="form-group mb-4">
@@ -33,7 +33,7 @@
                    @focus="referenceChanged">
           </div>
           <span class="text-danger" v-if="reference_code.length > 24">
-            Ce champ ne peut contenir plus de 25 caractères.
+            <p>Ce champ ne peut contenir plus de 25 caractères.</p>
           </span>
         </div>
         <div class="form-group mb-6">
@@ -58,7 +58,7 @@
       @confirm="exportControl"
     >
       <info-bar>
-        Veuillez sélectionner les questionnaires dont vous souhaitez exporter les fichiers-réponses.
+        <p>Veuillez sélectionner les questionnaires dont vous souhaitez exporter les fichiers-réponses.</p>
       </info-bar>
       <form>
         <div class="form-group mb-6">
@@ -88,7 +88,7 @@
     <template v-if="editMode">
       <div class="card-body">
         <error-bar v-if="hasErrors" :noclose="true">
-            L'espace de dépôt n'a pas pu être modifié. Erreur : {{JSON.stringify(errors)}}
+            <p>L'espace de dépôt n'a pas pu être modifié. Erreur : {{JSON.stringify(errors)}}</p>
         </error-bar>
 
         <form @submit.prevent="updateControl">

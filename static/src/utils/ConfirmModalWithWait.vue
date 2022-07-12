@@ -13,7 +13,7 @@
       </div>
       <div class="modal-body">
         <error-bar v-if="errorMessage">
-          {{ errorMessage }}
+          <p>{{ errorMessage }}</p>
         </error-bar>
         <slot></slot>
       </div>

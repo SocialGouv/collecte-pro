@@ -11,7 +11,7 @@
         <div class="alert alert-warning">
           <h4>Confirmer la suppression</h4>
           <error-bar v-if="hasErrors" :noclose="true">
-            La suppression d'utilisateur n'a pas fonctionné.
+            <p>La suppression d'utilisateur n'a pas fonctionné.</p>
           </error-bar>
           <p>
             {{ editingUser.first_name }} {{ editingUser.last_name }}

@@ -289,3 +289,8 @@ margin-left: 6em;
 .no-border {
 border: 0;
 }
+
+/* Alerts */
+.alert p{
+margin-bottom: 0;
+}

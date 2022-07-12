@@ -4,7 +4,7 @@
                  confirm-button="Terminer"
                  no-close="true">
     <error-bar v-if="errorMessage !== undefined" noclose="true">
-      {{ errorMessage }}
+      <p>{{ errorMessage }}</p>
     </error-bar>
     <div class="table-responsive border">
       <table class="table card-table">

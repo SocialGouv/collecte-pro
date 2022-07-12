@@ -7,8 +7,7 @@
         </no-controls>
         <div v-else class="card">
           <div class="card-body">
-            Vous n'avez accès à aucun espace de dépôt. Si vous avez besoin d'un accès, contactez
-            l'équipe d'instruction.
+            <p>Vous n'avez accès à aucun espace de dépôt. Si vous avez besoin d'un accès, contactez l'équipe d'instruction.</p>
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@
 
             <error-bar v-if="errorMessage"
                        class="mx-5">
-              {{ errorMessage }}
+              <p>{{ errorMessage }}</p>
             </error-bar>
 
             <div class="card-body">

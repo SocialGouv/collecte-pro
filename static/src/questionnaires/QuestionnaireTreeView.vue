@@ -8,7 +8,7 @@
           @confirm="cloneQuestionnaire"
         >
           <info-bar>
-            Veuillez sélectionner les espaces de dépôt vers lesquels vous souhaitez dupliquer ce questionnaire.
+            <p>Veuillez sélectionner les espaces de dépôt vers lesquels vous souhaitez dupliquer ce questionnaire.</p>
           </info-bar>
           <form>
             <div class="form-group mb-6">

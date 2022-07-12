@@ -13,7 +13,7 @@
     >
       <div>
         <info-bar>
-          Chaque espace de dépôt n'est visible que par les personnes que vous inviterez.
+          <p>Chaque espace de dépôt n'est visible que par les personnes que vous inviterez.</p>
         </info-bar>
 
           <div class="form-group mb-6">
@@ -22,8 +22,7 @@
               <span class="form-required">*</span>
             </label>
             <div id="title-help" class="text-muted">
-              Exemple : Contrôle des comptes et de la gestion de la Fédération Française de
-              Football. 255 caractères maximum.
+              <p>Exemple : Contrôle des comptes et de la gestion de la Fédération Française de Football. 255 caractères maximum.</p>
             </div>
             <div class="flex-row align-items-center">
               <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
@@ -43,7 +42,7 @@
               <span class="form-required">*</span>
             </label>
             <div id="organization-help" class="text-muted">
-              Exemple : Ministère des Sports. 255 caractères maximum.
+              <p>Exemple : Ministère des Sports. 255 caractères maximum.</p>
             </div>
             <div class="flex-row align-items-center">
               <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
@@ -63,9 +62,9 @@
               <span class="form-required">*</span>
             </label>
             <div id="reference-code-help" class="text-muted">
-              Ce nom sera celui du dossier contenant les pièces déposées. Il apparaîtra lors de
+              <p>Ce nom sera celui du dossier contenant les pièces déposées. Il apparaîtra lors de
               l'export de l'espace de dépôt. Nous conseillons un nom court (max 25 caractères) et signifiant,
-              pour que vous retrouviez facilement le dossier. Exemple : FFF_MinSports
+              pour que vous retrouviez facilement le dossier. Exemple : FFF_MinSports</p>
             </div>
             <div class="input-group">
             <span class="input-group-prepend" id="basic-addon3">
@@ -80,7 +79,7 @@
                      aria-labelledby="reference-code-label">
             </div>
             <span class="text-danger" v-if="reference_code_suffix.length > 24">
-              Ce champ ne peut contenir plus de 25 caractères.
+              <p>Ce champ ne peut contenir plus de 25 caractères.</p>
             </span>
           </div>
 

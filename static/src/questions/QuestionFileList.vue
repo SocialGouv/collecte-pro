@@ -1,7 +1,7 @@
 <template>
   <div>
     <error-bar v-if="errorMessage" @dismissed="clearError">
-      {{ errorMessage }}
+      <p>{{ errorMessage }}</p>
     </error-bar>
     <div v-if="files && files.length" class="question-box-child">
       <div v-if="files.length > 1" class="form-label">Fichiers annexes à la question :</div>

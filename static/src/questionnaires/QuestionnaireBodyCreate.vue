@@ -6,8 +6,8 @@
       </div>
       <div class="card-body pb-6">
         <info-bar>
-          A cette étape, vous pouvez créer votre questionnaire en ajoutant des thèmes,
-          des questions et des annexes à vos questions.
+          <p>A cette étape, vous pouvez créer votre questionnaire en ajoutant des thèmes,
+          des questions et des annexes à vos questions.</p>
         </info-bar>
         <form ref="form">
           <div class="card"

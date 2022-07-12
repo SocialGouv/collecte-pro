@@ -1,12 +1,12 @@
 <template>
   <div>
     <success-bar v-if="hasSucessMessage" @dismissed="clearSuccessMessage">
-      Le fichier "{{ successFilename }}" a bien été envoyé à la corbeille.
+      <p>Le fichier "{{ successFilename }}" a bien été envoyé à la corbeille.
       <a :href="trashUrl">Cliquez ici</a>
-      pour le voir dans la corbeille.
+      pour le voir dans la corbeille.</p>
     </success-bar>
     <error-bar v-if="errorMessage" @dismissed="clearErrorMessage">
-      {{ errorMessage }}
+      <p>{{ errorMessage }}</p>
     </error-bar>
     <div class="table-responsive question-box-child" v-if="files && files.length">
       <div class="form-label">

@@ -1,7 +1,7 @@
 <template>
 <div>
   <error-bar v-if="errorMessage" @dismissed="clearError">
-    {{ errorMessage }}
+    <p>{{ errorMessage }}</p>
   </error-bar>
   <div v-if="question.id">
     <label class="btn btn-primary">

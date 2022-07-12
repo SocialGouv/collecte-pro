@@ -3,9 +3,7 @@
     <div v-show="isAudited" class="form-group question-box-child">
       <div class="form-label">Déposer vos réponses</div>
       <error-bar v-if="hasErrors" @dismissed="clearErrors">
-        <div>
-          Une erreur s'est produite lors de la transmission d'un fichier.
-        </div>
+        <p>Une erreur s'est produite lors de la transmission d'un fichier.</p>
       </error-bar>
       <form class="dropzone"
             :action="uploadUrl"

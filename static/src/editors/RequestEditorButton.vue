@@ -5,11 +5,11 @@
         <div>
           <i class="fe fe-users mr-1" aria-hidden="true"></i>
           <span v-if="questionnaire.editor">
-            <strong>{{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</strong>
-            est actuellement la seule personne qui peut modifier ce questionnaire.
+            <p><strong>{{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</strong>
+            est actuellement la seule personne qui peut modifier ce questionnaire.</p>
           </span>
           <span v-else>
-            Personne n'est actuellement affecté à la rédaction de ce questionnaire.
+            <p>Personne n'est actuellement affecté à la rédaction de ce questionnaire.</p>
           </span>
         </div>
         <div class="text-right">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <error-bar v-if="errorMessage.length > 0" class="mt-4">
-        {{ errorMessage }}
+        <p>{{ errorMessage }}</p>
       </error-bar>
     </div>
 

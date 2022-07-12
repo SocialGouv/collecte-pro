@@ -53,13 +53,13 @@
 
           <error-bar id="sidebar-error-bar" v-if="hasError" noclose=true>
             <div>
-              Nous n'avons pas pu obtenir vos espaces de dépôt.
+              <p>Nous n'avons pas pu obtenir vos espaces de dépôt.</p>
             </div>
             <div class="mt-2">
-              Erreur : {{ errorMessage }}
+              <p>Erreur : {{ errorMessage }}</p>
             </div>
             <div class="mt-2">
-              Vous pouvez essayer de recharger la page
+              <p>Vous pouvez essayer de recharger la page
               <template v-if="!errorEmailLink">
                 .
               </template>
@@ -70,7 +70,7 @@
                   rel="noopener noreferrer"
                 >
                   cliquez ici pour nous contacter
-                </a>.
+                </a>.</p>
               </template>
             </div>
           </error-bar>
