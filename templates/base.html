@@ -14,7 +14,7 @@
   <div id="page" class="page container-fluid"> <!--// opening: page  //-->
     <div id="non-footer" class="flex-column flex-grow-1">
       {% block page_top_row %}
-        <div class="header flex-row justify-content-between"> <!--// opening: top_header  //-->
+        <div class="header flex-row justify-content-between" role="banner"> <!--// opening: top_header  //-->
           <div class="container flex-row">
             <div class="flex-column">
               <a class="header-brand" href="/accueil">
@@ -105,7 +105,7 @@
         <link href="{% static 'dist/sidebar-bundle.css' %}" rel="stylesheet" />
         <script src="{% static 'dist/sidebar-bundle.js' %}"></script>
 
-        <div class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child">
+        <div class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
           {% block page_main_container %}
           {% endblock page_main_container %}
         </div>

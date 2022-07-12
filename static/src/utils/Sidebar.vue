@@ -14,6 +14,7 @@
                     theme="white-theme"
                     :collapsed="collapsed"
                     widthCollapsed="0px"
+                    role="navigation"
       >
         <template v-slot:header>
           <div id="sidebar-title"

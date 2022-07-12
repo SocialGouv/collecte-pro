@@ -3,7 +3,7 @@
     <div id="sidebar-vm" class="border-right">
       <sidebar></sidebar>
     </div>
-    <div class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child">
+    <div class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
       <a name="contenu"> </a>
       <questionnaire-detail-page :control-id="controlId" :questionnaire-id="questionnaireId">
       </questionnaire-detail-page>
