@@ -1,5 +1,5 @@
 <template>
-  <div class="wizard-step">
+  <li class="wizard-step">
 
     <a v-if="clickable"
        class="wizard-step-graphics"
@@ -22,7 +22,7 @@
     </div>
 
     <slot></slot>
-  </div>
+  </li>
 </template>
 
 <script>

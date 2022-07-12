@@ -29,41 +29,41 @@
             </div>
 
           {% block nav_items %}
-            <div class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end"> <!--// opening: nav_items  //-->
+            <ul class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end links"> <!--// opening: nav_items  //-->
               {% if user.is_authenticated %}
-                <div class="nav-item">
+                <li class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="#contenu">
                     <i class="fe fe-link" aria-hidden="true"></i> Aller au contenu
                   </a>
-                </div>
+                </li>
               {% endif %}
               {% if user.is_staff %}
-                <div class="nav-item">
+                <li class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="{% url 'admin:index'%}">
                     <i class="fe fe-settings" aria-hidden="true"></i> Administration
                   </a>
-                </div>
+                </li>
               {% endif %}
               {% if user.is_authenticated %}
-                <div class="nav-item">
+                <li class="nav-item">
                   {% url 'faq' as faq_url %}
                   <a class="nav-link nav-link-thick-line {% if request.path == faq_url %}active{% endif %}"
                     href="{% url 'faq'%}">
                     <i class="fe fe-help-circle" aria-hidden="true"></i> FAQ
                   </a>
-                </div>
+                </li>
               {% else %}
-                <div class="nav-item mx-6">
+                <li class="nav-item mx-6">
                   {% url 'login' as login_redirect_url %}
                   <a class="nav-link nav-link-thick-line {% if request.path == login_redirect_url %}active{% endif %}"
                     href="{% url 'login'%}">
                     Se connecter
                   </a>
-                </div>
+                </li>
               {% endif %}
-            </div>
+            </ul>
           {% endblock nav_items %}
 
           {% block current_user %}

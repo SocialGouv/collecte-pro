@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-row justify-content-around mb-6">
+  <ul class="flex-row justify-content-around mb-6">
     <wizard-step v-for="(stepTitle, i) in stepTitles"
                  :key="'step-' + (i + 1)"
                  :number="i+1"
@@ -9,7 +9,7 @@
     >
       {{ stepTitle }}
     </wizard-step>
-  </div>
+  </ul>
 </template>
 
 <script>

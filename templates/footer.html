@@ -16,27 +16,25 @@
         <div class="flex-row justify-content-end">
           {% get_liens_footer_items as liens_footer %}
           {% for lien in liens_footer %}
-          <div class="flex-grow" style="margin-left: 2em">
-            <a href="{{ lien.url }}" title="{{lien.title}}" target="_blank" rel="noopener noreferrer"><b>{{ lien.name }}</b></a>
-          </div>
+          <ul class="flex-grow links" style="margin-left: 2em">
+            <li>
+                <a href="{{ lien.url }}" title="{{lien.title}}" target="_blank" rel="noopener noreferrer"><b>{{ lien.name }}</b></a>
+            </li>
+          </ul>
           {% endfor %}
         </div>
-        <div class="flex-row justify-content-between align-items-center">
-          <div class="flex-grow">
+        <ul class="flex-row justify-content-between align-items-center links">
+          <li class="flex-grow">
             collecte-pro
-            <span>
-              <a href="https://github.com/SocialGouv/ecollecte/blob/main/docs/releases/2.1.1.md" target="_blank" rel="noopener noreferrer">v2.1.1</a>
-            </span>
-          </div>
-          <div class="flex-grow">
-            <span>
-              <a href="{% url 'declarationConformite' %}">Accessibilité : Non conforme</a>
-            </span>
-          </div>
-          <div class="flex-grow">
+            <a href="https://github.com/SocialGouv/ecollecte/blob/main/docs/releases/2.1.1.md" target="_blank" rel="noopener noreferrer">v2.1.1</a>
+          </li>
+          <li class="flex-grow">
+            <a href="{% url 'declarationConformite' %}">Accessibilité : Non conforme</a>
+          </li>
+          <li class="flex-grow">
             <a href="{% url 'tos' %}">Conditions générales d'utilisation</a>
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
