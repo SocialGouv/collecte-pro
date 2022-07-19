@@ -20,7 +20,7 @@ django-activity-stream==1.4.1
 django-admin==2.0.1
 django-annoying==0.10.6
 django-celery-beat==2.3.0
-django-ckeditor==6.4.2
+django-ckeditor==6.3.2
 django-cleanup==6.0.0
 django-csp==3.7
 django-debug-toolbar==3.5.0
