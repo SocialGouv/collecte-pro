@@ -4,6 +4,13 @@ from rest_framework.exceptions import ParseError
 from control.models import Questionnaire
 
 
+class OnlyAuthenticatedCanAccess(permissions.BasePermission):
+    message_format = 'Accessing this resource is not allowed.'
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated
+
+
 class OnlyInspectorCanAccess(permissions.BasePermission):
     message_format = 'Accessing this resource is not allowed.'
 

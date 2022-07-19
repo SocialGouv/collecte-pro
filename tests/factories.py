@@ -89,6 +89,8 @@ class QuestionnaireFactory(factory.django.DjangoModelFactory):
     control = factory.SubFactory(ControlFactory)
     uploaded_file = dummy_file
     is_draft = True
+    is_replied = False
+    is_finalized = False
 
     class Meta:
         model = 'control.Questionnaire'

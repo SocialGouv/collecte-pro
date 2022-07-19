@@ -141,7 +141,7 @@ def test_no_modifying_questionnaire_if_not_inspector():
 
     # update
     payload = make_update_payload(questionnaire)
-    assert update_questionnaire(audited_user, payload).status_code == 403
+    assert update_questionnaire(audited_user, payload).status_code == 404
 
     # delete is never allowed
     assert delete_questionnaire(audited_user, questionnaire.id).status_code == 403
@@ -154,7 +154,7 @@ def test_no_modifying_questionnaire_if_not_inspector():
 
 
 def test_no_access_to_draft_if_not_inspector():
-    questionnaire = factories.QuestionnaireFactory(is_draft=True)
+    questionnaire = factories.QuestionnaireFactory()
     audited_user = utils.make_audited_user(questionnaire.control)
     # retrieve is never allowed
     assert get_questionnaire(audited_user, questionnaire.id).status_code == 405
@@ -302,21 +302,49 @@ def test_inspector_cannot_update_published_questionnaire():
     user = utils.make_inspector_user(control)
     questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control, editor=user)
     payload = make_update_payload(questionnaire)
-    # Here we are trying to update a questionnaire that's already published
+    # Here we are trying to update a questionnaire, but not finalizing it
     response = update_questionnaire(user, payload)
     assert 400 <= response.status_code < 500
 
 
+def test_inspector_can_finalize_questionnaire():
+    increment_ids()
+    control = factories.ControlFactory()
+    user = utils.make_inspector_user(control)
+    questionnaire = factories.QuestionnaireFactory(
+        is_replied=True, is_draft=False, control=control, editor=user
+    )
+    payload = make_update_payload(questionnaire)
+    payload["is_finalized"] = True
+    # Here we are trying to finalize a questionnaire
+    response = update_questionnaire(user, payload)
+    assert 200 <= response.status_code < 300
+
+
 def test_audited_cannot_update_published_questionnaire():
-    # In fact, draft or not, audited should not be able to update at all
+    # In fact, draft or not, audited should be able to update only if replying
     increment_ids()
     control = factories.ControlFactory()
     user = utils.make_audited_user(control)
-    questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control, editor=user)
+    questionnaire = factories.QuestionnaireFactory(
+        is_draft=False, control=control, editor=user
+    )
     payload = make_update_payload(questionnaire)
     # Here we are trying to update a questionnaire that's already published
     response = update_questionnaire(user, payload)
     assert 400 <= response.status_code < 500
+
+
+def test_audited_can_reply_to_questionnaire():
+    increment_ids()
+    control = factories.ControlFactory()
+    user = utils.make_audited_user(control)
+    questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control)
+    payload = make_update_payload(questionnaire)
+    payload["is_replied"] = True
+    # Here we are trying to reply to a questionnaire
+    response = update_questionnaire(user, payload)
+    assert 200 <= response.status_code < 300
 
 
 def test_questionnaire_draft_update__editor_can_update():

@@ -49,7 +49,10 @@ def make_audited_user(control=None):
 
 def make_inspector_user(control=None, assign_questionnaire_editor=True):
     return make_user(
-        UserProfile.INSPECTOR, control, assign_questionnaire_editor=assign_questionnaire_editor)
+        UserProfile.INSPECTOR,
+        control,
+        assign_questionnaire_editor=assign_questionnaire_editor
+    )
 
 
 def get_resource(client, user, resource_type, resource_id):

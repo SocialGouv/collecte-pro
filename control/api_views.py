@@ -12,7 +12,8 @@ from django.core.files import File
 
 from . import serializers as control_serializers
 from .models import Control, Question, Questionnaire, Theme, QuestionFile, ResponseFile
-from control.permissions import ControlIsNotDeleted, QuestionnaireIsDraft, OnlyAuditedCanAccess
+from control.permissions import ControlIsNotDeleted, QuestionnaireIsDraft
+from control.permissions import OnlyAuthenticatedCanAccess, OnlyAuditedCanAccess
 from control.permissions import OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire
 from user_profiles.serializers import UserProfileSerializer
 
@@ -161,7 +162,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
     serializer_class = control_serializers.QuestionnaireSerializer
     permission_classes_by_action = {
         "create": (OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
-        "update": (OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
+        "update": (OnlyAuthenticatedCanAccess, ControlIsNotDeleted),
     }
 
     def get_permissions(self):
@@ -180,15 +181,74 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:
             pre_existing_qr = self.get_object()  # throws 404 if no qr
-            is_beeing_published = pre_existing_qr.is_draft is True and \
-                request.data.get('is_draft') is False
-            if is_beeing_published:
-                verb = 'published'
+            verb = "updated"
+            if pre_existing_qr.is_draft is True:
+                # Only Inspector can publish a Questionnaire
+                if request.data.get("is_draft") is False:
+                    if not request.user.profile.is_inspector:
+                        e = PermissionDenied(
+                            detail=(
+                                "Only inspectors can publish questionnaires "
+                                "in active controls that they belong to."),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
+                    verb = "published"
+                else:
+                    # Only Editor can change a Questionnaire
+                    if not request.user.profile.is_inspector:
+                        e = PermissionDenied(
+                            detail=(
+                                "Only editors can edit questionnaires "
+                                "in active controls that they belong to."),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
+                    if not pre_existing_qr.editor or pre_existing_qr.editor != request.user:
+                        e = PermissionDenied(
+                            detail=(
+                                "Only inspectors can edit questionnaires "
+                                "in active controls that they belong to."),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
             else:
-                verb = 'updated'
+                # Only Audited can answer a Questionnaire when published
+                if (
+                    pre_existing_qr.is_replied is False
+                    and request.data.get("is_replied") is True
+                ):
+                    if not request.user.profile.is_audited:
+                        e = PermissionDenied(
+                            detail=("Only auditeds can answer questionnaires."),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
+                # Only Inspectors can finalize a Questionnaire Replied
+                elif (
+                    pre_existing_qr.is_replied is True
+                    and pre_existing_qr.is_finalized is False
+                    and request.data.get("is_finalized") is True
+                ):
+                    if not request.user.profile.is_inspector:
+                        e = PermissionDenied(
+                            detail=(
+                                "Only inspectors can finalize questionnaires "
+                                "in active controls that they belong to."
+                            ),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
+                # No other modification is possible
+                else:
+                    e = PermissionDenied(
+                        detail="Changing this resource is not allowed.",
+                        code=status.HTTP_403_FORBIDDEN
+                    )
+                    raise e
         else:
             pre_existing_qr = None
-            verb = 'created'
+            verb = "created"
 
         def log(saved_object):
             self.__log_action(request.user, verb, saved_object, saved_qr.control)
