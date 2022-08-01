@@ -24,8 +24,6 @@ from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDr
 from .serializers import ControlSerializer, ControlDetailControlSerializer
 
 
-MAX_FILENAME_LENGTH = 50
-
 
 class WithListOfControlsMixin(object):
 
@@ -209,7 +207,7 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         return True
 
     def filename_is_too_long(self, filename):
-        if len(filename) > MAX_FILENAME_LENGTH:
+        if len(filename) > settings.MAX_FILENAME_LENGTH:
             return True
 
     def file_mime_type_is_valid(self, mime_type):
@@ -261,7 +259,7 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             self.add_filename_is_too_long_log(file_object.name)
             return HttpResponseForbidden(
                 "Le nom du fichier dépasse la limite autorisée "
-                f"de {MAX_FILENAME_LENGTH} caractères. Sa taille est "
+                f"de {settings.MAX_FILENAME_LENGTH} caractères. Sa taille est "
                 f"de {len(file_object.name)} caractères."
             )
 

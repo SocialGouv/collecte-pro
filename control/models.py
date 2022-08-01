@@ -351,7 +351,7 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
     question = models.ForeignKey(
         to='Question', verbose_name='question', related_name='response_files',
         on_delete=models.CASCADE)
-    file = models.FileField(verbose_name="fichier", upload_to=response_file_path)
+    file = models.FileField(verbose_name="fichier", upload_to=response_file_path, max_length=2000)
     author = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, related_name='response_files', on_delete=models.PROTECT)
     is_deleted = models.BooleanField(

@@ -259,6 +259,8 @@ UPLOAD_FILE_EXTENSION_BLACKLIST = env('UPLOAD_FILE_EXTENSION_BLACKLIST', default
 
 UPLOAD_FILE_MAX_SIZE_MB = env('UPLOAD_FILE_MAX_SIZE_MB', default=256)
 
+MAX_FILENAME_LENGTH = env('MAX_FILENAME_LENGTH', default=50)
+
 STATIC_URL = '/static/'
 
 # Collect static won't work if you haven't configured this
