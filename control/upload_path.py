@@ -3,24 +3,18 @@ import re
 
 
 def questionnaire_path(questionnaire):
-    control_folder = questionnaire.control.reference_code
-    questionaire_num = questionnaire.numbering
-    questionnaire_folder = f'Q{questionaire_num:02}'
-    path = f'{control_folder}/{questionnaire_folder}'
-    return path
+    return os.path.join(
+        questionnaire.control.reference_code,
+        f'Q{questionnaire.numbering:02}',
+    )
 
 
 def questionnaire_file_path(instance, filename):
-    questionnaire = instance
-    questionnaire_folder = questionnaire_path(questionnaire)
-    path = f'{questionnaire_folder}/{filename}'
-    return path
+    return os.path.join(questionnaire_path(instance), filename)
 
 
 class Prefixer(object):
-
     def __init__(self, file_object):
-        self.file_object = file_object
         self.questionnaire_num = file_object.question.theme.questionnaire.numbering
         self.theme_num = file_object.question.theme.numbering
         self.question_num = file_object.question.numbering
@@ -40,37 +34,37 @@ class Prefixer(object):
 
 
 class PathBuilder(object):
-
     def __init__(self, file_object, filename):
-        self.file_object = file_object
         self.filename = filename
-        self.control_folder = file_object.question.theme.questionnaire.control.reference_code or \
+        control_folder = file_object.question.theme.questionnaire.control.reference_code or \
             f'CONTROLE-{file_object.question.theme.questionnaire.control.id}'
-        self.questionnaire_num = file_object.question.theme.questionnaire.numbering
-        self.questionnaire_folder = f'Q{self.questionnaire_num:02}'
-        self.theme_num = file_object.question.theme.numbering
-        self.theme_folder = f'T{self.theme_num:02}'
-        self.question_num = file_object.question.numbering
-        self.questionnaire_path = f'{self.control_folder}/{self.questionnaire_folder}'
-        self.theme_path = f'{self.questionnaire_path}/{self.theme_folder}'
+        questionnaire_num = file_object.question.theme.questionnaire.numbering
+        questionnaire_folder = f'Q{questionnaire_num:02}'
+        theme_num = file_object.question.theme.numbering
+        self.theme_folder = f'T{theme_num:02}'
+        question_num = file_object.question.numbering
+        self.questionnaire_path = os.path.join(control_folder, questionnaire_folder)
+        self.theme_path = os.path.join(self.questionnaire_path, self.theme_folder)
         self.prefixer = Prefixer(file_object)
 
     def get_question_file_path(self):
-        question_path = f'{self.questionnaire_path}/ANNEXES-AUX-QUESTIONS'
-        path = f'{question_path}/{self.filename}'
-        return path
+        question_path = os.path.join(self.questionnaire_path, "ANNEXES-AUX-QUESTIONS")
+        return os.path.join(question_path, self.filename)
 
     def get_response_file_path(self):
         prefix = self.prefixer.make_file_prefix()
         response_filename = f'{prefix}-{self.filename}'
-        path = f'{self.theme_path}/{response_filename}'
-        return path
+        if os.path.exists(os.path.join(self.theme_path, response_filename)):
+            return os.path.join(self.theme_path, response_filename)
+        return os.path.join(self.theme_path, self.filename)
 
     def get_deleted_response_file_path(self):
         prefix = self.prefixer.make_deleted_file_prefix()
         response_filename = f'{prefix}-{self.filename}'
-        path = f'{self.questionnaire_path}/CORBEILLE/{self.theme_folder}/{response_filename}'
-        return path
+        path = os.path.join(self.questionnaire_path, "CORBEILLE", self.theme_folder)
+        if os.path.exists(os.path.join(path, response_filename)):
+            return os.path.join(path, response_filename)
+        return os.path.join(path, self.filename)
 
 
 def question_file_path(instance, filename):

@@ -379,6 +379,11 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
     @property
     def downloadname(self):
         """
-        Name of file for download.
+        Name of file for download, prefixed.
         """
-        return os.path.basename(self.file.name)
+        prefixer = Prefixer(self)
+        if self.is_deleted:
+            filename = prefixer.strip_deleted_file_prefix()
+            return f"{prefixer.make_deleted_file_prefix()}-{filename}"
+        filename = prefixer.strip_file_prefix()
+        return f"{prefixer.make_file_prefix()}-{filename}"
