@@ -469,7 +469,7 @@ export default Vue.extend({
          * get formatted item for treeview plugin
          */
         getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null, isAnnexe = false, isCorbeille = false, isFichierAnnexe = false, isFichierCorbeille = false) {
-            const maxLength = 90;
+            const maxLength = 100;
             const objectTreeView = {
                 name: '',
                 short_name: '',
@@ -504,7 +504,7 @@ export default Vue.extend({
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
                 objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.dateDepot = item.created;
+                objectTreeView.dateDepot = this.formatDate(new Date(item.created));
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
@@ -514,7 +514,7 @@ export default Vue.extend({
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
                 objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.dateDepot = item.created;
+                objectTreeView.dateDepot = this.formatDate(new Date(item.created));
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView._id = 'file';
                 objectTreeView.id = questionnaireId + '-' + themeId + '-' + questionId + '-' + item.id;
@@ -703,6 +703,32 @@ export default Vue.extend({
 
                 return objQuestionnaire;
             });
+        },
+        formatDate(dateDepot) {
+            let finalDate = "";
+            if (dateDepot.getDate()<10) {
+                finalDate += "0" + dateDepot.getDate() + "/";
+            } else {
+                finalDate += dateDepot.getDate() + "/";
+            }
+            if (dateDepot.getMonth()<10) {
+                finalDate += "0" + (dateDepot.getMonth()+1) + "/";
+            } else {
+                finalDate += (dateDepot.getMonth()+1) + "/";
+            }
+            finalDate += (1900+dateDepot.getYear()) + " ";
+            if (dateDepot.getHours()<10) {
+                finalDate += "0" + dateDepot.getHours() + ":";
+            } else {
+                finalDate += dateDepot.getHours() + ":";
+            }
+            if (dateDepot.getMinutes()<10) {
+                finalDate += "0" + dateDepot.getMinutes();
+            } else {
+                finalDate += "" + dateDepot.getMinutes();
+            }
+
+            return finalDate;
         }
     },
 
