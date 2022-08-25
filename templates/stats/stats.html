@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block site_title %}
+  <title>Statistiques | collecte-pro</title>
+{% endblock site_title %}
+
+{% block page_main_container_with_sidebar %}
+  <div class="page-main flex-row">
+
+    <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child mb-3" role="main">
+      <div class="container">
+
+        <div class="page-header">
+          <h1 class="page-title">
+            {% block page_title %}
+              Statistiques d'utilisation
+            {% endblock page_title %}
+          </h1>
+        </div>
+
+        <div class="text-justify mt-6">
+          <h2>En cours de construction...</h2>
+          <p>Les statistiques sont en cours de construction.</p>
+      </div>
+
+    </main>
+  </div>
+{% endblock page_main_container_with_sidebar %}
+
