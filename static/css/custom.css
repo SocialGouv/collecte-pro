@@ -315,3 +315,13 @@ box-shadow: none;
 font-size: 1rem;
 font-weight: bold;
 }
+
+/* Datepicker */
+.date-input{
+width: 8em !important;
+}
+
+.date-input input{
+width: 6.8em !important;
+overflow: hidden !important;
+}

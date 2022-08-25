@@ -26,7 +26,7 @@
         </div>
         <div class="card">
           <span class="form-inline">
-            <span class="form-group col-sm-3">
+            <span class="form-group col-sm-4">
               <span class="form-label mr-2">Filtrer par répondant</span>
               <select v-model="filter" class="form-control">
                 <option></option>
@@ -35,12 +35,12 @@
                 </option>
               </select>
             </span>
-            <span class="form-group col-sm-6">
+            <span class="form-group col-sm-5">
               <label class="form-label mr-2" id="filtre_start_date" for="filtre_startdate">
                 Filtrer par date de dépôt de
               </label>
               <datepicker id="filtre_startdate"
-                class="form-control"
+                class="form-control date-input"
                 aria-labelledby="filtre_start_date"
                 v-model="date_filter_start"
                 :language="fr"
@@ -51,7 +51,7 @@
               </datepicker>
               <label class="form-label ml-2 mr-2" id="filtre_end_date" for="filtre_enddate">à</label>
               <datepicker id="filtre_enddate"
-                class="form-control"
+                class="form-control date-input"
                 aria-labelledby="filtre_end_date"
                 v-model="date_filter_end"
                 :language="fr"
@@ -81,6 +81,7 @@
             </span>
           </span>
         </div>
+        <div class="card">
         <vue-ads-table
             :columns="columns"
             :classes="classes"
@@ -102,8 +103,9 @@
             <template slot="name_file" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 rel="noopener noreferrer"
-                class="btn tag tag-azure pull-left btn-file">
-                {{ props.row.name }}
+                class="btn tag tag-azure pull-left btn-file"
+                :title="props.row.name">
+                {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
                   <i class="fe fe-file" aria-hidden="true"></i>
                 </span>
@@ -112,8 +114,9 @@
             <template slot="name_fileAnnexe" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 rel="noopener noreferrer"
-                class="btn tag tag-orange pull-left btn-file">
-                {{ props.row.name }}
+                class="btn tag tag-orange pull-left btn-file"
+                :title="props.row.name">
+                {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
                   <i class="fe fe-paperclip" aria-hidden="true"></i>
                 </span>
@@ -122,8 +125,9 @@
             <template slot="name_fileCorbeille" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 rel="noopener noreferrer"
-                class="btn tag tag-azure pull-left btn-file">
-                {{ props.row.name }}
+                class="btn tag tag-azure pull-left btn-file"
+                :title="props.row.name">
+                {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
                   <i class="fe fe-trash-2" aria-hidden="true"></i>
                 </span>
@@ -138,6 +142,7 @@
               &nbsp;
             </template>
         </vue-ads-table>
+        </div>
     </div>
 </template>
 
@@ -464,8 +469,10 @@ export default Vue.extend({
          * get formatted item for treeview plugin
          */
         getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null, isAnnexe = false, isCorbeille = false, isFichierAnnexe = false, isFichierCorbeille = false) {
+            const maxLength = 90;
             const objectTreeView = {
                 name: '',
+                short_name: '',
                 dateDepot: '',
                 repondant: '',
                 _showChildren: true,
@@ -489,12 +496,14 @@ export default Vue.extend({
                 objectTreeView.id = questionnaireId + '-' + 'corbeille';
             } else if (isFichierAnnexe) { // Fichier annexe
                 objectTreeView.name = item.basename;
+                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
                 objectTreeView.url = item.url;
                 objectTreeView._showChildren = false;
                 objectTreeView._id = 'fileAnnexe';
                 objectTreeView.id = questionnaireId + '-' + 'annexes' + '-' + item.id;
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
+                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView.url = item.url;
@@ -504,6 +513,7 @@ export default Vue.extend({
                 objectTreeView.is_deleted = item.is_deleted;
             } else if (questionId != null) { // Response_file
                 objectTreeView.name = item.basename;
+                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
                 objectTreeView.dateDepot = item.created;
                 objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
                 objectTreeView._id = 'file';
