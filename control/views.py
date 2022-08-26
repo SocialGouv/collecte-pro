@@ -191,24 +191,11 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             }
         action.send(**action_details)
 
-    def add_filename_is_too_long_log(self, filename):
-        action_details = {
-            'sender': self.request.user,
-            'verb': 'uploaded invalid named response-file',
-            'target': self.object.question,
-            'description': f'Detected too long filename: "{filename}"'
-            }
-        action.send(**action_details)
-
     def file_extension_is_valid(self, extension):
         blacklist = settings.UPLOAD_FILE_EXTENSION_BLACKLIST
         if any(match.lower() == extension.lower() for match in blacklist):
             return False
         return True
-
-    def filename_is_too_long(self, filename):
-        if len(filename) > settings.MAX_FILENAME_LENGTH:
-            return True
 
     def file_mime_type_is_valid(self, mime_type):
         blacklist = settings.UPLOAD_FILE_MIME_TYPE_BLACKLIST
@@ -255,13 +242,10 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
                 f"Ce type de fichier n'est pas autorisé: {mime_type}"
             )
 
-        if self.filename_is_too_long(file_object.name):
-            self.add_filename_is_too_long_log(file_object.name)
-            return HttpResponseForbidden(
-                "Le nom du fichier dépasse la limite autorisée "
-                f"de {settings.MAX_FILENAME_LENGTH} caractères. Sa taille est "
-                f"de {len(file_object.name)} caractères."
-            )
+        if len(file_object.name) > settings.MAX_FILENAME_LENGTH:
+            extension_length = len(file_extension)
+            max_length = settings.MAX_FILENAME_LENGTH - extension_length
+            self.object.file.name = f"{file_object.name[:max_length]}{file_extension}"
 
         MAX_SIZE_BYTES = 1048576 * settings.UPLOAD_FILE_MAX_SIZE_MB
         if file_object.file.size > MAX_SIZE_BYTES:
