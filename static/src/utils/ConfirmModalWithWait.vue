@@ -1,6 +1,6 @@
 <template>
   <empty-modal :no-close="noClose">
-    <form>
+    <form id="modalform">
       <div class="modal-header border-bottom-0">
         <div id="modal_title" class="modal-title">{{ title }}</div>
         <button v-if="!noClose"
@@ -64,6 +64,12 @@ export default Vue.extend({
   },
   methods: {
     confirmClicked () {
+      // Disabling submit behaviour for Firefox
+      document.getElementById("modalform").addEventListener(
+        "submit",
+        function(event){event.preventDefault();}
+      );
+
       this.errorMessage = "";
       if (!this.validateForm()) {
         return;
@@ -104,5 +110,4 @@ export default Vue.extend({
     },
   },
 });
-
 </script>
