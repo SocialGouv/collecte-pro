@@ -2,6 +2,7 @@
 {% load static %}
 {% block site_title %}
   <title>Statistiques | collecte-pro</title>
+  <script src="{% static 'js/chart.min.js' %}"></script>
 {% endblock site_title %}
 
 {% block page_main_container_with_sidebar %}
@@ -10,19 +11,315 @@
     <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child mb-3" role="main">
       <div class="container">
 
-        <div class="page-header">
-          <h1 class="page-title">
-            {% block page_title %}
-              Statistiques d'utilisation
-            {% endblock page_title %}
-          </h1>
+        <div class="">
+          <h1 class="page-title">Statistiques d'utilisation</h1>
+          <p>Ces statistiques se basent sur les données des 12 derniers mois.</p>
         </div>
 
         <div class="text-justify mt-6">
-          <h2>En cours de construction...</h2>
-          <p>Les statistiques sont en cours de construction.</p>
-      </div>
+          <h2>Nombre d'espaces créés par mois</h2>
+          <canvas id="controls" width="400" height="60" aria-label="Nombre d'espaces créés par mois" role="img"></canvas>
+          <script>
+          let ctx = document.getElementById("controls").getContext("2d");
+          let monthes = [{%for control in controls%}"{{control.0|date:"M Y"}}", {%endfor%}];
+          let datas = [{%for control in controls%}{{control.1}}, {%endfor%}];
+          let myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre d'espaces créés par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
 
+        <div class="text-justify mt-6">
+          <h2>Nombre de questionnaires publiés par mois</h2>
+          <canvas id="questionnaires" width="400" height="60" aria-label="Nombre de questionnaires publiés par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("questionnaires").getContext("2d");
+          monthes = [{%for questionnaire in questionnaires%}"{{questionnaire.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for questionnaire in questionnaires%}{{questionnaire.1}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre de questionnaires publiés par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+        <div class="text-justify mt-6">
+          <h2>Nombre de questions publiées par mois</h2>
+          <canvas id="questions" width="400" height="60" aria-label="Nombre de questions publiées par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("questions").getContext("2d");
+          monthes = [{%for question in questions%}"{{question.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for question in questions%}{{question.1}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre de questions publiées par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+        <div class="text-justify mt-6">
+          <h2>Nombre d'utilisateurs créés par mois</h2>
+          <canvas id="users" width="400" height="60" aria-label="Nombre d'utilisateurs créés par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("users").getContext("2d");
+          monthes = [{%for user in users%}"{{user.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for user in users%}{{user.1}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre d'utilisateurs créés par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+        <div class="text-justify mt-6">
+          <h2>Nombre et taille de fichiers déposés par mois</h2>
+          <canvas id="responses" width="400" height="60" aria-label="Nombre et taille de fichiers déposés par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("responses").getContext("2d");
+          monthes = [{%for response in responses%}"{{response.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for response in responses%}{{response.1}}, {%endfor%}];
+          datas_2 = [{%for response in responses%}{{response.2}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre de fichiers déposés par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      yAxisID: "y1",
+                      borderWidth: 1
+                  }, {
+                      label: "Taille des fichiers déposés par mois",
+                      data: datas_2,
+                      type: "line",
+                      backgroundColor: [
+                          "rgba(54, 162, 235, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(54, 162, 235, 1)"
+                      ],
+                      yAxisID: "y2",
+                      borderWidth: 3
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            if (context.dataset.label.startsWith("Taille")) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  label += parseInt(context.parsed.y*100/1048576)/100.0 + " Mo";
+                              }
+                              return label;
+                            }
+                            else {
+                              if (context.parsed.y !== null) {
+                                  return context.dataset.label + ": " + context.parsed.y;
+                              } else {
+                                  return context.dataset.label;
+                              }
+                            }
+                          }
+                        }
+                      }
+                  },
+                  scales: {
+                      y1: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      },
+                      y2: {
+                          position: "right",
+                          beginAtZero: true,
+                          // On n'affiche pas les lignes de cet axe
+                          grid: {
+                            drawOnChartArea: false
+                          },
+                          ticks: {
+                            stepSize: 1048576,
+                            callback: function(label, index, labels) {
+                                return parseInt(label/1048576) + " Mo";
+                            }
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+        <div class="text-justify mt-6">
+          <h2>Nombre de connexions par mois</h2>
+          <canvas id="connections" width="400" height="60" aria-label="Nombre de connexions par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("connections").getContext("2d");
+          monthes = [{%for connection in connections%}"{{connection.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for connection in connections%}{{connection.1}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre de connexions par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+      </div>
     </main>
   </div>
 {% endblock page_main_container_with_sidebar %}
