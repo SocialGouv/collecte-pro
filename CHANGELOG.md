@@ -64,12 +64,15 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les filtres de l'explorateur de fichiers ont été réduits afin de pouvoir être présentés au mieux
 - Les fichiers dont le nom est trop long ont été tronqués à l'affichage
 
+### Sécurité
+- Mises à jour de sécurité des composants python
+
 ### Corrections
 - Il est désormais possible de déposer des fichiers quelle que soit la taille du nom du fichier, celui-ci sera tronqué si nécessaire
 - Firefox ne gêne plus la création d'espaces de dépôt
 
 
-## [2.1.3] - 2022-08-02
+## [2.1.3] - 2022-08-02 [OBSOLETE]
 ### Modifications
 - Il est désormais possible de déposer des fichiers avec des noms plus longs (jusque 100 caractères)
 - Le message de réinitialisation du mot de passe Keycloak est plus accueillant
@@ -81,7 +84,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Suppression de la page de documentation de l'administration en mode DEBUG
 
 
-## [2.1.2] - 2022-07-19
+## [2.1.2] - 2022-07-19 [OBSOLETE]
 ### Sécurité
 - Retour à une ancienne version de librairie pour éviter les incompatibilités
 
@@ -89,7 +92,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Correction sur la mise à jour du statut des questionnaires
 
 
-## [2.1.1] - 2022-07-13
+## [2.1.1] - 2022-07-13 [OBSOLETE]
 ### Ajouts
 - Création d'un thème Keycloak permettant un meilleur rapport avec l'application
 - Les éléments sélectionnables ont une infobulle
@@ -99,6 +102,10 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - La page de l'explorateur de fichiers a été revue
 - La navigation au clavier est utilisable sur l'explorateur de fichiers; la sélection multiple n'est pas encore possible
 
+### Sécurité
+- Mises à jour de sécurité des composants javascript
+- Mises à jour de sécurité des composants python
+
 ### Corrections
 - La limitation de la taille du nom des fichiers déposés est plus explicite et correcte
 - Les métadonnées des fichiers déposés ne sont plus modifiées
@@ -106,7 +113,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Le filtre de l'explorateur liste désormais tous les utilisateurs ayant déposé des fichiers sur l'espace de dépôt
 
 
-## [2.1.0] - 2022-06-14
+## [2.1.0] - 2022-06-14 [OBSOLETE]
 ### Ajouts
 - Mise en place d'un explorateur de réponses
 - Ajout d'une partie promotionnelle sur la page d'accueil
@@ -123,12 +130,12 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les fichiers téléversés ne sont plus modifiés
 
 
-## [2.0.4] - 2022-05-19
+## [2.0.4] - 2022-05-19 [OBSOLETE]
 ### Corrections
 - Les pages FAQ et Accessibilité sont de nouveau disponibles
 
 
-## [2.0.3] - 2022-04-05
+## [2.0.3] - 2022-04-05 [OBSOLETE]
 ### Ajouts
 - Ajout d'un message d'attente lors de l'export d'un espace de dépôt
 - Le mail de publication d'un questionnaire est désormais envoyé à tous les Demandeurs de l'espace de dépôt
@@ -157,18 +164,18 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les statuts "Répondu" et "Finalisé" des questionnaires sont mieux gérés
 
 
-## [2.0.2] - 2022-03-11
+## [2.0.2] - 2022-03-11 [OBSOLETE]
 ### Corrections
 - Correction de la déclaration de conformité au RGAA
 - Correction de la mise à jour de la base de données
 
 
-## [2.0.1] - 2022-03-08
+## [2.0.1] - 2022-03-08 [OBSOLETE]
 ### Corrections
 - Correction sur l'accessibilité au clavier
 
 
-## [2.0.0] - 2022-03-04
+## [2.0.0] - 2022-03-04 [OBSOLETE]
 ### Ajouts
 - Ajout d'une page de non conformité au RGAA
 
@@ -182,12 +189,12 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Mises à jour de sécurité sur l'ensemble des composants javascript
 
 
-## [1.3.1] - 2021-10-29
+## [1.3.1] - 2021-10-29 [OBSOLETE]
 ### Corrections
 - La migration de la base, et donc l'attribution des permissions par défaut, s'effectue désormais sans souci
 
 
-## [1.3.0] - 2021-10-26
+## [1.3.0] - 2021-10-26 [OBSOLETE]
 ### Ajouts
 - Il est désormais possible d'ajouter des liens dans le pied de page
 - Ajout de la gestion des paramètres de l'application au niveau de l'administration
@@ -203,7 +210,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Limitation des droits d'administration pour les administrateurs qui ne peuvent plus tout voir et/ou tout modifier
 
 
-## [1.2.0] - 2021-10-04
+## [1.2.0] - 2021-10-04 [OBSOLETE]
 ### Ajouts
 - Les CGU sont désormais modifiables par les administrateurs
 - Ajout du paramètre ENV_NAME utilisé dans les titres des e-mails afin de pouvoir spécifier l'environnement utilisé
@@ -213,7 +220,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Quelques modifications de design mineures
 
 
-## [1.1.1] - 2021-09-06
+## [1.1.1] - 2021-09-06 [OBSOLETE]
 ### Ajouts
 - Ajout des informations de release
 
@@ -221,13 +228,13 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Correction du lien vers les informations de release
 
 
-## [1.1.0] - 2021-09-06
+## [1.1.0] - 2021-09-06 [OBSOLETE]
 ### Modifications
 - Vocabulaire interministériel et générique mis en place
 - Charte État mise en place par défaut
 
 
-## [1.0.0] - 2021-08-17
+## [1.0.0] - 2021-08-17 [OBSOLETE]
 ### Ajouts
 - Ajout d'un paramètre permettant de conditionner l'enrgistrement des adresses IP des utilisateurs
 
