@@ -53,18 +53,11 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 
 ## [2.1.5] - 2022-08-30 [OBSOLETE]
-=======
-## [2.1.5] - 2022-08-30
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - Le composant pytz ne pousse pas la mise à jour de tzdata. Il est désormais forcé dans les composants requis.
 
 
-<<<<<<< HEAD
 ## [2.1.4] - 2022-08-26 [OBSOLETE]
-=======
-## [2.1.4] - 2022-08-26
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Il est désormais possible de déposer des fichiers quelle que soit la taille du nom du fichier, celui-ci sera tronqué si nécessaire
 
@@ -72,22 +65,15 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les filtres de l'explorateur de fichiers ont été réduits afin de pouvoir être présentés au mieux
 - Les fichiers dont le nom est trop long ont été tronqués à l'affichage
 
-<<<<<<< HEAD
 ### Sécurité
 - Mises à jour de sécurité des composants python
 
-=======
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - Il est désormais possible de déposer des fichiers quelle que soit la taille du nom du fichier, celui-ci sera tronqué si nécessaire
 - Firefox ne gêne plus la création d'espaces de dépôt
 
 
-<<<<<<< HEAD
 ## [2.1.3] - 2022-08-02 [OBSOLETE]
-=======
-## [2.1.3] - 2022-08-02
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Modifications
 - Il est désormais possible de déposer des fichiers avec des noms plus longs (jusque 100 caractères)
 - Le message de réinitialisation du mot de passe Keycloak est plus accueillant
@@ -99,11 +85,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Suppression de la page de documentation de l'administration en mode DEBUG
 
 
-<<<<<<< HEAD
 ## [2.1.2] - 2022-07-19 [OBSOLETE]
-=======
-## [2.1.2] - 2022-07-19
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Sécurité
 - Retour à une ancienne version de librairie pour éviter les incompatibilités
 
@@ -111,11 +93,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Correction sur la mise à jour du statut des questionnaires
 
 
-<<<<<<< HEAD
 ## [2.1.1] - 2022-07-13 [OBSOLETE]
-=======
-## [2.1.1] - 2022-07-13
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Création d'un thème Keycloak permettant un meilleur rapport avec l'application
 - Les éléments sélectionnables ont une infobulle
@@ -125,13 +103,10 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - La page de l'explorateur de fichiers a été revue
 - La navigation au clavier est utilisable sur l'explorateur de fichiers; la sélection multiple n'est pas encore possible
 
-<<<<<<< HEAD
 ### Sécurité
 - Mises à jour de sécurité des composants javascript
 - Mises à jour de sécurité des composants python
 
-=======
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - La limitation de la taille du nom des fichiers déposés est plus explicite et correcte
 - Les métadonnées des fichiers déposés ne sont plus modifiées
@@ -139,11 +114,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Le filtre de l'explorateur liste désormais tous les utilisateurs ayant déposé des fichiers sur l'espace de dépôt
 
 
-<<<<<<< HEAD
 ## [2.1.0] - 2022-06-14 [OBSOLETE]
-=======
-## [2.1.0] - 2022-06-14
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Mise en place d'un explorateur de réponses
 - Ajout d'une partie promotionnelle sur la page d'accueil
@@ -160,20 +131,12 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les fichiers téléversés ne sont plus modifiés
 
 
-<<<<<<< HEAD
 ## [2.0.4] - 2022-05-19 [OBSOLETE]
-=======
-## [2.0.4] - 2022-05-19
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - Les pages FAQ et Accessibilité sont de nouveau disponibles
 
 
-<<<<<<< HEAD
 ## [2.0.3] - 2022-04-05 [OBSOLETE]
-=======
-## [2.0.3] - 2022-04-05
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Ajout d'un message d'attente lors de l'export d'un espace de dépôt
 - Le mail de publication d'un questionnaire est désormais envoyé à tous les Demandeurs de l'espace de dépôt
@@ -202,30 +165,18 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les statuts "Répondu" et "Finalisé" des questionnaires sont mieux gérés
 
 
-<<<<<<< HEAD
 ## [2.0.2] - 2022-03-11 [OBSOLETE]
-=======
-## [2.0.2] - 2022-03-11
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - Correction de la déclaration de conformité au RGAA
 - Correction de la mise à jour de la base de données
 
 
-<<<<<<< HEAD
 ## [2.0.1] - 2022-03-08 [OBSOLETE]
-=======
-## [2.0.1] - 2022-03-08
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - Correction sur l'accessibilité au clavier
 
 
-<<<<<<< HEAD
 ## [2.0.0] - 2022-03-04 [OBSOLETE]
-=======
-## [2.0.0] - 2022-03-04
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Ajout d'une page de non conformité au RGAA
 
@@ -239,20 +190,12 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Mises à jour de sécurité sur l'ensemble des composants javascript
 
 
-<<<<<<< HEAD
 ## [1.3.1] - 2021-10-29 [OBSOLETE]
-=======
-## [1.3.1] - 2021-10-29
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Corrections
 - La migration de la base, et donc l'attribution des permissions par défaut, s'effectue désormais sans souci
 
 
-<<<<<<< HEAD
 ## [1.3.0] - 2021-10-26 [OBSOLETE]
-=======
-## [1.3.0] - 2021-10-26
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Il est désormais possible d'ajouter des liens dans le pied de page
 - Ajout de la gestion des paramètres de l'application au niveau de l'administration
@@ -268,11 +211,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Limitation des droits d'administration pour les administrateurs qui ne peuvent plus tout voir et/ou tout modifier
 
 
-<<<<<<< HEAD
 ## [1.2.0] - 2021-10-04 [OBSOLETE]
-=======
-## [1.2.0] - 2021-10-04
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Les CGU sont désormais modifiables par les administrateurs
 - Ajout du paramètre ENV_NAME utilisé dans les titres des e-mails afin de pouvoir spécifier l'environnement utilisé
@@ -282,11 +221,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Quelques modifications de design mineures
 
 
-<<<<<<< HEAD
 ## [1.1.1] - 2021-09-06 [OBSOLETE]
-=======
-## [1.1.1] - 2021-09-06
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Ajout des informations de release
 
@@ -294,21 +229,13 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Correction du lien vers les informations de release
 
 
-<<<<<<< HEAD
 ## [1.1.0] - 2021-09-06 [OBSOLETE]
-=======
-## [1.1.0] - 2021-09-06
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Modifications
 - Vocabulaire interministériel et générique mis en place
 - Charte État mise en place par défaut
 
 
-<<<<<<< HEAD
 ## [1.0.0] - 2021-08-17 [OBSOLETE]
-=======
-## [1.0.0] - 2021-08-17
->>>>>>> a2b4fb9 (fix: L'historisation des modification est désormais regroupée dans un seul fichier CHANGELOG.md)
 ### Ajouts
 - Ajout d'un paramètre permettant de conditionner l'enrgistrement des adresses IP des utilisateurs
 
