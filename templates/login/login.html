@@ -18,7 +18,7 @@
         {% endif %}
       </div>
       <div class="col-md d-flex flex-column justify-content-between align-items-center">
-        <div class="mt-2 mt-md-2 mt-lg-2 mb-2 d-flex flex-column justify-content-center align-items-center">
+        <div class="mt-2 mt-md-2 mt-lg-2 d-flex flex-column justify-content-center align-items-center">
           <div class="mb-5 text-center" style="font-family: Trebuchet MS; font-size: 5em;">
             <span>collecte-pro</span>
           </div>
@@ -107,6 +107,16 @@
         </div>
       </div>
     </div>
+    {%if alerte%}
+    <div id="alerte">
+      <div class="justify-content-center align-items-center row">
+        <div class="alert alert-danger alert-icon" role="alert">
+          <i class="fe fe-alert-triangle" aria-hidden="true"></i>
+          <p>{{alerte.text}}</p>
+        </div>
+      </div>
+    </div>
+    {%endif%}
     <div class="" id="a-quoi-sert-collecte-pro">
       <div class="row">
         <div class="col-sm text-center">

@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'tos',
     'logs',
     'parametres',
+    'alerte',
 
     # Central app - loaded last
     'ecc',
