@@ -126,7 +126,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Limitation de l'administration fonctionnelle pour plus de sécurité
 
 
-## [2.0.5] - 2022-07-01
+## [2.0.5] - 2022-07-01 [OBSOLETE]
 ### Corrections
 - Les fichiers téléversés ne sont plus modifiés
 
