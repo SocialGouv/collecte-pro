@@ -60,7 +60,7 @@ class SoftDeletedAdmin(object):
         return super().get_list_display(request) + ('deleted_at', 'is_active')
 
     def get_readonly_fields(self, request, obj=None):
-        return super().get_readonly_fields(request, obj) + ('deleted_at',)
+        return super().get_readonly_fields(request, obj) + ('is_deleted', 'deleted_at',)
 
     def has_delete_permission(self, request, obj=None):
         return False
