@@ -97,6 +97,7 @@
                 <div class="card-header border-0">
                   <div class="flex-column align-items-center mr-4">
                     <button :class="{ disabled: qIndex === 0 }"
+                      :tabindex="qIndex === 0 ? -1 : 0"
                       class="btn btn-secondary btn-sm move-up-button"
                       role="button"
                       type="button"
@@ -114,6 +115,7 @@
                       </label>
                     </div>
                     <button :class="{ disabled: qIndex === (theme.questions.length - 1) }"
+                      :tabindex="qIndex === (theme.questions.length - 1) ? -1 : 0"
                       class="btn btn-secondary btn-sm move-down-button"
                       role="button"
                       type="button"
