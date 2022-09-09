@@ -45,7 +45,7 @@
         <caption class="sr-only">Questionnaires</caption>
         <thead>
           <tr>
-            <th v-if="user.is_inspector">
+            <th v-if="user.is_inspector" scope="col">
               Statut
               <help-tooltip
                 text="Un questionnaire est d'abord en Brouillon : il est modifiable et
@@ -54,9 +54,9 @@
               >
               </help-tooltip>
             </th>
-            <th>Titre</th>
-            <th>Date de réponse</th>
-            <th v-if="user.is_inspector">Rédacteur</th>
+            <th scope="col">Titre</th>
+            <th scope="col">Date de réponse</th>
+            <th v-if="user.is_inspector" scope="col">Rédacteur</th>
             <td class="border-bottom"></td>
           </tr>
         </thead>
