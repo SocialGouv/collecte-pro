@@ -34,6 +34,7 @@
                        required>
                 <span>
                   <button v-if="themes[themeIndex].questions.length === 0"
+                          :id="'delete_theme_' + themeIndex"
                           @click.prevent="deleteTheme(themeIndex)"
                           role="button"
                           type="button"
@@ -44,6 +45,7 @@
                     <span class="sr-only">Supprimer le thème</span>
                   </button>
                   <button v-else
+                          :id="'delete_theme_' + themeIndex"
                           class="btn btn-link"
                           role="button"
                           type="button"
@@ -138,6 +140,7 @@
 
                   <span>
                     <button v-if="themes[themeIndex].questions.length > 1"
+                            :id="'delete_question_' + qIndex"
                             @click.prevent="deleteQuestion(themeIndex, qIndex)"
                             class="btn btn-link"
                             role="button"
@@ -148,6 +151,7 @@
                       <span class="sr-only">Supprimer la question</span>
                     </button>
                     <button v-else
+                            :id="'delete_question_' + qIndex"
                             class="btn btn-link"
                             role="button"
                             type="button"
@@ -181,6 +185,7 @@
 
             <div class="card-footer">
               <button @click.prevent="addQuestion(themeIndex)"
+                      id="add_question"
                       class="btn btn-primary"
                       role="button"
                       type="button"
@@ -195,6 +200,7 @@
               <div class="card-status card-status-top bg-blue">
               </div>
               <button @click="addTheme()"
+                      id="add_theme"
                       class="btn btn-primary"
                       role="button"
                       type="button"
@@ -259,12 +265,26 @@ export default Vue.extend({
       this.themes.push({ title: '', questions: [{ description: '' }] })
     },
     deleteQuestion: function(themeIndex, qIndex) {
-      this.themes[themeIndex].questions.splice(qIndex, 1)
-      this.swapMixin_updateOrderFields(this.themes[themeIndex].questions)
+      this.themes[themeIndex].questions.splice(qIndex, 1);
+      this.swapMixin_updateOrderFields(this.themes[themeIndex].questions);
+      if (this.themes[themeIndex].questions.length <= 1) {
+        $("#add_question").focus();
+      } else if (qIndex >= this.themes[themeIndex].questions.length) {
+        $("#delete_question_"+(qIndex-1)).focus();
+      } else {
+        $("#delete_question_"+(qIndex+1)).focus();
+      }
     },
     deleteTheme: function(themeIndex) {
-      this.themes.splice(themeIndex, 1)
-      this.swapMixin_updateOrderFields(this.themes)
+      this.themes.splice(themeIndex, 1);
+      this.swapMixin_updateOrderFields(this.themes);
+      if (this.themes.length <= 1) {
+        window.setTimeout(function() {$("#add_theme").focus();}, 300);
+      } else if (themeIndex >= this.themes.length) {
+        window.setTimeout(function() {$("#delete_theme_"+(themeIndex-1)).focus();}, 300);
+      } else {
+        window.setTimeout(function() {$("#delete_theme_"+(themeIndex)).focus();}, 300);
+      }
     },
     // Used in QuestionnaireCreate.
     validateForm: function() {
