@@ -42,6 +42,7 @@
         Il n'y a pas encore de questionnaire pour cet espace de dépôt.
       </div>
       <table v-else class="table card-table table-vcenter">
+        <caption class="sr-only">Questionnaires</caption>
         <thead>
           <tr>
             <th v-if="user.is_inspector">
