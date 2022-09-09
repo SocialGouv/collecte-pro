@@ -95,7 +95,7 @@
 
         <form @submit.prevent="updateControl">
           <h2 class="card-title">Modifier l'espace de dépôt</h2>
-          <fieldset class="form-fieldset">
+          <div class="form-fieldset">
             <div class="form-group">
               <label id="organization-label" class="form-label" for="organisme">
                 Quel est le nom de l’organisme qui va déposer les réponses ?
@@ -116,7 +116,7 @@
                 <input id="procedure" type="text" class="form-control" v-model="title" required aria-labelledby="title-label" maxlength="255">
               </div>
             </div>
-          </fieldset>
+          </div>
           <div class="text-right">
             <button @click="cancel"
                     type="button"

@@ -8,33 +8,36 @@
       </div>
 
       <div class="modal-body">
-        <label for="checkModif" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkModif"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">
-            Le questionnaire ne pourra plus être modifié
-          </span>
-        </label>
-        <label for="checkVisible" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkVisible"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">
-            Le questionnaire deviendra visible par l'organisme interrogé
-          </span>
-        </label>
-        <label for="checkInfo" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkInfo"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">
-            Vous devrez informer l'organisme interrogé
-          </span>
-        </label>
+        <fieldset class="form-fieldset">
+          <legend>Merci de cocher toutes les cases pour valider cette action</legend>
+          <label for="checkModif" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkModif"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">
+              Le questionnaire ne pourra plus être modifié
+            </span>
+          </label>
+          <label for="checkVisible" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkVisible"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">
+              Le questionnaire deviendra visible par l'organisme interrogé
+            </span>
+          </label>
+          <label for="checkInfo" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkInfo"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">
+              Vous devrez informer l'organisme interrogé
+            </span>
+          </label>
+        </fieldset>
       </div>
 
       <div class="modal-footer border-top-0">

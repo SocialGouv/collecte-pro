@@ -9,33 +9,36 @@
       </div>
 
       <div class="modal-body">
-        <label for="checkbox_1" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkbox_1"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">Les données ne seront pas récupérables.</span>
-        </label>
-        <label for="checkbox_2" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkbox_2"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">
-            Tous les utilisateurs de cet espace n'y auront plus accès.
-          </span>
-        </label>
-        <label for="checkbox_3" class="custom-control custom-checkbox">
-          <input type="checkbox"
-                 id="checkbox_3"
-                  class="custom-control-input"
-                  required>
-          <span class="custom-control-label">
-            En cas de contrôle juridictionnel, je confirme que la suppression
-            des données, n'impacte pas la suite de la procédure, en cas de
-            contentieux notamment.
-          </span>
-        </label>
+        <fieldset class="form-fieldset">
+          <legend>Merci de cocher toutes les cases pour valider cette action</legend>
+          <label for="checkbox_1" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkbox_1"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">Les données ne seront pas récupérables.</span>
+          </label>
+          <label for="checkbox_2" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkbox_2"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">
+              Tous les utilisateurs de cet espace n'y auront plus accès.
+            </span>
+          </label>
+          <label for="checkbox_3" class="custom-control custom-checkbox">
+            <input type="checkbox"
+                   id="checkbox_3"
+                    class="custom-control-input"
+                    required>
+            <span class="custom-control-label">
+              En cas de contrôle juridictionnel, je confirme que la suppression
+              des données, n'impacte pas la suite de la procédure, en cas de
+              contentieux notamment.
+            </span>
+          </label>
+        </fieldset>
       </div>
 
       <div class="modal-footer border-top-0">
