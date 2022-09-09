@@ -8,6 +8,8 @@
                  @clickedStep="clicked(i+1)"
     >
       {{ stepTitle }}
+      <span v-if="activeI === i" class="sr-only">En cours de consultation</span>
+      <span v-if="activeI > i" class="sr-only">Étape validée</span>
     </wizard-step>
   </ul>
 </template>
