@@ -42,9 +42,10 @@
             <span class="custom-control-label font-weight-bold">Sélectionner Tout
           </label>
           <label v-for="q in accessibleQuestionnaires"
+                :for="q.id"
                 :key="q.id"
                 class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
+            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
             <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>
@@ -62,14 +63,15 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
+          <label for="checkAll" class="custom-control custom-checkbox">
+            <input id="checkAll" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
             <span class="custom-control-label font-weight-bold">Sélectionner Tout
           </label>
           <label v-for="q in accessibleQuestionnaires"
+                :for="q.id"
                 :key="q.id"
                 class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
+            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
             <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>

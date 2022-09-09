@@ -9,22 +9,25 @@
       </div>
 
       <div class="modal-body">
-        <label class="custom-control custom-checkbox">
+        <label for="checkbox_1" class="custom-control custom-checkbox">
           <input type="checkbox"
+                 id="checkbox_1"
                   class="custom-control-input"
                   required>
           <span class="custom-control-label">Les données ne seront pas récupérables.</span>
         </label>
-        <label class="custom-control custom-checkbox">
+        <label for="checkbox_2" class="custom-control custom-checkbox">
           <input type="checkbox"
+                 id="checkbox_2"
                   class="custom-control-input"
                   required>
           <span class="custom-control-label">
             Tous les utilisateurs de cet espace n'y auront plus accès.
           </span>
         </label>
-        <label class="custom-control custom-checkbox">
+        <label for="checkbox_3" class="custom-control custom-checkbox">
           <input type="checkbox"
+                 id="checkbox_3"
                   class="custom-control-input"
                   required>
           <span class="custom-control-label">

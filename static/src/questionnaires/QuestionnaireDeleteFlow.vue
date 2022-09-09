@@ -14,8 +14,9 @@
       </div>
 
       <div class="modal-body">
-        <label class="custom-control custom-checkbox">
+        <label for="checkCompris" class="custom-control custom-checkbox">
           <input type="checkbox"
+                  id="checkCompris"
                   class="custom-control-input"
                   required>
           <span class="custom-control-label">

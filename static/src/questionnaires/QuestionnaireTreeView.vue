@@ -13,9 +13,10 @@
           <form>
             <div class="form-group mb-6">
               <label v-for="ctrl in accessibleControls"
+                    :for="ctrl.id"
                     :key="ctrl.id"
                     class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
+                <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
                 <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
               </label>
             </div>
