@@ -122,12 +122,12 @@
           <fieldset v-else class="form-fieldset">
             <div class="form-group">
               <label class="form-label" for="prenom">Prénom<span class="form-required"></span></label>
-              <input id="prenom" type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" placeholder="prenom" required>
+              <input id="prenom" type="given-name" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" placeholder="prenom" required>
               <p class="text-muted pl-2" v-if="errors.first_name"><i class="fa fa-warning" aria-hidden="true"></i> {{ errors.first_name.join(' / ')}}</p>
             </div>
             <div class="form-group">
               <label class="form-label" for="nom">Nom<span class="form-required"></span></label>
-              <input id="nom" type="text" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" placeholder="nom" required>
+              <input id="nom" type="family-name" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" placeholder="nom" required>
               <p class="text-muted pl-2" v-if="errors.last_name"><i class="fa fa-warning" aria-hidden="true"></i> {{ errors.last_name.join(' / ')}}</p>
             </div>
           </fieldset>
