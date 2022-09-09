@@ -7,7 +7,7 @@
       <p>{{ errorMessage }}</p>
     </error-bar>
     <div class="table-responsive border">
-      <table class="table card-table">
+      <table class="table card-table" role="presentation">
         <transition-group name="theme-list" tag="tbody">
 
           <tr v-for="(theme, themeIndex) in themes"
