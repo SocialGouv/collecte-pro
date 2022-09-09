@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn btn-primary" @click="showModal">
+    <button id="AddControlButton" class="btn btn-primary" @click="showModal">
       <i class="fe fe-plus" aria-hidden="true"></i>
       Ajouter un espace de dépôt
     </button>
@@ -10,6 +10,7 @@
                              confirm-button="Créer l'espace de dépôt"
                              title="Créer un nouvel espace de dépôt"
                              @confirm="createControl"
+                             @close="closeModal"
     >
       <div>
         <info-bar>
@@ -29,6 +30,7 @@
             <div class="flex-row align-items-center">
               <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
               <input type="text"
+                     ref="nom_controle"
                      class="form-control"
                      v-model="title"
                      maxlength="255"
@@ -122,6 +124,11 @@ export default Vue.extend({
   methods: {
     showModal() {
       $(this.$refs.modal.$el).modal('show');
+      $(this.$refs.modal.$el).on("hidden.bs.modal", this.closeModal);
+      this.$refs["nom_controle"].focus();
+    },
+    closeModal() {
+        $("#AddControlButton").focus();
     },
     createControl: function(processingDoneCallback) {
       const payload = {
