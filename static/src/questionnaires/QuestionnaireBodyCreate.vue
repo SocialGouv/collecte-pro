@@ -22,6 +22,7 @@
                   <h3 class="card-title">{{themeIndex + 1}}.</h3>
                 </label>
                 <input class="form-control form-control-h3"
+                       title="Ecrivez un thème ici"
                        placeholder="Ecrivez un thème ici"
                        type="text"
                        maxlength="255"
@@ -123,6 +124,7 @@
                     </button>
                   </div>
                   <textarea class="form-control"
+                            title="Ecrivez une question ici"
                             placeholder="Ecrivez une question ici"
                             rows="4"
                             v-bind:id="'question' + (themeIndex + 1) + '-' + (qIndex + 1)"

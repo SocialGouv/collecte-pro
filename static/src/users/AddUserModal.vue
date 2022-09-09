@@ -51,7 +51,7 @@
                      v-bind:class="{ 'state-invalid': errors.email }"
                      v-model="formData.email_confirm"
                      required
-                     aria-labelledby="email-label"
+                     aria-labelledby="email-confirm-label"
                      aria-describedby="erreur-email">
               <p class="text-muted pl-2" v-if="errors.email" id="erreur-email">
                 <i class="fa fa-warning" aria-hidden="true"></i>
