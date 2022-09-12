@@ -20,7 +20,7 @@
           <p>Tous Les champs sont obligatoires.</p>
         </info-bar>
           <div class="form-group mb-6">
-            <label id="title-label" class="form-label">
+            <label id="title-label" for="nom_controle" class="form-label">
               Quel est le nom de la procédure pour laquelle vous ouvrez cet espace de dépôt ?
               <span class="form-required">*</span>
             </label>
@@ -30,6 +30,7 @@
             <div class="flex-row align-items-center">
               <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
               <input type="text"
+                     id="nom_controle"
                      ref="nom_controle"
                      class="form-control"
                      v-model="title"
@@ -41,7 +42,7 @@
           </div>
 
           <div class="form-group mb-6">
-            <label id="organization-label" class="form-label">
+            <label id="organization-label" for="organisation_controle" class="form-label">
               Quel est le nom de l’organisme qui va déposer les réponses ?
               <span class="form-required">*</span>
             </label>
@@ -51,6 +52,7 @@
             <div class="flex-row align-items-center">
               <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
               <input type="text"
+                     id="organisation_controle"
                      class="form-control"
                      v-model="organization"
                      maxlength="255"
@@ -61,7 +63,7 @@
           </div>
 
           <div class="form-group mb-6">
-            <label id="reference-code-label" class="form-label">
+            <label id="reference-code-label" for="reference_controle" class="form-label">
               Indiquez un nom abrégé pour cet espace de dépôt :
               <span class="form-required">*</span>
             </label>
@@ -74,7 +76,10 @@
             <span class="input-group-prepend" id="basic-addon3">
               <span class="input-group-text">{{ reference_code_prefix }}</span>
             </span>
-              <input type="text" class="form-control" v-model="reference_code_suffix" required
+              <input type="text"
+                     id="reference_controle"
+                     class="form-control"
+                     v-model="reference_code_suffix" required
                      pattern="^[\.\s\wÀ-ÖØ-öø-ÿŒœ-]+$"
                      maxlength="25"
                      title="Ce champ ne doit pas contenir de caractères spéciaux
