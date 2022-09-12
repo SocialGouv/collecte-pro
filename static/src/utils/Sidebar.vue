@@ -5,6 +5,7 @@
         <i v-show="!collapsed" class="fa fa-chevron-left"></i>
         <i v-show="collapsed" class="fa fa-chevron-down"></i>
         <span v-show="collapsed">Ouvrir le menu</span>
+        <span v-show="!collapsed" class="hidden">Replier le panneau latéral</span>
       </button>
       <sidebar-menu class="sidebar-body"
                     :menu="menu"

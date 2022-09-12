@@ -328,3 +328,8 @@ width: 8em !important;
 width: 6.8em !important;
 overflow: hidden !important;
 }
+
+/* Sidebar */
+.hidden {
+display: none;
+}
