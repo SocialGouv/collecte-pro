@@ -8,6 +8,7 @@
         <span v-show="!collapsed" class="hidden">Replier le panneau latéral</span>
       </button>
       <sidebar-menu class="sidebar-body"
+                    id="sidebar"
                     :menu="menu"
                     :relative="true"
                     :hideToggle="true"
@@ -255,6 +256,10 @@ export default Vue.extend({
     },
     toggleCollapse() {
       this.collapsed = !this.collapsed;
+      window.setTimeout(function() {
+        $("#sidebar").toggleClass("hidden");
+      },
+      300);
     },
   },
 })
