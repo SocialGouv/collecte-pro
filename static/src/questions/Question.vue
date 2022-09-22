@@ -5,7 +5,7 @@
     </span>
 
     <div class="card-text cursor-pointer">
-      <button type="button" class="btn btn-secondary no-border">{{ question.description}}</button>
+      <button type="button" class="btn btn-secondary no-border question">{{ question.description}}</button>
       <div class="tags">
         <template v-if="questionFileCount > 0">
           <button

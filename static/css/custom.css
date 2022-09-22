@@ -367,3 +367,10 @@ border-right: 1px solid rgba(0, 40, 100, 0.22);
 #footer hr {
 margin: 0px 0px 1rem 1rem;
 }
+
+/* Question */
+.question {
+text-align: left;
+white-space: normal;
+margin-bottom: 1rem;
+}
