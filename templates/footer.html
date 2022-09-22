@@ -3,35 +3,46 @@
 
 <footer id="footer" class="footer pb-0" role="contentinfo">
   <div class="container">
-    <div class="flex-row justify-content-between align-items-center">
-      <div class="text-center">
+    <div class="row">
+      <div class="col-2">
         {% get_logo_footer_item as logo_footer %}
         {% if logo_footer.url|slice:":4" == "http" %}
-        <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+        <img src="{{ logo_footer.url }}" class="img logo_footer" alt="{{ logo_footer.title }}"/>
         {% else %}
-        <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+        <img src="{% static logo_footer.url %}" class="img logo_footer" alt="{{ logo_footer.title }}"/>
         {% endif %}
       </div>
-      <div class="container">
-        <div class="flex-row justify-content-end">
+      <div class="col-2">
+      </div>
+      <div class="col-8">
+        <div class="row">
+          <p class="presentation"></p>
+        </div>
+        <div class="row float-right">
           {% get_liens_footer_items as liens_footer %}
+          <ul class="links">
           {% for lien in liens_footer %}
-          <ul class="flex-grow links" style="margin-left: 2em">
-            <li>
+            <li class="link mainlink">
                 <a href="{{ lien.url }}" title="{{lien.title}}" target="_blank" rel="noopener noreferrer"><b>{{ lien.name }}</b></a>
             </li>
-          </ul>
           {% endfor %}
+          </ul>
         </div>
-        <ul class="flex-row justify-content-between align-items-center links">
-          <li class="flex-grow">
-            Collecte-pro
-            <a href="https://github.com/SocialGouv/collecte-pro/blob/main/docs/releases/2.1.6.md" target="_blank" rel="noopener noreferrer">v2.1.6</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 separator">
+        <hr />
+        <ul class="links">
+          <li class="link sublink firstlink">
+            <a href="https://github.com/SocialGouv/collecte-pro/blob/main/docs/releases/2.1.6.md" target="_blank" rel="noopener noreferrer">
+            Collecte-pro v2.1.6
+            </a>
           </li>
-          <li class="flex-grow">
+          <li class="link sublink">
             <a href="{% url 'declarationConformite' %}">Accessibilité : Non conforme</a>
           </li>
-          <li class="flex-grow">
+          <li class="link ">
             <a href="{% url 'tos' %}">Conditions générales d'utilisation</a>
           </li>
         </ul>

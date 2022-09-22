@@ -10393,9 +10393,10 @@ body.fixed-header .header {
 
 .footer {
   background: #fff;
-  border-top: 1px solid rgba(0, 40, 100, 0.12);
+  border-top: 2px solid #000091;
   font-size: 0.875rem;
   padding: 1.25rem 0;
+  margin-top: -7rem;
   color: #6a7281;
 }
 
