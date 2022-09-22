@@ -373,7 +373,7 @@ export default Vue.extend({
           );
         },
         zipFiles(files) {
-          this.loaderActive = true;
+          this.$parent.$parent.$children[0].loaderActive = true;
           const formatFilename = (file) => {
             const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
             const questionnaireId = `Q${questionnaireNb}`;
@@ -408,7 +408,7 @@ export default Vue.extend({
               cnt++;
               if (cnt === files.length) {
                 zip.generateAsync({ type: 'blob' }).then((content) => {
-                  this.loaderActive = false;
+                  this.$parent.$parent.$children[0].loaderActive = false;
                   saveAs(content, zipFilename)
                 })
               }
