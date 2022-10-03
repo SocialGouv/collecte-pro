@@ -1,4 +1,5 @@
 {% load static %}
+{% load startswith %}
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
     <head>
@@ -32,6 +33,9 @@
 
     </head>
     <body class="">
+        {%if not settings.ENV_NAME|startswith:"production" %}
+        <div class="bandeau">Attention : Vous êtes actuellement sur un environnement de test.</div>
+        {%endif%}
         {% block content %}
         {% endblock content %}
         {% block js_in_script_tags %}

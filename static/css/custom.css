@@ -374,3 +374,14 @@ text-align: left;
 white-space: normal;
 margin-bottom: 1rem;
 }
+
+/* Bandeau */
+.bandeau {
+text-align: center;
+font-size: 1.4rem;
+font-weight: bold;
+border-color: #f1c1c0;
+background-color: #f5d2d2;
+color: #6b1110;
+padding: 1rem 0;
+}
