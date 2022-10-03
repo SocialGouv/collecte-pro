@@ -5,6 +5,7 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
+
 ## [En cours]
 ### Ajouts
 - Ajout d'une page de statistiques pour les Administrateurs
@@ -19,17 +20,17 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Suppression des fichiers de version
 
 
-## [2.1.10] - 2022-08-30
+## [2.1.10] - 2022-10-24
 ## Corrections
 - Les mails envoyés n'ajoutent pas de préfixe pour l'environnement de production
 
 
-## [2.1.9] - 2022-08-30
+## [2.1.9] - 2022-10-14 [OBSOLETE]
 ## Corrections
 - La date de dépôt des fichiers affichée dans l'export est désormais localisée
 
 
-## [2.1.8] - 2022-08-30
+## [2.1.8] - 2022-10-07 [OBSOLETE]
 ### Modifications
 - Si l'environnement n'est pas celui de production, un bandeau d'alerte est affiché en haut de toutes les pages
 
@@ -38,25 +39,25 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Les questions trop longues sont coupées sur plusieurs lignes pour un meilleur affichage
 
 
-## [2.1.7] - 2022-08-30
+## [2.1.7] - 2022-09-23 [OBSOLETE]
 ### Corrections
 - Les question trop longues sont affichées sur plusieurs lignes
 - L'animation d'attente de téléchargement est visible via l'explorateur de fichiers
 - Le pied de page est au format du Design System de l'Etat
 
 
-## [2.1.6] - 2022-08-30
+## [2.1.6] - 2022-09-12 [OBSOLETE]
 ### Corrections
 - Améliorations liées aux RGAA
 - Le filtre des documents par date se base sur la date sans prendre en compte l'heure
 
 
-## [2.1.5] - 2022-08-30
+## [2.1.5] - 2022-08-30 [OBSOLETE]
 ### Corrections
 - Le composant pytz ne pousse pas la mise à jour de tzdata. Il est désormais forcé dans les composants requis.
 
 
-## [2.1.4] - 2022-08-26
+## [2.1.4] - 2022-08-26 [OBSOLETE]
 ### Ajouts
 - Il est désormais possible de déposer des fichiers quelle que soit la taille du nom du fichier, celui-ci sera tronqué si nécessaire
 
