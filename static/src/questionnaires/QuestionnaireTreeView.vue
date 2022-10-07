@@ -709,23 +709,23 @@ export default Vue.extend({
         },
         formatDate(dateDepot) {
             let finalDate = "";
-            if (dateDepot.getDate()<10) {
+            if (dateDepot.getDate() < 10) {
                 finalDate += "0" + dateDepot.getDate() + "/";
             } else {
                 finalDate += dateDepot.getDate() + "/";
             }
-            if (dateDepot.getMonth()<10) {
+            if (dateDepot.getMonth() < 9) {
                 finalDate += "0" + (dateDepot.getMonth()+1) + "/";
             } else {
                 finalDate += (dateDepot.getMonth()+1) + "/";
             }
             finalDate += (1900+dateDepot.getYear()) + " ";
-            if (dateDepot.getHours()<10) {
+            if (dateDepot.getHours() < 10) {
                 finalDate += "0" + dateDepot.getHours() + ":";
             } else {
                 finalDate += dateDepot.getHours() + ":";
             }
-            if (dateDepot.getMinutes()<10) {
+            if (dateDepot.getMinutes() < 10) {
                 finalDate += "0" + dateDepot.getMinutes();
             } else {
                 finalDate += "" + dateDepot.getMinutes();
