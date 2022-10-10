@@ -185,6 +185,48 @@
         </div>
 
         <div class="text-justify mt-6">
+          <h2>Nombre de connexions par mois</h2>
+          <canvas id="connections" width="400" height="60" aria-label="Nombre de connexions par mois" role="img"></canvas>
+          <script>
+          ctx = document.getElementById("connections").getContext("2d");
+          monthes = [{%for connection in connections%}"{{connection.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for connection in connections%}{{connection.1}}, {%endfor%}];
+          myChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                  labels: monthes,
+                  datasets: [{
+                      label: "Nombre de connexions par mois",
+                      data: datas,
+                      backgroundColor: [
+                          "rgba(255, 99, 132, 0.2)"
+                      ],
+                      borderColor: [
+                          "rgba(255, 99, 132, 1)"
+                      ],
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  plugins: {
+                      legend: {
+                          display: false
+                      }
+                  },
+                  scales: {
+                      y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                      }
+                  }
+              }
+          });
+          </script>
+        </div>
+
+        <div class="text-justify mt-6">
           <h2>Nombre et taille de fichiers déposés par mois</h2>
           <canvas id="responses" width="400" height="60" aria-label="Nombre et taille de fichiers déposés par mois" role="img"></canvas>
           <script>
@@ -278,39 +320,66 @@
         </div>
 
         <div class="text-justify mt-6">
-          <h2>Nombre de connexions par mois</h2>
-          <canvas id="connections" width="400" height="60" aria-label="Nombre de connexions par mois" role="img"></canvas>
+          <h2>Taille totale cumulée par mois</h2>
+          <canvas id="files" width="400" height="60" aria-label="Taille totale cumulée par mois" role="img"></canvas>
           <script>
-          ctx = document.getElementById("connections").getContext("2d");
-          monthes = [{%for connection in connections%}"{{connection.0|date:"M Y"}}", {%endfor%}];
-          datas = [{%for connection in connections%}{{connection.1}}, {%endfor%}];
+          ctx = document.getElementById("files").getContext("2d");
+          monthes = [{%for file in files%}"{{file.0|date:"M Y"}}", {%endfor%}];
+          datas = [{%for file in files%}{{file.1}}, {%endfor%}];
           myChart = new Chart(ctx, {
-              type: "bar",
+              type: "line",
               data: {
                   labels: monthes,
                   datasets: [{
-                      label: "Nombre de connexions par mois",
+                      label: "Taille totale cumulée par mois",
                       data: datas,
                       backgroundColor: [
-                          "rgba(255, 99, 132, 0.2)"
+                          "rgba(54, 162, 235, 0.2)"
                       ],
                       borderColor: [
-                          "rgba(255, 99, 132, 1)"
+                          "rgba(54, 162, 235, 1)"
                       ],
-                      borderWidth: 1
+                      yAxisID: "y1",
+                      borderWidth: 3
                   }]
               },
               options: {
                   plugins: {
                       legend: {
                           display: false
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            if (context.dataset.label.startsWith("Taille")) {
+                              let label = context.dataset.label || '';
+                              if (label) {
+                                  label += ': ';
+                              }
+                              if (context.parsed.y !== null) {
+                                  label += parseInt(context.parsed.y*100/1048576)/100.0 + " Mo";
+                              }
+                              return label;
+                            }
+                            else {
+                              if (context.parsed.y !== null) {
+                                  return context.dataset.label + ": " + context.parsed.y;
+                              } else {
+                                  return context.dataset.label;
+                              }
+                            }
+                          }
+                        }
                       }
                   },
                   scales: {
-                      y: {
+                      y1: {
                           beginAtZero: true,
                           ticks: {
-                            stepSize: 1
+                            stepSize: 1048576,
+                            callback: function(label, index, labels) {
+                                return parseInt(label/1048576) + " Mo";
+                            }
                           }
                       }
                   }
