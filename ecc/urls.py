@@ -75,6 +75,7 @@ urlpatterns = [
          name='megacontrol-done'),
     path('declaration-conformite/', declarationConformite_views.DeclarationConformite.as_view(), name='declarationConformite'),
     path('stats/', include('stats.urls')),
+    path('presentation/', include('presentation.urls')),
 
     # Custom-made api endoints
     path('api/fichier-reponse/corbeille/<int:pk>/',

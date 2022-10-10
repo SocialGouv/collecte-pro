@@ -1,0 +1,66 @@
+{% extends "base_tabler.html" %}
+{% load static %}
+{% block site_title %}
+  <title>Présentation | collecte-pro</title>
+{% endblock site_title %}
+{% block extra_static_header %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+{% endblock extra_static_header %}
+
+{% block content %}
+  <div id="page" class="page container-fluid"> <!--// opening: page  //-->
+    <div id="non-footer" class="flex-column flex-grow-1">
+      <header class="header flex-row justify-content-between" role="banner"> <!--// opening: top_header  //-->
+        <div class="container flex-row">
+          <div class="flex-column">
+            <a class="header-brand" href="/accueil">
+              <img src="/static/img/logo-footer.png" class="img" alt="Logo Marianne" style="max-height: 110px; min-width: 150px" />
+              <span class="mx-5">collecte-pro</span>
+            </a>
+          </div>
+          <ul class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end links"> <!--// opening: nav_items  //-->
+              <li class="nav-item">
+                {% url 'presentation:index' as presentation_index_url %}
+                <a class="nav-link nav-link-thick-line {% if request.path == presentation_index_url %}active{% endif %}"
+                  href="{% url 'presentation:index'%}">
+                  <i class="fa fa-pen" aria-hidden="true"></i> Le produit
+                </a>
+              </li>
+              <li class="nav-item">
+                {% url 'presentation:who' as presentation_who_url %}
+                <a class="nav-link nav-link-thick-line {% if request.path == presentation_who_url %}active{% endif %}"
+                  href="{% url 'presentation:who'%}">
+                  <i class="fa fa-user-friends" aria-hidden="true"></i> Qui sommes-nous ?
+                </a>
+              </li>
+              <li class="nav-item">
+                {% url 'presentation:test' as presentation_test_url %}
+                <a class="nav-link nav-link-thick-line {% if request.path == presentation_test_url %}active{% endif %}"
+                  href="{% url 'presentation:test'%}">
+                  <i class="fa fa-vial" aria-hidden="true"></i> Tester
+                </a>
+              </li>
+              <li class="nav-item">
+                {% url 'presentation:faq' as faq_url %}
+                <a class="nav-link nav-link-thick-line {% if request.path == faq_url %}active{% endif %}"
+                  href="{% url 'presentation:faq'%}">
+                  <i class="fe fe-help-circle" aria-hidden="true"></i> FAQ
+                </a>
+              </li>
+          </ul>
+        </div>
+      </header>  <!--// closing: top_header  //-->
+      <div class="page-main flex-row"> <!--// opening: main_page  //-->
+        <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
+          {% block page_main_container %}
+          <h1>Le produit</h1>
+          {% endblock page_main_container %}
+        </main>
+      </div>  <!--// closing: main_page  //-->
+    </div>
+    {% block footer %}
+      {% include "footer.html" %}
+    {% endblock footer %}
+  </div> <!--// closing: page  //-->
+
+{% endblock content %}
