@@ -109,4 +109,20 @@ class Stats(LoginRequiredMixin, TemplateView):
             ]
         context["connections"] = self.complete_datas(connections)
 
+        files = [[0, 0, 0] for i in range(12)]
+        actions = Action.objects.filter(verb=ACTION_UPLOADED_RESPONSE).all()
+        dates = actions.datetimes("timestamp", kind="month")
+        total_size = 0
+        for date in dates:
+            for fil in actions.filter(timestamp__month=date.month).all():
+                try:
+                    total_size += fil.action_object.file.size
+                except:
+                    pass
+            files[(11 - month + date.month) % 12] = [
+                date,
+                total_size,
+            ]
+        context["files"] = self.complete_datas(files)
+
         return context
