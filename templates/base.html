@@ -40,7 +40,8 @@
               {% endif %}
               {% if user.is_staff %}
                 <li class="nav-item">
-                  <a class="nav-link nav-link-thick-line"
+                  {% url 'stats:index' as stats_url %}
+                  <a class="nav-link nav-link-thick-line {% if request.path == stats_url %}active{% endif %}"
                     href="{% url 'stats:index'%}">
                     <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
                   </a>
