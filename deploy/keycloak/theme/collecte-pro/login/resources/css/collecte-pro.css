@@ -1,0 +1,14 @@
+.login-pf {
+    background: none;
+}
+
+.login-pf body {
+    background: none;
+    background-color: #fff;
+    background-size: cover;
+    height: 100%;
+}
+
+#kc-header {
+    color: black;
+}
