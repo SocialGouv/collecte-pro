@@ -4,6 +4,8 @@ from datetime import date
 from .models import ResponseFile
 from tempfile import NamedTemporaryFile
 
+from django.utils import timezone
+
 
 def get_files_for_export(questionnaire):
     queryset = ResponseFile.objects \
@@ -69,8 +71,8 @@ def generate_response_file_list_in_xlsx(questionnaire):
                     file.question.description,
                     file.basename,
                     f"{file.author.first_name} {file.author.last_name}",
-                    file.created.strftime('%Y-%m-%d'),
-                    file.created.strftime('%H:%M:%S')
+                    timezone.localtime(file.created).strftime('%Y-%m-%d'),
+                    timezone.localtime(file.created).strftime('%H:%M:%S'),
                 )
                 for file in get_files_for_export(questionnaire)
             ]
