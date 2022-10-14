@@ -37,6 +37,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 ### Corrections
 - Le mois d'octobre est affiché correctement dans l'explorateur de fichiers
 - Les questions trop longues sont coupées sur plusieurs lignes pour un meilleur affichage
+- L'animation d'attente du téléchargement est disponible pour tous les téléchargements
 
 
 ## [2.1.7] - 2022-09-23 [OBSOLETE]
