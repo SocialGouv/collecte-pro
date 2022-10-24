@@ -160,7 +160,10 @@ export default Vue.extend({
       config: 'config',
     }),
     emailSubject: function() {
-        return this.config.env_name != '' ? this.config.env_name + ' - Questionnaire publié' : 'Questionnaire publié'
+      if (this.config.env_name != '' && !this.config.env_name.toLowerCase().startsWith("production")) {
+        return this.config.env_name + ' - Questionnaire publié';
+      }
+      return 'Questionnaire publié';
     },
     emailHeader: function() {
       const uniq = (arrArg) => arrArg.filter((elem, pos, arr) => arr.indexOf(elem) === pos)

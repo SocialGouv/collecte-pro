@@ -229,7 +229,10 @@ export default Vue.extend({
       config: 'config',
     }),
     emailSubject: function() {
-        return this.config.env_name != '' ? this.config.env_name + ' - Bienvenue sur collecte-pro' : 'Bienvenue sur collecte-pro'
+      if (this.config.env_name != '' && !this.config.env_name.toLowerCase().startsWith("production")) {
+        return this.config.env_name + ' - Bienvenue sur collecte-pro';
+      }
+      return 'Bienvenue sur collecte-pro';
     },
     emailBody: function() {
       if (this.stepShown !== 3) {

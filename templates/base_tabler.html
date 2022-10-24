@@ -33,8 +33,8 @@
 
     </head>
     <body class="">
-        {%if not settings.ENV_NAME|startswith:"production" %}
-        <div class="bandeau">Attention : Vous êtes actuellement sur un environnement de test.</div>
+        {%if settings.ENV_NAME != "" and not settings.ENV_NAME|startswith:"production" %}
+        <div class="bandeau">Attention : Vous êtes actuellement sur un environnement de test ({{settings.ENV_NAME}}).</div>
         {%endif%}
         {% block content %}
         {% endblock content %}
