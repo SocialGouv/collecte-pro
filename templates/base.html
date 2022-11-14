@@ -39,29 +39,11 @@
                 </li>
               {% endif %}
               {% if user.is_staff %}
+                {% url 'stats:index' as stats_url %}
                 <li class="nav-item">
-                  {% url 'stats:index' as stats_url %}
                   <a class="nav-link nav-link-thick-line {% if request.path == stats_url %}active{% endif %}"
                     href="{% url 'stats:index'%}">
                     <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link nav-link-thick-line"
-                    href="{% url 'stats:index'%}">
-                    <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link nav-link-thick-line"
-                    href="{% url 'stats:index'%}">
-                    <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link nav-link-thick-line"
-                    href="{% url 'admin:index'%}">
-                    <i class="fe fe-settings" aria-hidden="true"></i> Administration
                   </a>
                 </li>
               {% endif %}
