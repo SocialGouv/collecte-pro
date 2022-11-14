@@ -46,6 +46,12 @@
                     <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a class="nav-link nav-link-thick-line"
+                    href="{% url 'admin:index'%}">
+                    <i class="fe fe-settings" aria-hidden="true"></i> Administration
+                  </a>
+                </li>
               {% endif %}
               {% if user.is_authenticated %}
                 <li class="nav-item">
