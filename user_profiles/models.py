@@ -64,3 +64,22 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+class Access(models.Model):
+    REPONDANT = 'repondant'
+    DEMANDEUR = 'demandeur'
+    ACCESS_TYPE = (
+        (REPONDANT, 'Répondant'),
+        (DEMANDEUR, 'Demandeur'),
+    )
+    access_type = models.CharField(max_length=255, choices=ACCESS_TYPE)
+    userprofile = models.ForeignKey(
+        to='Userprofile', verbose_name='userprofile', related_name='access',
+        blank=True, on_delete=models.CASCADE)
+    control = models.ForeignKey(
+        to='control.Control', related_name='access', on_delete=models.PROTECT,
+        blank=True)
+
+    class Meta:
+        verbose_name = "Accès d'un utilisateur à un contrôle"
+        verbose_name_plural = "Accès des utilisateurs à des contrôles"
