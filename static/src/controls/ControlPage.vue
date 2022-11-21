@@ -102,12 +102,12 @@ export default Vue.extend({
 
     updateHash()
 
-    this.getAccessType()
+    this.getAccessType(this.displayedControl.id)
   },
   methods: {
-    async getAccessType() {
+    async getAccessType(displayedControlId) {
       try {
-        const resp = await axios.get(backendUrls.getAccessToControl(this.displayedControl.id))
+        const resp = await axios.get(backendUrls.getAccessToControl(displayedControlId))
         this.accessType = (
           resp.data &&
           resp.data[0] &&
@@ -125,6 +125,14 @@ export default Vue.extend({
     RemoveUserModal,
     UpdateUserModal,
   },
-
+  watch: {
+    displayedControl: {
+      handler(newVal) {
+        this.getAccessType(newVal.id)
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
 })
 </script>

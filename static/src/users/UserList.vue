@@ -12,7 +12,7 @@
           <div>{{ user.first_name }} {{ user.last_name }}</div>
           <small><a :href="'mailto:' + user.email">{{ user.email }}</a></small>
         </div>
-        <template v-if="sessionUser.is_inspector">
+        <template v-if="accessType === 'demandeur'">
           <button class="fe fe-edit btn btn-outline-primary mr-4"
                   title="Modifier l'utilisateur"
                   aria-label="Modifier l'utilisateur"
@@ -48,8 +48,9 @@ Vue.use(Vuex)
 export default Vue.extend({
   store,
   props: {
-    users: Array,
-    control: Object,
+    users: { type: Array, default: () => ([]) },
+    control: { type: Object, default: () => ({}) },
+    accessType: { type: String, default: '' },
   },
   computed: {
     ...mapFields([

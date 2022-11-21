@@ -152,6 +152,13 @@
             </div>
             <div class="card-title">{{ title }}</div>
           </div>
+          <div class="mb-3">
+            <div class="text-muted font-italic">
+              <i class="fa fa-user mr-2" aria-hidden="true"></i>
+              Accès
+            </div>
+            <div class="card-title">{{ getAccessTypeLibelle() }}</div>
+          </div>
         </div>
         <div v-else>
           <div class="page-title">{{ title }}</div>
@@ -290,6 +297,12 @@ export default Vue.extend({
         .then((response) => {
           this.users = response.data
         })
+    },
+    getAccessTypeLibelle() {
+      if (this.accessType === 'demandeur') {
+        return 'Demandeur'
+      }
+      return 'Répondant'
     },
     cloneControl() {
       // reference code given by user (2021_SOMETHING)

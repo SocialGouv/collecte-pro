@@ -24,7 +24,8 @@
             Ajouter un demandeur
           </button>
         </div>
-        <user-list :users="inspectorUsers()" profile-type="inspector" :control="control">
+        <user-list :users="inspectorUsers()" profile-type="inspector"
+          :control="control" :accessType="accessType">
         </user-list>
       </div>
 
@@ -43,7 +44,8 @@
             Ajouter une personne
           </button>
         </div>
-        <user-list :users="auditedUsers()" profile-type="audited" :control="control">
+        <user-list :users="auditedUsers()" profile-type="audited"
+          :control="control" :accessType="accessType">
         </user-list>
       </div>
     </div>
