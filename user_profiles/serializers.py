@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from control.models import Control
 
-from .models import UserProfile
+from .models import UserProfile, Access
 
 from keycloak import KeycloakAdmin
 
@@ -133,3 +133,11 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             user_api_post_update.send(
                 sender=UserProfile, session_user=session_user, user_profile=profile)
         return profile
+
+class AccessSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='access.pk', read_only=True)
+    access_type = serializers.CharField()
+
+    class Meta:
+        model = Access
+        fields = ('id', 'access_type')

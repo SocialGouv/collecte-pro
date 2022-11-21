@@ -1,8 +1,9 @@
 <template>
   <div>
-    <control-title :control="control"></control-title>
-    <questionnaire-list :control="control" :user="user"></questionnaire-list>
-    <user-section :control="control"></user-section>
+    <control-title :control="control" :accessType="accessType"></control-title>
+    <questionnaire-list :control="control" :user="user" :accessType="accessType">
+    </questionnaire-list>
+    <user-section :control="control" :accessType="accessType"></user-section>
   </div>
 
 </template>
@@ -11,7 +12,7 @@
   import Vue from 'vue'
 
   import ControlCreate from './ControlCreate'
-  import ControlTitle from "./ControlTitle"
+  import ControlTitle from './ControlTitle'
   import QuestionnaireList from '../questionnaires/QuestionnaireList'
   import UserSection from '../users/UserSection'
 
@@ -19,6 +20,7 @@
     props: [
       'control',
       'user',
+      'accessType',
     ],
     components: {
       ControlCreate,

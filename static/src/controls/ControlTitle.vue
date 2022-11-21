@@ -157,7 +157,8 @@
           <div class="page-title">{{ title }}</div>
         </div>
 
-        <div v-if="sessionUser.is_inspector" class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
+        <div v-if="accessType === 'demandeur'"
+          class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
           <div class="btn-group">
             <button type="button"
                     class="btn btn-secondary"
@@ -232,7 +233,8 @@ axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
 export default Vue.extend({
   props: {
-    control: Object,
+    control: { type: Object, default: () => ({}) },
+    accessType: { type: String, default: '' },
   },
   data: function() {
     return {
@@ -272,9 +274,9 @@ export default Vue.extend({
   },
   methods: {
     showCloneModal() {
-      this.allChecked = false;
-      this.reference_code = '';
-      this.checkedQuestionnaires = [];
+      this.allChecked = false
+      this.reference_code = ''
+      this.checkedQuestionnaires = []
       $(this.$refs.modal.$el).modal('show')
     },
     hideCloneModal() {

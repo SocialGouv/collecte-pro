@@ -46,7 +46,7 @@
         <caption class="sr-only">Questionnaires</caption>
         <thead>
           <tr>
-            <th v-if="user.is_inspector" scope="col">
+            <th v-if="accessType === 'demandeur'" scope="col">
               Statut
               <help-tooltip
                 text="Un questionnaire est d'abord en Brouillon : il est modifiable et
@@ -57,7 +57,7 @@
             </th>
             <th scope="col">Titre</th>
             <th scope="col">Date de réponse</th>
-            <th v-if="user.is_inspector" scope="col">Rédacteur</th>
+            <th v-if="accessType === 'demandeur'" scope="col">Rédacteur</th>
             <td class="border-bottom"></td>
           </tr>
         </thead>
@@ -66,7 +66,7 @@
             v-for="questionnaire in accessibleQuestionnaires"
             :key="'questionnaire-' + questionnaire.id"
           >
-            <td class="tag-column" v-if="user.is_inspector">
+            <td class="tag-column" v-if="accessType === 'demandeur'">
               <div v-if="questionnaire.is_draft">
                 <div class="tag tag-azure round-tag font-italic">Brouillon</div>
               </div>
@@ -94,7 +94,7 @@
                 </small>
               </div>
             </td>
-            <td v-if="user.is_inspector" class="editor-column">
+            <td v-if="accessType === 'demandeur'" class="editor-column">
               <div v-if="questionnaire.is_draft && questionnaire.editor">
                 <help-tooltip
                   v-if="questionnaire.editor.id !== user.id"
@@ -116,7 +116,7 @@
               </div>
             </td>
             <td class="w-1 action-column">
-              <template v-if="!user.is_inspector">
+              <template v-if="accessType !== 'demandeur'">
                 <div v-if="questionnaire.has_replies && !questionnaire.is_replied" class="text-right">
                    <div class="btn-group">
                       <a class="btn btn-secondary"
@@ -267,7 +267,7 @@
     </div>
 
     <div
-      v-if="user.is_inspector"
+      v-if="accessType === 'demandeur'"
       class="card-footer flex-row justify-content-end"
     >
       <a :href="questionnaireCreateUrl" class="btn btn-primary">
@@ -296,7 +296,7 @@ import { saveAs } from 'file-saver'
 Vue.use(Vuex)
 
 export default Vue.extend({
-  props: ['control', 'user'],
+  props: ['control', 'user', 'accessType'],
   filters: {
     DateFormat,
   },
@@ -322,7 +322,7 @@ export default Vue.extend({
       return this.controls
     },
     accessibleQuestionnaires() {
-      if (this.user.is_inspector) {
+      if (this.accessType === 'demandeur') {
         return this.control.questionnaires
       }
       return this.control.questionnaires.filter(

@@ -62,6 +62,8 @@ urlMaker.swapEditor = (questionnaireId) =>
 urlMaker.deleteControl = (controlId) => '/api/deletion/' + controlId + '/delete-control/'
 urlMaker.responseFileTrash = (responseFileId) =>
   '/api/fichier-reponse/corbeille/' + responseFileId + '/'
+urlMaker.getAccessToControl = (controlId) =>
+  '/api/control/' + controlId + '/access/'
 
 for (const [name, url] of Object.entries(viewUrls)) {
   urlMaker[name] = (id) => {

@@ -17,6 +17,7 @@
                       :key="displayedControl.id"
                       :control="displayedControl"
                       :user="user"
+                      :accessType="accessType"
         >
         </control-card>
       </template>
@@ -41,11 +42,15 @@ import NoControls from './NoControls'
 import RemoveUserModal from '../users/RemoveUserModal'
 import UpdateUserModal from '../users/UpdateUserModal'
 
+import axios from 'axios'
+import backendUrls from '../utils/backend'
+
 export default Vue.extend({
   name: 'ControlPage',
   data: function() {
     return {
       hash: '',
+      accessType: '',
     }
   },
   computed: {
@@ -96,6 +101,22 @@ export default Vue.extend({
       false)
 
     updateHash()
+
+    this.getAccessType()
+  },
+  methods: {
+    async getAccessType() {
+      try {
+        const resp = await axios.get(backendUrls.getAccessToControl(this.displayedControl.id))
+        this.accessType = (
+          resp.data &&
+          resp.data[0] &&
+          resp.data[0].access_type
+        ) ? resp.data[0].access_type : ''
+      } catch (error) {
+        console.error("Erreur sur l'access type : ", error)
+      }
+    },
   },
   components: {
     AddUserModal,

@@ -15,7 +15,7 @@ from .models import Control, Question, Questionnaire, Theme, QuestionFile, Respo
 from control.permissions import ControlIsNotDeleted, QuestionnaireIsDraft
 from control.permissions import OnlyAuthenticatedCanAccess, OnlyAuditedCanAccess
 from control.permissions import OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire
-from user_profiles.serializers import UserProfileSerializer
+from user_profiles.serializers import UserProfileSerializer, AccessSerializer
 
 
 # This signal is triggered after the questionnaire is saved via the API
@@ -75,6 +75,11 @@ class ControlViewSet(mixins.CreateModelMixin,
                         users.append(response_file.author.profile)
         serialized_users = UserProfileSerializer(list(set(users)), many=True)
         return Response(serialized_users.data)
+    
+    @decorators.action(detail=True, methods=['get'], url_path='access')
+    def access(self, request, pk):
+        serialized_access = AccessSerializer(self.get_object().access.filter(userprofile=request.user.profile).all(), many=True)
+        return Response(serialized_access.data)
 
 
 class QuestionViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

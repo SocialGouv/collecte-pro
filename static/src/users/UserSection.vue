@@ -15,7 +15,7 @@
             <i class="fa fa-university mr-2" aria-hidden="true"></i>
             <strong>Équipe d'instruction</strong>
           </h3>
-          <button v-if="sessionUser.is_inspector"
+          <button v-if="accessType === 'demandeur'"
                   data-toggle="modal"
                   data-target="#addUserModal"
                   @click="updateEditingState('inspector')"
@@ -34,7 +34,7 @@
             <i class="fa fa-building mr-2" aria-hidden="true"></i>
             <strong>Organisme interrogé</strong>
           </h3>
-          <button v-if="sessionUser.is_inspector"
+          <button v-if="accessType === 'demandeur'"
                   data-toggle="modal"
                   data-target="#addUserModal"
                   @click="updateEditingState('audited')"
@@ -63,7 +63,8 @@ import Vue from 'vue'
 export default Vue.extend({
   store,
   props: {
-    control: Object,
+    control: { type: Object, default: () => ({}) },
+    accessType: { type: String, default: '' },
   },
   data() {
     return {
