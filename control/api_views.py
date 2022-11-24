@@ -1,22 +1,24 @@
-from actstream import action
 from functools import partial
-from rest_framework import generics, mixins, status, viewsets
-from rest_framework import serializers
-from rest_framework import decorators
+
+import django.dispatch
+from actstream import action
+from django.core.files import File
+from rest_framework import (decorators, generics, mixins, serializers, status,
+                            viewsets)
 from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-import django.dispatch
-from django.core.files import File
+from control.permissions import (ControlIsNotDeleted, OnlyAuditedCanAccess,
+                                 OnlyAuthenticatedCanAccess,
+                                 OnlyEditorCanChangeQuestionnaire,
+                                 OnlyInspectorCanChange, QuestionnaireIsDraft)
+from user_profiles.models import Access
+from user_profiles.serializers import AccessSerializer, UserProfileSerializer
 
 from . import serializers as control_serializers
-from .models import Control, Question, Questionnaire, Theme, QuestionFile, ResponseFile
-from control.permissions import ControlIsNotDeleted, QuestionnaireIsDraft
-from control.permissions import OnlyAuthenticatedCanAccess, OnlyAuditedCanAccess
-from control.permissions import OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire
-from user_profiles.serializers import UserProfileSerializer, AccessSerializer
-
+from .models import (Control, Question, QuestionFile, Questionnaire,
+                     ResponseFile, Theme)
 
 # This signal is triggered after the questionnaire is saved via the API
 questionnaire_api_post_save = django.dispatch.Signal()
@@ -64,6 +66,25 @@ class ControlViewSet(mixins.CreateModelMixin,
     def users(self, request, pk):
         serialized_users = UserProfileSerializer(self.get_object().user_profiles.all(), many=True)
         return Response(serialized_users.data)
+
+    @decorators.action(detail=True, methods=['get'], url_path='audited')
+    def audited(self, request, pk):
+        users = []
+        for acc in self.get_object().access.all():
+            if acc.access_type == 'repondant':
+                users.append(acc.userprofile)
+        serialized_users = UserProfileSerializer(list(set(users)), many=True)
+        return Response(serialized_users.data)
+
+    @decorators.action(detail=True, methods=['get'], url_path='inspectors')
+    def inspectors(self, request, pk):
+        users = []
+        for acc in self.get_object().access.all():
+            if acc.access_type == 'demandeur':
+                users.append(acc.userprofile)
+        serialized_users = UserProfileSerializer(list(set(users)), many=True)
+        return Response(serialized_users.data)
+
 
     @decorators.action(detail=True, methods=['get'], url_path='depositors')
     def depositors(self, request, pk):

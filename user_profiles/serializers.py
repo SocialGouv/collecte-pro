@@ -29,12 +29,14 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')
+    access = serializers.PrimaryKeyRelatedField(
+        queryset=Access.objects.all(), write_only=True, required=False)
 
     class Meta:
         model = UserProfile
         fields = (
             'id', 'first_name', 'last_name', 'email', 'profile_type',
-            'organization', 'control', 'is_audited', 'is_inspector')
+            'organization', 'control', 'is_audited', 'is_inspector', 'access')
 
     def create(self, validated_data):
         if settings.KEYCLOAK_ACTIVE:
@@ -137,7 +139,11 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
 class AccessSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='access.pk', read_only=True)
     access_type = serializers.CharField()
+    control = serializers.PrimaryKeyRelatedField(
+        queryset=Control.objects.all())
+    userprofile = serializers.PrimaryKeyRelatedField(
+        queryset=UserProfile.objects.all())
 
     class Meta:
         model = Access
-        fields = ('id', 'access_type')
+        fields = ('id', 'access_type', 'control', 'userprofile')

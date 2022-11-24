@@ -24,7 +24,7 @@
             Ajouter un demandeur
           </button>
         </div>
-        <user-list :users="inspectorUsers()" profile-type="inspector"
+        <user-list :users="inspectorUsers" profile-type="inspector"
           :control="control" :accessType="accessType">
         </user-list>
       </div>
@@ -44,7 +44,7 @@
             Ajouter une personne
           </button>
         </div>
-        <user-list :users="auditedUsers()" profile-type="audited"
+        <user-list :users="auditedUsers" profile-type="audited"
           :control="control" :accessType="accessType">
         </user-list>
       </div>
@@ -70,7 +70,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      users: [],
+      auditedUsers: [],
+      inspectorUsers: [],
     }
   },
   computed: {
@@ -81,21 +82,17 @@ export default Vue.extend({
     ]),
   },
   methods: {
-    getUsers() {
-      axios.get(backendUrls.getUsersInControl(this.control.id))
+    getAuditedUsers() {
+      axios.get(backendUrls.getAuditedUsersInControl(this.control.id))
         .then((response) => {
-          this.users = response.data
+          this.auditedUsers = response.data
         })
     },
-    auditedUsers() {
-      return this.users.filter(item => {
-        return item.profile_type === 'audited'
-      })
-    },
-    inspectorUsers() {
-      return this.users.filter(item => {
-        return item.profile_type === 'inspector'
-      })
+    getInspectorUsers() {
+      axios.get(backendUrls.getInspectorUsersInControl(this.control.id))
+        .then((response) => {
+          this.inspectorUsers = response.data
+        })
     },
     updateEditingState(profileType) {
       this.editingControl = this.control
@@ -103,9 +100,11 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.getUsers()
+    this.getAuditedUsers()
+    this.getInspectorUsers()
     EventBus.$on('users-changed', () => {
-      this.getUsers()
+      this.getAuditedUsers()
+      this.getInspectorUsers()
     })
   },
   components: {

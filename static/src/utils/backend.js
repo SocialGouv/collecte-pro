@@ -55,6 +55,8 @@ for (const [name, url] of Object.entries(apiUrls)) {
 
 urlMaker.currentUser = () => '/api/user/current/'
 urlMaker.getUsersInControl = (controlId) => '/api/control/' + controlId + '/users/'
+urlMaker.getAuditedUsersInControl = (controlId) => '/api/control/' + controlId + '/audited/'
+urlMaker.getInspectorUsersInControl = (controlId) => '/api/control/' + controlId + '/inspectors/'
 urlMaker.getDepositorsInControl = (controlId) => '/api/control/' + controlId + '/depositors/'
 urlMaker.removeUserFromControl = (id) => '/api/user/' + id + '/remove-control/'
 urlMaker.swapEditor = (questionnaireId) =>
