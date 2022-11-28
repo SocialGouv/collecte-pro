@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.dispatch import Signal
 from django.conf import settings
+from django.db.models import Q
 
 from rest_framework import serializers
 
@@ -67,11 +68,13 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             raise serializers.ValidationError(
                 f"{session_user} n'est pas authorisé à modifier cette procédure : {control}")
         inspector_role = False
+        access_type = 'repondant'
         if settings.KEYCLOAK_ACTIVE:
             # Find keycloak inspector role
             role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
             inspector_role = True
+            access_type = 'demandeur'
         if profile:
             if settings.KEYCLOAK_ACTIVE:
                 user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
@@ -126,7 +129,15 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                     roles=[role,],
                 )
         if control:
-            profile.controls.add(control)
+            profile.controls.add(control) # TODO almorin - à supprimer au moment du nettoyage du user_profile_controls
+            access = Access.objects.filter(Q(control=control) & Q(userprofile=profile)).first()
+            if access:
+                access.access_type = access_type
+                access.userprofile = profile
+                access.control = control
+                access.save()
+            else:
+                access = Access.objects.create(access_type=access_type, userprofile=profile, control=control)
         if control:
             user_api_post_add.send(
                 sender=UserProfile, session_user=session_user, user_profile=profile,

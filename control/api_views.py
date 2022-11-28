@@ -38,7 +38,7 @@ class ControlViewSet(mixins.CreateModelMixin,
         return control_serializers.ControlSerializerWithoutDraft
 
     def get_queryset(self):
-        return self.request.user.profile.controls.active()
+        return Control.objects.filter(access__in=self.request.user.profile.access.all())
 
     def add_log_entry(self, control, verb):
         action_details = {
@@ -51,8 +51,10 @@ class ControlViewSet(mixins.CreateModelMixin,
     def create(self, request, *args, **kwargs):
         response = super(ControlViewSet, self).create(request, *args, **kwargs)
         control = Control.objects.active().get(id=response.data['id'])
+        access_type = 'repondant'
+        profile = request.user.profile
         # The current user is automatically added to the created control
-        self.request.user.profile.controls.add(control)
+        Access.objects.create(access_type=access_type, userprofile=profile, control=control)
         self.add_log_entry(control=control, verb='created control')
         return response
 
