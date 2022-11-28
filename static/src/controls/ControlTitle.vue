@@ -164,9 +164,8 @@
           <div class="page-title">{{ title }}</div>
         </div>
 
-        <div v-if="accessType === 'demandeur'"
-          class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
-          <div class="btn-group">
+        <div class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
+          <div v-if="sessionUser.is_inspector" class="btn-group">
             <button type="button"
                     class="btn btn-secondary"
                     @click="enterEditMode">
@@ -182,7 +181,7 @@
             </button>
             <div class="dropdown-menu dropdown-menu-right">
               <button
-                      v-if="this.accessibleQuestionnaires.length > 0"
+                      v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
                       class="dropdown-item"
                       type="button"
                       @click="showCloneModal"
@@ -190,25 +189,26 @@
                 <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
                 Dupliquer
               </button>
-               <button
-                      v-if="this.accessibleQuestionnaires.length > 0"
-                      class="dropdown-item"
-                      type="button"
-                      @click="showExportModal"
-              >
-                <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
-                Exporter (.zip)
-              </button>
               <button class="dropdown-item text-danger"
                       type="button"
                       @click="startControlDeleteFlow"
+                      v-if="sessionUser.is_inspector"
               >
                 <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>
                 Supprimer cet espace...
               </button>
             </div>
           </div>
-
+          <div v-if="this.accessibleQuestionnaires.length > 0 && accessType === 'demandeur'"
+            class="btn-group mt-2">
+            <button class="btn btn-secondary"
+                    type="button"
+                    @click="showExportModal"
+            >
+              <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
+              Exporter (.zip)
+            </button>
+          </div>
         </div>
 
       </div>
