@@ -1,4 +1,5 @@
 from django.dispatch import Signal
+from control.models import Control
 from rest_framework import decorators
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
@@ -26,7 +27,7 @@ class UserProfileViewSet(
         queryset = UserProfile.objects
         if self.request.user.profile.profile_type != UserProfile.INSPECTOR:
             queryset = queryset.filter(
-                controls__in=self.request.user.profile.controls.active()
+                controls__in=Control.objects.filter(access__in=self.request.user.profile.access.all())
             )
         return queryset.distinct()
 
@@ -37,7 +38,7 @@ class UserProfileViewSet(
         if serializer.is_valid():
             control_id = serializer.data['control']
             Access.objects.filter(Q(control=control_id) & Q(userprofile=profile)).first().delete()
-            control = profile.controls.get(pk=control_id)
+            control = profile.controls.get(pk=control_id) # TODO almorin - à vérifier si ça doit être modifier
             user_api_post_remove.send(
                 sender=UserProfile, session_user=self.request.user, user_profile=profile,
                 control=control)

@@ -31,8 +31,8 @@ class WithListOfControlsMixin(object):
         context = super().get_context_data(**kwargs)
         # Questionnaires are grouped by control:
         # we get the list of questionnaire from the list of controls
-        user_controls = self.request.user.profile.controls.active()
-        control_list = Control.objects.filter(id__in=user_controls).order_by('-id')
+        user_access = self.request.user.profile.access.all()
+        control_list = Control.objects.filter(access__in=user_access).order_by('-id')
         context['controls'] = control_list
         return context
 
@@ -59,7 +59,7 @@ class Trash(LoginRequiredMixin, WithListOfControlsMixin, DetailView):
     template_name = "ecc/trash.html"
 
     def get_queryset(self):
-        user_controls = self.request.user.profile.controls.active()
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         queryset = Questionnaire.objects.filter(control__in=user_controls)
         return queryset
 
@@ -100,7 +100,7 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        user_controls = self.request.user.profile.controls.active()
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         queryset = Questionnaire.objects.filter(control__in=user_controls)
         if not self.request.user.profile.is_inspector:
             queryset = queryset.filter(is_draft=False)
@@ -138,7 +138,7 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
     def get_queryset(self):
         if not self.request.user.profile.is_inspector:
             return Control.objects.none()
-        user_controls = self.request.user.profile.controls.active()
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         questionnaires = Questionnaire.objects.filter(
             control__in=user_controls,
             editor=self.request.user
@@ -154,10 +154,10 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
     context_object_name = 'control'
 
     def get_queryset(self):
-        user_controls = self.request.user.profile.controls.active()
-        if not self.request.user.profile.is_inspector:
+        user_access = self.request.user.profile.access.all()
+        if not self.request.user.profile.is_inspector: # Vérifier si le control ne doit pas être fait sur l'access user au control
             return Control.objects.none()
-        return Control.objects.filter(id__in=user_controls)
+        return Control.objects.filter(access__in=user_access)
 
 
 class UploadResponseFile(LoginRequiredMixin, CreateView):
@@ -318,7 +318,8 @@ class SendQuestionnaireFile(SendFileMixin, LoginRequiredMixin, View):
         return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
-        return self.request.user.profile.questionnaires
+        return Questionnaire.objects.filter(
+            control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
 
 
 class SendQuestionFile(SendFileMixin, LoginRequiredMixin, View):
@@ -329,7 +330,7 @@ class SendQuestionFile(SendFileMixin, LoginRequiredMixin, View):
         # The user should only have access to files that belong to the control
         # he was associated with. That's why we filter-out based on the user's
         # control.
-        user_controls = self.request.user.profile.controls.active()
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         return self.model.objects.filter(
             question__theme__questionnaire__control__in=user_controls)
 
@@ -343,7 +344,7 @@ class SendResponseFileList(SingleObjectMixin, LoginRequiredMixin, View):
     model = Questionnaire
 
     def get_queryset(self):
-        user_controls = self.request.user.profile.controls.active()
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         queryset = Questionnaire.objects.filter(control__in=user_controls)
         queryset = queryset.filter(is_draft=False)
         return queryset

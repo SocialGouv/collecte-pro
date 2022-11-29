@@ -17,7 +17,7 @@ class DeleteViewSet(viewsets.ViewSet):
     permission_classes = (OnlyInspectorCanAccess,)
 
     def get_controls(self):
-        return self.request.user.profile.controls.active()
+        return Control.objects.filter(access__in=self.request.user.profile.access.all())
 
     @decorators.action(detail=True, methods=['post'], url_path='delete-control')
     def delete_control(self, request, pk):

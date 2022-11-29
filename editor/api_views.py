@@ -1,7 +1,7 @@
 from rest_framework import generics
 
 from .serializers import UpdateEditorSerializer
-from control.models import Questionnaire
+from control.models import Control, Questionnaire
 from control.permissions import OnlyInspectorCanChange
 
 
@@ -11,6 +11,6 @@ class UpdateEditor(generics.UpdateAPIView):
 
     def get_queryset(self):
         queryset = Questionnaire.objects  \
-            .filter(control__in=self.request.user.profile.controls.active())  \
+            .filter(control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))  \
             .filter(is_draft=True)
         return queryset

@@ -33,7 +33,7 @@ class ControlViewSet(mixins.CreateModelMixin,
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
             return control_serializers.ControlUpdateSerializer
-        if self.request and self.request.user.profile.is_inspector:
+        if self.request and self.request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur ?
             return control_serializers.ControlSerializer
         return control_serializers.ControlSerializerWithoutDraft
 
@@ -51,7 +51,7 @@ class ControlViewSet(mixins.CreateModelMixin,
     def create(self, request, *args, **kwargs):
         response = super(ControlViewSet, self).create(request, *args, **kwargs)
         control = Control.objects.active().get(id=response.data['id'])
-        access_type = 'repondant'
+        access_type = 'demandeur'
         profile = request.user.profile
         # The current user is automatically added to the created control
         Access.objects.create(access_type=access_type, userprofile=profile, control=control)
@@ -142,7 +142,7 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
 
     def get_queryset(self):
         queryset = ResponseFile.objects.filter(
-            question__theme__questionnaire__control__in=self.request.user.profile.controls.active())
+            question__theme__questionnaire__control__in=Control.objects.filter(access__in=self.request.user.profile.access.all())) # Modifier par les controls des access
         return queryset
 
     def put(self, request, *args, **kwargs):
@@ -201,8 +201,9 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
 
     def get_queryset(self):
         queryset = Questionnaire.objects.filter(
-            control__in=self.request.user.profile.controls.active())
-        if not self.request.user.profile.is_inspector:
+            control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
+        # self.request.user.profile.access.filter(Q(control=control_id) & Q(userprofile=profile)).first()
+        if not self.request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
             queryset = queryset.filter(is_draft=False)
         return queryset
 
@@ -213,7 +214,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             if pre_existing_qr.is_draft is True:
                 # Only Inspector can publish a Questionnaire
                 if request.data.get("is_draft") is False:
-                    if not request.user.profile.is_inspector:
+                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
                         e = PermissionDenied(
                             detail=(
                                 "Only inspectors can publish questionnaires "
@@ -224,7 +225,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                     verb = "published"
                 else:
                     # Only Editor can change a Questionnaire
-                    if not request.user.profile.is_inspector:
+                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
                         e = PermissionDenied(
                             detail=(
                                 "Only editors can edit questionnaires "
@@ -258,7 +259,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                     and pre_existing_qr.is_finalized is False
                     and request.data.get("is_finalized") is True
                 ):
-                    if not request.user.profile.is_inspector:
+                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
                         e = PermissionDenied(
                             detail=(
                                 "Only inspectors can finalize questionnaires "
@@ -336,7 +337,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                 )
             )
             raise e
-        if control is not None and not request.user.profile.controls.active().filter(id=control.id).exists():
+        if control is not None and not request.user.profile.access.all().filter(control__id=control.id).exists(): # Vérifier si le controle sur l'access_type == 'demandeur' doit être fait
             e = PermissionDenied(
                 detail=(
                     'Users can only create questionnaires '

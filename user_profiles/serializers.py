@@ -64,7 +64,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         profile = UserProfile.objects.filter(user__email=email).first()
 
         session_user = self.context['request'].user
-        if control and control not in session_user.profile.controls.active():
+        if control and control not in Control.objects.filter(access__in=self.request.user.profile.access.all()):
             raise serializers.ValidationError(
                 f"{session_user} n'est pas authorisé à modifier cette procédure : {control}")
         inspector_role = False
