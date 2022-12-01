@@ -56,6 +56,8 @@ class OnlyEditorCanChangeQuestionnaire(permissions.BasePermission):
 class ControlInspectorAccess(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
         control = obj
         return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 

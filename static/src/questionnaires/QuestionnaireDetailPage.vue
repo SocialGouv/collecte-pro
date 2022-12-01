@@ -1,7 +1,7 @@
 <template>
   <div class="mx-3">
     <breadcrumbs :control="control"></breadcrumbs>
-    <template v-if="isLoaded && user.is_inspector">
+    <template v-if="isLoaded && accessType === 'demandeur'">
       <request-editor-button :questionnaire='questionnaire' v-if="questionnaire.is_draft">
       </request-editor-button>
       <success-bar v-else>
@@ -13,7 +13,7 @@
     <div class="page-header">
       <h2 class="page-title">
         <i class="fe fe-list mr-2" aria-hidden="true"></i>
-        <template v-if="isLoaded && user.is_inspector">
+        <template v-if="isLoaded && accessType === 'demandeur'">
           <span v-if="questionnaire.is_draft"
                 class="tag tag-azure big-tag round-tag font-italic mr-2">
             Brouillon
@@ -47,9 +47,9 @@
             </question-file-list>
             <response-file-list :question="question"
                                 :questionnaire-id="questionnaire.id"
-                                :is-audited="isLoaded && user.is_audited">
+                                :is-audited="isLoaded && accessType === 'repondant'">
             </response-file-list>
-            <response-dropzone :is-audited="isLoaded && user.is_audited"
+            <response-dropzone :is-audited="isLoaded && accessType === 'repondant'"
                                :question-id="question.id">
             </response-dropzone>
 
@@ -78,11 +78,19 @@ import ResponseFileList from '../questions/ResponseFileList'
 import SuccessBar from '../utils/SuccessBar'
 import ThemeBox from '../themes/ThemeBox'
 
+import axios from 'axios'
+import backendUrls from '../utils/backend'
+
 export default Vue.extend({
   name: 'QuestionnaireDetailPage',
   props: {
     controlId: Number,
     questionnaireId: Number,
+  },
+  data: function() {
+    return {
+      accessType: '',
+    }
   },
   computed: {
     control() {
@@ -104,7 +112,25 @@ export default Vue.extend({
       return this.userLoadStatus === loadStatuses.SUCCESS
     },
   },
+  mounted() {
+    this.getAccessType(this.control.id)
+
+    console.log('coucou')
+  },
   methods: {
+    async getAccessType(controlId) {
+      try {
+        const resp = await axios.get(backendUrls.getAccessToControl(controlId))
+        console.log('Resp data : ', resp.data)
+        this.accessType = (
+          resp.data &&
+          resp.data[0] &&
+          resp.data[0].access_type
+        ) ? resp.data[0].access_type : ''
+      } catch (error) {
+        console.error("Erreur sur l'access type : ", error)
+      }
+    },
   },
   components: {
     Breadcrumbs,
