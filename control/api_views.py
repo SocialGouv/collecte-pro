@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from control.permissions import (ControlIsNotDeleted, OnlyAuditedCanAccess,
                                  OnlyAuthenticatedCanAccess,
                                  OnlyEditorCanChangeQuestionnaire,
-                                 OnlyInspectorCanChange, QuestionnaireIsDraft)
+                                 ControlInspectorAccess, QuestionnaireIsDraft)
 from user_profiles.models import Access
 from user_profiles.serializers import AccessSerializer, UserProfileSerializer
 
@@ -28,7 +28,7 @@ class ControlViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      mixins.UpdateModelMixin,
                      viewsets.GenericViewSet):
-    permission_classes = (OnlyInspectorCanChange,)
+    permission_classes = (ControlInspectorAccess,)
 
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
@@ -121,7 +121,7 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
     serializer_class = control_serializers.QuestionFileSerializer
     parser_classes = (MultiPartParser, FormParser)
     filterset_fields = ('question',)
-    permission_classes = (OnlyInspectorCanChange, ControlIsNotDeleted, QuestionnaireIsDraft)
+    permission_classes = (ControlInspectorAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
 
     def get_queryset(self):
         queryset = QuestionFile.objects.filter(
@@ -177,10 +177,12 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 class ThemeViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = control_serializers.ThemeSerializer
-    permission_classes = (OnlyInspectorCanChange, QuestionnaireIsDraft)
+    permission_classes = (ControlInspectorAccess, QuestionnaireIsDraft)
 
     def get_queryset(self):
-        queryset = Theme.objects.filter(questionnaire__in=self.request.user.profile.questionnaires)
+        questionnaires = Questionnaire.objects.filter(
+            control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
+        queryset = Theme.objects.filter(questionnaire__in=questionnaires)
         return queryset
 
 
@@ -189,7 +191,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                            viewsets.GenericViewSet):
     serializer_class = control_serializers.QuestionnaireSerializer
     permission_classes_by_action = {
-        "create": (OnlyInspectorCanChange, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
+        "create": (ControlInspectorAccess, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
         "update": (OnlyAuthenticatedCanAccess, ControlIsNotDeleted),
     }
 

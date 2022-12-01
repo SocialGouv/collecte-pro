@@ -2,6 +2,7 @@ from rest_framework import permissions
 from rest_framework.exceptions import ParseError
 
 from control.models import Questionnaire
+from django.db.models import Q
 
 
 class OnlyAuthenticatedCanAccess(permissions.BasePermission):
@@ -51,6 +52,12 @@ class OnlyEditorCanChangeQuestionnaire(permissions.BasePermission):
         if questionnaire.editor == request.user:
             return True
         return False
+
+class ControlInspectorAccess(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        control = obj
+        return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 
 
 class ControlIsNotDeleted(permissions.BasePermission):

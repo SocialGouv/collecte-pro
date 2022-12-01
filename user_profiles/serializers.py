@@ -64,9 +64,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         profile = UserProfile.objects.filter(user__email=email).first()
 
         session_user = self.context['request'].user
-        if control and control not in Control.objects.filter(access__in=self.request.user.profile.access.all()):
-            raise serializers.ValidationError(
-                f"{session_user} n'est pas authorisé à modifier cette procédure : {control}")
         inspector_role = False
         access_type = 'repondant'
         if settings.KEYCLOAK_ACTIVE:
@@ -84,20 +81,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                     payload={'firstName': user_data.get('first_name'),
                     'lastName': user_data.get('last_name')}
                 )
-                if inspector_role:
-                    # Assign inspector role
-                    keycloak_admin.assign_client_role(
-                        client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                        user_id=user_id_keycloak,
-                        roles=[role,],
-                    )
-                else:
-                    # Remove inspector role
-                    keycloak_admin.delete_client_roles_of_user(
-                        user_id=user_id_keycloak,
-                        client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                        roles=[role,],
-                    )
             profile.user.first_name = user_data.get('first_name')
             profile.user.last_name = user_data.get('last_name')
             profile.organization = profile_data.get('organization')
@@ -122,14 +105,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             profile_data['user'] = user
             profile_data['send_files_report'] = True
             profile = UserProfile.objects.create(**profile_data)
-            if inspector_role and settings.KEYCLOAK_ACTIVE:
-                keycloak_admin.assign_client_role(
-                    client_id=settings.KEYCLOAK_URL_CLIENT_ID,
-                    user_id=new_user,
-                    roles=[role,],
-                )
         if control:
-            profile.controls.add(control) # TODO almorin - à supprimer au moment du nettoyage du user_profile_controls
             access = Access.objects.filter(Q(control=control) & Q(userprofile=profile)).first()
             if access:
                 access.access_type = access_type

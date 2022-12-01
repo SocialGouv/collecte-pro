@@ -5,7 +5,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from django.db.models import Q
 
-from control.permissions import OnlyInspectorCanChange
+from control.permissions import ControlInspectorAccess
 
 from .models import Access, UserProfile
 from .serializers import AccessSerializer, UserProfileSerializer, RemoveControlSerializer
@@ -21,7 +21,7 @@ class UserProfileViewSet(
         viewsets.GenericViewSet):
     serializer_class = UserProfileSerializer
     search_fields = ('=user__email',)
-    permission_classes = (OnlyInspectorCanChange,)
+    permission_classes = (ControlInspectorAccess,)
 
     def get_queryset(self):
         queryset = UserProfile.objects
