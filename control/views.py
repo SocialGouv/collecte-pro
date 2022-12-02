@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.views import View
 from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from django.db.models import Q
 
 
 from actstream import action
@@ -212,12 +213,14 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
                 "Ce fichier a été notifié comme contenant un virus, merci de vérifier"
                 " celui-ci avant de le déposer à nouveau."
             )
-        if not self.request.user.profile.is_audited:
-            return HttpResponseForbidden("User is not authorized to access this ressource")
         try:
             question_id = form.data['question_id']
         except KeyError:
             return HttpResponseBadRequest("Question ID was missing on file upload")
+        question = Question.objects.get(pk=question_id)
+        control = question.theme.questionnaire.control
+        if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='repondant')).exists():
+            return HttpResponseForbidden("User is not authorized to access this ressource")
         get_object_or_404(
             Question,
             pk=question_id,
