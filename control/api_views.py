@@ -3,6 +3,7 @@ from functools import partial
 import django.dispatch
 from actstream import action
 from django.core.files import File
+from django.db.models import Q
 from rest_framework import (decorators, generics, mixins, serializers, status,
                             viewsets)
 from rest_framework.exceptions import ParseError, PermissionDenied
@@ -33,7 +34,7 @@ class ControlViewSet(mixins.CreateModelMixin,
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
             return control_serializers.ControlUpdateSerializer
-        if self.request and self.request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur ?
+        if self.request and self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
             return control_serializers.ControlSerializer
         return control_serializers.ControlSerializerWithoutDraft
 
@@ -204,19 +205,19 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
     def get_queryset(self):
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
-        # self.request.user.profile.access.filter(Q(control=control_id) & Q(userprofile=profile)).first()
-        if not self.request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
+        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
             queryset = queryset.filter(is_draft=False)
         return queryset
 
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:
             pre_existing_qr = self.get_object()  # throws 404 if no qr
+            control = pre_existing_qr.control
             verb = "updated"
             if pre_existing_qr.is_draft is True:
                 # Only Inspector can publish a Questionnaire
                 if request.data.get("is_draft") is False:
-                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
+                    if not request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
                         e = PermissionDenied(
                             detail=(
                                 "Only inspectors can publish questionnaires "
@@ -227,7 +228,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                     verb = "published"
                 else:
                     # Only Editor can change a Questionnaire
-                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
+                    if not request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
                         e = PermissionDenied(
                             detail=(
                                 "Only editors can edit questionnaires "
@@ -249,7 +250,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                     pre_existing_qr.is_replied is False
                     and request.data.get("is_replied") is True
                 ):
-                    if not request.user.profile.is_audited:
+                    if not request.user.profile.access.filter(Q(control=control) & Q(access_type='repondant')).exists():
                         e = PermissionDenied(
                             detail=("Only auditeds can answer questionnaires."),
                             code=status.HTTP_403_FORBIDDEN
@@ -261,7 +262,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                     and pre_existing_qr.is_finalized is False
                     and request.data.get("is_finalized") is True
                 ):
-                    if not request.user.profile.is_inspector: # Modifier en faisant le controle sur l'access demandeur
+                    if not request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
                         e = PermissionDenied(
                             detail=(
                                 "Only inspectors can finalize questionnaires "
