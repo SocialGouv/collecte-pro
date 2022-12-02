@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.exceptions import ParseError
 
-from control.models import Questionnaire
+from control.models import Control, Question, Questionnaire, Theme
 from django.db.models import Q
 
 
@@ -58,9 +58,16 @@ class ControlInspectorAccess(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        control = obj
-        return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
+        if isinstance(obj, Control):
+            control = obj
+        elif isinstance(obj, Questionnaire):
+            control = obj.control
+        elif isinstance(obj, Theme):
+            control = obj.questionnaire.control
+        elif isinstance(obj, Question):
+            control = obj.theme.questionnaire.control
 
+        return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 
 class ControlIsNotDeleted(permissions.BasePermission):
     message_format = 'Accessing this resource is not allowed.'

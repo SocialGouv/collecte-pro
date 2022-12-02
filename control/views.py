@@ -50,7 +50,7 @@ class ControlDetail(LoginRequiredMixin, WithListOfControlsMixin, TemplateView):
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
         user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
-        user_serialized['is_inspector'] = self.request.user.profile.is_inspector
+        user_serialized['is_inspector'] = self.request.user.profile.is_inspector # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
         context['user_json'] = json.dumps(user_serialized)
         return context
 
@@ -103,7 +103,7 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
     def get_queryset(self):
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         queryset = Questionnaire.objects.filter(control__in=user_controls)
-        if not self.request.user.profile.is_inspector:
+        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
             queryset = queryset.filter(is_draft=False)
         return queryset
 
@@ -111,7 +111,7 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         context = super().get_context_data(**kwargs)
 
         serializer = ControlSerializerWithoutDraft
-        if self.request.user.profile.is_inspector:
+        if self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
             serializer = ControlSerializer
         control_list = context['controls']
         controls_serialized = []
@@ -137,7 +137,7 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
     context_object_name = 'questionnaire'
 
     def get_queryset(self):
-        if not self.request.user.profile.is_inspector:
+        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
             return Control.objects.none()
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         questionnaires = Questionnaire.objects.filter(
@@ -156,7 +156,7 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
 
     def get_queryset(self):
         user_access = self.request.user.profile.access.all()
-        if not self.request.user.profile.is_inspector: # Vérifier si le control ne doit pas être fait sur l'access user au control
+        if not self.request.user.profile.is_inspector: # TODO almorin - Vérifier si le control ne doit pas être fait sur l'access user au control
             return Control.objects.none()
         return Control.objects.filter(access__in=user_access)
 

@@ -34,7 +34,7 @@ class ControlViewSet(mixins.CreateModelMixin,
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
             return control_serializers.ControlUpdateSerializer
-        if self.request and self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
+        if self.request and self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact / la request.data est vide, donc pas de possibilité d'accéder au control pour check l'access
             return control_serializers.ControlSerializer
         return control_serializers.ControlSerializerWithoutDraft
 
@@ -203,9 +203,10 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             return [permission() for permission in self.permission_classes_by_action["create"]]
 
     def get_queryset(self):
+        control = Control.objects.get(pk=self.request.data.get("control"))
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
-        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
+        if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
         return queryset
 

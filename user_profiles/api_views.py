@@ -38,7 +38,7 @@ class UserProfileViewSet(
         if serializer.is_valid():
             control_id = serializer.data['control']
             Access.objects.filter(Q(control=control_id) & Q(userprofile=profile)).first().delete()
-            control = profile.controls.get(pk=control_id) # TODO almorin - à vérifier si ça doit être modifier
+            control = Control.objects.get(pk=control_id)
             user_api_post_remove.send(
                 sender=UserProfile, session_user=self.request.user, user_profile=profile,
                 control=control)
