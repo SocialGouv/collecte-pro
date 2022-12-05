@@ -102,16 +102,20 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
 
     def get_queryset(self):
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
-        queryset = Questionnaire.objects.filter(control__in=user_controls)
-        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
-            queryset = queryset.filter(is_draft=False)
+        controls_questionnaires = Questionnaire.objects.filter(control__in=user_controls)
+        user_questionnaires = []
+        for result in controls_questionnaires:
+            if not (result.is_draft & self.request.user.profile.access.filter(Q(control=result.control) & Q(access_type='repondant')).exists()):
+                user_questionnaires.append(result.id)
+        queryset = Questionnaire.objects.filter(id__in=user_questionnaires)
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         serializer = ControlSerializerWithoutDraft
-        if self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
+        questionnaire = context['object']
+        if self.request.user.profile.access.filter(Q(control=questionnaire.control) & Q(access_type='demandeur')).exists():
             serializer = ControlSerializer
         control_list = context['controls']
         controls_serialized = []
@@ -137,7 +141,8 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
     context_object_name = 'questionnaire'
 
     def get_queryset(self):
-        if not self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
+        questionnaire = Questionnaire.objects.filter(id=self.kwargs['pk']).first()
+        if not self.request.user.profile.access.filter(Q(control=questionnaire.control) & Q(access_type='demandeur')).exists():
             return Control.objects.none()
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         questionnaires = Questionnaire.objects.filter(
@@ -155,9 +160,8 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
     context_object_name = 'control'
 
     def get_queryset(self):
-        user_access = self.request.user.profile.access.all()
-        if not self.request.user.profile.is_inspector: # TODO almorin - Vérifier si le control ne doit pas être fait sur l'access user au control
-            return Control.objects.none()
+
+        user_access = self.request.user.profile.access.filter(access_type='demandeur').all()
         return Control.objects.filter(access__in=user_access)
 
 
