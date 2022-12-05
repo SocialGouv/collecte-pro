@@ -1,5 +1,6 @@
 from django.dispatch import Signal
 from control.models import Control
+from control.serializers import ControlSerializer
 from rest_framework import decorators
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
@@ -50,3 +51,9 @@ class UserProfileViewSet(
     def current(self, request, pk=None):
         serializer = UserProfileSerializer(request.user.profile)
         return Response(serializer.data)
+
+    @decorators.action(detail=True, methods=['get'], url_path='controls-inspected')
+    def controls_inspected(self, request, pk):
+        controls_inspected = Control.objects.filter(access__in=request.user.profile.access.filter(access_type='demandeur').all())
+        serialized_controls = ControlSerializer(controls_inspected, many=True)
+        return Response(serialized_controls.data)

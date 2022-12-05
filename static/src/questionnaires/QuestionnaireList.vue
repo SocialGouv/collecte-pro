@@ -12,7 +12,7 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label v-for="ctrl in accessibleControls"
+          <label v-for="ctrl in controlsInspected"
                 :for="ctrl.id"
                 :key="ctrl.id"
                 class="custom-control custom-checkbox">
@@ -312,6 +312,7 @@ export default Vue.extend({
       checkedCtrls: [],
       currentView: 'questions',
       isList: true,
+      controlsInspected:[],
     }
   },
   computed: {
@@ -333,9 +334,12 @@ export default Vue.extend({
       return backendUrls['questionnaire-create'](this.control.id)
     },
     hasAnyAnswer() {
-      let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies);
-      return (questionnaires.length > 0);
-    }
+      let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies)
+      return (questionnaires.length > 0)
+    },
+  },
+  mounted() {
+    this.getControlsInspectedFromUser()
   },
   methods: {
     questionnaireDetailUrl(questionnaireId) {
@@ -377,15 +381,13 @@ export default Vue.extend({
         window.location.reload();
       })
     },
-    toggleView(){
-      if (this.isList) {
-        this.currentView = 'tree';
-      } else {
-        this.currentView = 'questions';
-      }
-      this.isList = !this.isList;
+    getControlsInspectedFromUser() {
+      axios.get(backendUrls.getControlsInspectedFromUser(this.user.id))
+        .then((response) => {
+          this.controlsInspected = response.data
+        })
     },
-    toggleView(){
+    toggleView() {
       if (this.isList) {
         this.currentView = 'tree';
       } else {
@@ -394,7 +396,7 @@ export default Vue.extend({
       this.isList = !this.isList;
     },
     cloneQuestionnaire() {
-      let self = this;
+      let self = this
       const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 

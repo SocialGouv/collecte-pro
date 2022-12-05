@@ -66,6 +66,8 @@ urlMaker.responseFileTrash = (responseFileId) =>
   '/api/fichier-reponse/corbeille/' + responseFileId + '/'
 urlMaker.getAccessToControl = (controlId) =>
   '/api/control/' + controlId + '/access/'
+urlMaker.getControlsInspectedFromUser = (id) =>
+  '/api/user/' + id + '/controls-inspected/'
 
 for (const [name, url] of Object.entries(viewUrls)) {
   urlMaker[name] = (id) => {
