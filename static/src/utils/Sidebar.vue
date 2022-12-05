@@ -92,6 +92,8 @@ import { SidebarMenu } from 'vue-sidebar-menu'
 import Vue from 'vue'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 
+import axios from 'axios'
+
 const ERROR_EMAIL_BODY = 'Bonjour,%0D%0A%0D%0A' +
     'Je voudrais vous signaler une erreur lors du chargement des espaces de dépôt dans le menu.' +
     ' Les détails sont ci-dessous.%0D%0A%0D%0ACordialement,%0D%0A%0D%0A%0D%0A-----------%0D%0A'
@@ -212,47 +214,49 @@ export default Vue.extend({
       // If we are on a trash page, find the control for which the trash folder is.
       const questionnaireForTrash = backend.getIdFromViewUrl(this.window.location.pathname, 'trash')
 
-      const menu = this.controls.sort((a, b) => { return b.id - a.id })
-        .map(control => {
-          const controlMenu = {
-            icon: 'fa fa-archive',
-            href: backend['control-detail'](control.id),
-            title: makeControlTitle(control),
-          }
+      const menu = []
+      this.controls.forEach(async control => {
+        const controlMenu = {
+          icon: 'fa fa-archive',
+          href: backend['control-detail'](control.id),
+          title: makeControlTitle(control),
+        }
 
-          const children = control.questionnaires.map(questionnaire => {
-            if (this.user.is_inspector || !questionnaire.is_draft) {
-              const questionnaireItem = {
-                href: makeQuestionnaireLink(questionnaire),
-                title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title,
-              }
-              if (questionnaireForTrash === questionnaire.id) {
-                questionnaireItem.child = [{
-                  href: backend.trash(questionnaire.id),
-                  title: 'Corbeille',
-                }]
-              }
-              return questionnaireItem
+        const resp = await axios.get(backend.getAccessToControl(control.id))
+        const accessType = resp.data[0].access_type
+        const children = control.questionnaires.map(questionnaire => {
+          if (accessType === 'demandeur' || !questionnaire.is_draft) {
+            const questionnaireItem = {
+              href: makeQuestionnaireLink(questionnaire),
+              title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title,
             }
-          }).filter(item => !!item)
-          if (children.length > 0) {
-            controlMenu.child = children
+            if (questionnaireForTrash === questionnaire.id) {
+              questionnaireItem.child = [{
+                href: backend.trash(questionnaire.id),
+                title: 'Corbeille',
+              }]
+            }
+            return questionnaireItem
           }
+        }).filter(item => !!item)
+        if (children.length > 0) {
+          controlMenu.child = children
+        }
 
-          // Add menu item for the questionnaire being created, if there is one.
-          if (controlCreatingQuestionnaire === (control.id)) {
-            if (!controlMenu.child) {
-              controlMenu.child = []
-            }
-            controlMenu.child.push({
-              href: backend['questionnaire-create'](control.id),
-              title: 'Q' + (controlMenu.child.length + 1),
-            })
+        // Add menu item for the questionnaire being created, if there is one.
+        if (controlCreatingQuestionnaire === (control.id)) {
+          if (!controlMenu.child) {
+            controlMenu.child = []
           }
-          return controlMenu
-        })
+          controlMenu.child.push({
+            href: backend['questionnaire-create'](control.id),
+            title: 'Q' + (controlMenu.child.length + 1),
+          })
+        }
+        menu.push(controlMenu)
+      })
       this.isMenuBuilt = true
-      this.menu = menu
+      this.menu = menu.sort((a, b) => { return b.id - a.id })
     },
     toggleCollapse() {
       this.collapsed = !this.collapsed;

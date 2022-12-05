@@ -50,7 +50,7 @@ class ControlDetail(LoginRequiredMixin, WithListOfControlsMixin, TemplateView):
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
         user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
-        user_serialized['is_inspector'] = self.request.user.profile.is_inspector # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact
+        user_serialized['is_inspector'] = self.request.user.profile.is_inspector
         context['user_json'] = json.dumps(user_serialized)
         return context
 
