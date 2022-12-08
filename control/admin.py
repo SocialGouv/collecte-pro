@@ -80,20 +80,12 @@ class QuestionnaireInline(OrderedTabularInline):
     extra = 1
 
 
-class UserProfileInline(admin.TabularInline):
-    model = UserProfile.controls.through
-    verbose_name_plural = 'Profils Utilisateurs'
-    extra = 1
-    fields = ('userprofile',)
-    raw_id_fields = ('userprofile',)
-
-
 @admin.register(Control)
 class ControlAdmin(SoftDeletedAdmin, OrderedInlineModelAdminMixin, OrderedModelAdmin):
     list_display = ('id', 'title', 'depositing_organization', 'reference_code')
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
-    inlines = (QuestionnaireInline, UserProfileInline, )
+    inlines = (QuestionnaireInline, )
     list_filter = (IsActiveFilter,)
 
 

@@ -67,7 +67,10 @@ class ControlViewSet(mixins.CreateModelMixin,
 
     @decorators.action(detail=True, methods=['get'], url_path='users')
     def users(self, request, pk):
-        serialized_users = UserProfileSerializer(self.get_object().user_profiles.all(), many=True)
+        users = []
+        for acc in self.get_object().access.all():
+            users.append(acc.userprofile)
+        serialized_users = UserProfileSerializer(list(set(users)), many=True)
         return Response(serialized_users.data)
 
     @decorators.action(detail=True, methods=['get'], url_path='audited')

@@ -54,6 +54,7 @@ class UserProfileViewSet(
 
     @decorators.action(detail=True, methods=['get'], url_path='controls-inspected')
     def controls_inspected(self, request, pk):
-        controls_inspected = Control.objects.filter(access__in=request.user.profile.access.filter(access_type='demandeur').all())
+        profile = self.get_object()
+        controls_inspected = profile.user_controls('demandeur')
         serialized_controls = ControlSerializer(controls_inspected, many=True)
         return Response(serialized_controls.data)

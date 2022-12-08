@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.apps import apps
+from django.db.models import Q
 
 from annoying.fields import AutoOneToOneField
 
@@ -26,8 +27,6 @@ class UserProfile(models.Model):
         settings.AUTH_USER_MODEL, primary_key=True, on_delete=models.CASCADE,
         related_name='profile')
     profile_type = models.CharField(max_length=255, choices=PROFILE_TYPE)
-    controls = models.ManyToManyField(
-        to='control.Control', verbose_name='procédures', related_name='user_profiles', blank=True)
     organization = models.CharField("Organisme", max_length=255, blank=True, null=True)
     send_files_report = models.BooleanField(
         verbose_name="Envoi Rapport de Fichiers", default=True,
@@ -56,11 +55,22 @@ class UserProfile(models.Model):
         Returns the questionnaires belonging to the user.
         """
         Questionnaire = apps.get_model('control.Questionnaire')
-        user_controls = self.controls.active()
-        user_questionnaires = Questionnaire.objects.filter(control__in=user_controls)
-        if self.is_audited:
-            user_questionnaires = user_questionnaires.filter(is_draft=False)
-        return user_questionnaires
+        inspected_controls = self.user_controls('demandeur')
+        audited_controls = self.user_controls('repondant')
+        inspected_questionnaires = Questionnaire.objects.filter(control__in=inspected_controls)
+        audited_questionnaires = Questionnaire.objects.filter(Q(control__in=audited_controls) & Q(is_draft=False))
+        return inspected_questionnaires | audited_questionnaires
+
+    def user_controls(self, accesstype):
+        """
+        Returns the controls by access belonging to the user.
+        """
+        Control = apps.get_model('control.Control')
+        if accesstype == 'all':
+            all_user_controls = Control.objects.filter(access__in=self.access.all())
+            return all_user_controls
+        filtered_user_controls = Control.objects.filter(access__in=self.access.filter(access_type=accesstype).all())
+        return filtered_user_controls
 
     def __str__(self):
         return str(self.user)
