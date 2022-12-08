@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
+from django.apps import apps
 
 from django_cleanup import cleanup
 from model_utils.models import TimeStampedModel
@@ -111,7 +112,7 @@ class Control(SoftDeleteModel):
 
     @property
     def has_multiple_inspectors(self):
-        return self.user_profiles.filter(profile_type=UserProfile.INSPECTOR).count() > 1
+        return self.access.filter(access_type='demandeur').count() > 1
 
     @property
     def title_display(self):
