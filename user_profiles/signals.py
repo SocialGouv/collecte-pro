@@ -69,9 +69,10 @@ def bake_and_send_email(
     A wrapper function for sending emails.
     """
     recipients = [session_user.email, ]
-    inspectors = control.user_profiles.filter(profile_type=UserProfile.INSPECTOR)
-    inspectors = inspectors.exclude(user=session_user)
-    inspectors_emails = inspectors.values_list('user__email', flat=True)
+    inspectors_access = control.access.filter(access_type='demandeur')
+    inspectors_users = UserProfile.objects.filter(access__in=inspectors_access)
+    inspectors_users = inspectors_users.exclude(user=session_user)
+    inspectors_emails = inspectors_users.values_list('user__email', flat=True)
     support_email = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
     if isinstance(support_email, dict):
         support_email = support_email["url"]

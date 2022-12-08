@@ -58,6 +58,7 @@ class ControlInspectorAccess(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
+        control = obj
         if isinstance(obj, Control):
             control = obj
         elif isinstance(obj, Questionnaire):
