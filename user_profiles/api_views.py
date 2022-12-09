@@ -28,8 +28,9 @@ class UserProfileViewSet(
         queryset = UserProfile.objects
         if self.request.user.profile.profile_type != UserProfile.INSPECTOR:
             queryset = queryset.filter(
-                controls__in=Control.objects.filter(access__in=self.request.user.profile.access.all())
+                access__in=self.request.user.profile.access.all()
             )
+        
         return queryset.distinct()
 
     @decorators.action(detail=True, methods=['post'], url_path='remove-control')

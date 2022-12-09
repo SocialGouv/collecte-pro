@@ -165,7 +165,7 @@
         </div>
 
         <div class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
-          <div v-if="sessionUser.is_inspector" class="btn-group">
+          <div v-if="accessType === 'demandeur'" class="btn-group">
             <button type="button"
                     class="btn btn-secondary"
                     @click="enterEditMode">
@@ -190,17 +190,15 @@
               <button class="dropdown-item text-danger"
                       type="button"
                       @click="startControlDeleteFlow"
-                      v-if="sessionUser.is_inspector"
               >
                 <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>
                 Supprimer cet espace...
               </button>
             </div>
           </div>
-          <div v-if="this.accessibleQuestionnaires.length > 0 && accessType === 'demandeur'"
+          <div v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
             class="btn-group mt-2">
             <button
-                      v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
                       class="btn btn-secondary"
                       type="button"
                       @click="showCloneModal"
