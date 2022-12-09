@@ -180,15 +180,6 @@
               <span class="sr-only">Menu d'actions</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-              <button
-                      v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
-                      class="dropdown-item"
-                      type="button"
-                      @click="showCloneModal"
-              >
-                <i class="fe fe-copy mr-2" aria-hidden="true"></i>
-                Dupliquer
-            </button>
               <button class="dropdown-item"
                       type="button"
                       @click="showExportModal"
@@ -204,6 +195,17 @@
                 Supprimer cet espace...
               </button>
             </div>
+          </div>
+          <div v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
+            class="btn-group mt-2">
+            <button
+                      class="btn btn-secondary"
+                      type="button"
+                      @click="showCloneModal"
+              >
+                <i class="fe fe-copy mr-2" aria-hidden="true"></i>
+                Dupliquer
+              </button>
           </div>
         </div>
 

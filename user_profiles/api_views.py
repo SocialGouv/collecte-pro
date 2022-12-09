@@ -6,10 +6,10 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from django.db.models import Q
 
-from control.permissions import ControlInspectorAccess
+from control.permissions import UserInspectorAccess
 
 from .models import Access, UserProfile
-from .serializers import AccessSerializer, UserProfileSerializer, RemoveControlSerializer
+from .serializers import UserProfileSerializer, RemoveControlSerializer
 
 
 # These signals are triggered after the user is deleted via the API
@@ -22,16 +22,10 @@ class UserProfileViewSet(
         viewsets.GenericViewSet):
     serializer_class = UserProfileSerializer
     search_fields = ('=user__email',)
-    permission_classes = (ControlInspectorAccess,)
+    permission_classes = (UserInspectorAccess,)
 
     def get_queryset(self):
-        queryset = UserProfile.objects
-        if self.request.user.profile.profile_type != UserProfile.INSPECTOR:
-            queryset = queryset.filter(
-                access__in=self.request.user.profile.access.all()
-            )
-        
-        return queryset.distinct()
+        return UserProfile.objects.distinct()
 
     @decorators.action(detail=True, methods=['post'], url_path='remove-control')
     def remove_control(self, request, pk):

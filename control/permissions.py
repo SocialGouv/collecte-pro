@@ -70,6 +70,16 @@ class ControlInspectorAccess(permissions.BasePermission):
 
         return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 
+class UserInspectorAccess(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if not request.data.get('control'):
+            return False
+        control_id = request.data.get('control')
+        return request.user.profile.access.filter(Q(control=control_id) & Q(access_type='demandeur')).exists()
+
 class ControlIsNotDeleted(permissions.BasePermission):
     message_format = 'Accessing this resource is not allowed.'
 
