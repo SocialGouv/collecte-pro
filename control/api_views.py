@@ -31,12 +31,15 @@ class ControlViewSet(mixins.CreateModelMixin,
                      viewsets.GenericViewSet):
     permission_classes = (ControlInspectorAccess,)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["profile"] = self.request.user.profile
+        return context
+
     def get_serializer_class(self):
         if self.action in ['update', 'partial_update']:
             return control_serializers.ControlUpdateSerializer
-        if self.request and self.request.user.profile.is_inspector: # TODO almorin - Modifier en faisant le controle sur l'access demandeur ? comprendre l'impact / la request.data est vide, donc pas de possibilité d'accéder au control pour check l'access
-            return control_serializers.ControlSerializer
-        return control_serializers.ControlSerializerWithoutDraft
+        return control_serializers.ControlFilteredSerializer
 
     def get_queryset(self):
         return Control.objects.filter(access__in=self.request.user.profile.access.all())

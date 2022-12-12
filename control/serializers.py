@@ -105,6 +105,21 @@ class ControlSerializerWithoutDraft(ControlSerializer):
         serializer = QuestionnaireSerializer(instance=questionnaires, many=True)
         return serializer.data
 
+class ControlFilteredSerializer(ControlSerializer):
+    """
+    Questionnaires are filtered to exclude draft if user is repondant.
+    """
+    questionnaires = serializers.SerializerMethodField()
+
+    def get_questionnaires(self, obj):
+        profile = self.context["profile"]
+        profile_controls_repondant = profile.user_controls('repondant')
+        questionnaires = obj.questionnaires
+        if profile_controls_repondant.filter(id=obj.id).exists():
+            questionnaires = obj.questionnaires.filter(is_draft=False)
+        serializer = QuestionnaireSerializer(instance=questionnaires, many=True)
+        return serializer.data
+
 
 class ControlUpdateSerializer(serializers.ModelSerializer):
     class Meta:
