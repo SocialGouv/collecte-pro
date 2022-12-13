@@ -13,10 +13,10 @@
       <form>
         <div class="form-group mb-6">
           <label v-for="ctrl in controlsInspected"
-                :for="ctrl.id"
+                :for="questionnaireId + '_' + ctrl.id"
                 :key="ctrl.id"
                 class="custom-control custom-checkbox">
-            <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
+            <input :id="questionnaireId + '_' + ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
             <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
           </label>
         </div>
