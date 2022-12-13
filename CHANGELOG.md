@@ -6,9 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 
-## [En cours]
+## [2.2.0] - 2022-12-13
 ### Ajouts
 - Ajout d'une page de statistiques pour les Administrateurs
+- Un utilisateur peut être à la fois Demandeur et Répondant
 
 ### Modifications
 - Les modifications de l'application ne sont plus gérées par version mais dans ce fichier unique (CHANGELOG.md)
