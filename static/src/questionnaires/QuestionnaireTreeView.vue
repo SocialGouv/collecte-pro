@@ -1,27 +1,5 @@
 <template>
     <div id="app" class="card">
-        <confirm-modal
-          ref="modal"
-          cancel-button="Annuler"
-          confirm-button="Dupliquer le questionnaire"
-          title="Dupliquer un questionnaire"
-          @confirm="cloneQuestionnaire"
-        >
-          <info-bar>
-            <p>Veuillez sélectionner les espaces de dépôt vers lesquels vous souhaitez dupliquer ce questionnaire.</p>
-          </info-bar>
-          <form>
-            <div class="form-group mb-6">
-              <label v-for="ctrl in accessibleControls"
-                    :for="ctrl.id"
-                    :key="ctrl.id"
-                    class="custom-control custom-checkbox">
-                <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
-                <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
-              </label>
-            </div>
-          </form>
-        </confirm-modal>
         <div class="p-4 font-italic text-muted">
             Pour sélectionner les éléments à exporter, cliquer sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
         </div>
@@ -155,7 +133,6 @@ import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
 import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
 
 import InfoBar from '../utils/InfoBar'
-import ConfirmModal from '../utils/ConfirmModal'
 
 import Vue from 'vue';
 import { mapState } from 'vuex'
@@ -174,7 +151,6 @@ export default Vue.extend({
     },
     components: {
         InfoBar,
-        ConfirmModal,
         VueAdsTable,
         Datepicker,
     },
@@ -548,11 +524,6 @@ export default Vue.extend({
 
         questionnaireDetailUrl(questionnaireId) {
             return backendUrls['questionnaire-detail'](questionnaireId)
-        },
-
-        showModal(qId) {
-          this.questionnaireId = qId
-          $(this.$refs.modal.$el).modal('show')
         },
 
         cloneQuestionnaire() {
