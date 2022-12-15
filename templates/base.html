@@ -34,7 +34,7 @@
                 <li class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="#contenu">
-                    <i class="fe fe-link" aria-hidden="true"></i> Aller au contenu
+                    <em class="fe fe-link" aria-hidden="true"></em> Aller au contenu
                   </a>
                 </li>
               {% endif %}
@@ -43,13 +43,13 @@
                 <li class="nav-item">
                   <a class="nav-link nav-link-thick-line {% if request.path == stats_url %}active{% endif %}"
                     href="{% url 'stats:index'%}">
-                    <i class="fe fe-bar-chart-2" aria-hidden="true"></i> Statistiques
+                    <em class="fe fe-bar-chart-2" aria-hidden="true"></em> Statistiques
                   </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link nav-link-thick-line"
                     href="{% url 'admin:index'%}">
-                    <i class="fe fe-settings" aria-hidden="true"></i> Administration
+                    <em class="fe fe-settings" aria-hidden="true"></em> Administration
                   </a>
                 </li>
               {% endif %}
@@ -58,7 +58,7 @@
                   {% url 'faq' as faq_url %}
                   <a class="nav-link nav-link-thick-line {% if request.path == faq_url %}active{% endif %}"
                     href="{% url 'faq'%}">
-                    <i class="fe fe-help-circle" aria-hidden="true"></i> FAQ
+                    <em class="fe fe-help-circle" aria-hidden="true"></em> FAQ
                   </a>
                 </li>
               {% else %}
@@ -87,12 +87,12 @@
                   <form action="{% url 'oidc_logout' %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="dropdown-item clickable">
-                      <i class="dropdown-icon fe fe-log-out" aria-hidden="true"></i> Se déconnecter
+                      <em class="dropdown-icon fe fe-log-out" aria-hidden="true"></em> Se déconnecter
                     </button>
                   </form>
                   {%else%}
                   <a class="dropdown-item" href="{% url 'logout' %}">
-                    <i class="dropdown-icon fe fe-log-out" aria-hidden="true"></i> Se déconnecter
+                    <em class="dropdown-icon fe fe-log-out" aria-hidden="true"></em> Se déconnecter
                   </a>
                   {%endif%}
                 </div>

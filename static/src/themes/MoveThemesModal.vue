@@ -22,7 +22,7 @@
                   type="button"
                   title="Déplacer le thème vers le haut"
                   @click="moveThemeUp(themeIndex)">
-                  <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                  <em class="fa fa-chevron-up" aria-hidden="true"></em>
                 </button>
                 <div>
                   {{ themeIndex + 1 }}
@@ -33,7 +33,7 @@
                   type="button"
                   title="Déplacer le thème vers le bas"
                   @click="moveThemeDown(themeIndex)">
-                  <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                  <em class="fa fa-chevron-down" aria-hidden="true"></em>
                 </button>
               <div>
             </td>

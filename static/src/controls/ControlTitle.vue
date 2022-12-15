@@ -102,7 +102,7 @@
                 <span class="form-required">*</span>
               </label>
               <div class="flex-row align-items-center">
-                <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
+                <em class="fa fa-building mr-2 text-muted" aria-hidden="true"></em>
                 <input id="organisme" type="text" class="form-control" v-model="organization" required aria-labelledby="organization-label" maxlength="255">
               </div>
             </div>
@@ -112,7 +112,7 @@
                 <span class="form-required">*</span>
               </label>
               <div class="flex-row align-items-center">
-                <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
+                <em class="fa fa-award mr-2 text-muted" aria-hidden="true"></em>
                 <input id="procedure" type="text" class="form-control" v-model="title" required aria-labelledby="title-label" maxlength="255">
               </div>
             </div>
@@ -140,21 +140,21 @@
         <div v-if="organization">
           <div class="mb-3">
             <div class="text-muted font-italic">
-              <i class="fa fa-building mr-2" aria-hidden="true"></i>
+              <em class="fa fa-building mr-2" aria-hidden="true"></em>
               Organisme interrogé
             </div>
             <div class="page-title">{{ organization }}</div>
           </div>
           <div class="mb-3">
             <div class="text-muted font-italic">
-              <i class="fa fa-award mr-2" aria-hidden="true"></i>
+              <em class="fa fa-award mr-2" aria-hidden="true"></em>
               Procédure
             </div>
             <div class="card-title">{{ title }}</div>
           </div>
           <div class="mb-3">
             <div class="text-muted font-italic">
-              <i class="fa fa-user mr-2" aria-hidden="true"></i>
+              <em class="fa fa-user mr-2" aria-hidden="true"></em>
               Accès
             </div>
             <div class="card-title">{{ getAccessTypeLibelle() }}</div>
@@ -169,7 +169,7 @@
             <button type="button"
                     class="btn btn-secondary"
                     @click="enterEditMode">
-              <i class="fe fe-edit mr-2" aria-hidden="true"></i>
+              <em class="fe fe-edit mr-2" aria-hidden="true"></em>
               Modifier
             </button>
             <button type="button"
@@ -186,21 +186,21 @@
                       type="button"
                       @click="showCloneModal"
               >
-                <i class="fe fe-copy mr-2" aria-hidden="true"></i>
+                <em class="fe fe-copy mr-2" aria-hidden="true"></em>
                 Dupliquer
             </button>
               <button class="dropdown-item"
                       type="button"
                       @click="showExportModal"
               >
-                <i class="fas fa-file-export mr-2" aria-hidden="true"></i>
+                <em class="fas fa-file-export mr-2" aria-hidden="true"></em>
                 Exporter (.zip)
               </button>
               <button class="dropdown-item text-danger"
                       type="button"
                       @click="startControlDeleteFlow"
               >
-                <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>
+                <em class="fe fe-trash-2 mr-2" aria-hidden="true"></em>
                 Supprimer cet espace...
               </button>
             </div>

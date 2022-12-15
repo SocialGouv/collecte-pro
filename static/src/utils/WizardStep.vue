@@ -8,7 +8,7 @@
       <div class="wizard-step-thread"></div>
       <div class="wizard-step-bubble card-title">
         <span class="number">{{ number }}</span>
-        <i class="done-icon fe fe-check" aria-hidden="true"></i>
+        <em class="done-icon fe fe-check" aria-hidden="true"></em>
       </div>
     </a>
 
@@ -17,7 +17,7 @@
       <div class="wizard-step-thread"></div>
       <div class="wizard-step-bubble card-title">
         <span class="number">{{ number }}</span>
-        <i class="done-icon fe fe-check" aria-hidden="true"></i>
+        <em class="done-icon fe fe-check" aria-hidden="true"></em>
       </div>
     </div>
 

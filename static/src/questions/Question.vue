@@ -15,7 +15,7 @@
             {{ questionFileCount }} fichier{{ questionFileCount === 1 ? '': 's' }}
             annexe{{ questionFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
-              <i class="fe fe-paperclip" aria-hidden="true"></i>
+              <em class="fe fe-paperclip" aria-hidden="true"></em>
             </span>
           </button>
         </template>
@@ -27,7 +27,7 @@
             {{ responseFileCount }} fichier{{ responseFileCount === 1 ? '': 's' }}
             déposé{{ responseFileCount === 1 ? '': 's' }}
             <span class="tag-addon">
-              <i class="fe fe-file" aria-hidden="true"></i>
+              <em class="fe fe-file" aria-hidden="true"></em>
             </span>
           </button>
         </template>

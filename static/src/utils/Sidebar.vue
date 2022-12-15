@@ -2,8 +2,8 @@
   <nav class="sidebar" :class="{ collapsed: collapsed }">
     <div v-if="showSidebar">
       <button id="sidebar-toggle-button" class="btn btn-secondary" @click="toggleCollapse" title="Replier le panneau latéral">
-        <i v-show="!collapsed" class="fa fa-chevron-left"></i>
-        <i v-show="collapsed" class="fa fa-chevron-down"></i>
+        <em v-show="!collapsed" class="fa fa-chevron-left"></em>
+        <em v-show="collapsed" class="fa fa-chevron-down"></em>
         <span v-show="collapsed">Ouvrir le menu</span>
         <span v-show="!collapsed" class="hidden">Replier le panneau latéral</span>
       </button>

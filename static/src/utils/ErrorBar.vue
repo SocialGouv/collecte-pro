@@ -3,7 +3,7 @@
     <button v-if="!noclose" type="button" class="close" data-dismiss="alert" @click="dismissed">
     <span class="sr-only">Fermer</span>
     </button>
-    <i class="fe fe-alert-triangle" aria-hidden="true"></i>
+    <em class="fe fe-alert-triangle" aria-hidden="true"></em>
     <slot></slot>
   </div>
 </template>

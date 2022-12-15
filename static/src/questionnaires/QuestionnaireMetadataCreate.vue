@@ -40,7 +40,7 @@
                       v-model="description">
             </textarea>
             <p class="text-muted pl-2" v-if="errors.description">
-              <i class="fa fa-warning" aria-hidden="true"></i> {{ errors.description.join(' / ')}}
+              <em class="fa fa-warning" aria-hidden="true"></em> {{ errors.description.join(' / ')}}
             </p>
           </div>
           <div class="form-group">

@@ -1,7 +1,7 @@
 <template>
   <div>
     <button id="AddControlButton" class="btn btn-primary" @click="showModal">
-      <i class="fe fe-plus" aria-hidden="true"></i>
+      <em class="fe fe-plus" aria-hidden="true"></em>
       Ajouter un espace de dépôt
     </button>
 
@@ -28,7 +28,7 @@
               <p>Exemple : Contrôle des comptes et de la gestion de la Fédération Française de Football. 255 caractères maximum.</p>
             </div>
             <div class="flex-row align-items-center">
-              <i class="fa fa-award mr-2 text-muted" aria-hidden="true"></i>
+              <em class="fa fa-award mr-2 text-muted" aria-hidden="true"></em>
               <input type="text"
                      id="nom_controle"
                      ref="nom_controle"
@@ -50,7 +50,7 @@
               <p>Exemple : Ministère des Sports. 255 caractères maximum.</p>
             </div>
             <div class="flex-row align-items-center">
-              <i class="fa fa-building mr-2 text-muted" aria-hidden="true"></i>
+              <em class="fa fa-building mr-2 text-muted" aria-hidden="true"></em>
               <input type="text"
                      id="organisation_controle"
                      class="form-control"

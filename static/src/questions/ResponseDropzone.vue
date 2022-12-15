@@ -21,7 +21,7 @@
         </div>
       </form>
       <div class="text-right">
-        <i class="dropdown-icon fe fe-help-circle" aria-hidden="true"></i>
+        <em class="dropdown-icon fe fe-help-circle" aria-hidden="true"></em>
         <a :href="faqUrl">Des questions sur le dépôt de fichiers ?</a>
       </div>
     </div>

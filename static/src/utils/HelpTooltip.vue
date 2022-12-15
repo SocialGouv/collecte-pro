@@ -1,6 +1,6 @@
 <template>
   <span data-toggle="tooltip" data-placement="right" :title="text" class="help-tooltip">
-    <i :class="iconClass"></i>
+    <em :class="iconClass"></em>
   </span>
 </template>
 

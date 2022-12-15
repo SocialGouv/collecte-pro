@@ -8,7 +8,7 @@
          :aria-controls="id">
       <div class="card-title m-0">
         <button type="button" class="btn btn-secondary">
-          <i class="fe mr-2" :class="buttonicon" aria-hidden="true"></i>
+          <em class="fe mr-2" :class="buttonicon" aria-hidden="true"></em>
           {{ buttontext }}
         </button>
       </div>

@@ -46,14 +46,14 @@
                 data-dismiss="modal"
                 title="J'ai encore des modifications à faire"
         >
-          <i class="fa fa-chevron-left mr-2" aria-hidden="true"></i>
+          <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
           J'ai encore des modifications à faire
         </button>
         <button type="submit"
                 class="btn btn-primary"
                 title="Publier le questionnaire"
         >
-          <i class="fa fa-rocket mr-1" aria-hidden="true"></i>
+          <em class="fa fa-rocket mr-1" aria-hidden="true"></em>
           Publier le questionnaire
         </button>
       </div>
@@ -88,7 +88,7 @@
     <template v-slot:success-modal-body>
       <div class="modal-header border-bottom-0 flex-column align-items-center">
         <p>
-          <i class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></i>
+          <em class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></em>
         </p>
         <div id="modal_title" class="text-center">
           Bravo, votre questionnaire est publié!
@@ -105,7 +105,7 @@
             class="btn btn-primary ml-2"
             @click="goHome"
           >
-            <i class="fa fa-chevron-left mr-2" aria-hidden="true"></i>
+            <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
             Revenir à l'accueil
           </button>
           <a class="btn btn-primary ml-2"

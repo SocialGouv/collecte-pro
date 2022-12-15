@@ -5,14 +5,14 @@
   </error-bar>
   <div v-if="question.id">
     <label class="btn btn-primary">
-      <i class="fe fe-upload mr-2"></i>
+      <em class="fe fe-upload mr-2"></em>
       Ajouter un fichier annexe
       <input type="file" ref="fileInput" v-on:change="handleFileUpload()" hidden/>
     </label>
   </div>
   <div v-else>
     <label class="btn btn-primary disabled" >
-      <i class="fe fe-upload mr-2" ></i>
+      <em class="fe fe-upload mr-2" ></em>
       Ajouter un fichier annexe
     </label>
     <div class="small">

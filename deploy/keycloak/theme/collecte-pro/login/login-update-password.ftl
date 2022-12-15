@@ -17,7 +17,7 @@
                            autofocus autocomplete="new-password"
                            aria-invalid="<#if messagesPerField.existsError('password','password-confirm')>true</#if>"
                     />
-                    <i class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></i>
+                    <em class="far fa-eye" id="togglePassword" style="margin-left: -30px; cursor: pointer;"></em>
 
                     <#if messagesPerField.existsError('password')>
                         <span id="input-error-password" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">
@@ -37,7 +37,7 @@
                            autocomplete="new-password"
                            aria-invalid="<#if messagesPerField.existsError('password-confirm')>true</#if>"
                     />
-                    <i class="far fa-eye" id="toggleConfirmPassword" style="margin-left: -30px; cursor: pointer;"></i>
+                    <em class="far fa-eye" id="toggleConfirmPassword" style="margin-left: -30px; cursor: pointer;"></em>
 
                     <#if messagesPerField.existsError('password-confirm')>
                         <span id="input-error-password-confirm" class="${properties.kcInputErrorMessageClass!}" aria-live="polite">

@@ -13,11 +13,11 @@
   <!-- Code from Breadcrumbs.vue -->
   <h1 class="flex-row mb-5 text-muted breadcrumbs">
     <div class="mx-2">
-      <i class="fa fa-archive" aria-hidden="true"></i>
+      <em class="fa fa-archive" aria-hidden="true"></em>
       <span class="sr-only">Corbeille</span>
     </div>
     <div class="mx-2">
-      <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      <em class="fa fa-chevron-right" aria-hidden="true"></em>
       <span class="sr-only">&gt;</span>
     </div>
     <div class="mx-2">
@@ -34,7 +34,7 @@
 
   <div class="page-header">
     <div class="page-title">
-      <i class="fe fe-trash-2 mr-2" aria-hidden="true"></i>
+      <em class="fe fe-trash-2 mr-2" aria-hidden="true"></em>
       <span class="mr-1">Corbeille du</span>
       <a href="{% url 'questionnaire-detail' questionnaire.id %}">
         questionnaire {{ questionnaire.numbering }} : {{ questionnaire.title }}
@@ -45,7 +45,7 @@
   <div>
     <div class="alert alert-info alert-icon alert-dismissible" role="status">
       <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Fermer</span></button>
-      <i class="fe fe-info" aria-hidden="true"></i>
+      <em class="fe fe-info" aria-hidden="true"></em>
       Les fichiers mis à la corbeille sont toujours visibles par l'équipe d'instruction. Ils peuvent toujours être utilisés pour la procédure.
     </div>
 

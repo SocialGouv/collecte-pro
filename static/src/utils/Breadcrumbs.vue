@@ -1,11 +1,11 @@
 <template>
   <h1 class="flex-row mb-5 text-muted breadcrumbs">
     <div class="mx-2">
-      <i class="fa fa-archive" aria-hidden="true"></i>
+      <em class="fa fa-archive" aria-hidden="true"></em>
       <span class="sr-only">Corbeille</span>
     </div>
     <div class="mx-2">
-      <i class="fa fa-chevron-right" aria-hidden="true"></i>
+      <em class="fa fa-chevron-right" aria-hidden="true"></em>
       <span class="sr-only">&gt;</span>
     </div>
     <div class="mx-2">

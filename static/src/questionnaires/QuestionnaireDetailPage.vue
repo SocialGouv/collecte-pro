@@ -12,7 +12,7 @@
 
     <div class="page-header">
       <h2 class="page-title">
-        <i class="fe fe-list mr-2" aria-hidden="true"></i>
+        <em class="fe fe-list mr-2" aria-hidden="true"></em>
         <template v-if="isLoaded && accessType === 'demandeur'">
           <span v-if="questionnaire.is_draft"
                 class="tag tag-azure big-tag round-tag font-italic mr-2">

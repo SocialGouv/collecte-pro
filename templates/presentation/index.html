@@ -23,28 +23,28 @@
                 {% url 'presentation:index' as presentation_index_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == presentation_index_url %}active{% endif %}"
                   href="{% url 'presentation:index'%}">
-                  <i class="fa fa-pen" aria-hidden="true"></i> Le produit
+                  <em class="fa fa-pen" aria-hidden="true"></em> Le produit
                 </a>
               </li>
               <li class="nav-item">
                 {% url 'presentation:who' as presentation_who_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == presentation_who_url %}active{% endif %}"
                   href="{% url 'presentation:who'%}">
-                  <i class="fa fa-user-friends" aria-hidden="true"></i> Qui sommes-nous ?
+                  <em class="fa fa-user-friends" aria-hidden="true"></em> Qui sommes-nous ?
                 </a>
               </li>
               <li class="nav-item">
                 {% url 'presentation:test' as presentation_test_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == presentation_test_url %}active{% endif %}"
                   href="{% url 'presentation:test'%}">
-                  <i class="fa fa-vial" aria-hidden="true"></i> Tester
+                  <em class="fa fa-vial" aria-hidden="true"></em> Tester
                 </a>
               </li>
               <li class="nav-item">
                 {% url 'presentation:faq' as faq_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == faq_url %}active{% endif %}"
                   href="{% url 'presentation:faq'%}">
-                  <i class="fe fe-help-circle" aria-hidden="true"></i> FAQ
+                  <em class="fe fe-help-circle" aria-hidden="true"></em> FAQ
                 </a>
               </li>
           </ul>
