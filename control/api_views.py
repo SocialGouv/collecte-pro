@@ -42,7 +42,7 @@ class ControlViewSet(mixins.CreateModelMixin,
         return control_serializers.ControlFilteredSerializer
 
     def get_queryset(self):
-        return Control.objects.filter(access__in=self.request.user.profile.access.all())
+        return Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
 
     def add_log_entry(self, control, verb):
         action_details = {

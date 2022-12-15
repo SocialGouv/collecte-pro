@@ -15,7 +15,7 @@ def send_email_after_control_soft_delete(session_user, obj, *args, **kwargs):
     """
     control = obj
     inspectors = control.access.filter(access_type='demandeur')
-    inspectors_emails = inspectors.values_list('user__email', flat=True)
+    inspectors_emails = inspectors.values_list('userprofile__user__email', flat=True)
     support_email = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
     if isinstance(support_email, dict):
         support_email = support_email["url"]
