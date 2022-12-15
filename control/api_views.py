@@ -108,7 +108,7 @@ class ControlViewSet(mixins.CreateModelMixin,
     
     @decorators.action(detail=True, methods=['get'], url_path='access')
     def access(self, request, pk):
-        serialized_access = AccessSerializer(self.get_object().access.filter(userprofile=request.user.profile).all(), many=True)
+        serialized_access = AccessSerializer(self.get_object().access.filter(Q(userprofile=request.user.profile) & Q(control__is_deleted=False)).all(), many=True)
         return Response(serialized_access.data)
 
 
