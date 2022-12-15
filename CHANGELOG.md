@@ -5,6 +5,16 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
+## [2.2.1] En cours
+### Ajouts
+
+### Modifications
+- Applications des retours sur les règles RGAA
+
+### Corrections
+
+### Suppressions
+
 
 ## [2.2.0] - 2022-12-13
 ### Ajouts
