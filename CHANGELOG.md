@@ -5,15 +5,26 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
-## [2.2.1] En cours
+## [En cours]
 ### Ajouts
 
 ### Modifications
-- Applications des retours sur les règles RGAA
 
 ### Corrections
 
 ### Suppressions
+
+
+## [2.2.1] - 2022-12-16
+### Ajouts
+- Il n'est plus possible d'accéder à un Espace de dépôt et/ou un Questionnaire supprimer
+
+### Modifications
+- Application des retours sur les règles RGAA : balises <i>
+- Application des retours sur les règles RGAA : tags alt des logos d'en-tête et de pied de page
+
+### Corrections
+- La création/duplication d'un espace de dépôt est impossible si le nom abrégé existe déjà
 
 
 ## [2.2.0] - 2022-12-13
