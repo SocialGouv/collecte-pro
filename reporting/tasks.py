@@ -72,8 +72,6 @@ def send_files_report():
             for access in control.access.all()
             if access.userprofile.send_files_report==True
         ]
-        # ~ recipients = control.access.objects.userprofile.filter(send_files_report=True)
-        # ~ recipient_list = recipients.values_list('user__email', flat=True)
         if not recipient_list:
             logger.info(f'Pas de destinataire, arrêt.')
             continue
