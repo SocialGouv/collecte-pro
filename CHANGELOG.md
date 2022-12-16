@@ -25,6 +25,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 ### Corrections
 - La création/duplication d'un espace de dépôt est impossible si le nom abrégé existe déjà
+- Le bouton de repli du panneau latéral est correctement positionné
 
 
 ## [2.2.0] - 2022-12-13

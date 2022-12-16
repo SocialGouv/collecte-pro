@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 
 from control.models import Control, QuestionFile, Questionnaire
 from tests import factories, utils
-from user_profiles.models import UserProfile
+from user_profiles.models import Access, UserProfile
 
 pytestmark = mark.django_db
 client = APIClient()
@@ -37,14 +37,22 @@ def test_inspector_can_list_question_file_from_draft_questionnaire():
     published_questionnaire.is_draft = False
     published_questionnaire.save()
     assert Questionnaire.objects.get(id=published_questionnaire.id).is_published
-    inspector.controls.add(published_questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=published_questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
 
     draft_question_file = factories.QuestionFileFactory()
     draft_questionnaire = draft_question_file.question.theme.questionnaire
     draft_questionnaire.is_draft = True
     draft_questionnaire.save()
     assert Questionnaire.objects.get(id=draft_questionnaire.id).is_draft
-    inspector.controls.add(draft_questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=draft_questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
 
     response = list_annexes(inspector.user)
 
@@ -62,14 +70,22 @@ def test_audited_cannot_list_question_file_from_draft_questionnaire():
     published_questionnaire.is_draft = False
     published_questionnaire.save()
     assert Questionnaire.objects.get(id=published_questionnaire.id).is_published
-    audited.controls.add(published_questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=published_questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
 
     draft_question_file = factories.QuestionFileFactory()
     draft_questionnaire = draft_question_file.question.theme.questionnaire
     draft_questionnaire.is_draft = True
     draft_questionnaire.save()
     assert Questionnaire.objects.get(id=draft_questionnaire.id).is_draft
-    audited.controls.add(draft_questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=draft_questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
 
     response = list_annexes(audited.user)
 
@@ -87,7 +103,11 @@ def test_audited_cannot_list_question_file_by_question_from_draft_questionnaire(
     draft_questionnaire.is_draft = True
     draft_questionnaire.save()
     assert Questionnaire.objects.get(id=draft_questionnaire.id).is_draft
-    audited.controls.add(draft_questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=draft_questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
 
     response = list_annexes_for_question(audited.user, draft_question_file.question.id)
 
@@ -104,7 +124,11 @@ def test_cannot_list_question_file_by_question_from_deleted_control():
 
     # Audited
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
-    audited.controls.add(deleted_control)
+    audited.access.create(
+        userprofile=audited,
+        control=deleted_control,
+        access_type=Access.REPONDANT,
+    )
 
     response = list_annexes_for_question(audited.user, deleted_question_file.question.id)
 
@@ -114,7 +138,11 @@ def test_cannot_list_question_file_by_question_from_deleted_control():
 
     # Inspector
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
-    inspector.controls.add(deleted_control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=deleted_control,
+        access_type=Access.DEMANDEUR,
+    )
 
     response = list_annexes_for_question(inspector.user, deleted_question_file.question.id)
 
@@ -139,8 +167,16 @@ def test_cannot_get_question_file_even_if_user_belongs_to_control():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question_file = factories.QuestionFileFactory()
     questionnaire = question_file.question.theme.questionnaire
-    inspector.controls.add(questionnaire.control)
-    audited.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
+    audited.access.create(
+        userprofile=audited,
+        control=questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     questionnaire.is_draft = False
     questionnaire.save()
     assert Questionnaire.objects.get(id=questionnaire.id).is_published
@@ -160,7 +196,11 @@ def test_cannot_get_inexistant_question_file():
 def test_cannot_get_question_file_if_control_is_deleted():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     question_file = factories.QuestionFileFactory()
-    inspector.controls.add(question_file.question.theme.questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=question_file.question.theme.questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     question_file.question.theme.questionnaire.control.delete()
 
     # method not allowed
@@ -170,7 +210,11 @@ def test_cannot_get_question_file_if_control_is_deleted():
 def test_audited_cannot_get_question_file_from_draft_questionnaire():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question_file = factories.QuestionFileFactory()
-    audited.controls.add(question_file.question.theme.questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=question_file.question.theme.questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     question_file.question.theme.questionnaire.is_draft = True
     question_file.question.theme.questionnaire.save()
     assert Questionnaire.objects.get(id=question_file.question.theme.questionnaire.id).is_draft
@@ -183,7 +227,11 @@ def test_inspector_cannot_update_question_file_from_published_questionnaire():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     question_file = factories.QuestionFileFactory()
     questionnaire = question_file.question.theme.questionnaire
-    inspector.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     questionnaire.is_draft = False
     questionnaire.save()
     assert Questionnaire.objects.get(id=questionnaire.id).is_published
@@ -201,7 +249,11 @@ def test_audited_cannot_update_question_file_from_published_questionnaire():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question_file = factories.QuestionFileFactory()
     questionnaire = question_file.question.theme.questionnaire
-    audited.controls.add(questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     questionnaire.is_draft = False
     questionnaire.save()
     assert Questionnaire.objects.get(id=questionnaire.id).is_published
@@ -219,7 +271,11 @@ def test_audited_cannot_update_question_file_from_draft_questionnaire():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question_file = factories.QuestionFileFactory()
     questionnaire = question_file.question.theme.questionnaire
-    audited.controls.add(questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     questionnaire.is_draft = True
     questionnaire.save()
     assert Questionnaire.objects.get(id=questionnaire.id).is_draft
@@ -240,7 +296,11 @@ def test_inspector_can_upload_question_file():
     questionnaire = question.theme.questionnaire
     questionnaire.is_draft = True
     questionnaire.save()
-    inspector.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-list')
     count_before = QuestionFile.objects.count()
@@ -262,7 +322,11 @@ def test_inspector_cannot_upload_question_file_to_published_questionnaire():
     questionnaire = question.theme.questionnaire
     questionnaire.is_draft = False
     questionnaire.save()
-    inspector.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-list')
     count_before = QuestionFile.objects.count()
@@ -284,7 +348,11 @@ def test_inspector_can_remove_question_file():
     questionnaire = question_file.question.theme.questionnaire
     questionnaire.is_draft = True
     questionnaire.save()
-    inspector.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-detail', args=[question_file.id])
     count_before = QuestionFile.objects.count()
@@ -302,7 +370,11 @@ def test_inspector_cannot_remove_question_file_if_control_is_published():
     questionnaire = question_file.question.theme.questionnaire
     questionnaire.is_draft = False
     questionnaire.save()
-    inspector.controls.add(questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-detail', args=[question_file.id])
     count_before = QuestionFile.objects.count()
@@ -317,7 +389,11 @@ def test_inspector_cannot_remove_question_file_if_control_is_published():
 def test_inspector_cannot_remove_question_file_if_control_is_deleted():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     question_file = factories.QuestionFileFactory()
-    inspector.controls.add(question_file.question.theme.questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=question_file.question.theme.questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-detail', args=[question_file.id])
     count_before = QuestionFile.objects.count()
@@ -333,7 +409,11 @@ def test_inspector_cannot_remove_question_file_if_control_is_deleted():
 def test_cannot_upload_question_file_if_control_is_deleted():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     question = factories.QuestionFactory()
-    inspector.controls.add(question.theme.questionnaire.control)
+    inspector.access.create(
+        userprofile=inspector,
+        control=question.theme.questionnaire.control,
+        access_type=Access.DEMANDEUR,
+    )
     utils.login(client, user=inspector.user)
     url = reverse('api:annexe-list')
     post_data = {
@@ -348,7 +428,11 @@ def test_cannot_upload_question_file_if_control_is_deleted():
 def test_audited_cannot_upload_question_file():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question = factories.QuestionFactory()
-    audited.controls.add(question.theme.questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=question.theme.questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     utils.login(client, user=audited.user)
     url = reverse('api:annexe-list')
     count_before = QuestionFile.objects.count()
@@ -367,7 +451,11 @@ def test_audited_cannot_upload_question_file():
 def test_audited_cannot_remove_question_file():
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question_file = factories.QuestionFileFactory()
-    audited.controls.add(question_file.question.theme.questionnaire.control)
+    audited.access.create(
+        userprofile=audited,
+        control=question_file.question.theme.questionnaire.control,
+        access_type=Access.REPONDANT,
+    )
     utils.login(client, user=audited.user)
     url = reverse('api:annexe-detail', args=[question_file.id])
     count_before = QuestionFile.objects.count()

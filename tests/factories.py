@@ -84,6 +84,15 @@ class ControlFactory(factory.django.DjangoModelFactory):
 
 
 @register
+class AccessFactory(factory.django.DjangoModelFactory):
+    userprofile = factory.SubFactory(UserProfileFactory)
+    control = factory.SubFactory(ControlFactory)
+
+    class Meta:
+        model = 'user_profiles.Access'
+
+
+@register
 class QuestionnaireFactory(factory.django.DjangoModelFactory):
     title = factory.LazyFunction(faker.name)
     control = factory.SubFactory(ControlFactory)

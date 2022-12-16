@@ -13,7 +13,10 @@ class SendResponseFileRunner:
         response_file = factories.ResponseFileFactory()
         self.filename = response_file.basename
         user = response_file.author
-        user.profile.controls.add(response_file.question.theme.questionnaire.control)
+        user.profile.access.create(
+            userprofile=user.profile,
+            control=response_file.question.theme.questionnaire.control,
+        )
         user.profile.agreed_to_tos = True
         user.profile.save()
         utils.login(client, user=response_file.author)
@@ -37,7 +40,10 @@ def test_download_response_file_fails_if_the_control_is_not_associated_with_the_
     user = response_file.author
     unauthorized_control = factories.ControlFactory()
     assert unauthorized_control != response_file.question.theme.questionnaire.control
-    user.profile.controls.add(unauthorized_control)
+    user.profile.access.create(
+        userprofile=user.profile,
+        control=response_file.question.theme.questionnaire.control,
+    )
     user.profile.save()
     utils.login(client, user=response_file.author)
     url = reverse('send-response-file', args=[response_file.id])

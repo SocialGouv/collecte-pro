@@ -4,7 +4,7 @@ import sys
 from django.conf import settings
 from django.shortcuts import reverse
 from django.urls import clear_url_caches
-from user_profiles.models import UserProfile
+from user_profiles.models import Access, UserProfile
 
 from . import factories
 
@@ -35,8 +35,16 @@ def reload_urlconf():
 
 def make_user(profile_type, control=None, assign_questionnaire_editor=True):
     user_profile = factories.UserProfileFactory(profile_type=profile_type)
+    if profile_type == "AUDITED":
+        access_type = Access.REPONDANT
+    else:
+        access_type = Access.DEMANDEUR
     if control is not None:
-        user_profile.controls.add(control)
+        access = factories.AccessFactory(
+            userprofile=user_profile,
+            control=control,
+            access_type=access_type,
+        )
         if assign_questionnaire_editor:
             control.questionnaires.update(editor=user_profile.user)
     user_profile.save()
