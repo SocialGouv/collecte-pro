@@ -1,6 +1,7 @@
 from functools import partial
 
 import django.dispatch
+from django.http import HttpResponse
 from actstream import action
 from django.core.files import File
 from django.db.models import Q
@@ -110,6 +111,11 @@ class ControlViewSet(mixins.CreateModelMixin,
     def access(self, request, pk):
         serialized_access = AccessSerializer(self.get_object().access.filter(Q(userprofile=request.user.profile) & Q(control__is_deleted=False)).all(), many=True)
         return Response(serialized_access.data)
+
+    @decorators.action(detail=True, methods=['get'], url_path='unique-code')
+    def check_unique_code(self, request, pk):
+        isCodeExist = Control.objects.filter(reference_code=request.query_params.get('code')).exists()
+        return HttpResponse(isCodeExist)
 
 
 class QuestionViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):

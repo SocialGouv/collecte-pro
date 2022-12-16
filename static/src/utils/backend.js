@@ -66,6 +66,8 @@ urlMaker.responseFileTrash = (responseFileId) =>
   '/api/fichier-reponse/corbeille/' + responseFileId + '/'
 urlMaker.getAccessToControl = (controlId) =>
   '/api/control/' + controlId + '/access/'
+urlMaker.checkControlUniqueCode = (controlId, code) =>
+  '/api/control/' + controlId + '/unique-code/?code=' + code
 urlMaker.getControlsInspectedFromUser = (id) =>
   '/api/user/' + id + '/controls-inspected/'
 

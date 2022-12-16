@@ -5,7 +5,7 @@
       cancel-button="Annuler"
       confirm-button-prevent="Dupliquer l'espace de dépôt"
       title="Dupliquer un espace de dépôt"
-      @confirm="cloneControl"
+      @confirm="checkUniqueReferenceCode"
     >
       <info-bar>
         <p>Veuillez sélectionner les questionnaires que vous souhaitez dupliquer.</p>
@@ -294,16 +294,26 @@ export default Vue.extend({
           this.users = response.data
         })
     },
+    checkUniqueReferenceCode() {
+      // reference code given by user (2021_SOMETHING)
+      const newRefCode = new Date().getFullYear() + '_' + this.reference_code
+      this.referenceError = false
+      axios.get(backendUrls.checkControlUniqueCode(this.control.id, newRefCode))
+        .then((response) => {
+          if (response.data === 'True') {
+            this.referenceError = true
+            return
+          }
+          this.cloneControl(newRefCode)
+        })
+    },
     getAccessTypeLibelle() {
       if (this.accessType === 'demandeur') {
         return 'Demandeur'
       }
       return 'Répondant'
     },
-    cloneControl() {
-      // reference code given by user (2021_SOMETHING)
-      const newRefCode = new Date().getFullYear() + '_' + this.reference_code
-
+    cloneControl(newRefCode) {
       const valid = this.reference_code &&
                     !this.controls.find(ctrl => ctrl.reference_code === newRefCode)
 
