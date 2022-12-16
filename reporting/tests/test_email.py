@@ -5,7 +5,7 @@ from django.core import mail
 
 from reporting.tasks import send_files_report
 from tests import factories
-from user_profiles.models import UserProfile
+from user_profiles.models import Access, UserProfile
 
 
 pytestmark = mark.django_db
