@@ -48,6 +48,7 @@
               id="questionnaire-metadata-create"
               ref="questionnaireMetadataCreate"
               :questionnaire-numbering="questionnaireNumbering"
+              :questionnaire="questionnaire"
               v-show="state === STATES.START">
       </questionnaire-metadata-create>
       <questionnaire-body-create
@@ -194,6 +195,7 @@ export default Vue.extend({
         isWaitingForMinDisplayTime: false,
         isSaveHappening: false,
       },
+      questionnaire: '',
     }
   },
   computed: {
@@ -292,6 +294,7 @@ export default Vue.extend({
         const foundQuestionnaires =
           control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
         if (foundQuestionnaires.length > 0) {
+          this.questionnaire = foundQuestionnaires[0]
           return foundQuestionnaires[0]
         }
       }

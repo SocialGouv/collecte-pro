@@ -20,7 +20,7 @@ import json
 
 from .docx import generate_questionnaire_file
 from .export_response_files import generate_response_file_list_in_xlsx
-from .models import Control, Questionnaire, QuestionFile, ResponseFile, Question
+from .models import Control, Questionnaire, QuestionFile, QuestionnaireFile, ResponseFile, Question
 from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDraft
 from .serializers import ControlSerializer, ControlDetailControlSerializer
 
@@ -340,6 +340,19 @@ class SendQuestionFile(SendFileMixin, LoginRequiredMixin, View):
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         return self.model.objects.filter(
             question__theme__questionnaire__control__in=user_controls)
+
+class SendQuestionnairePjFile(SendFileMixin, LoginRequiredMixin, View):
+    model = QuestionnaireFile
+    file_type = 'questionnaire-file'
+
+    def get_queryset(self):
+        # The user should only have access to files that belong to the control
+        # he was associated with. That's why we filter-out based on the user's
+        # control.
+        user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
+        return self.model.objects.filter(
+            questionnaire__control__in=user_controls)
+
 
 
 class SendResponseFile(SendQuestionFile):

@@ -15,7 +15,7 @@ from django_softdelete.models import SoftDeleteModel
 from soft_deletion.managers import DeletableQuerySet
 
 from .docx import DocxMixin
-from .upload_path import questionnaire_file_path, question_file_path, response_file_path, Prefixer
+from .upload_path import questionnaire_file_path, question_file_path, response_file_path, questionnaire_pj_file_path, Prefixer
 
 from user_profiles.models import UserProfile
 
@@ -38,15 +38,24 @@ class FileInfoMixin(object):
 
     @property
     def control(self):
-        if not self.question:
+        if isinstance(self, QuestionFile):
+            if not self.question:
+                return None
+            return self.question.control
+        if not self.questionnaire:
             return None
-        return self.question.control
+        return self.questionnaire.control
+        
 
     @property
     def questionnaire(self):
-        if not self.question:
+        if isinstance(self, QuestionFile):
+            if not self.question:
+                return None
+            return self.question.questionnaire
+        if not self.questionnnaire:
             return None
-        return self.question.questionnaire
+        return self.questionnaire
 
     @property
     def theme(self):
@@ -245,6 +254,36 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         display_text += f' [Q{self.numbering}]'
         display_text += f' - {self.title}'
         return display_text
+
+class QuestionnaireFile(OrderedModel, FileInfoMixin):
+    questionnaire = models.ForeignKey(
+        to='Questionnaire', verbose_name='questionnaire', related_name='questionnaire_files',
+        on_delete=models.CASCADE)
+    file = models.FileField(verbose_name="fichier", upload_to=questionnaire_pj_file_path)
+    order_with_respect_to = 'questionnaire'
+
+    class Meta:
+        ordering = ('questionnaire', 'order')
+        verbose_name = 'Questionnaire: Fichier Annexe'
+        verbose_name_plural = 'Questionnaire: Fichiers Annexes'
+
+    @property
+    def url(self):
+        return reverse('send-questionnaire-pj-file', args=[self.id])
+
+    @property
+    def basename(self):
+        """
+        Name of file, without path.
+        """
+        return os.path.basename(self.file.name)
+
+    @property
+    def downloadname(self):
+        """
+        Name of file, without path.
+        """
+        return self.basename
 
 
 class Theme(OrderedModel, WithNumberingMixin):

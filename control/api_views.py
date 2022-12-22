@@ -19,7 +19,7 @@ from user_profiles.models import Access
 from user_profiles.serializers import AccessSerializer, UserProfileSerializer
 
 from . import serializers as control_serializers
-from .models import (Control, Question, QuestionFile, Questionnaire,
+from .models import (Control, Question, QuestionFile, Questionnaire, QuestionnaireFile,
                      ResponseFile, Theme)
 
 # This signal is triggered after the questionnaire is saved via the API
@@ -146,6 +146,27 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
         # Before creating the QuestionFile, let's check that permission are ok for
         # the associated Question object.
         self.check_object_permissions(self.request, question)
+        serializer.save(file=self.request.data.get('file'))
+
+class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
+                          mixins.ListModelMixin,
+                          mixins.CreateModelMixin,
+                          viewsets.GenericViewSet):
+    serializer_class = control_serializers.QuestionnaireFileSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    filterset_fields = ('questionnaire',)
+    permission_classes = (ControlInspectorAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
+
+    def get_queryset(self):
+        queryset = QuestionnaireFile.objects.filter(
+            questionnaire__in=self.request.user.profile.questionnaires)
+        return queryset
+
+    def perform_create(self, serializer):
+        questionnaire = serializer.validated_data['questionnaire']
+        # Before creating the QuestionFile, let's check that permission are ok for
+        # the associated Question object.
+        self.check_object_permissions(self.request, questionnaire)
         serializer.save(file=self.request.data.get('file'))
 
 

@@ -14,6 +14,10 @@
           Date de réponse souhaitée :
           {{ questionnaire.end_date | DateFormat }}
         </p>
+        <p>
+          <questionnaire-file-list :files="questionnaire.questionnaire_files" :with-delete="false">
+          </questionnaire-file-list>
+        </p>
         <div class="flex-row justify-content-end">
           <div v-if="withTrash" class="mx-2">
             <a class="btn btn-secondary"
@@ -84,10 +88,15 @@ import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
 
+import QuestionnaireFileList from './QuestionnaireFileList'
+
 export default Vue.extend({
   props: ['questionnaire', 'control', 'withTrash'],
   filters: {
     DateFormat,
+  },
+  components: {
+    QuestionnaireFileList,
   },
   computed: {
     exportUrl() {

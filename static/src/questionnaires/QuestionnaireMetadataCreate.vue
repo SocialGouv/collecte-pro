@@ -58,6 +58,11 @@
                         :monday-first="true">
             </datepicker>
           </div>
+          <div class="form-group">
+            <questionnaire-file-upload :questionnaire="questionnaire"></questionnaire-file-upload>
+            <questionnaire-file-list :files="questionnaire.questionnaire_files" :with-delete="true">
+            </questionnaire-file-list>
+          </div>
         </form>
 
       </div>
@@ -71,6 +76,8 @@ import Datepicker from 'vuejs-datepicker'
 import { mapFields } from 'vuex-map-fields'
 import fr from '../utils/vuejs-datepicker-locale-fr'
 import reportValidity from 'report-validity'
+import QuestionnaireFileUpload from './QuestionnaireFileUpload'
+import QuestionnaireFileList from './QuestionnaireFileList'
 
 // eslint-disable-next-line no-multi-str
 const DESCRIPTION_DEFAULT = 'À l’occasion de cette procédure, \
@@ -83,6 +90,7 @@ services pour toute information complémentaire qu’appellerait ce questionnair
 const QuestionnaireMetadataCreate = Vue.extend({
   props: {
     questionnaireNumbering: Number,
+    questionnaire: Object,
   },
   data() {
     return {
@@ -108,6 +116,8 @@ const QuestionnaireMetadataCreate = Vue.extend({
   },
   components: {
     Datepicker,
+    QuestionnaireFileUpload,
+    QuestionnaireFileList,
   },
 })
 

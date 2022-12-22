@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from utils.serializers import DateTimeFieldWihTZ
 
-from .models import Control, Question, QuestionFile, Questionnaire, ResponseFile, Theme
+from .models import Control, Question, QuestionFile, Questionnaire, QuestionnaireFile, ResponseFile, Theme
 
 
 User = get_user_model()
@@ -67,19 +67,25 @@ class ControlDetailUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'email', 'id',)
 
+class QuestionnaireFileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = QuestionnaireFile
+        fields = ('id', 'url', 'basename', 'file', 'questionnaire')
 
 class QuestionnaireSerializer(serializers.ModelSerializer):
     themes = ThemeSerializer(many=True, read_only=True)
     editor = ControlDetailUserSerializer(read_only=True, required=False)
     modified_date = DateTimeFieldWihTZ(source='modified', format='%a %d %B %Y', read_only=True)
     modified_time = DateTimeFieldWihTZ(source='modified', format='%X', read_only=True)
+    questionnaire_files = QuestionnaireFileSerializer(many=True, read_only=True)
 
     class Meta:
         model = Questionnaire
         fields = (
             'id', 'title', 'sent_date', 'end_date', 'description', 'control', 'themes',
             'is_draft', 'is_replied', 'is_finalized', 'editor', 'title_display',
-            'numbering', 'modified_date', 'modified_time', 'has_replies')
+            'numbering', 'modified_date', 'modified_time', 'has_replies', 'questionnaire_files')
 
         extra_kwargs = {'control': {'required': True}}
         # not serialized (yet) : file, order
