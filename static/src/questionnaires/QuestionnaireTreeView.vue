@@ -101,6 +101,17 @@
                 </span>
               </a>
             </template>
+            <template slot="name_filePieceJointe" slot-scope="props">
+              <a :href="props.row.url" target="_blank"
+                rel="noopener noreferrer"
+                class="btn tag tag-orange pull-left btn-file"
+                :title="props.row.name">
+                {{ props.row.short_name }}
+                <span class="tag-addon pb-1">
+                  <em class="fe fe-paperclip" aria-hidden="true"></em>
+                </span>
+              </a>
+            </template>
             <template slot="name_fileCorbeille" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 rel="noopener noreferrer"
@@ -447,7 +458,9 @@ export default Vue.extend({
         /**
          * get formatted item for treeview plugin
          */
-        getTreeViewLevel(item, questionnaireId = null, themeId = null, questionId = null, isAnnexe = false, isCorbeille = false, isFichierAnnexe = false, isFichierCorbeille = false) {
+        getTreeViewLevel(item, questionnaireId = null, themeId = null,
+          questionId = null, isAnnexe = false, isCorbeille = false,
+          isFichierAnnexe = false, isFichierCorbeille = false, isPieceJointe = false, isFichierPieceJointe = false) {
             const maxLength = 100;
             const objectTreeView = {
                 name: '',
@@ -468,6 +481,11 @@ export default Vue.extend({
                 objectTreeView._children = [];
                 objectTreeView._id = 'annexes';
                 objectTreeView.id = questionnaireId + '-' + 'annexes';
+            } else if (isPieceJointe) { // Questionnaire pièces jointes
+                objectTreeView.name = 'Pièces jointes';
+                objectTreeView._children = [];
+                objectTreeView._id = 'piecesjointes';
+                objectTreeView.id = questionnaireId + '-' + 'piecesjointes';
             } else if (isCorbeille) { // Corbeille
                 objectTreeView.name = 'Corbeille';
                 objectTreeView._children = [];
@@ -480,6 +498,13 @@ export default Vue.extend({
                 objectTreeView._showChildren = false;
                 objectTreeView._id = 'fileAnnexe';
                 objectTreeView.id = questionnaireId + '-' + 'annexes' + '-' + item.id;
+            } else if (isFichierPieceJointe) { // Fichier pièce jointe
+                objectTreeView.name = item.basename;
+                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
+                objectTreeView.url = item.url;
+                objectTreeView._showChildren = false;
+                objectTreeView._id = 'filePieceJointe';
+                objectTreeView.id = questionnaireId + '-' + 'piecesjointes' + '-' + item.id;
             } else if (isFichierCorbeille) { // Fichier corbeille
                 objectTreeView.name = item.basename;
                 objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
@@ -621,6 +646,19 @@ export default Vue.extend({
 
                 const objAnnexes = this.getTreeViewLevel(null, element.id, null, null, true);
                 const objCorbeille = this.getTreeViewLevel(null, element.id, null, null, false, true);
+                const objPiecesJointes = this.getTreeViewLevel(null, element.id, null, null, false, false, false, false, true);
+
+                objPiecesJointes._children = accessibleQuestionnaires
+                  .filter(aq => aq.id === element.id)
+                  .flatMap(fq => {
+                    return fq.questionnaire_files
+                    .filter(this.filterByDate)
+                    .flatMap(qf => {
+                        if (qf) {
+                          return this.getTreeViewLevel(qf, element.id, null, null, false, false, false, false, false, true);
+                        }
+                    })
+                  })
 
                 objAnnexes._children = accessibleQuestionnaires
                   .filter(aq => aq.id === element.id)
@@ -673,6 +711,12 @@ export default Vue.extend({
                   objAnnexes._showChildren = false;
                 } else {
                   objQuestionnaire._children.unshift(objAnnexes);
+                }
+
+                if (!objPiecesJointes._children.length) {
+                  objPiecesJointes._showChildren = false;
+                } else {
+                  objQuestionnaire._children.unshift(objPiecesJointes);
                 }
 
                 return objQuestionnaire;

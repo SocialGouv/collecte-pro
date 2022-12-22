@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from rest_framework.exceptions import ParseError
 
-from control.models import Control, Question, Questionnaire, Theme
+from control.models import Control, Question, QuestionFile, Questionnaire, QuestionnaireFile, Theme
 from django.db.models import Q
 
 
@@ -67,6 +67,10 @@ class ControlInspectorAccess(permissions.BasePermission):
             control = obj.questionnaire.control
         elif isinstance(obj, Question):
             control = obj.theme.questionnaire.control
+        elif isinstance(obj, QuestionFile):
+            control = obj.question.theme.questionnaire.control
+        elif isinstance(obj, QuestionnaireFile):
+            control = obj.questionnaire.control
 
         return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 

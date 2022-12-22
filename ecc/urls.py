@@ -27,6 +27,7 @@ admin.site.site_header = 'Collecte-pro Administration'
 
 router = routers.DefaultRouter()
 router.register(r'annexe', control_api_views.QuestionFileViewSet, basename='annexe')
+router.register(r'piecejointe', control_api_views.QuestionnaireFileViewSet, basename='piecejointe')
 router.register(r'config', config_api_views.ConfigViewSet, basename='config')
 router.register(r'control', control_api_views.ControlViewSet, basename='control')
 router.register(r'question', control_api_views.QuestionViewSet, basename='question')
@@ -60,6 +61,7 @@ urlpatterns = [
          control_views.SendQuestionnaireFile.as_view(),
          name='send-questionnaire-file'),
     path('fichier-question/<int:pk>/', control_views.SendQuestionFile.as_view(), name='send-question-file'),
+    path('fichier-pj-questionnaire/<int:pk>/', control_views.SendQuestionnairePjFile.as_view(), name='send-questionnaire-pj-file'),
     path('fichier-reponse/<int:pk>/', control_views.SendResponseFile.as_view(), name='send-response-file'),
     path('fichier-reponses-deposees/<int:pk>/', control_views.SendResponseFileList.as_view(), name='send-response-file-list'),
 

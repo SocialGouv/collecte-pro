@@ -12,6 +12,7 @@ backend['questionnaire-edit'](4) ---> 'questionnaire/modifier/4/'
 // Todo : make query to /api/ to get this
 const apiUrls = {
   annexe: '/api/annexe/',
+  piecejointe: '/api/piecejointe/',
   control: '/api/control/',
   question: '/api/question/',
   questionnaire: '/api/questionnaire/',
