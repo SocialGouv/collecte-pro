@@ -112,6 +112,17 @@
                 </span>
               </a>
             </template>
+            <template slot="name_filePieceJointe" slot-scope="props">
+              <a :href="props.row.url" target="_blank"
+                rel="noopener noreferrer"
+                class="btn tag tag-orange pull-left btn-file"
+                :title="props.row.name">
+                {{ props.row.short_name }}
+                <span class="tag-addon pb-1">
+                  <em class="fe fe-paperclip" aria-hidden="true"></em>
+                </span>
+              </a>
+            </template>
             <template slot="name_fileCorbeille" slot-scope="props">
               <a :href="props.row.url" target="_blank"
                 rel="noopener noreferrer"
