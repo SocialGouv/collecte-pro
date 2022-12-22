@@ -41,7 +41,7 @@
                   @click="updateEditingState('audited')"
                   class="btn btn-primary">
             <em class="fe fe-plus" aria-hidden="true"></em>
-            Ajouter une personne
+            Ajouter un répondant
           </button>
         </div>
         <user-list :users="auditedUsers" profile-type="audited"

@@ -33,7 +33,7 @@
                     class="custom-control-input"
                     required>
             <span class="custom-control-label">
-              En cas de contrôle juridictionnel, je confirme que la suppression
+              Je confirme que la suppression
               des données, n'impacte pas la suite de la procédure, en cas de
               contentieux notamment.
             </span>
