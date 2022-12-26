@@ -33,9 +33,8 @@
                     class="custom-control-input"
                     required>
             <span class="custom-control-label">
-              Je confirme que la suppression
-              des données, n'impacte pas la suite de la procédure, en cas de
-              contentieux notamment.
+              Je confirme que la suppression des données n'impacte pas la suite
+              de la procédure, en cas de contentieux notamment.
             </span>
           </label>
         </fieldset>
