@@ -3,12 +3,27 @@
   <error-bar v-if="errorMessage" @dismissed="clearError">
     <p>{{ errorMessage }}</p>
   </error-bar>
-  <div>
+  <div v-if="questionnaire.id">
     <label class="btn btn-primary">
       <em class="fe fe-upload mr-2"></em>
       Ajouter une pièce jointe
       <input type="file" ref="fileInput" v-on:change="handleFileUpload()" hidden/>
     </label>
+  </div>
+  <div v-else>
+    <label class="btn btn-primary disabled" >
+      <em class="fe fe-upload mr-2" ></em>
+      Ajouter une pièce jointe
+    </label>
+    <div class="small">
+      Pour pouvoir ajouter des pièces jointes,
+    </div>
+    <div class="small">
+      vous devez d'abord enregistrer
+    </div>
+    <div class="small">
+      votre brouillon.
+    </div>
   </div>
 </div>
 </template>
@@ -21,7 +36,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
   props: {
-    questionnaire: Object,
+    questionnaire: { type: Object, default: () => ({}) },
   },
   data () {
     return {
