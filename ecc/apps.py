@@ -33,6 +33,7 @@ class EccConfig(AppConfig):
         registry.register(apps.get_model('tos.CGUItem'))
         registry.register(apps.get_model('parametres.Parametre'))
         registry.register(apps.get_model('alerte.Alert'))
+        registry.register(apps.get_model('control.QuestionnaireFile'))
         registry.register(get_user_model())
 
         # Signals

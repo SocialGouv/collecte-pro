@@ -48,7 +48,7 @@
               id="questionnaire-metadata-create"
               ref="questionnaireMetadataCreate"
               :questionnaire-numbering="questionnaireNumbering"
-              :questionnaire="questionnaire"
+              :questionnaire="currentQuestionnaire"
               v-show="state === STATES.START">
       </questionnaire-metadata-create>
       <questionnaire-body-create
@@ -443,23 +443,24 @@ export default Vue.extend({
       this.saveMessage.isSaveHappening = false
     },
     saveDraft() {
-      this.currentQuestionnaire.is_draft = true
-      this.displaySaveInProgress()
-      return this._doSave()
+      const self = this
+      self.currentQuestionnaire.is_draft = true
+      self.displaySaveInProgress()
+      return self._doSave()
         .then((response) => {
-          console.log('Successful draft save.')
-          this.currentQuestionnaire = response.data
-          this.emitQuestionnaireUpdated()
+          console.debug('Successful draft save.')
+          self.currentQuestionnaire = response.data
+          self.emitQuestionnaireUpdated()
 
-          this.displaySavingDone(nowTimeString())
+          self.displaySavingDone(nowTimeString())
           return response.data
         })
         .catch((error) => {
           console.error('Error in draft save :', error)
           const errorToDisplay =
             (error.response && error.response.data) ? error.response.data : error
-          this.displayErrors('Erreur lors de la sauvegarde du brouillon.', errorToDisplay)
-          this.displaySavingDoneWithError()
+          self.displayErrors('Erreur lors de la sauvegarde du brouillon.', errorToDisplay)
+          self.displaySavingDoneWithError()
         })
     },
     startPublishFlow() {
