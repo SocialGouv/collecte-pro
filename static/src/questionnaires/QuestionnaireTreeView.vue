@@ -119,7 +119,7 @@
                 :title="props.row.name">
                 {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
-                  <em class="fe fe-paperclip" aria-hidden="true"></em>
+                  <span class="fe fe-paperclip" aria-hidden="true"></span>
                 </span>
               </a>
             </template>
