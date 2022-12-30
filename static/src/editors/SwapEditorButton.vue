@@ -2,7 +2,7 @@
   <div>
     <div class="alert alert-info flex-row justify-content-between" role="alert">
       <div class="mt-2">
-        <em class="fe fe-users mr-1" aria-hidden="true"></em>
+        <span class="fe fe-users mr-1" aria-hidden="true"></span>
         <strong>Vous</strong> êtes actuellement le rédacteur de ce questionnaire.
       </div>
       <div class="text-right">
@@ -10,7 +10,7 @@
           class="btn btn-primary"
           title="Transférer les droits de rédaction..."
           @click="saveDraft">
-          <em class="fa fa-exchange-alt mr-1" aria-hidden="true"></em>
+          <span class="fa fa-exchange-alt mr-1" aria-hidden="true"></span>
           Transférer les droits de rédaction...
         </button>
       </div>

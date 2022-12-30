@@ -28,7 +28,7 @@
         <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
       <h2 class="card-title">
-        <em class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></em>
+        <span class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></span>
         <span>{{isList ? 'Questionnaires' : 'Documents'}}</span>
       </h2>
     </div>
@@ -39,7 +39,7 @@
         class="alert alert-icon alert-secondary m-2"
         role="status"
       >
-        <em class="fe fe-info mr-2" aria-hidden="true"></em>
+        <span class="fe fe-info mr-2" aria-hidden="true"></span>
         Il n'y a pas encore de questionnaire pour cet espace de dépôt.
       </div>
       <table v-else class="table card-table table-vcenter">
@@ -122,7 +122,7 @@
                       <a class="btn btn-secondary"
                         :href="questionnaireDetailUrl(questionnaire.id)"
                         title="Déposer et consulter vos réponses">
-                        <em class="fe fe-eye" aria-hidden="true"></em>
+                        <span class="fe fe-eye" aria-hidden="true"></span>
                         Répondre
                       </a>
                        <button
@@ -140,7 +140,7 @@
                         type="button"
                         @click="markQuestionnaireAsReplied(questionnaire.id)"
                       >
-                        <em class="fe fe-check" aria-hidden="true"></em>
+                        <span class="fe fe-check" aria-hidden="true"></span>
                         Marquer comme répondu
                       </button>
                     </div>
@@ -152,7 +152,7 @@
                     class="btn btn-primary ml-2"
                     title="Déposer et consulter vos réponses"
                   >
-                    <em class="fe fe-eye" aria-hidden="true"></em>
+                    <span class="fe fe-eye" aria-hidden="true"></span>
                     Répondre
                   </a>
                 </div>
@@ -170,7 +170,7 @@
                       <a class="btn btn-secondary"
                         :href="questionnaireEditUrl(questionnaire.id)"
                         title="Modifier le brouillon de questionnaire">
-                        <em class="fe fe-edit" aria-hidden="true"></em>
+                        <span class="fe fe-edit" aria-hidden="true"></span>
                         Modifier
                       </a>
                        <button
@@ -188,7 +188,7 @@
                         type="button"
                         @click="startQuestionnaireDeleteFlow(questionnaire.id)"
                       >
-                        <em class="fe fe-trash-2" aria-hidden="true"></em>
+                        <span class="fe fe-trash-2" aria-hidden="true"></span>
                         Supprimer
                       </button>
                     </div>
@@ -202,7 +202,7 @@
                       class="btn btn-primary ml-2"
                       title="Voir le brouillon de questionnaire"
                     >
-                      <em class="fe fe-eye" aria-hidden="true"></em>
+                      <span class="fe fe-eye" aria-hidden="true"></span>
                       Consulter
                     </a>
                   </div>
@@ -215,7 +215,7 @@
                       title="Voir le questionnaire publié"
                       class="btn btn-secondary"
                     >
-                      <em class="fe fe-eye" aria-hidden="true"></em>
+                      <span class="fe fe-eye" aria-hidden="true"></span>
                       Consulter
                     </a>
                     <button
@@ -233,14 +233,14 @@
                         type="button"
                         @click="showModal(questionnaire.id)"
                       >
-                        <em class="fe fe-copy" aria-hidden="true"></em>
+                        <span class="fe fe-copy" aria-hidden="true"></span>
                         Dupliquer
                       </button>
                       <button class="dropdown-item"
                               type="button"
                               @click="exportControl(questionnaire.id)"
                       >
-                        <em class="fas fa-file-export mr-2" aria-hidden="true"></em>
+                        <span class="fas fa-file-export mr-2" aria-hidden="true"></span>
                         Exporter (.zip)
                       </button>
                       <button
@@ -249,7 +249,7 @@
                         type="button"
                         @click="markQuestionnaireAsFinalized(questionnaire.id)"
                       >
-                        <em class="fe fe-check" aria-hidden="true"></em>
+                        <span class="fe fe-check" aria-hidden="true"></span>
                         Marquer comme finalisé
                       </button>
                     </div>
@@ -271,7 +271,7 @@
       class="card-footer flex-row justify-content-end"
     >
       <a :href="questionnaireCreateUrl" class="btn btn-primary">
-        <em class="fe fe-plus" aria-hidden="true"></em>
+        <span class="fe fe-plus" aria-hidden="true"></span>
         Ajouter un questionnaire
       </a>
     </div>

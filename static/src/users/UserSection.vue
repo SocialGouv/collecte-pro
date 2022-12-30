@@ -3,7 +3,7 @@
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header">
       <h2 class="card-title">
-        <em class="fe fe-users mr-2" aria-hidden="true"></em>
+        <span class="fe fe-users mr-2" aria-hidden="true"></span>
         <span>Qui a accès à cet espace ?</span>
       </h2>
     </div>
@@ -12,7 +12,7 @@
       <div class="card">
         <div class="card-header justify-content-between">
           <h3 class="card-title">
-            <em class="fa fa-university mr-2" aria-hidden="true"></em>
+            <span class="fa fa-university mr-2" aria-hidden="true"></span>
             <strong>Équipe d'instruction</strong>
           </h3>
           <button v-if="accessType === 'demandeur'"
@@ -20,7 +20,7 @@
                   data-target="#addUserModal"
                   @click="updateEditingState('inspector')"
                   class="btn btn-primary">
-            <em class="fe fe-plus" aria-hidden="true"></em>
+            <span class="fe fe-plus" aria-hidden="true"></span>
             Ajouter un demandeur
           </button>
         </div>
@@ -32,7 +32,7 @@
       <div class="card mb-0">
         <div class="card-header justify-content-between">
           <h3 class="card-title">
-            <em class="fa fa-building mr-2" aria-hidden="true"></em>
+            <span class="fa fa-building mr-2" aria-hidden="true"></span>
             <strong>Organisme interrogé</strong>
           </h3>
           <button v-if="accessType === 'demandeur'"
@@ -40,7 +40,7 @@
                   data-target="#addUserModal"
                   @click="updateEditingState('audited')"
                   class="btn btn-primary">
-            <em class="fe fe-plus" aria-hidden="true"></em>
+            <span class="fe fe-plus" aria-hidden="true"></span>
             Ajouter un répondant
           </button>
         </div>

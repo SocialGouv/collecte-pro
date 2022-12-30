@@ -42,19 +42,19 @@
             </span>
             <span class="form-group col-sm-3" v-if="filter!=='' || !(!this.date_filter_start && !this.date_filter_end)">
               <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <em class="fa-file-export fas mr-2" aria-hidden="true"></em>
+                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
                 Exporter les documents filtrés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else-if="this.selected.length">
               <button @click="exportSelected" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <em class="fa-file-export fas mr-2" aria-hidden="true"></em>
+                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
                 Exporter les documents sélectionnés
               </button>
             </span>
             <span class="form-group col-sm-3" v-else>
               <button @click="exportAll" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <em class="fa-file-export fas mr-2" aria-hidden="true"></em>
+                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
                 Exporter tous les documents
               </button>
             </span>
@@ -86,7 +86,7 @@
                 :title="props.row.name">
                 {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
-                  <em class="fe fe-file" aria-hidden="true"></em>
+                  <span class="fe fe-file" aria-hidden="true"></span>
                 </span>
               </a>
             </template>
@@ -97,7 +97,7 @@
                 :title="props.row.name">
                 {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
-                  <em class="fe fe-paperclip" aria-hidden="true"></em>
+                  <span class="fe fe-paperclip" aria-hidden="true"></span>
                 </span>
               </a>
             </template>
@@ -108,7 +108,7 @@
                 :title="props.row.name">
                 {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
-                  <em class="fe fe-paperclip" aria-hidden="true"></em>
+                  <span class="fe fe-paperclip" aria-hidden="true"></span>
                 </span>
               </a>
             </template>
@@ -119,7 +119,7 @@
                 :title="props.row.name">
                 {{ props.row.short_name }}
                 <span class="tag-addon pb-1">
-                  <em class="fe fe-trash-2" aria-hidden="true"></em>
+                  <span class="fe fe-trash-2" aria-hidden="true"></span>
                 </span>
               </a>
             </template>
@@ -127,8 +127,8 @@
             <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
             <template slot="no-rows">Pas de résultat</template>
             <template slot="toggle-children-icon" slot-scope="props">
-              <em class="fe fe-folder-minus" v-if="props.expanded" aria-hidden="true"></em>
-              <em class="fe fe-folder-plus" v-else aria-hidden="true"></em>
+              <span class="fe fe-folder-minus" v-if="props.expanded" aria-hidden="true"></span>
+              <span class="fe fe-folder-plus" v-else aria-hidden="true"></span>
               &nbsp;
             </template>
         </vue-ads-table>

@@ -2,7 +2,7 @@
   <empty-modal :no-close="noClose">
     <div class="modal-header border-bottom-0">
       <div id="modal_title" class="modal-title">
-        <em :class="iconClass + ' mr-2'"></em>
+        <span :class="iconClass + ' mr-2'"></span>
         {{ title }}
       </div>
       <button v-if="!noClose"

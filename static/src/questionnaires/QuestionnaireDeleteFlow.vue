@@ -38,7 +38,7 @@
                 class="btn btn-primary btn-red"
                 title="Forcer le transfert"
         >
-          <em class="fe fe-trash-2 mr-1" aria-hidden="true"></em>
+          <span class="fe fe-trash-2 mr-1" aria-hidden="true"></span>
           Supprimer
         </button>
       </div>
@@ -51,7 +51,7 @@
     <template v-slot:success-modal-body>
       <div class="modal-header border-bottom-0 flex-column align-items-center">
         <p>
-          <em class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></em>
+          <span class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></span>
         </p>
         <p id="modal_title" class="text-center">
           Le questionnaire a bien été supprimé.

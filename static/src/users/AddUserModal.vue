@@ -11,10 +11,10 @@
           L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
-            <h4><em class="fa fa-university mr-2" aria-hidden="true"></em><strong>Équipe d'instruction</strong></h4>
+            <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
         </div>
         <div v-if="editingProfileType==='audited'" class="text-center">
-            <h4><em class="fa fa-building mr-2" aria-hidden="true"></em><strong>Organisme interrogé</strong></h4>
+            <h4><span class="fa fa-building mr-2" aria-hidden="true"></span><strong>Organisme interrogé</strong></h4>
         </div>
 
         <info-bar>
@@ -56,26 +56,26 @@
                      aria-labelledby="email-confirm-label"
                      aria-describedby="erreur-email">
               <p class="text-muted pl-2" v-if="errors.email" id="erreur-email">
-                <em class="fa fa-warning" aria-hidden="true"></em>
+                <span class="fa fa-warning" aria-hidden="true"></span>
                 {{ errors.email.join(' / ')}}
               </p>
             </div>
           </div>
           <div class="flex-row justify-content-between">
             <button type="button" class="btn btn-secondary" @click="cancel">
-              <em class="fa fa-times mr-2" aria-hidden="true"></em>
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
               Annuler
             </button>
             <button type="submit" class="btn btn-primary">
               Suivant
-              <em class="fa fa-chevron-right ml-2" aria-hidden="true"></em>
+              <span class="fa fa-chevron-right ml-2" aria-hidden="true"></span>
             </button>
           </div>
         </form>
 
         <form @submit.prevent="findUser" v-if="stepShown === 1.5" @keydown.esc="resetFormData">
           <div class="alert alert-warning alert-icon my-8" role="alert">
-            <em class="fa fa-exclamation-circle mr-2" aria-hidden="true" aria-hidden="true"></em>
+            <span class="fa fa-exclamation-circle mr-2" aria-hidden="true" aria-hidden="true"></span>
             <div class="mb-4">
               Vous allez ajouter
               <strong>{{ formData.email }}</strong>
@@ -94,18 +94,18 @@
           </div>
           <div class="flex-row justify-content-between">
             <button type="button" class="btn btn-secondary" @click="cancel">
-              <em class="fa fa-times mr-2" aria-hidden="true"></em>
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
               Annuler
             </button>
             <div class="text-right">
               <button type="button" class="btn btn-secondary" @click="back">
                 C'est une erreur,<br/>
-                <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
+                <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
                 Retour
               </button>
               <button type="submit" class="btn btn-primary">
                 C'est volontaire,<br/>Suivant
-                <em class="fa fa-chevron-right ml-2" aria-hidden="true"></em>
+                <span class="fa fa-chevron-right ml-2" aria-hidden="true"></span>
               </button>
             </div>
           </div>
@@ -123,22 +123,22 @@
             <div class="form-group">
               <label class="form-label" for="prenom">Prénom<span class="form-required"></span></label>
               <input id="prenom" type="given-name" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" placeholder="prenom" required>
-              <p class="text-muted pl-2" v-if="errors.first_name"><em class="fa fa-warning" aria-hidden="true"></em> {{ errors.first_name.join(' / ')}}</p>
+              <p class="text-muted pl-2" v-if="errors.first_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.first_name.join(' / ')}}</p>
             </div>
             <div class="form-group">
               <label class="form-label" for="nom">Nom<span class="form-required"></span></label>
               <input id="nom" type="family-name" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" placeholder="nom" required>
-              <p class="text-muted pl-2" v-if="errors.last_name"><em class="fa fa-warning" aria-hidden="true"></em> {{ errors.last_name.join(' / ')}}</p>
+              <p class="text-muted pl-2" v-if="errors.last_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.last_name.join(' / ')}}</p>
             </div>
           </fieldset>
           <div class="flex-row justify-content-between">
             <button type="button" class="btn btn-secondary" @click="cancel">
-              <em class="fa fa-times mr-2" aria-hidden="true"></em>
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
               Annuler
             </button>
             <div class="text-right">
               <button type="button" class="btn btn-secondary" @click="back">
-                <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
+                <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
                 Retour
               </button>
               <button type="submit" class="btn btn-primary">Ajouter</button>
@@ -149,7 +149,7 @@
         <div v-if="stepShown === 3" class="flex-column align-items-center">
 
           <div class="flex-row align-items-center">
-            <em class="fe fe-check-circle fg-success big-icon mr-4" aria-hidden="true"></em>
+            <span class="fe fe-check-circle fg-success big-icon mr-4" aria-hidden="true"></span>
             <h4 class="mb-0"> Utilisateur ajouté</h4>
           </div>
 
