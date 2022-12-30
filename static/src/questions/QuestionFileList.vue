@@ -17,7 +17,7 @@
             <button @click.prevent="deleteFile(file.id)"
                     class="btn btn-link"
                     title="Supprimer le fichier">
-              <em class="fe fe-trash-2" aria-hidden="true"></em>
+              <span class="fe fe-trash-2" aria-hidden="true"></span>
               <span class="sr-only">Supprimer le fichier</span>
             </button>
           </span>

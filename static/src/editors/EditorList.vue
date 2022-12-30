@@ -15,7 +15,7 @@
               class="btn btn-secondary"
               title="Transférer"
               @click="swapEditor(user)">
-                <em class="fa fa-exchange-alt mr-2" aria-hidden="true"></em>
+                <span class="fa fa-exchange-alt mr-2" aria-hidden="true"></span>
                 Transférer
             </button>
           </div>

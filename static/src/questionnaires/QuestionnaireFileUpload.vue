@@ -5,14 +5,14 @@
   </error-bar>
   <div v-if="questionnaire.id">
     <label class="btn btn-primary">
-      <em class="fe fe-upload mr-2"></em>
+      <span class="fe fe-upload mr-2"></span>
       Ajouter une pièce jointe
       <input type="file" ref="fileInput" v-on:change="handleFileUpload()" hidden/>
     </label>
   </div>
   <div v-else>
     <label class="btn btn-primary disabled" >
-      <em class="fe fe-upload mr-2" ></em>
+      <span class="fe fe-upload mr-2" ></span>
       Ajouter une pièce jointe
     </label>
     <div class="small">

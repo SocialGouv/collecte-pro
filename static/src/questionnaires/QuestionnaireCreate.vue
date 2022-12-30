@@ -9,7 +9,7 @@
     </swap-editor-button>
     <div class="page-header">
       <div class="page-title flex-wrap">
-        <em class="fe fe-list mr-2" aria-hidden="true"></em>
+        <span class="fe fe-list mr-2" aria-hidden="true"></span>
         <span v-if="currentQuestionnaire.is_draft || currentQuestionnaire.id === undefined"
               class="tag tag-azure big-tag round-tag font-italic mr-2">
           Brouillon
@@ -74,7 +74,7 @@
               class="btn btn-secondary"
               @click="saveDraftAndGoHome"
       >
-        <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
+        <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
         Retour
       </button>
       <div>
@@ -82,7 +82,7 @@
                 id="back-button"
                 @click="back"
                 class="btn btn-secondary">
-          <em class="fa fa-chevron-left mr-2" aria-hidden="true"></em>
+          <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
           Etape {{ state - 1 }}
         </button>
         <button v-if="state === STATES.CREATING_BODY"
@@ -92,12 +92,12 @@
                 class="btn btn-secondary"
                 @click="saveAndShowMoveThemesModal"
                 title="Réorganiser les thèmes">
-          <em class="fa fa-exchange-alt fa-rotate-90" aria-hidden="true"></em>
+          <span class="fa fa-exchange-alt fa-rotate-90" aria-hidden="true"></span>
           Réorganiser les thèmes
         </button>
         <button @click="validateFormAndSaveDraft"
                 class="btn btn-primary">
-          <em class="fe fe-save" aria-hidden="true"></em>
+          <span class="fe fe-save" aria-hidden="true"></span>
           Enregistrer
         </button>
         <button v-if="state !== STATES.PREVIEW"
@@ -105,7 +105,7 @@
                 @click="next"
                 class="btn btn-secondary">
           Etape {{ state + 1 }}
-          <em class="fa fa-chevron-right ml-2" aria-hidden="true"></em>
+          <span class="fa fa-chevron-right ml-2" aria-hidden="true"></span>
         </button>
         <button v-if="state === STATES.PREVIEW"
                 id="publishButton"
@@ -113,7 +113,7 @@
                 @click="startPublishFlow()"
                 class="btn btn-primary ml-5"
                 title="Publier le questionnaire à l'organisme interrogé">
-          <em class="fa fa-rocket mr-1" aria-hidden="true"></em>
+          <span class="fa fa-rocket mr-1" aria-hidden="true"></span>
           Publier
         </button>
       </div>
@@ -121,15 +121,15 @@
     <div class="flex-row justify-content-end mt-2">
       <div v-if="saveMessage.isWaitingForMinDisplayTime || saveMessage.isSaveHappening"
            style="min-height: 1.5rem;">
-        <em class="fas fa-sync-alt mr-2" aria-hidden="true"></em>
+        <span class="fas fa-sync-alt mr-2" aria-hidden="true"></span>
         Enregistrement en cours ...
       </div>
       <div v-else
            :class="{ 'text-danger': hasErrors, 'text-muted': !hasErrors }"
            class="flex-row align-items-center"
            style="min-height: 1.5rem;">
-        <em v-if="hasErrors" class="fe fe-alert-triangle mr-2" aria-hidden="true"></em>
-        <em v-else class="fe fe-check-circle mr-2" aria-hidden="true"></em>
+        <span v-if="hasErrors" class="fe fe-alert-triangle mr-2" aria-hidden="true"></span>
+        <span v-else class="fe fe-check-circle mr-2" aria-hidden="true"></span>
         {{ saveMessage.text }}
       </div>
     </div>

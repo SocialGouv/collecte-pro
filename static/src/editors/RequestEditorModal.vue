@@ -3,7 +3,7 @@
     <div class="modal-dialog large-modal" role="document">
       <div class="modal-content">
         <div class="modal-header border-bottom-0" aria-labelledby="modal_title">
-          <em class="fa fa-exchange-alt mr-2 mt-3" aria-hidden="true"></em>
+          <span class="fa fa-exchange-alt mr-2 mt-3" aria-hidden="true"></span>
           <div id="modal_title" class="modal-title">
             <div class="modal-title">Obtenir les droits de rédaction du questionnaire</div>
           </div>
@@ -33,7 +33,7 @@
                   <h4>Votre collègue n'est pas disponible ?</h4>
                   <p>Vous pouvez forcer le transfert des droits.</p>
                   <div class="alert alert-icon alert-danger" role="alert">
-                    <em class="fe fe-alert-triangle mr-2" aria-hidden="true"></em>
+                    <span class="fe fe-alert-triangle mr-2" aria-hidden="true"></span>
                     Attention, dans ce cas toute modification non enregistrée par votre collègue sera perdue.
                   </div>
                   <div class="mb-4" v-if="questionnaire.modified_date">
@@ -45,7 +45,7 @@
                     class="btn btn-primary"
                     title="Forcer le transfert des droits..."
                     @click="requestEditor()">
-                    <em class="fa fa-exchange-alt mr-1" aria-hidden="true"></em>
+                    <span class="fa fa-exchange-alt mr-1" aria-hidden="true"></span>
                     Forcer le transfert des droits...
                   </button>
                 </div>
