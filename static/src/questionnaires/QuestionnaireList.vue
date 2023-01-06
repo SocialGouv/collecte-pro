@@ -232,6 +232,7 @@
                         class="dropdown-item"
                         type="button"
                         @click="showModal(questionnaire.id)"
+                        v-if="controlsInspected.length"
                       >
                         <span class="fe fe-copy" aria-hidden="true"></span>
                         Dupliquer
