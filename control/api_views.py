@@ -236,7 +236,8 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             return [permission() for permission in self.permission_classes_by_action["create"]]
 
     def get_queryset(self):
-        control = Control.objects.get(pk=self.request.data.get("control"))
+        questionnaire = Questionnaire.objects.get(pk=self.request.data.get("id"))
+        control = questionnaire.control
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
