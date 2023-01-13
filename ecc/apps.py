@@ -34,6 +34,7 @@ class EccConfig(AppConfig):
         registry.register(apps.get_model('parametres.Parametre'))
         registry.register(apps.get_model('alerte.Alert'))
         registry.register(apps.get_model('control.QuestionnaireFile'))
+        registry.register(apps.get_model('user_profiles.Access'))
         registry.register(get_user_model())
 
         # Signals

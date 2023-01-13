@@ -2,7 +2,14 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from .models import UserProfile, UserIpAddress
+from .models import Access, UserProfile, UserIpAddress
+
+
+@admin.register(Access)
+class AccessAdmin(admin.ModelAdmin):
+    list_display = ('userprofile', 'control', 'access_type')
+    list_filter = ('userprofile', 'control', 'access_type')
+    search_fields = ('userprofile__user__username', 'userprofile__user__email')
 
 
 @admin.register(UserProfile)

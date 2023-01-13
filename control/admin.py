@@ -16,7 +16,7 @@ from ordered_model.admin import OrderedTabularInline, OrderedInlineModelAdminMix
 
 from soft_deletion.admin import SoftDeletedAdmin, IsActiveFilter
 
-from .models import Control, Questionnaire, Theme, Question, QuestionFile, ResponseFile
+from .models import Control, Questionnaire, Theme, Question, QuestionFile, ResponseFile, QuestionnaireFile
 from .questionnaire_duplicate import QuestionnaireDuplicateMixin
 from user_profiles.models import UserProfile
 
@@ -97,6 +97,14 @@ class ThemeInline(OrderedTabularInline):
     extra = 1
 
 
+class QuestionnaireFileInline(OrderedTabularInline):
+    model = QuestionnaireFile
+    fields = (
+        'id', 'file', 'order', 'move_up_down_links')
+    readonly_fields = ('id', 'order', 'move_up_down_links')
+    extra = 1
+
+
 @admin.register(Questionnaire)
 class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinksMixin):
     save_as = True
@@ -109,7 +117,7 @@ class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMix
     list_filter = ('control', 'is_draft')
     raw_id_fields = ('editor', 'control')
     actions = ['megacontrol_admin_action']
-    inlines = (ThemeInline, )
+    inlines = (ThemeInline, QuestionnaireFileInline, )
 
 
 class QuestionInline(OrderedTabularInline):
@@ -153,43 +161,6 @@ class QuestionAdmin(OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinks
     list_filter = ('theme__questionnaire__control',)
     search_fields = ('description',)
     inlines = (QuestionFileInline, ResponseFileInline,)
-
-
-@admin.register(ResponseFile)
-class ResponseFileAdmin(ReadOnlyModelAdmin, admin.ModelAdmin, ParentLinksMixin):
-    def is_active(self, obj):
-        return not obj.is_deleted
-    is_active.boolean = True
-    is_active.short_description = u"Actif ou corbeille?"
-
-    list_display = (
-        'id', 'file_name', 'link_to_question', 'link_to_theme', 'link_to_questionnaire',
-        'link_to_control', 'created', 'author', 'is_active')
-    list_display_links = ('id',)
-    date_hierarchy = 'created'
-    list_filter = ('question__theme__questionnaire__control',)
-    fields = (
-        'id', 'author', 'file_name', 'link_to_question', 'link_to_questionnaire', 'link_to_control',
-        'created', 'modified', 'is_active')
-    readonly_fields = ('file_name', 'is_active', 'link_to_question', 'link_to_questionnaire', 'link_to_control')
-    search_fields = (
-        'file', 'question__description', 'author__first_name', 'author__last_name',
-        'author__username', 'author__email')
-
-
-@admin.register(QuestionFile)
-class QuestionFileAdmin(admin.ModelAdmin, ParentLinksMixin):
-    list_display = (
-        'id', 'file', 'link_to_question', 'link_to_theme', 'link_to_questionnaire',
-        'link_to_control')
-    list_display_links = ('id',)
-    list_filter = ('question__theme__questionnaire__control',)
-    fields = (
-        'id', 'file', 'question', 'order', 'link_to_questionnaire', 'link_to_control')
-    readonly_fields = (
-        'id', 'order', 'link_to_questionnaire', 'link_to_control')
-    search_fields = ('file', 'question__description')
-    raw_id_fields = ('question',)
 
 
 @method_decorator(staff_member_required, name='dispatch')
