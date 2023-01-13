@@ -22,8 +22,10 @@ from . import serializers as control_serializers
 from .models import (Control, Question, QuestionFile, Questionnaire, QuestionnaireFile,
                      ResponseFile, Theme)
 
-# This signal is triggered after the questionnaire is saved via the API
+# This signal is triggered after the questionnaire is created via the API
 questionnaire_api_post_save = django.dispatch.Signal()
+# This signal is triggered after the questionnaire is saved via the API
+questionnaire_api_post_update = django.dispatch.Signal()
 
 
 class ControlViewSet(mixins.CreateModelMixin,
@@ -344,6 +346,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         response.data = control_serializers.QuestionnaireSerializer(instance=saved_qr).data
         if not is_update:
             questionnaire_api_post_save.send(sender=Questionnaire, instance=saved_qr)
+        questionnaire_api_post_update.send(sender=Questionnaire, instance=saved_qr, session_user=self.request.user)
         return response
 
     def create(self, request, *args, **kwargs):
