@@ -18,6 +18,11 @@ import Vue from 'vue'
 
 export default Vue.extend({
   name: 'ControlDetail',
+  data: function() {
+    return {
+      noAccess: false,
+    }
+  },
   components: {
     ControlPage,
     Sidebar,
