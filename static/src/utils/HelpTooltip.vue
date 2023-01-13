@@ -1,5 +1,5 @@
 <template>
-  <span data-toggle="tooltip" data-placement="right" :title="text" class="help-tooltip">
+  <span data-html="true" data-toggle="tooltip" data-placement="right" :title="text" class="help-tooltip">
     <span :class="iconClass"></span>
   </span>
 </template>

@@ -49,10 +49,11 @@
             <th v-if="accessType === 'demandeur'" scope="col">
               Statut
               <help-tooltip
-                text="Un questionnaire est d'abord en Brouillon : il est modifiable et
-                                  l'organisme interrogé ne le voit pas. Puis il est Publié : il
-                                  n'est plus modifiable et l'organisme interrogé le voit."
-              >
+                text="Brouillon : modifiable, l'organisme interrogé ne le voit pas<br />
+Publié : non modifiable, l'organisme interrogé le voit<br />
+En cours : l'organisme interrogé a commencé à déposer les réponses<br />
+Répondu : l'organisme interrogé a fini de répondre au questionnaire<br />
+Finalisé : l'instruction des pièces déposées est achevée">
               </help-tooltip>
             </th>
             <th scope="col">Titre</th>

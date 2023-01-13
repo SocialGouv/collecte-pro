@@ -382,3 +382,13 @@ background-color: #f5d2d2;
 color: #6b1110;
 padding: 1rem 0;
 }
+
+/* tooltip */
+.tooltip {
+max-width: 26rem;
+}
+
+.tooltip-inner {
+text-align: left;
+max-width: 100%;
+}
