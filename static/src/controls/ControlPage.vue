@@ -81,7 +81,13 @@ export default Vue.extend({
       if (isNaN(controlId)) {
         return false
       }
-      return this.controls.map(control => control.id).includes(controlId)
+      if (this.controls.map(control => control.id).includes(controlId)) {
+        return true;
+      } else {
+        // Le contrôle souhaité n'est pas accessible, on le signale
+        this.$parent.noAccess = true;
+        return false;
+      }
     }
 
     const updateHash = () => {
@@ -90,8 +96,6 @@ export default Vue.extend({
         // Change the hash to select the first control in the list, which will trigger the
         // hashchange event again.
         window.location.hash = '#control-' + this.controls[0].id
-        // Le contrôle souhaité n'est pas accessible, on le signale
-        this.$parent.noAccess = true;
         return
       }
       this.hash = window.location.hash
