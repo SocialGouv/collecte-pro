@@ -19,7 +19,7 @@
   <ul>
     {% for profile in inspectors %}
       <li>
-        {{ profile.user.first_name }} {{ profile.user.last_name }}
+        {{ profile.userprofile.user.first_name }} {{ profile.userprofile.user.last_name }}
       </li>
     {% endfor %}
   </ul>
@@ -27,7 +27,7 @@
 
 <p>
   Si vous pensez ne pas être le bon destinataire de ce message, ou si cette suppression est une
-  erreur, vous pouvez nous contacter en {{ support_email_url|obfuscate_mailto:"écrivant au support" }}.
+  erreur, vous pouvez nous contacter en {{ support_team_email|obfuscate_mailto:"écrivant au support" }}.
 </p>
 
 <p>Merci beaucoup,</p>
