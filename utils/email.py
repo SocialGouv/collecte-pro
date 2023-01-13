@@ -6,9 +6,6 @@ from django.template import loader
 from actstream import action
 
 
-current_site = Site.objects.get_current()
-
-
 def add_log_entry(site, verb, to, cc, subject, error=''):
     log_message = f'Envoi email "{subject}" à : {to}.'
     if cc:
@@ -26,6 +23,7 @@ def add_log_entry(site, verb, to, cc, subject, error=''):
 def send_email(
         to, subject, text_template, html_template,
         cc=None, from_email=settings.DEFAULT_FROM_EMAIL, extra_context=None):
+    current_site = Site.objects.get_current()
     context = {'site': current_site}
     if extra_context:
         context.update(extra_context)
