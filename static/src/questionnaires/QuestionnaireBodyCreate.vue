@@ -17,13 +17,16 @@
             </div>
 
             <div class="border-bottom">
-              <div class="card-header border-0 pb-0">
-                <label v-bind:for="'theme' + (themeIndex + 1)" class="form-label-h3">
+              <div class="text-muted pt-2 pl-7" :id="'theme' + (themeIndex + 1) + 'Help'">
+                Ecrivez un thème ici. 255 caractères maximum.
+              </div>
+              <div class="card-header border-0 pb-0 pt-0">
+                <label v-bind:for="'theme' + (themeIndex + 1)" class="form-label-h3 mr-1">
                   <h3 class="card-title">{{themeIndex + 1}}.</h3>
                 </label>
                 <input class="form-control form-control-h3"
                        title="Ecrivez un thème ici"
-                       placeholder="Ecrivez un thème ici"
+                       placeholder="Ressources Humaines"
                        type="text"
                        maxlength="255"
                        v-bind:id="'theme' + (themeIndex + 1)"
@@ -57,9 +60,6 @@
                     <span class="sr-only">Supprimer le thème</span>
                   </button>
                 </span>
-              </div>
-              <div class="text-muted pb-2 pl-6" :id="'theme' + (themeIndex + 1) + 'Help'">
-                Exemple : "Ressources Humaines". 255 caractères maximum.
               </div>
               <confirm-modal v-if="themes.length > 1"
                             :id="'deleteThemeConfirmModal' + themeIndex"
@@ -96,6 +96,9 @@
                   :id="'theme-' + themeIndex + '-question-' + qIndex"
                   class="card border-0 m-0 pt-2"
                   :key="'question-' + question.id"> <!-- Card for each question -->
+                <div class="text-muted pt-2 pl-9" :id="'theme' + (themeIndex + 1) + 'Help'">
+                  Ecrivez une question ici.
+                </div>
                 <div class="card-header border-0">
                   <div class="flex-column align-items-center mr-4">
                     <button :class="{ disabled: qIndex === 0 }"
@@ -129,7 +132,7 @@
                   </div>
                   <textarea class="form-control"
                             title="Ecrivez une question ici"
-                            placeholder="Ecrivez une question ici"
+                            placeholder="Règlement intérieur (au cours des 3 dernières années)"
                             rows="4"
                             v-bind:id="'question' + (themeIndex + 1) + '-' + (qIndex + 1)"
                             v-model="themes[themeIndex].questions[qIndex].description"
