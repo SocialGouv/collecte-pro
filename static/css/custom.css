@@ -63,7 +63,11 @@
 }
 
 .fg-success {
-    color: #5EBB00;
+    color: #448600;
+}
+
+.text-success {
+    color: #448600 !important;
 }
 
 /* Secondary button : you can't see it's disabled */
