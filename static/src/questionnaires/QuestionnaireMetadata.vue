@@ -19,6 +19,16 @@
           </questionnaire-file-list>
         </p>
         <div class="flex-row justify-content-end">
+          <button class="btn btn-secondary mx-2"
+                title="Modifier la date de réponse"
+                aria-label="Modifier la date de réponse"
+                data-toggle="modal"
+                data-target="#updateDateReponseModal">
+                <span class="fe fe-edit mr-2"></span>
+                <span class="mr-2">
+                  Modifier la date de réponse
+                </span>
+          </button>
           <div v-if="withTrash" class="mx-2">
             <a class="btn btn-secondary"
               :href="trashUrl"
@@ -91,7 +101,12 @@ import { saveAs } from 'file-saver'
 import QuestionnaireFileList from './QuestionnaireFileList'
 
 export default Vue.extend({
-  props: ['questionnaire', 'control', 'withTrash'],
+  props: {
+    questionnaire: { type: Object, default: () => ({}) },
+    control: { type: Object, default: () => ({}) },
+    withTrash: { type: Boolean, default: false },
+    accessType: { type: String, default: '' },
+  },
   filters: {
     DateFormat,
   },

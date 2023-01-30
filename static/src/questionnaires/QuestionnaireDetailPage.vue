@@ -59,6 +59,9 @@
 
       </div>
     </div>
+
+    <update-date-reponse-modal :questionnaireId="questionnaireId" 
+      :questionnaire="questionnaire"></update-date-reponse-modal>
   </div>
 
 </template>
@@ -77,6 +80,7 @@ import ResponseDropzone from '../questions/ResponseDropzone'
 import ResponseFileList from '../questions/ResponseFileList'
 import SuccessBar from '../utils/SuccessBar'
 import ThemeBox from '../themes/ThemeBox'
+import UpdateDateReponseModal from '../questionnaires/UpdateDateReponseModal'
 
 import axios from 'axios'
 import backendUrls from '../utils/backend'
@@ -114,14 +118,11 @@ export default Vue.extend({
   },
   mounted() {
     this.getAccessType(this.control.id)
-
-    console.log('coucou')
   },
   methods: {
     async getAccessType(controlId) {
       try {
         const resp = await axios.get(backendUrls.getAccessToControl(controlId))
-        console.log('Resp data : ', resp.data)
         this.accessType = (
           resp.data &&
           resp.data[0] &&
@@ -142,6 +143,7 @@ export default Vue.extend({
     ResponseFileList,
     SuccessBar,
     ThemeBox,
+    UpdateDateReponseModal,
   },
 })
 
