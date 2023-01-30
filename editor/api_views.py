@@ -2,12 +2,12 @@ from rest_framework import generics
 
 from .serializers import UpdateEditorSerializer
 from control.models import Control, Questionnaire
-from control.permissions import ControlInspectorAccess
+from control.permissions import ControlDemandeurAccess
 
 
 class UpdateEditor(generics.UpdateAPIView):
     serializer_class = UpdateEditorSerializer
-    permission_classes = (ControlInspectorAccess,)
+    permission_classes = (ControlDemandeurAccess,)
 
     def get_queryset(self):
         queryset = Questionnaire.objects  \

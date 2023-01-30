@@ -58,49 +58,49 @@ def test_audited_can_list_controls():
     assert list_control(user).status_code == 200
 
 
-def test_draft_questionnaire_is_not_listed_in_controls_data_if_user_is_audited():
+def test_draft_questionnaire_is_not_listed_in_controls_data_if_user_is_repondant():
     control = factories.ControlFactory()
     factories.QuestionnaireFactory(control=control, is_draft=False, title='MUST BE LISTED')
     factories.QuestionnaireFactory(control=control, is_draft=True, title='MUST NOT BE LISTED')
-    user = utils.make_audited_user(control)
+    user = utils.make_repondant_user(control)
     response = list_control(user)
     assert response.status_code == 200
     assert 'MUST BE LISTED' in str(response.content)
     assert 'MUST NOT BE LISTED' not in str(response.content)
 
 
-def test_draft_questionnaire_is_listed_in_controls_data_if_user_is_inspector():
+def test_draft_questionnaire_is_listed_in_controls_data_if_user_is_demandeur():
     control = factories.ControlFactory()
     factories.QuestionnaireFactory(control=control, is_draft=False, title='MUST BE LISTED')
     factories.QuestionnaireFactory(control=control, is_draft=True, title='MUST ALSO BE LISTED')
-    user = utils.make_inspector_user(control)
+    user = utils.make_demandeur_user(control)
     response = list_control(user)
     assert response.status_code == 200
     assert 'MUST BE LISTED' in str(response.content)
     assert 'MUST ALSO BE LISTED' in str(response.content)
 
 
-def test_as_auditor_questionnaire_is_not_listed_if_not_associated_with_user_control():
+def test_as_repondant_questionnaire_is_not_listed_if_not_associated_with_user_control():
     control_in = factories.ControlFactory()
     control_out = factories.ControlFactory()
     factories.QuestionnaireFactory(control=control_in, is_draft=False, title='MUST BE LISTED')
     factories.QuestionnaireFactory(control=control_out, is_draft=False, title='MUST NOT BE LISTED')
-    user = utils.make_audited_user(control_in)
+    user = utils.make_repondant_user(control_in)
     response = list_control(user)
     assert response.status_code == 200
     assert 'MUST BE LISTED' in str(response.content)
     assert 'MUST NOT BE LISTED' not in str(response.content)
 
 
-def test_as_auditor_questionnaire_is_not_listed_if_associated_with_deleted_control():
+def test_as_repondant_questionnaire_is_not_listed_if_associated_with_deleted_control():
     control_active = factories.ControlFactory()
     control_deleted = factories.ControlFactory()
     factories.QuestionnaireFactory(
         control=control_active, is_draft=False, title='MUST BE LISTED')
     factories.QuestionnaireFactory(
         control=control_deleted, is_draft=False, title='MUST NOT BE LISTED')
-    user = utils.make_audited_user(control_active)
-    user.profile.controls.add(control_deleted)
+    user = utils.make_repondant_user(control_active)
+    utils.add_control_to_user(user, control_deleted)
     control_deleted.delete()
 
     response = list_control(user)
@@ -137,7 +137,7 @@ def test_cannot_create_control_with_special_characters_in_reference_code():
 
 def test_no_access_to_control_create_api_if_not_inspector():
     control = factories.ControlFactory()
-    user = utils.make_audited_user(control)
+    user = utils.make_audited_user()
     assert create_control(user, make_create_payload()).status_code == 403
 
 
@@ -162,7 +162,7 @@ def test_creates_control_and_adds_to_current_user():
     saved_control = Control.objects.get(id=response_control['id'])
     assert saved_control.title == payload['title']
     assert saved_control.reference_code == payload['reference_code']
-    assert user.profile.controls.all().get(id=response_control['id']) == saved_control
+    assert user.profile.access.all().get(control__id=response_control['id']).control == saved_control
 
 
 ### Update
@@ -258,20 +258,20 @@ def test_cannot_get_users_of_control_if_control_does_not_belong_to_user():
     assert get_users_of_control(audited, control).status_code == 404
 
 
-def test_cannot_get_users_of_neigboring_control():
+def test_cannot_get_users_of_neighboring_control():
     # testing for a specific bug we had.
     control_1 = factories.ControlFactory()
-    inspector_1 = utils.make_inspector_user(control_1)
+    demandeur_1 = utils.make_demandeur_user(control_1)
 
     control_2 = factories.ControlFactory()
-    inspector_2 = utils.make_inspector_user(control_2)
-    inspector_2.profile.controls.add(control_1)
+    demandeur_2 = utils.make_demandeur_user(control_2)
+    utils.add_control_to_user(demandeur_2, control_1)
 
     # control_2 is unknown to inspector_1.
     # inspector_2 is known to inspector_1/
     # So inspector_1 should not be able to get info on control_2.
 
-    assert get_users_of_control(inspector_1, control_2).status_code == 404
+    assert get_users_of_control(demandeur_1, control_2).status_code == 404
 
 
 def test_cannot_get_users_of_control_if_control_is_deleted():

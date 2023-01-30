@@ -34,25 +34,34 @@ def reload_urlconf():
 
 
 def make_user(profile_type, control=None, assign_questionnaire_editor=True):
-    user_profile = factories.UserProfileFactory(profile_type=profile_type)
-    if profile_type == "AUDITED":
-        access_type = Access.REPONDANT
+    userprofile = factories.UserProfileFactory()
+    if profile_type == UserProfile.INSPECTOR:
+        userprofile.profile_type = UserProfile.INSPECTOR
     else:
-        access_type = Access.DEMANDEUR
+        userprofile.profile_type = UserProfile.AUDITED
+    userprofile.save()
     if control is not None:
-        access = factories.AccessFactory(
-            userprofile=user_profile,
-            control=control,
-            access_type=access_type,
-        )
+        access = factories.AccessFactory(control=control, userprofile=userprofile)
+        if profile_type == UserProfile.INSPECTOR or profile_type == Access.DEMANDEUR:
+            access.access_type = Access.DEMANDEUR
+        else:
+            access.access_type = Access.REPONDANT
+        access.save()
         if assign_questionnaire_editor:
-            control.questionnaires.update(editor=user_profile.user)
-    user_profile.save()
-    return user_profile.user
+            access.control.questionnaires.update(editor=access.userprofile.user)
+    return userprofile.user
 
 
-def make_audited_user(control=None):
-    return make_user(UserProfile.AUDITED, control)
+def make_repondant_user(control=None):
+    return make_user(Access.REPONDANT, control)
+
+
+def make_demandeur_user(control=None, assign_questionnaire_editor=True):
+    return make_user(
+        Access.DEMANDEUR,
+        control,
+        assign_questionnaire_editor=assign_questionnaire_editor
+    )
 
 
 def make_inspector_user(control=None, assign_questionnaire_editor=True):
@@ -61,6 +70,19 @@ def make_inspector_user(control=None, assign_questionnaire_editor=True):
         control,
         assign_questionnaire_editor=assign_questionnaire_editor
     )
+
+
+def make_audited_user(control=None):
+    return make_user(UserProfile.AUDITED, control)
+
+
+def add_control_to_user(user, control, access_type=None):
+    access = factories.AccessFactory(control=control, userprofile=user.profile)
+    if access_type == Access.DEMANDEUR:
+        access.access_type = Access.DEMANDEUR
+    else:
+        access.access_type = Access.REPONDANT
+    access.save()
 
 
 def get_resource(client, user, resource_type, resource_id):

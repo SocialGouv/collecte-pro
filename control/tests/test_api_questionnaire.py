@@ -135,7 +135,7 @@ def test_no_access_to_questionnaire_api_for_anonymous():
     assert_no_data_is_saved()
 
 
-def test_no_modifying_questionnaire_if_not_inspector():
+def test_no_modifying_questionnaire_if_not_demandeur():
     questionnaire = factories.QuestionnaireFactory()
     audited_user = utils.make_audited_user(questionnaire.control)
 
@@ -144,7 +144,7 @@ def test_no_modifying_questionnaire_if_not_inspector():
     assert update_questionnaire(audited_user, payload).status_code == 404
 
     # delete is never allowed
-    assert delete_questionnaire(audited_user, questionnaire.id).status_code == 403
+    assert delete_questionnaire(audited_user, questionnaire.id).status_code == 405
 
     # create
     clear_saved_data()
@@ -191,7 +191,7 @@ def test_no_questionnaire_update_if_control_is_deleted():
     assert 403 <= response.status_code <= 404
 
 
-def test_questionnaire_create__success():
+def test_questionnaire_create_success():
     increment_ids()
     control = factories.ControlFactory()
     user = utils.make_inspector_user(control)
@@ -249,7 +249,7 @@ def test_questionnaire_create_fails_with_null_control_id():
     # "control" : "null" : malformed request
     payload['control'] = None
     response = create_questionnaire(user, payload)
-    assert response.status_code == 400
+    assert response.status_code == 403
     assert_no_data_is_saved()
 
 
@@ -261,7 +261,7 @@ def test_questionnaire_create_fails_with_empty_control_id():
     # "control" : "" : malformed request
     payload['control'] = ""
     response = create_questionnaire(user, payload)
-    assert response.status_code == 400
+    assert response.status_code == 403
     assert_no_data_is_saved()
 
 
@@ -309,6 +309,7 @@ def test_inspector_cannot_update_published_questionnaire():
 
 def test_inspector_can_finalize_questionnaire():
     increment_ids()
+    parameter = factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_inspector_user(control)
     questionnaire = factories.QuestionnaireFactory(
@@ -337,6 +338,7 @@ def test_audited_cannot_update_published_questionnaire():
 
 def test_audited_can_reply_to_questionnaire():
     increment_ids()
+    parameter = factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_audited_user(control)
     questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control)

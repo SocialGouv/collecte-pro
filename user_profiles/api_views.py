@@ -6,7 +6,7 @@ from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from django.db.models import Q
 
-from control.permissions import UserInspectorAccess
+from control.permissions import UserDemandeurAccess
 
 from .models import Access, UserProfile
 from .serializers import UserProfileSerializer, RemoveControlSerializer
@@ -22,10 +22,16 @@ class UserProfileViewSet(
         viewsets.GenericViewSet):
     serializer_class = UserProfileSerializer
     search_fields = ('=user__email',)
-    permission_classes = (UserInspectorAccess,)
+    permission_classes = (UserDemandeurAccess,)
 
     def get_queryset(self):
-        return UserProfile.objects.distinct()
+        if len(self.request.user.profile.user_controls("demandeur")) > 0:
+            return UserProfile.objects.distinct()
+        else:
+            return UserProfile.objects.filter(
+                Q(access__control__is_deleted=False) &
+                Q(access__control__in=self.request.user.profile.user_controls("all"))
+            ).distinct()
 
     @decorators.action(detail=True, methods=['post'], url_path='remove-control')
     def remove_control(self, request, pk):

@@ -77,23 +77,13 @@ def test_cannot_search_audited_user_by_username_if_associated_with_deleted_contr
 
 
 def test_can_search_inspector_user_by_username_if_associated_with_deleted_control():
-    inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
-    login_user = inspector.user
-    target_user = factories.UserProfileFactory()
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
-        userprofile=inspector,
-        control=control,
-        access_type=Access.DEMANDEUR,
-    )
-    target_access = factories.AccessFactory(
-        userprofile=target_user,
-        control=control,
-    )
+    inspector = utils.make_inspector_user(control)
+    target_user = utils.make_audited_user(control)
     control.delete()
     control.save()
 
-    response = search_user_by_username(login_user, target_user.user.username)
+    response = search_user_by_username(inspector, target_user.username)
 
     # Sucessful query with no results
     assert response.status_code == 200
@@ -230,6 +220,7 @@ def test_can_associate_a_control_to_an_existing_user():
 
 
 def test_audited_cannot_create_user():
+    factories.ParameterFactory()
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     control = factories.ControlFactory()
     audited_access = factories.AccessFactory(
@@ -254,6 +245,7 @@ def test_audited_cannot_create_user():
 
 
 def test_cannot_create_user_when_control_is_deleted():
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector_access = factories.AccessFactory(
@@ -279,6 +271,7 @@ def test_cannot_create_user_when_control_is_deleted():
 
 
 def test_inspector_cannot_alter_a_control_that_is_not_accessible_to_him():
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     existing_user = factories.UserFactory()

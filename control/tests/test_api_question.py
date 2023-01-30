@@ -44,10 +44,12 @@ def test_audited_cannot_get_a_question_if_questionnaire_is_draft():
 def test_response_file_listed_in_question_endpoint():
     response_file = factories.ResponseFileFactory()
     question = response_file.question
+    question.theme.questionnaire.is_draft = False
+    question.theme.questionnaire.save()
     user = response_file.author
     user.profile.agreed_to_tos = True
-    user.profile.controls.add(question.theme.questionnaire.control)
     user.profile.save()
+    utils.add_control_to_user(user, question.theme.questionnaire.control)
 
     response = get_question(user, question.id)
     assert response_file.basename in str(response.content)

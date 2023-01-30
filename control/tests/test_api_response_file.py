@@ -164,7 +164,7 @@ def test_cannot_trash_response_file_if_control_is_deleted():
     payload = { "is_deleted": "true" }
     response_file.question.theme.questionnaire.control.delete()
     response = trash_response_file(user, response_file.id, payload)
-    assert response.status_code == 404
+    assert response.status_code == 403
 
 
 def test_audited_cannot_trash_response_file_if_already_deleted():

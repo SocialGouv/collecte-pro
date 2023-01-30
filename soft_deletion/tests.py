@@ -18,7 +18,7 @@ User = get_user_model()
 
 
 def test_inspector_can_delete_a_control():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector_access = factories.AccessFactory(
@@ -36,6 +36,7 @@ def test_inspector_can_delete_a_control():
 
 
 def test_audited_cannot_delete_a_control():
+    factories.ParameterFactory()
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     control = factories.ControlFactory()
     audited_access = factories.AccessFactory(
@@ -52,7 +53,8 @@ def test_audited_cannot_delete_a_control():
     assert response.status_code == 403
 
 
-def test_delete_twice_raise_404():
+def test_delete_twice_raise_403():
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     inspector_access = factories.AccessFactory(
@@ -64,4 +66,4 @@ def test_delete_twice_raise_404():
     url = reverse('api:deletion-delete-control', args=[control.pk])
     control.delete()
     response = client.post(url)
-    assert response.status_code == 404
+    assert response.status_code == 403

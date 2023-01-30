@@ -147,4 +147,4 @@ def test_no_access_to_editor_api_for_deleted_control():
     assert_questionnaire_has_editor(questionnaire, user)
     control.delete()
     response = call_api(user, questionnaire.id, user.id)
-    assert response.status_code == 404
+    assert response.status_code == 403

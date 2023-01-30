@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest, Http404
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
@@ -223,6 +223,8 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
             return HttpResponseBadRequest("Question ID was missing on file upload")
         question = Question.objects.get(pk=question_id)
         control = question.theme.questionnaire.control
+        if control.is_deleted:
+            return HttpResponseForbidden("Control is deleted.")
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='repondant')).exists():
             return HttpResponseForbidden("User is not authorized to access this ressource")
         get_object_or_404(
@@ -321,6 +323,9 @@ class SendQuestionnaireFile(SendFileMixin, LoginRequiredMixin, View):
         when the user downloads the file.
         """
         questionnaire = self.get_object()
+        if questionnaire.is_draft:
+            if not questionnaire.control in request.user.profile.user_controls("demandeur"):
+                raise Http404
         generate_questionnaire_file(questionnaire)
         return super().get(request, *args, **kwargs)
 

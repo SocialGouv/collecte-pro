@@ -3,7 +3,8 @@ from django.dispatch import Signal
 from django.conf import settings
 from django.db.models import Q
 
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import PermissionDenied
 
 from control.models import Control
 
@@ -64,6 +65,18 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         profile = UserProfile.objects.filter(user__email=email).first()
 
         session_user = self.context['request'].user
+        if control is not None and control not in session_user.profile.user_controls('demandeur'):
+            e = PermissionDenied(
+                detail=("Only Demandeur can create user."),
+                code=status.HTTP_403_FORBIDDEN,
+            )
+            raise e
+        if control is not None and control.is_deleted:
+            e = PermissionDenied(
+                detail=("Create user is only possible on active control."),
+                code=status.HTTP_403_FORBIDDEN,
+            )
+            raise e
         inspector_role = False
         access_type = 'repondant'
         if settings.KEYCLOAK_ACTIVE:

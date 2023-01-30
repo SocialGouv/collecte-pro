@@ -100,7 +100,7 @@ def test_inspector_has_no_access_to_theme_api_for_deleted_control():
     theme = factories.ThemeFactory()
     user = utils.make_inspector_user(theme.questionnaire.control)
     theme.questionnaire.control.delete()
-    assert update_theme(user, make_update_theme_payload(theme)).status_code == 404
+    assert update_theme(user, make_update_theme_payload(theme)).status_code == 403
 
 
 def test_audited_has_access_to_theme_api_for_deleted_control():
@@ -143,7 +143,7 @@ def test_cannot_delete_theme_if_questionnaire_is_published():
     theme.questionnaire.is_draft = False
     theme.questionnaire.save()
 
-    assert delete_theme(audited_user, theme.id).status_code == 403
+    assert delete_theme(audited_user, theme.id).status_code == 405
     assert delete_theme(inspector_user, theme.id).status_code == 405
 
 
@@ -154,4 +154,4 @@ def test_audited_cannot_delete_theme_from_draft_questionnaire():
     theme.questionnaire.save()
     assert Questionnaire.objects.get(id=theme.questionnaire.id).is_draft
 
-    assert delete_theme(audited_user, theme.id).status_code == 403
+    assert delete_theme(audited_user, theme.id).status_code == 405

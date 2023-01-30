@@ -11,10 +11,10 @@ from rest_framework.exceptions import ParseError, PermissionDenied
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
-from control.permissions import (ControlIsNotDeleted, OnlyAuditedCanAccess,
-                                 OnlyAuthenticatedCanAccess,
+from control.permissions import (ControlIsNotDeleted, OnlyRepondantCanAccess,
+                                 OnlyInspectorCanCreate, OnlyAuthenticatedCanAccess,
                                  OnlyEditorCanChangeQuestionnaire,
-                                 ControlInspectorAccess, QuestionnaireIsDraft)
+                                 ControlDemandeurAccess, QuestionnaireIsDraft)
 from user_profiles.models import Access
 from user_profiles.serializers import AccessSerializer, UserProfileSerializer
 
@@ -32,7 +32,16 @@ class ControlViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      mixins.UpdateModelMixin,
                      viewsets.GenericViewSet):
-    permission_classes = (ControlInspectorAccess,)
+    permission_classes_by_action = {
+        "create": (OnlyInspectorCanCreate,),
+        "update": (ControlDemandeurAccess,),
+    }
+
+    def get_permissions(self):
+        try:
+            return [permission() for permission in self.permission_classes_by_action[self.action]]
+        except KeyError:
+            return [permission() for permission in self.permission_classes_by_action["update"]]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -45,7 +54,8 @@ class ControlViewSet(mixins.CreateModelMixin,
         return control_serializers.ControlFilteredSerializer
 
     def get_queryset(self):
-        return Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
+        if not self.request.user.is_anonymous:
+            return Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
 
     def add_log_entry(self, control, verb):
         action_details = {
@@ -136,11 +146,13 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
     serializer_class = control_serializers.QuestionFileSerializer
     parser_classes = (MultiPartParser, FormParser)
     filterset_fields = ('question',)
-    permission_classes = (ControlInspectorAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
+    permission_classes = (ControlDemandeurAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
 
     def get_queryset(self):
         queryset = QuestionFile.objects.filter(
-            question__theme__questionnaire__in=self.request.user.profile.questionnaires)
+            Q(question__theme__questionnaire__control__is_deleted=False) &
+            Q(question__theme__questionnaire__in=self.request.user.profile.questionnaires)
+        )
         return queryset
 
     def perform_create(self, serializer):
@@ -157,7 +169,7 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
     serializer_class = control_serializers.QuestionnaireFileSerializer
     parser_classes = (MultiPartParser, FormParser)
     filterset_fields = ('questionnaire',)
-    permission_classes = (ControlInspectorAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
+    permission_classes = (ControlDemandeurAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
 
     def get_queryset(self):
         queryset = QuestionnaireFile.objects.filter(
@@ -174,7 +186,7 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
 
 class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
     serializer_class = control_serializers.ResponseFileTrashSerializer
-    permission_classes = (OnlyAuditedCanAccess,)
+    permission_classes = (OnlyRepondantCanAccess,)
 
     def get_queryset(self):
         queryset = ResponseFile.objects.filter(
@@ -213,7 +225,7 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
 
 class ThemeViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = control_serializers.ThemeSerializer
-    permission_classes = (ControlInspectorAccess, QuestionnaireIsDraft)
+    permission_classes = (ControlDemandeurAccess, QuestionnaireIsDraft)
 
     def get_queryset(self):
         questionnaires = Questionnaire.objects.filter(
@@ -227,7 +239,7 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                            viewsets.GenericViewSet):
     serializer_class = control_serializers.QuestionnaireSerializer
     permission_classes_by_action = {
-        "create": (ControlInspectorAccess, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
+        "create": (ControlDemandeurAccess, OnlyEditorCanChangeQuestionnaire, QuestionnaireIsDraft),
         "update": (OnlyAuthenticatedCanAccess, ControlIsNotDeleted),
     }
 
@@ -370,19 +382,33 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         serializer.is_valid(raise_exception=True)
 
         control = serializer.validated_data['control']
-        if verb == "created" and control is None:
-            e = ParseError(
+        if verb == "created" and (control is None or control.is_deleted):
+            e = PermissionDenied(
                 detail=(
                     'Users can only create questionnaires '
                     'in active controls.'
-                )
+                ),
+                code=status.HTTP_403_FORBIDDEN,
             )
             raise e
-        if control is not None and not request.user.profile.access.all().filter(control__id=control.id).exists(): # Vérifier si le controle sur l'access_type == 'demandeur' doit être fait
+        if request.user.is_anonymous:
+            e = PermissionDenied(
+                detail=("Can only create questionnaires when connected."),
+                code=status.HTTP_403_FORBIDDEN,
+            )
+            raise e
+        if control is not None and not request.user.profile.access.all().filter(control__id=control.id).exists():
             e = PermissionDenied(
                 detail=(
                     'Users can only create questionnaires '
                     'in active controls that they belong to.'),
+                code=status.HTTP_403_FORBIDDEN)
+            raise e
+        if verb == "created" and control is not None and control not in request.user.profile.user_controls('demandeur'):
+            e = PermissionDenied(
+                detail=(
+                    'Users can only create questionnaires '
+                    'when they are Demandeur.'),
                 code=status.HTTP_403_FORBIDDEN)
             raise e
 

@@ -264,7 +264,7 @@ def test_audited_cannot_update_question_file_from_published_questionnaire():
     }
 
     # forbidden
-    assert update_question_file(audited.user, payload).status_code == 403
+    assert update_question_file(audited.user, payload).status_code == 405
 
 
 def test_audited_cannot_update_question_file_from_draft_questionnaire():
@@ -286,7 +286,7 @@ def test_audited_cannot_update_question_file_from_draft_questionnaire():
     }
 
     # Forbidden
-    assert update_question_file(audited.user, payload).status_code == 403
+    assert update_question_file(audited.user, payload).status_code == 405
 
 
 ### Upload API
@@ -462,6 +462,6 @@ def test_audited_cannot_remove_question_file():
 
     response = client.delete(url)
 
-    assert response.status_code == 403
+    assert response.status_code == 404
     count_after = QuestionFile.objects.count()
     assert count_after == count_before
