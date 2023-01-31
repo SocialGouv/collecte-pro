@@ -1,11 +1,13 @@
 <template>
-    <div class="modal fade update-date-reponse-modal" id="updateDateReponseModal" tabindex="-1" 
-        role="dialog" aria-labelledby="labelForModalDateReponse" aria-hidden="true" 
+    <div class="modal fade update-date-reponse-modal" id="updateDateReponseModal" tabindex="-1"
+        role="dialog" aria-labelledby="labelForModalDateReponse" aria-hidden="true"
         aria-modal="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <div class="modal-title" id="labelForModalDateReponse">Coucou la modif</div>
+            <div class="modal-title" id="labelForModalDateReponse">
+                {{questionnaire.title_display}}
+            </div>
           </div>
           <div class="modal-body">
             <div v-if="hasErrors" class="alert alert-danger" role="alert">
@@ -14,7 +16,7 @@
             <form @submit.prevent="updateDateReponse" @keydown.esc="resetFormData">
                 <div class="form-group">
                     <label class="form-label" id="questionnaireEndDate" for="questionnaire_enddate">
-                    Vous pouvez indiquer la date limite de réponse :
+                    Vous pouvez modifier la date limite de réponse :
                     </label>
                     <datepicker id="questionnaire_enddate"
                                 class="blue"
@@ -22,7 +24,7 @@
                                 :language="fr"
                                 :typeable="true"
                                 :placeholder="placeholder"
-                                :v-model="questionnaire.end_date"
+                                :v-model="end_date"
                                 :format="format"
                                 :monday-first="true">
                     </datepicker>
@@ -48,6 +50,8 @@ import { store } from '../store'
 import Datepicker from 'vuejs-datepicker'
 import fr from '../utils/vuejs-datepicker-locale-fr'
 import backend from '../utils/backend'
+
+import EventBus from '../events'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
@@ -85,11 +89,11 @@ export default Vue.extend({
       this.errors = []
     },
     updateDateReponse() {
-      console.log('on va update la date echeance')
-      console.log('notre questionnaire : ', this.questionnaireId)
-      axios.put.bind(this, backend.questionnaire(this.questionnaireId))
+      console.log('Mon questId : ', this.questionnaireId)
+      axios.put(backend.questionnaire(this.questionnaireId))
         .then(response => {
           this.postResult = response.data
+          EventBus.$emit('questionnaire-changed', this.postResult)
           this.hideThisModal()
         })
         .catch((error) => {

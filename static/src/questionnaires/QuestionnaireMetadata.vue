@@ -19,7 +19,10 @@
           </questionnaire-file-list>
         </p>
         <div class="flex-row justify-content-end">
-          <button class="btn btn-secondary mx-2"
+          <button v-if="!questionnaire.is_draft
+                  && !questionnaire.is_finalized
+                  && accessType === 'demandeur'"
+                class="btn btn-secondary mx-2"
                 title="Modifier la date de réponse"
                 aria-label="Modifier la date de réponse"
                 data-toggle="modal"

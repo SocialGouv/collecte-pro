@@ -18,16 +18,21 @@
                 class="tag tag-azure big-tag round-tag font-italic mr-2">
             Brouillon
           </span>
-          <span v-else-if="questionnaire.has_replies && !questionnaire.is_replied" class="tag tag-yellow round-tag font-italic mr-2">En cours</span>
-          <span v-else-if="questionnaire.is_replied && !questionnaire.is_finalized" class="tag tag-orange round-tag font-italic mr-2">Répondu</span>
-          <span v-else-if="questionnaire.is_finalized" class="tag tag-purple round-tag font-italic mr-2">Finalisé</span>
+          <span v-else-if="questionnaire.has_replies && !questionnaire.is_replied"
+            class="tag tag-yellow round-tag font-italic mr-2">En cours</span>
+          <span v-else-if="questionnaire.is_replied && !questionnaire.is_finalized"
+            class="tag tag-orange round-tag font-italic mr-2">Répondu</span>
+          <span v-else-if="questionnaire.is_finalized"
+            class="tag tag-purple round-tag font-italic mr-2">Finalisé</span>
           <span v-else class="tag tag-green big-tag round-tag font-italic mr-2">Publié</span>
         </template>
         {{ questionnaire.title_display }}
       </h2>
     </div>
     <div :class="{ preview: questionnaire.is_draft }">
-      <questionnaire-metadata :questionnaire="questionnaire" :control="control" :with-trash="!questionnaire.is_draft">
+      <questionnaire-metadata :questionnaire="questionnaire"
+        :control="control" :with-trash="!questionnaire.is_draft"
+        :accessType="accessType">
       </questionnaire-metadata>
 
       <div>
@@ -59,9 +64,8 @@
 
       </div>
     </div>
-
-    <update-date-reponse-modal :questionnaireId="questionnaireId" 
-      :questionnaire="questionnaire"></update-date-reponse-modal>
+    <update-date-reponse-modal :questionnaireId="questionnaireId" :questionnaire="questionnaire">
+    </update-date-reponse-modal>
   </div>
 
 </template>
