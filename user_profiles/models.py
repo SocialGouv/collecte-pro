@@ -61,7 +61,7 @@ class UserProfile(models.Model):
         audited_questionnaires = Questionnaire.objects.filter(Q(control__in=audited_controls) & Q(is_draft=False))
         return inspected_questionnaires | audited_questionnaires
 
-    def user_controls(self, accesstype):
+    def user_controls(self, accesstype, active=False):
         """
         Returns the controls by access belonging to the user.
         """
@@ -70,6 +70,8 @@ class UserProfile(models.Model):
             all_user_controls = Control.objects.filter(access__in=self.access.all())
             return all_user_controls
         filtered_user_controls = Control.objects.filter(access__in=self.access.filter(access_type=accesstype).all())
+        if active:
+            return filtered_user_controls.active()
         return filtered_user_controls.distinct()
 
     def __str__(self):
