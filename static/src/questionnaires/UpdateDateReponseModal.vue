@@ -51,7 +51,7 @@ import Datepicker from 'vuejs-datepicker'
 import fr from '../utils/vuejs-datepicker-locale-fr'
 import backend from '../utils/backend'
 
-import EventBus from '../events'
+import { toBackendFormat } from '../utils/DateFormat'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
@@ -88,17 +88,31 @@ export default Vue.extend({
       this.hasErrors = false
       this.errors = []
     },
+    emitQuestionnaireUpdated: function() {
+      this.$emit('questionnaire-updated', this.questionnaire)
+    },
+    _doSave() {
+      const getUpdateMethod =
+          (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
+      this.questionnaire.end_date = toBackendFormat(this.questionnaire.end_date)
+      const saveMethod = getUpdateMethod(this.questionnaire.id)
+      return saveMethod(this.questionnaire)
+    },
     updateDateReponse() {
-      console.log('Mon questId : ', this.questionnaireId)
-      axios.put(backend.questionnaire(this.questionnaireId))
-        .then(response => {
-          this.postResult = response.data
-          EventBus.$emit('questionnaire-changed', this.postResult)
-          this.hideThisModal()
+      const self = this
+      return self._doSave()
+        .then((response) => {
+          console.debug('Successful response date save.')
+          self.postResult = response.data
+          self.emitQuestionnaireUpdated()
+          return response.data
         })
         .catch((error) => {
-          this.hasErrors = true
-          this.errors = error.response.data
+          console.error('Error in response date save :', error)
+          const errorToDisplay =
+            (error.response && error.response.data) ? error.response.data : error
+          self.displayErrors('Erreur lors de la sauvegarde de la date reponse.', errorToDisplay)
+          self.displaySavingDoneWithError()
         })
     },
   },
