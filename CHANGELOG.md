@@ -7,12 +7,40 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 ## [En cours]
 ### Ajouts
+- Il est désormais possible d'afficher une alerte globale aux utilisateurs sur la page d'accueil
+- Lorsqu'un demandeur est supprimé d'un espace de dépôt, il reçoit une notification
+- Il est désormais possible d'ajouter un fichier annexe au questionnaire
+- Lorsqu'un questionnaire est marqué comme "Répondu", une notification est envoyée
+- Lors de l'accès à un espace de dépôt inconnu ou supprimé, un message est affiché à l'utilisateur
 
 ### Modifications
+- Le logo présent dans le questionnaire est désormais celui de la République Française
+- Le texte du bouton d'ajout de Répondant sur un espace de dépôt a été corrigé
+- lors de la suppression d'un questionnaire, la 3ème case à cocher a été simplifiée
+- Un utilisateur peut être Demandeur sur un espace de dépôt et Répondant sur un autre
+- L'icône affichée dans le navigateur est désormais la Marianne
 
 ### Corrections
+- L'info-bulle des questionnaires précise tous les statuts possibles
+- Le mail informant de la suppression d'un espace de dépôt a été corrigé
+- La suppression d'un Questionnaire à l'état Brouillon est à nouveau possible
+- La duplication d'un Questionnaire n'est pas possible vers un espace de dépôt supprimé
+
 
 ### Suppressions
+
+
+## [2.2.2] - 2023-02-02
+### Ajouts
+- Il n'est plus possible d'accéder à un Espace de dépôt et/ou un Questionnaire supprimer
+
+### Modifications
+- Application des retours sur les règles RGAA : balises <i>
+- Application des retours sur les règles RGAA : tags alt des logos d'en-tête et de pied de page
+
+### Corrections
+- La création/duplication d'un espace de dépôt est impossible si le nom abrégé existe déjà
+- Le bouton de repli du panneau latéral est correctement positionné
 
 
 ## [2.2.1] - 2022-12-16
