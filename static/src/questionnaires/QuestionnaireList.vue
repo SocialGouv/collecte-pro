@@ -414,10 +414,10 @@ export default Vue.extend({
             return { title: t.title, questions: qq }
           })
 
-          let newQ = { ...curQ, control: ctrl.id, is_draft: true, id: null, themes: [] }
+          let newQ = { ...curQ, control: ctrl.id, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
           getCreateMethod()(newQ).then(response => {
             const qId = response.data.id
-            newQ = { ...newQ, themes: themes }
+            newQ = { ...newQ, id: qId, themes: themes }
 
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
