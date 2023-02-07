@@ -27,7 +27,7 @@ def send_email_when_answered(instance, session_user, **kwargs):
     """
     Envoi d'un email lorsque le questionnaire est marqué "Répondu" par un répondant.
     """
-    if instance.is_replied:
+    if instance.is_replied and not instance.is_finalized and instance.control is not None:
         # On envoie le mail à tous les membres de l'espace de dépôt
         access = instance.control.access
         recipients = [session_user.email, ]
