@@ -157,8 +157,8 @@ Un autre façon de faire, est d'installer un service systemd:
 Si le serveur Redis n'est pas fourni, on peut l'installer:
 
     apt-get install redis
-    systemctl start redis
-    systemctl enable redis
+    systemctl start redis / sudo service redis-server start (sur WSL)
+    systemctl enable redis / sudo service redis-server stop (sur WSL)
     redis-cli ping
 
 # uWSGI
