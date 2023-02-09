@@ -24,7 +24,7 @@
                                 :language="fr"
                                 :typeable="true"
                                 :placeholder="placeholder"
-                                :v-model="end_date"
+                                v-model="questionnaire.end_date"
                                 :format="format"
                                 :monday-first="true">
                     </datepicker>

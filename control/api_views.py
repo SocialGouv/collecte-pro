@@ -320,6 +320,21 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
                             code=status.HTTP_403_FORBIDDEN
                         )
                         raise e
+                # Only Inspectors can change a Questionnaire response date
+                elif (
+                    pre_existing_qr.is_replied is False
+                    and pre_existing_qr.is_finalized is False
+                    and pre_existing_qr.end_date != request.data.get("end_date")
+                ):
+                    if not request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
+                        e = PermissionDenied(
+                            detail=(
+                                "Only inspectors can change response date "
+                                "in active questionnaires that they belong to."
+                            ),
+                            code=status.HTTP_403_FORBIDDEN
+                        )
+                        raise e
                 # No other modification is possible
                 else:
                     e = PermissionDenied(
