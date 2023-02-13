@@ -53,6 +53,7 @@
                         v-model="end_date"
                         :language="fr"
                         :typeable="true"
+                        :use-utc="true"
                         :placeholder="placeholder"
                         :format="format"
                         :monday-first="true">

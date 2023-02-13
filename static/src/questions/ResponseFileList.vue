@@ -25,7 +25,7 @@
         <tbody>
           <tr v-for="file in files" :key="file.id">
             <td>
-              <div>{{ file.creation_date }}</div>
+              <div>{{ file.creation_date | DateFormat }}</div>
               <div class="small text-muted">{{ file.creation_time }}</div>
             </td>
             <td>
@@ -70,6 +70,7 @@ import Vue from 'vue'
 
 import axios from 'axios'
 import backendUrls from '../utils/backend'
+import DateFormat from '../utils/DateFormat.js'
 import { clearCache } from '../utils/utils'
 import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
@@ -86,6 +87,9 @@ export default Vue.extend({
     question: Object,
     questionnaireId: Number,
     isAudited: Boolean,
+  },
+  filters: {
+    DateFormat,
   },
   data() {
     return {
