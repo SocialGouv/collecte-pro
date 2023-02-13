@@ -7,7 +7,8 @@
       <div v-if="files.length > 1" class="form-label">Fichiers annexes à la question :</div>
       <div v-else class="form-label">Fichier annexe à la question :</div>
       <ul>
-        <li v-for="(file, index) in files"
+        <input type="text" v-model="search" placeholder='Filtrer par type...'>
+        <li v-for="(file, index) in filteredFiles"
             :key="index"
             class="question-file">
           <a :href="file.url">
@@ -44,6 +45,7 @@ export default Vue.extend({
   data() {
     return {
       errorMessage: undefined,
+      search: '',
     }
   },
   components: {
@@ -73,5 +75,12 @@ export default Vue.extend({
         })
     },
   },
+  computed: {
+    filteredFiles() {
+      return this.files.filter(file => {
+        return file.basename.match(this.search)
+      })
+    }
+  }
 })
 </script>
