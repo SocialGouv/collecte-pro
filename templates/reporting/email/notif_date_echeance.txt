@@ -1,0 +1,8 @@
+Bonjour,
+
+Le questionnaire {{ questionnaire.title }} arrive à échéance dans {{ jours_echeance }} jours.
+
+
+Merci beaucoup,
+
+L'équipe collecte-pro

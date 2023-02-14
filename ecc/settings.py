@@ -353,3 +353,6 @@ QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
 
 # Mise à jour pour Django>=3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Jours de relance par défaut avant échéance d'un questionnaire
+JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
