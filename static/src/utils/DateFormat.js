@@ -4,10 +4,14 @@ const LOCALE = 'fr-FR'
 export default function (value) {
   if (value) {
     let date = "";
-    try {
-        date = new Date(value + " 00:00:00");
-    } catch(e) {
-        date = new Date(value);
+    if (value instanceof Date) {
+        date = value;
+    } else {
+        try {
+            date = new Date(value + " 00:00:00");
+        } catch(e) {
+            date = new Date(value);
+        }
     }
     return date.toLocaleDateString(LOCALE, DISPLAY_FORMAT)
   }
@@ -16,10 +20,14 @@ export default function (value) {
 export const toBackendFormat = (value) => {
   if (value) {
     let date = "";
-    try {
-        date = new Date(value + " 00:00:00");
-    } catch(e) {
-        date = new Date(value);
+    if (value instanceof Date) {
+        date = value;
+    } else {
+        try {
+            date = new Date(value + " 00:00:00");
+        } catch(e) {
+            date = new Date(value);
+        }
     }
     const day = date.getDate()
     const month = date.getMonth() + 1
