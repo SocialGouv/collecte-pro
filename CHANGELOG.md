@@ -6,9 +6,30 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+
+
+## [2.2.4] - 2023-02-23
+### Corrections
+- Corrections dans le message envoyé lorsqu'un questionnaire est marqué comme répondu
+- Corrections dans le message envoyé lorsuq'un questionnaire va arriver à échéance
+- Corrections dans le message envoyé par Keycloak lorsqu'un utilisateur souhaite lier son compte
+- Sur un environnement de production, le sujet des mails n'est pas préfixé
+
+
+## [2.2.3] - 2023-02-23
+### Ajouts
+- Les demandeurs peuvent modifier la date d'échéance d'un questionnaire publié
+- Une alerte est envoyée N jours avant la date d'échéance d'un questionnaire publié
+
+### Modifications
+- Mise à jour de la documentation Keycloak
+- Traduction du mail de liaison de compte (Keycloak)
+
 ### Corrections
 - Un questionnaire marqué comme supprimé, mais sans date de suppression, n'est plus vu comme actif
 - Un questionnaire dupliqué ne duplique plus ses statuts de réponse
+- Un questionnaire marqué comme répondu et modifié ne renvoit pas son message de changement de statut
+- Assainissement de la date d'échéance du questionnaire par rapport à la locale
 
 
 ## [2.2.2] - 2023-02-02
