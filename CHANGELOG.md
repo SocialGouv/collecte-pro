@@ -19,7 +19,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - Sur un environnement de production, le sujet des mails n'est pas préfixé
 
 
-## [2.2.3] - 2023-02-23
+## [2.2.3] - 2023-02-14
 ### Ajouts
 - Les demandeurs peuvent modifier la date d'échéance d'un questionnaire publié
 - Une alerte est envoyée N jours avant la date d'échéance d'un questionnaire publié
