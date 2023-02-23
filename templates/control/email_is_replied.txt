@@ -1,14 +1,15 @@
 Bonjour,
 
- Le questionnaire {{ questionnaire }} vient d'être marqué comme Répondu.
+Le questionnaire {{ questionnaire }} vient d'être déclaré comme répondu.
 
-- Espace de dépôt : {{ questionnaire.control.title_display }}
-- Questionnaire : {{ questionnaire.title }}
+    Espace de dépôt : {{ questionnaire.control.reference_code }}
 
-Vous pouvez accéder au questionnaire en vous rendant à cette adresse : https://{{ site.domain }}/questionnaire/{{ questionnaire.id }}
+    Questionnaire : {{ questionnaire.title }}
 
-Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en écrivant au support : {{ support_team_email }}.
+Vous pouvez accéder au questionnaire en vous rendant à cette adresse
 
-Merci beaucoup,
+https://{{ site.domain }}/questionnaire/{{ questionnaire.id }}
 
-L'équipe collecte-pro
+Cordialement,
+
+L'équipe Collecte-pro

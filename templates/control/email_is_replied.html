@@ -1,18 +1,20 @@
 {% extends "base_email.html" %}
 {% load email_obfuscator %}
 {% block email_content %}
+
 <p>Bonjour,</p>
-<p> Le questionnaire {{ questionnaire }} vient d'être marqué comme Répondu.</p>
-- Espace de dépôt : {{ questionnaire.control.title_display }}
-<br/>
-- Questionnaire : {{ questionnaire.title }}
 
-<p>Vous pouvez accéder au questionnaire en vous rendant à cette adresse : https://{{ site.domain }}/questionnaire/{{ questionnaire.id }}</p>
-<hr/>
+<p>Le questionnaire {{ questionnaire }} vient d'être déclaré comme répondu.</p>
 
-<p>
-  Si vous pensez ne pas être le bon destinataire de ce message, merci de nous informer en {{ support_team_email|obfuscate_mailto:"écrivant au support" }}.
-</p>
-<p>Merci beaucoup,</p>
-<p>L'équipe collecte-pro</p>
+<ul>
+    <li>Espace de dépôt : {{ questionnaire.control.reference_code }}</li>
+    <li>Questionnaire : {{ questionnaire.title }}</li>
+</ul>
+
+<p>Vous pouvez accéder au questionnaire en vous rendant à <a href="https://{{ site.domain }}/questionnaire/{{ questionnaire.id }}">cette adresse</a></p>
+
+<p>Cordialement,</p>
+
+<p>L'équipe Collecte-pro</p>
+
 {% endblock email_content %}
