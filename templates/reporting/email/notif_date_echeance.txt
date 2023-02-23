@@ -1,8 +1,15 @@
 Bonjour,
 
-Le questionnaire {{ questionnaire.title }} arrive à échéance dans {{ jours_echeance }} jours.
+La réponse au questionnaire {{ questionnaire.title }} arrive à échéance dans {{ jours_echeance }} jours.
 
+    Espace de dépôt : {{ questionnaire.control.reference_code }}
 
-Merci beaucoup,
+    Questionnaire : {{ questionnaire.title }}
 
-L'équipe collecte-pro
+Vous pouvez accéder au questionnaire en vous rendant à cette adresse 
+
+https://{{ site.domain }}/questionnaire/{{ questionnaire.id }}/
+
+Cordialement,
+
+L'équipe Collecte-pro

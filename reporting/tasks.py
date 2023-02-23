@@ -129,7 +129,7 @@ def send_notifs_dates_echeances():
                 subject = questionnaire.control.depositing_organization
             else:
                 subject = questionnaire.control.title
-            subject += f" - Questionnaire {questionnaire.order} : {questionnaire.title}"
+            subject += f" - Questionnaire : {questionnaire.title}"
             subject += " - la date de réponse arrive bientôt à échéance."
             recipient_list = [
                 access.userprofile.user.email
@@ -141,7 +141,7 @@ def send_notifs_dates_echeances():
             logger.debug(f"Destinataires : {len(recipient_list)}")
             context = {
                 "questionnaire": questionnaire,
-                "jours_echeances": jours_echeance,
+                "jours_echeance": jours_echeance,
             }
             number_of_sent_email = send_email(
                 to=recipient_list,
