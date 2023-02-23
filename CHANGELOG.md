@@ -9,6 +9,9 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 
 ## [2.2.4] - 2023-02-23
+### Ajouts
+- Ajout d'un script SQL de réinitialisation pour une instance de démonstration
+
 ### Corrections
 - Corrections dans le message envoyé lorsqu'un questionnaire est marqué comme répondu
 - Corrections dans le message envoyé lorsuq'un questionnaire va arriver à échéance
