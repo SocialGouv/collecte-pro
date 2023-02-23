@@ -29,10 +29,12 @@ def send_email(
         context.update(extra_context)
     text_message = loader.render_to_string(text_template, context)
     html_message = loader.render_to_string(html_template, context)
+    if settings.ENV_NAME != "" and not settings.ENV_NAME.startswith("production"):
+        subject = settings.ENV_NAME + ' - ' + subject
     email = EmailMultiAlternatives(
         to=to,
         cc=cc or [],
-        subject=settings.ENV_NAME + ' - ' + subject if settings.ENV_NAME!='' else subject,
+        subject=subject,
         body=text_message,
         from_email=from_email,
     )
