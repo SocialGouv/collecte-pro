@@ -1,0 +1,333 @@
+.page-main {
+background-color: white;
+}
+
+.nav-item {
+margin-left: 3em;
+}
+
+#presentation section {
+}
+
+#presentation li {
+list-style-type: none;
+}
+
+#presentation div.presentation {
+background: url("/static/img/gray_pixel.png");
+background-size: 80% 80%;
+background-repeat: no-repeat;
+background-position: 50% 50%;
+margin: 2em 20em 6em 20em;
+padding: 2em;
+height: 24em;
+}
+
+#presentation div.text {
+float: left;
+position: relative;
+top: 3em;
+left: -4em;
+width: 50%;
+}
+
+#presentation div.illustration {
+float: left;
+position: relative;
+top: -2em;
+right: -6em;
+width: 50%;
+height: 20em;
+}
+
+#presentation h1 {
+background: url("/static/img/oblique_bleue.png") no-repeat 330px 0px;
+font-size: 2em;
+line-height: 2em;
+}
+
+#presentation section p {
+font-size: 1.4em;
+width: 68%;
+}
+
+#presentation div.presentation2 {
+background: url("/static/img/gray_pixel.png");
+background-size: 80% 80%;
+background-repeat: no-repeat;
+background-position: 0% 50%;
+margin: 0em 20em 6em 20em;
+padding: 2em;
+height: 36em;
+}
+
+#presentation .presentation2 div.text {
+left: 0;
+}
+
+#presentation .presentation2 ol {
+column-count: 2;
+text-indent: -46px;
+}
+
+#presentation .presentation2 li::before {
+content: "";
+background: url("/static/img/depot.svg") no-repeat 0px 0px;
+background-size: 80%;
+display: inline-block;
+width: 48px;
+height: 48px;
+}
+
+#presentation .presentation2 li {
+margin-right: 2em;
+}
+
+#presentation .presentation2 li .marker {
+color: white;
+background-color: #3473cb;
+padding: .1em .2em;
+margin-right: .4em;
+position: relative;
+top: -24px;
+}
+
+#presentation .presentation2 li .text {
+position: relative;
+top: -24px;
+}
+
+#presentation .presentation2 div.illustration {
+top: .6em;
+}
+
+#presentation div.presentation3 {
+background: url("/static/img/fond partenaires.png");
+background-repeat: no-repeat;
+background-position: 30% 0%;
+margin: 2em 20em 6em 20em;
+padding: 2em;
+height: 26em;
+}
+
+#presentation div.text3 {
+position: relative;
+left: -4em;
+width: 50%;
+}
+
+#presentation .illustration3 {
+padding-left: 3em;
+text-align: center;
+}
+
+#presentation .illustration3 img {
+max-width: 30%;
+height: 128px;
+margin: 1em 3em;
+}
+
+#presentation div.presentation4 {
+background: url("/static/img/fond partenaires.png");
+background-repeat: no-repeat;
+background-position: 30% 0%;
+margin: 2em 20em 6em 20em;
+padding: 0em 2em;
+height: 20em;
+}
+
+#presentation .illustration4 {
+display: table-cell;
+text-align: center;
+height: inherit;
+width: 10%;
+font-size: 1.4em;
+padding-top: 8em;
+}
+
+#presentation .presentation4 ul {
+text-indent: -46px;
+}
+
+#presentation .presentation4 li {
+padding-left: 3em;
+font-size: 1.2em;
+}
+
+#presentation .plus::before {
+content: "";
+background: url("/static/img/plus.svg") no-repeat 0px 0px;
+background-size: 80%;
+display: inline-block;
+width: 48px;
+height: 48px;
+position: relative;
+top: 24px;
+}
+
+#presentation .fleche::before {
+content: "";
+background: url("/static/img/fleche.svg") no-repeat 0px 0px;
+background-size: 80%;
+display: inline-block;
+width: 48px;
+height: 48px;
+position: relative;
+top: 24px;
+}
+
+#presentation .fichier::before {
+content: "";
+background: url("/static/img/fichier.svg") no-repeat 0px 0px;
+background-size: 80%;
+display: inline-block;
+width: 48px;
+height: 48px;
+position: relative;
+top: 24px;
+}
+
+#presentation .loupe::before {
+content: "";
+background: url("/static/img/loupe.svg") no-repeat 0px 0px;
+background-size: 80%;
+display: inline-block;
+width: 48px;
+height: 48px;
+position: relative;
+top: 24px;
+}
+
+#presentation div.p5 {
+height: 34em;
+background-size: 100% 90%;
+background-position: 0% 50%;
+}
+
+#presentation div.p5 .demo {
+clear: both;
+display: inline-block;
+text-align: center;
+padding-top: 6em;
+}
+
+#presentation div.p6 {
+background-size: 100% 90%;
+height: 22em;
+}
+
+#presentation div.p6 .text {
+left: 6em;
+}
+
+#presentation div.p6 .illustration {
+left: -6em;
+top: -3em;
+}
+
+#presentation div.p6 img {
+max-width: 80%;
+margin-right: 2em;
+}
+
+#presentation div.p7 {
+height: 28em;
+}
+
+#presentation div.p7 p {
+display: inline-block;
+width: 12%;
+border: 1px solid black;
+height: 128px;
+margin: 0px 4em;
+vertical-align: top;
+}
+
+#presentation div.p7 img {
+max-width: 100%;
+}
+
+#presentation div.p7 .picture {
+display: block;
+margin: 0px;
+}
+
+#presentation div.p7 .name {
+display: block;
+}
+
+#presentation div.p7 .stars {
+display: block;
+height: 32px;
+}
+
+#presentation div.p7 .stars img {
+height: inherit;
+}
+
+#presentation div.p7 .quote {
+display: block;
+font-size: .8em;
+font-style: italic;
+}
+
+#presentation div.presentation8 {
+background: url("/static/img/gray_pixel.png");
+background-size: 100% 100%;
+background-repeat: no-repeat;
+margin: 2em 20em 6em 20em;
+padding: 2em;
+height: 38em;
+}
+
+#presentation div.text8 {
+float: left;
+position: relative;
+width: 50%;
+}
+
+#presentation div.illustration8 {
+float: left;
+position: relative;
+top: 2em;
+right: -6em;
+width: 50%;
+height: 20em;
+}
+
+#presentation div.illustration8 ol {
+counter-reset: firstlevel; 
+}
+
+#presentation div.illustration8 li::before {
+font-size: 1.2em;
+content: counter(firstlevel);
+counter-increment: firstlevel;
+color: white;
+background-color: #3473cb;
+padding: .2em .4em;
+margin-right: .4em;
+}
+
+#presentation div.illustration8 li {
+font-size: 1.2em;
+line-height: 2em;
+}
+
+#presentation div.presentation9 {
+background: url("/static/img/gray_pixel.png");
+background-size: 100% 100%;
+background-repeat: no-repeat;
+margin: 2em 20em 6em 20em;
+padding: 2em;
+height: 18em;
+}
+
+#presentation div.presentation9 li {
+line-height: 3em;
+}
+
+#presentation div.presentation9 li a {
+margin-left: 1em;;
+}
+

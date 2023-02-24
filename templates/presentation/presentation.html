@@ -1,0 +1,106 @@
+{% extends "presentation/accueil.html" %}
+{% load static %}
+{% block site_title %}
+  <title>Présentation | collecte-pro</title>
+{% endblock site_title %}
+
+{% block page_main_container %}
+          <section>
+            <div class="presentation p5">
+              <div class="text">
+                <h1>Découvrir notre solution</h1>
+                <p>
+                  <ul>
+                    <li class="plus">Structurer la collecte de documents</li>
+                    <li class="fleche">Simplifier la transmission des réponses</li>
+                    <li class="fichier">Automatiser le classement et le renommage</li>
+                    <li class="loupe">Faciliter le pointage des fichiers</li>
+                  </ul>
+                </p>
+              </div>
+              <div class="illustration">
+                <img src="/static/img/bienvenue.jpg" />
+              </div>
+              <div class="demo">
+                <a href="/presentation/demo" class="btn btn-primary btn-block">Tester Collecte-pro</a>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="presentation2 p6">
+              <div class="illustration">
+                <img src="/static/img/dossiers.jpg" />
+              </div>
+              <div class="text">
+                <h1>Notre cible</h1>
+                <p>Collecte-pro est un service conçu par l'État pour toute administration réalisant des évaluations, contrôles, inspections ou audits</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="presentation3 p7">
+              <div class="text3">
+                <h1>Les avis</h1>
+              </div>
+              <div class="illustration3">
+                <p>
+                  <img src="/static/img/franck.png" class="picture" />
+                  <span class="name">Franck B.</span>
+                  <span class="stars"><img src="/static/img/stars5.svg" /></span>
+                  <span class="quote">"Prise en main en une heure et des réponses obtenues dans l'heure suivante."</span>
+                </p>
+                <p>
+                  <img src="/static/img/sandra.png" class="picture" />
+                  <span class="name">Sandra A.</span>
+                  <span class="stars"><img src="/static/img/stars4.svg" /></span>
+                  <span class="quote">"Je retrouve mon organisation, la sélection des fichiers est un atout supplémentaire."</span>
+                </p>
+                <p>
+                  <img src="/static/img/mathilde.png" class="picture" />
+                  <span class="name">Mathilde T.</span>
+                  <span class="stars"><img src="/static/img/stars5.svg" /></span>
+                  <span class="quote">"Un outil indispensable lorsque l'on doit collecter des quantités importantes de documents."</span>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="presentation8">
+              <div class="text8">
+                <h1>Vidéos</h1>
+                <iframe width="640" height="420" src="https://www.youtube.com/embed/76XCQO9J3k0" frameborder="0" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="illustration8">
+                <p>
+                  <ol>
+                    <li><a href="#" onclick="play('76XCQO9J3k0');">Présentation</a></li>
+                    <li><a href="#" onclick="play('LdSus0uAe3w');">Introduction et connexion</a></li>
+                    <li><a href="#" onclick="play('oaYiAX7v_m8');">Demandeur : Créer un espace de dépôt</a></li>
+                    <li><a href="#" onclick="play('1dcZFx3quKo');">Demandeur : Créer un questionnaire</a></li>
+                    <li><a href="#" onclick="play('gaTCAgTsAg0');">Demandeur : Dupliquer un espace de dépôt</a></li>
+                    <li><a href="#" onclick="play('DOvRU3Jh5rY');">Répondant : Déposer des réponses</a></li>
+                    <li><a href="#" onclick="play('sJPGV9Dcmgg');">Répondant : Voir et exporter les réponses</a></li>
+                    <li><a href="#" onclick="play('3cM2yDOSHxE');">Répondant : Exporter la liste des réponses</a></li>
+                  </ol>
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="presentation9">
+              <div class="text8">
+                <h1>Tutoriels</h1>
+                <p>
+                  <ul>
+                    <li>Tutoriel Demandeur <a href="#" class="btn btn-primary">Télécharger ici</a></li>
+                    <li>Tutoriel Répondant <a href="#" class="btn btn-primary">Télécharger ici</a></li>
+                  </ul>
+                </p>
+            </div>
+          </section>
+
+{% endblock page_main_container %}
