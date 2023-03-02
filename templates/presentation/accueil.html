@@ -21,14 +21,14 @@
           </div>
           <ul class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-center links">
               <li class="nav-item">
-                {% url 'presentation:index' as presentation_index_url %}
+                {% url 'presentation:accueil' as presentation_accueil_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == presentation_accueil_url %}active{% endif %}"
                   href="{% url 'presentation:accueil'%}">
                   Accueil
                 </a>
               </li>
               <li class="nav-item">
-                {% url 'presentation:who' as presentation_who_url %}
+                {% url 'presentation:presentation' as presentation_presentation_url %}
                 <a class="nav-link nav-link-thick-line {% if request.path == presentation_presentation_url %}active{% endif %}"
                   href="{% url 'presentation:presentation'%}">
                   Présentation
@@ -37,15 +37,20 @@
           </ul>
           <ul class="nav nav-tabs border-0 flex-row flex-grow-1 justify-content-end links">
               <li class="nav-item">
-                {% url 'presentation:index' as presentation_index_url %}
+                {%if settings.KEYCLOAK_ACTIVE %}
                 <a class="btn btn-primary btn-block"
-                  href="{% url 'presentation:accueil'%}">
+                  href="{% url 'oidc_authentication_init' %}">
                   Connexion
                 </a>
+                {%else%}
+                <a class="btn btn-primary btn-block"
+                  href="{% url 'login' %}">
+                  Connexion
+                </a>
+                {%endif%}
               </li>
               <li class="nav-item">
-                {% url 'presentation:who' as presentation_who_url %}
-                <a class="nav-link nav-link-thick-line {% if request.path == presentation_who_url %}active{% endif %}"
+                <a class="nav-link nav-link-thick-line"
                   href="{% url 'faq'%}">
                   FAQ
                 </a>
@@ -58,68 +63,79 @@
           {% block page_main_container %}
           <section>
             <div class="presentation">
-              <div class="text">
+              <div class="text left">
                 <h1>Bienvenue sur Collecte-pro</h1>
                 <p>Votre service de transmission de documents entre administration et organismes</p>
               </div>
-              <div class="illustration">
+              <div class="illustration right">
                 <img src="/static/img/bienvenue.jpg" />
               </div>
             </div>
           </section>
 
           <section>
-            <div class="presentation2">
-              <div class="text">
+            <div class="presentation">
+              <div class="text left">
                 <h1>Le processus</h1>
                 <p>Équipe d'instruction</p>
                 <p>
-                  <ol>
-                    <li><span class="marker">1</span><span class="text"><strong>Créez des espaces de dépôt</strong> étanches pour chaque organisme interrogé</span></li>
+                  <ul>
+                    <li class="multilines"><span class="marker">1</span><span class="text"><strong>Créez des espaces de dépôt</strong> étanches pour chaque organisme interrogé</span></li>
                     <li><span class="marker">2</span><span class="text"><strong>Créez vos questionnaires</strong> dans chaque espace de dépôt</span></li>
                     <li><span class="marker">3</span><span class="text"><strong>Ouvrez les accès</strong> aux membres de votre équipe et aux agents désignés des organismes interrogés</span></li>
                     <li><span class="marker">4</span><span class="text"><strong>Soyez alerté</strong> si des réponses sont déposées</span></li>
                     <li><span class="marker">5</span><span class="text"><strong>Visualisez les réponses</strong> directement sur la plateforme sous chaque question</span></li>
                     <li><span class="marker">6</span><span class="text"><strong>Exportez les réponses</strong> dans un fichier compressé</span></li>
-                  </ol>
+                  </ul>
                 </p>
               </div>
-              <div class="illustration">
+              <div class="illustration right">
                 <img src="/static/img/processus.png" />
               </div>
             </div>
           </section>
 
           <section>
-            <div class="presentation3">
-              <div class="text3">
+            <div class="presentation">
+              <div class="text">
                 <h1>Nos partenaires</h1>
               </div>
-              <div class="illustration3">
-                <img src="/static/img/partenaire_ministeres_sociaux.png" alt="" />
-                <img src="/static/img/partenaire_ministere_transition.png" />
-                <img src="/static/img/partenaire_igedd.jpg" />
-                <img src="/static/img/partenaire_cour_comptes.png" />
-                <img src="/static/img/partenaire_igas.png" />
-                <img src="/static/img/partenaire_france_relance.png" />
+              <div class="row">
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_ministeres_sociaux.png" />
+                </div>
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_ministere_transition.png" />
+                </div>
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_igedd.jpg" />
+                </div>
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_cour_comptes.png" />
+                </div>
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_igas.png" />
+                </div>
+                <div class="card border-0 m-5" style="width: 9rem;">
+                  <img class="card-img-top" src="/static/img/partenaire_france_relance.png" />
+                </div>
               </div>
             </div>
           </section>
 
-
           <section>
-            <div class="presentation4">
-              <div class="text">
+            <div class="presentation">
+              <div class="text left">
                 <h1>Nos évolutions</h1>
                 <p>
                   <ul>
-                    <li class="plus">Duplication des espaces de dépôt et des questionnaires</li>
-                    <li class="plus">Filtrage et sélection des documents à exporter</li>
-                    <li class="plus">Gestion des statuts des questionnaires</li>
+                    <li class="icon plus">Duplication des espaces de dépôt et des questionnaires</li>
+                    <li class="icon plus">Filtrage et sélection des documents à exporter</li>
+                    <li class="icon plus">Gestion des statuts des questionnaires</li>
                   </ul>
                 </p>
               </div>
-              <div class="illustration4">
+              <div class="illustration vertical-middle large">
                 <a href="https://github.com/SocialGouv/collecte-pro/blob/main/CHANGELOG.md" target="_blank">Dernières nouveautés</a>
               </div>
             </div>

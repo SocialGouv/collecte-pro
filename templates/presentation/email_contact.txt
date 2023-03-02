@@ -1,0 +1,25 @@
+Bonjour,
+
+ {{ firstname }} {{ lastname }} vient de remplir le formulaire de contact :
+
+- Fonction : {{ position }}
+- Adresse mail : {{ email }}
+- Numéro de téléphone : {{ phone }}
+
+{%if contact %}
+Il a également demandé à être recontacté.
+{%endif%}
+
+{%if access %}
+Il a également demandé à avoir accès à la plateforme de démonstration.
+{%endif%}
+
+{%if message %}
+Il a également laissé un message :
+{{message}}
+{%endif%}
+
+
+Merci beaucoup,
+
+L'équipe collecte-pro

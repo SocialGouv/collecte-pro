@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
+from django.views.generic.base import RedirectView
 
 from rest_framework import routers
 
@@ -39,7 +40,6 @@ router.register(r'deletion', deletion_api_views.DeleteViewSet, basename='deletio
 
 
 urlpatterns = [
-    path('', ecc_views.home, name='login'),
     path('cgu/', tos_views.tos, name='tos'),
     path('oidc/', include('mozilla_django_oidc.urls')),
     path(settings.ADMIN_URL + 'login/',
@@ -87,6 +87,18 @@ urlpatterns = [
          editor_api_views.UpdateEditor.as_view(),
          name='update-editor'),
 ]
+
+# Si les pages de présentation sont activées, la page par défaut est remplacée
+if settings.PRESENTATION_ACTIVE:
+    urlpatterns.insert(
+        0,
+        path('', RedirectView.as_view(url='/presentation'), name='login'),
+    )
+else:
+    urlpatterns.insert(
+        0,
+        path('', ecc_views.home, name='login'),
+    )
 
 # If Keycloak is active, disable administration login page
 if settings.KEYCLOAK_ACTIVE:

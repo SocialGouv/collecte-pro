@@ -1,0 +1,29 @@
+{% extends "base_email.html" %}
+{% load email_obfuscator %}
+{% block email_content %}
+<p>Bonjour,</p>
+<p> {{ firstname }} {{ lastname }} vient de remplir le formulaire de contact :</p>
+<ul>
+    <li>Fonction : {{ position }}</li>
+    <li>Adresse mail : {{ email }}</li>
+    <li>Numéro de téléphone : {{ phone }}</li>
+</ul>
+
+{%if contact %}
+<p>Il a également demandé à être recontacté.</p>
+{%endif%}
+
+{%if access %}
+<p>Il a également demandé à avoir accès à la plateforme de démonstration.</p>
+{%endif%}
+
+{%if message %}
+<p>
+Il a également laissé un message :
+{{message}}
+</p>
+{%endif%}
+
+<p>Merci beaucoup,</p>
+<p>L'équipe collecte-pro</p>
+{% endblock email_content %}

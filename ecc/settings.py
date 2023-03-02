@@ -231,6 +231,7 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 LOGIN_URL = 'login'
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -356,3 +357,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Jours de relance par défaut avant échéance d'un questionnaire
 JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
+
+# Indique si la page par défaut est celle de présentation
+PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=False)
