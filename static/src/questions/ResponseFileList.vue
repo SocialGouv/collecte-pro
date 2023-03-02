@@ -25,7 +25,7 @@
         <tbody>
           <tr v-for="file in files" :key="file.id">
             <td>
-              <div>{{ file.creation_date | DateFormat }}</div>
+              <div>{{ file.creation_date }}</div>
               <div class="small text-muted">{{ file.creation_time }}</div>
             </td>
             <td>
