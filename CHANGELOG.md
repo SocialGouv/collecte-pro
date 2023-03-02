@@ -6,8 +6,14 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+### Ajouts
+- Ajout des pages de présentation
+
 ### Modifications
 - Mise à jour de la déclaration d'accessibilité
+
+### Corrections
+- Correction de l'affichage des dates des fichiers déposés
 
 
 ## [2.2.4] - 2023-02-23
