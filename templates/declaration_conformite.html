@@ -6,8 +6,6 @@
   <title>Déclaration d'accessibilité | collecte-pro</title>
 {% endblock site_title %}
 
-{% get_support_email_item as support_email %}
-
 {% block page_main_container_with_sidebar %}
   <div class="page-main flex-row">
     {% if user.is_authenticated %}
@@ -241,6 +239,7 @@
 
           <a name="retour-d-information"></a>
           <h2>Retour d’information et contact</h2>
+          {% get_support_email_item as support_email %}
           <p>Si vous n’arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter {{ support_email.url|obfuscate_mailto:"le responsable de l'accessibilité" }} pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme.</p>
           <p>
           <ul>
