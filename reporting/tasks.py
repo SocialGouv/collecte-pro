@@ -55,7 +55,7 @@ def get_files(control):
     return files
 
 
-@app.task
+@app.task(queue=settings.CELERY_QUEUE)
 def send_files_report():
     html_template = 'reporting/email/files_report.html'
     text_template = 'reporting/email/files_report.txt'
@@ -111,7 +111,7 @@ def send_files_report():
         time.sleep(EMAIL_SPACING_TIME_SECONDS)
 
 
-@app.task
+@app.task(queue=settings.CELERY_QUEUE)
 def send_notifs_dates_echeances():
     html_template = "reporting/email/notif_date_echeance.html"
     text_template = "reporting/email/notif_date_echeance.txt"
