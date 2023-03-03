@@ -6,6 +6,14 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+
+
+## [2.2.6] - 2023-03-03
+### Modifications
+- Routage des tâches Celery pour permettre une meilleure gestion en cas d'instances multiples
+
+
+## [2.2.5] - 2023-03-02
 ### Ajouts
 - Ajout des pages de présentation
 
