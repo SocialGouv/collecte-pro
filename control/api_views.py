@@ -1,7 +1,9 @@
 from functools import partial
 
 import django.dispatch
+import psycopg2
 from django.http import HttpResponse
+from django.db import connection
 from actstream import action
 from django.core.files import File
 from django.db.models import Q
@@ -259,7 +261,24 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
+        self.after_duplicate()
         return queryset
+
+    def after_duplicate(self):
+
+        try:
+            control_id = self.request.data.get("control")
+            cursor = connection.cursor()
+            str = """update control_questionnaire set "order" = (id - (select min(id) from control_questionnaire  where control_id=%s)) where control_id=%s"""
+            val = (control_id, control_id)
+            cursor.execute(str, val)
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print('Error while connecting to PostgreSQL')
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
 
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:
