@@ -374,6 +374,19 @@ export default Vue.extend({
         const qId = response.data.id
         const newQ = { ...questionnaire, themes: themes }
 
+          newQ.questionnaire_files.map(qf => {
+                axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                  const formData = new FormData()
+                  formData.append('file', response.data, qf.basename)
+                  formData.append('questionnaire', qId)
+                  axios.post(backendUrls.piecejointe(), formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  })
+                })
+              }) 
+
         await getUpdateMethod(qId)(newQ).then(response => {
           const updatedQ = response.data
 
