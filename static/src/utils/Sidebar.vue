@@ -220,6 +220,7 @@ export default Vue.extend({
           icon: 'fa fa-archive',
           href: backend['control-detail'](control.id),
           title: makeControlTitle(control),
+          ctrl_id: control.id,
         }
 
         const resp = await axios.get(backend.getAccessToControl(control.id))
@@ -254,9 +255,10 @@ export default Vue.extend({
           })
         }
         menu.push(controlMenu)
+        menu.sort((a, b) => { return b.ctrl_id - a.ctrl_id })
       })
       this.isMenuBuilt = true
-      this.menu = menu.sort((a, b) => { return b.id - a.id })
+      this.menu = menu
     },
     toggleCollapse() {
       this.collapsed = !this.collapsed;
