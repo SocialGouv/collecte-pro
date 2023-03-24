@@ -257,11 +257,12 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             control = questionnaire.control
         except Exception:
             control = Control.objects.get(pk=self.request.data.get("control"))
+            self.after_duplicate()
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
-        self.after_duplicate()
+
         return queryset
 
     def after_duplicate(self):
