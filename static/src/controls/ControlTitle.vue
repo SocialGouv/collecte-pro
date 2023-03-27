@@ -359,7 +359,7 @@ export default Vue.extend({
             })
 
           Promise.all(promises).then((values) => {
-            setTimeout(() => { window.location.href = backendUrls.home(); }, 1400);
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 2000);
           });
         })
 
