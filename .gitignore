@@ -35,3 +35,4 @@ celerybeat-schedule
 
 # Environment
 venv*/
+.vscode/tasks.json
