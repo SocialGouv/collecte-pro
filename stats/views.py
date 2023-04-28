@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView
 
 from actstream.models import Action
+from dateutil.relativedelta import relativedelta
+
 
 
 ACTION_CREATED_CONTROL = "created control"
@@ -41,9 +43,10 @@ class Stats(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         month = datetime.today().month
+        last_twelve_months = datetime.today() + relativedelta(months=-11)
 
         controls = [[0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_CREATED_CONTROL).all()
+        actions = Action.objects.filter(verb=ACTION_CREATED_CONTROL, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         for date in dates:
             controls[(11 - month + date.month) % 12] = [
@@ -53,7 +56,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["controls"] = self.complete_datas(controls)
 
         questionnaires = [[0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_PUBLISHED_QUESTIONNAIRE).all()
+        actions = Action.objects.filter(verb=ACTION_PUBLISHED_QUESTIONNAIRE, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         for date in dates:
             questionnaires[(11 - month + date.month) % 12] = [
@@ -63,7 +66,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["questionnaires"] = self.complete_datas(questionnaires)
 
         questions = [[0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_PUBLISHED_QUESTION).all()
+        actions = Action.objects.filter(verb=ACTION_PUBLISHED_QUESTION, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         for date in dates:
             questions[(11 - month + date.month) % 12] = [
@@ -73,7 +76,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["questions"] = self.complete_datas(questions)
 
         users = [[0, 0] for i in range(12)]
-        all_users = User.objects.all()
+        all_users = User.objects.filter(date_joined__gte=last_twelve_months).all()
         dates = all_users.datetimes("date_joined", kind="month")
         for date in dates:
             users[(11 - month + date.month) % 12] = [
@@ -83,7 +86,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["users"] = self.complete_datas(users)
 
         responses = [[0, 0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_UPLOADED_RESPONSE).all()
+        actions = Action.objects.filter(verb=ACTION_UPLOADED_RESPONSE, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         for date in dates:
             month_size = 0
@@ -100,7 +103,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["responses"] = self.complete_datas(responses)
 
         connections = [[0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_LOGGED_IN).all()
+        actions = Action.objects.filter(verb=ACTION_LOGGED_IN, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         for date in dates:
             connections[(11 - month + date.month) % 12] = [
@@ -110,7 +113,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         context["connections"] = self.complete_datas(connections)
 
         files = [[0, 0, 0] for i in range(12)]
-        actions = Action.objects.filter(verb=ACTION_UPLOADED_RESPONSE).all()
+        actions = Action.objects.filter(verb=ACTION_UPLOADED_RESPONSE, timestamp__gte=last_twelve_months).all()
         dates = actions.datetimes("timestamp", kind="month")
         total_size = 0
         for date in dates:

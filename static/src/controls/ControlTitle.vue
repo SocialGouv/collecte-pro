@@ -359,7 +359,7 @@ export default Vue.extend({
             })
 
           Promise.all(promises).then((values) => {
-            setTimeout(() => { window.location.href = backendUrls.home(); }, 500);
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 2000);
           });
         })
 
@@ -373,6 +373,19 @@ export default Vue.extend({
       const promise = await getCreateMethod()(questionnaire).then(async response => {
         const qId = response.data.id
         const newQ = { ...questionnaire, themes: themes }
+
+          newQ.questionnaire_files.map(qf => {
+                axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                  const formData = new FormData()
+                  formData.append('file', response.data, qf.basename)
+                  formData.append('questionnaire', qId)
+                  axios.post(backendUrls.piecejointe(), formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  })
+                })
+              }) 
 
         await getUpdateMethod(qId)(newQ).then(response => {
           const updatedQ = response.data

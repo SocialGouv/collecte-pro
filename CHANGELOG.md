@@ -8,6 +8,32 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 ## [En cours]
 
 
+## [2.2.11] - 2023-04-25
+### Modifications
+- Renfort du script de suppression des données sur l'espace de démo
+- Mise à jour de CHANGELOG
+
+
+## [2.2.10] - 2023-04-21
+### Modifications
+- Optimisation de l'accès aux statistiques 
+
+
+## [2.2.9] - 2023-03-27
+### Corrections
+- Les espaces de dépôt ne s'affichent plus par ordre chronologique décroissant
+
+
+## [2.2.8] - 2023-03-22
+### Corrections
+- Perte de PJ lors de la duplication d'un espace de dépôt 
+
+
+## [2.2.7] - 2023-03-17
+### Corrections
+- La duplication des questionnaires est KO
+
+
 ## [2.2.6] - 2023-03-03
 ### Modifications
 - Routage des tâches Celery pour permettre une meilleure gestion en cas d'instances multiples

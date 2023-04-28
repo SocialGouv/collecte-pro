@@ -1,7 +1,9 @@
 from functools import partial
 
 import django.dispatch
+import psycopg2
 from django.http import HttpResponse
+from django.db import connection
 from actstream import action
 from django.core.files import File
 from django.db.models import Q
@@ -250,13 +252,18 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             return [permission() for permission in self.permission_classes_by_action["create"]]
 
     def get_queryset(self):
-        questionnaire = Questionnaire.objects.get(pk=self.request.data.get("id"))
-        control = questionnaire.control
+        try:
+            questionnaire = Questionnaire.objects.get(pk=self.request.data.get("id"))
+            control = questionnaire.control
+        except Exception:
+            control = Control.objects.get(pk=self.request.data.get("control"))
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
         return queryset
+
+    
 
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:
