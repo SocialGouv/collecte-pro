@@ -7,6 +7,9 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 ## [En cours]
 
+## [2.2.12] - 2023-05-09
+### Modifications
+- Correction d'affichage de la date de création/modification d'un brouillon dans Firefox
 
 ## [2.2.11] - 2023-04-25
 ### Modifications
