@@ -110,7 +110,7 @@ Finalisé : l'instruction des pièces déposées est achevée">
                   {{ questionnaire.editor.first_name }}
                   {{ questionnaire.editor.last_name }}
                   <span v-if="questionnaire.modified_date" class="text-muted editor-date">
-                    {{ questionnaire.modified_date.includes('.') ? questionnaire.modified_date : questionnaire.modified_date | DateFormat }} à
+                    {{ questionnaire.modified_date }} à
                     {{ questionnaire.modified_time }}
                   </span>
                 </small>

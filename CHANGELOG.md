@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.13] - 2023-05-10
+### Modifications
+- Suppression du formatage modified_date des questionnaires
 
 ## [2.2.12] - 2023-05-09
 ### Modifications
