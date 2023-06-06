@@ -117,15 +117,17 @@ class Stats(LoginRequiredMixin, TemplateView):
         dates = actions.datetimes("timestamp", kind="month")
         total_size = 0
         for date in dates:
-            for fil in actions.filter(timestamp__month=date.month).all():
+            """for fil in actions.filter(timestamp__month=date.month).all():
                 try:
                     total_size += fil.action_object.file.size
                 except:
                     pass
+            """
             files[(11 - month + date.month) % 12] = [
                 date,
                 total_size,
             ]
         context["files"] = self.complete_datas(files)
+        
 
         return context

@@ -227,13 +227,13 @@
         </div>
 
         <div class="text-justify mt-6">
-          <h2>Nombre et taille de fichiers déposés par mois</h2>
-          <canvas id="responses" width="400" height="60" aria-label="Nombre et taille de fichiers déposés par mois" role="img"></canvas>
+        <h2>Nombre de fichiers déposés par mois</h2>
+        <canvas id="responses" width="400" height="60" aria-label="Nombre de fichiers déposés par mois" role="img"></canvas>
           <script>
           ctx = document.getElementById("responses").getContext("2d");
           monthes = [{%for response in responses%}"{{response.0|date:"M Y"}}", {%endfor%}];
           datas = [{%for response in responses%}{{response.1}}, {%endfor%}];
-          datas_2 = [{%for response in responses%}{{response.2}}, {%endfor%}];
+          //datas_2 = [{%for response in responses%}{{response.2}}, {%endfor%}];
           myChart = new Chart(ctx, {
               type: "bar",
               data: {
@@ -250,7 +250,7 @@
                       yAxisID: "y1",
                       borderWidth: 1
                   }, {
-                      label: "Taille des fichiers déposés par mois",
+                      /*label: "Taille des fichiers déposés par mois",
                       data: datas_2,
                       type: "line",
                       backgroundColor: [
@@ -260,7 +260,7 @@
                           "rgba(54, 162, 235, 1)"
                       ],
                       yAxisID: "y2",
-                      borderWidth: 3
+                      borderWidth: 3*/
                   }]
               },
               options: {
@@ -272,14 +272,14 @@
                         callbacks: {
                           label: function(context) {
                             if (context.dataset.label.startsWith("Taille")) {
-                              let label = context.dataset.label || '';
+                              /*let label = context.dataset.label || '';
                               if (label) {
                                   label += ': ';
                               }
                               if (context.parsed.y !== null) {
                                   label += parseInt(context.parsed.y*100/1048576)/100.0 + " Mo";
                               }
-                              return label;
+                              return label;*/
                             }
                             else {
                               if (context.parsed.y !== null) {
@@ -299,7 +299,7 @@
                             stepSize: 1
                           }
                       },
-                      y2: {
+                      /*y2: {
                           position: "right",
                           beginAtZero: true,
                           // On n'affiche pas les lignes de cet axe
@@ -312,14 +312,14 @@
                                 return parseInt(label/1048576) + " Mo";
                             }
                           }
-                      }
+                      }*/
                   }
               }
           });
           </script>
         </div>
 
-        <div class="text-justify mt-6">
+        <!--<div class="text-justify mt-6">
           <h2>Taille totale cumulée par mois</h2>
           <canvas id="files" width="400" height="60" aria-label="Taille totale cumulée par mois" role="img"></canvas>
           <script>
@@ -386,7 +386,7 @@
               }
           });
           </script>
-        </div>
+        </div>-->
 
       </div>
     </main>

@@ -14,11 +14,12 @@ DELETE FROM "ecollecte-demo".public.django_session;
 NETTOYAGE DE CELERY
 **************************************/
 DELETE FROM "ecollecte-demo".public.django_celery_beat_clockedschedule;
+DELETE FROM "ecollecte-demo".public.django_celery_beat_periodictask;
 DELETE FROM "ecollecte-demo".public.django_celery_beat_crontabschedule;
 DELETE FROM "ecollecte-demo".public.django_celery_beat_intervalschedule;
 DELETE FROM "ecollecte-demo".public.django_celery_beat_solarschedule;
 DELETE FROM "ecollecte-demo".public.django_celery_beat_periodictasks;
-DELETE FROM "ecollecte-demo".public.django_celery_beat_periodictask;
+
 
 
 
@@ -118,18 +119,6 @@ INSERT INTO "ecollecte-demo".public.tos_cguitem VALUES (1, 1, null, 'Condition g
 
 
 /*************************************
-NETTOYAGE DES ESPACES DE DEPOT
-**************************************/
-DELETE FROM "ecollecte-demo".public.control_responsefile;
-DELETE FROM "ecollecte-demo".public.control_questionfile;
-DELETE FROM "ecollecte-demo".public.control_question;
-DELETE FROM "ecollecte-demo".public.control_theme;
-DELETE FROM "ecollecte-demo".public.control_questionnairefile;
-DELETE FROM "ecollecte-demo".public.control_questionnaire;
-DELETE FROM "ecollecte-demo".public.control_control;
-
-
-/*************************************
 NETTOYAGE DES UTILISATEURS
 **************************************/
 DELETE FROM "ecollecte-demo".public.user_profiles_access;
@@ -141,6 +130,19 @@ DELETE FROM "ecollecte-demo".public.auth_permission;
 DELETE FROM "ecollecte-demo".public.auth_user_groups;
 DELETE FROM "ecollecte-demo".public.auth_group;
 DELETE FROM "ecollecte-demo".public.auth_user;
+
+
+/*************************************
+NETTOYAGE DES ESPACES DE DEPOT
+**************************************/
+DELETE FROM "ecollecte-demo".public.control_responsefile;
+DELETE FROM "ecollecte-demo".public.control_questionfile;
+DELETE FROM "ecollecte-demo".public.control_question;
+DELETE FROM "ecollecte-demo".public.control_theme;
+DELETE FROM "ecollecte-demo".public.control_questionnairefile;
+DELETE FROM "ecollecte-demo".public.control_questionnaire;
+DELETE FROM "ecollecte-demo".public.control_control;
+
 
 -- Gestion des groupes
 INSERT INTO "ecollecte-demo".public.auth_group VALUES (1, 'admin_metier');
