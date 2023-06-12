@@ -6,6 +6,14 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+
+## [2.2.15] - 2023-06-12
+### Modifications
+Evolution pages communication : 
+    -harmonisation de la typographie pour le nom 'collecte-pro'
+    -remplacement de trois images
+    -mise à jour des logos avec l'aspect du logo en pièce jointe
+
 ## [2.2.14] - 2023-06-06
 ### Modifications
 - Optimisation de l'accès aux statistiques : garder le nombre de fichiers déposés mais pas la taille qui présente un goulot d'étranglement.
