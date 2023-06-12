@@ -24,7 +24,7 @@ from user_profiles import api_views as user_profiles_api_views
 from declaration_conformite import views as declarationConformite_views
 
 
-admin.site.site_header = 'Collecte-pro Administration'
+admin.site.site_header = 'collecte-pro Administration'
 
 router = routers.DefaultRouter()
 router.register(r'annexe', control_api_views.QuestionFileViewSet, basename='annexe')
