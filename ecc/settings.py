@@ -360,4 +360,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
 
 # Indique si la page par défaut est celle de présentation
-PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=False)
+PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=True)
