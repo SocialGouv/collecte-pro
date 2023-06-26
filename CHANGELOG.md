@@ -7,6 +7,10 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 ## [En cours]
 
+## [2.2.16] - 2023-06-26
+### Modifications
+- Activation des pages de présentation
+
 ## [2.2.15] - 2023-06-12
 ### Modifications
 Evolution pages communication : 
