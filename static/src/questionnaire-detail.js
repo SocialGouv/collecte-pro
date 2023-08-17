@@ -41,12 +41,11 @@ new Vue({
       },
     }),
   methods: {
-    ...mapActions(['fetchConfig', 'fetchControls', 'fetchSessionUser']),
+    ...mapActions(['fetchConfig', , 'fetchSessionUser']),
   },
   created() {
     this.fetchConfig()
     this.fetchSessionUser()
-
     // Store the controls in the Vuex store
     this.$store.commit('updateControls', controls)
     this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)

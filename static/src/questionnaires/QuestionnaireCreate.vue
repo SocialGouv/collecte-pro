@@ -279,8 +279,12 @@ export default Vue.extend({
     StickyBottomMixin,
   ],
   mounted() {
+    if (typeof this.questionnaireId === 'undefined') {
+      this.loadNewQuestionnaire()
+    }else{
+      this.loadExistingQuestionnaire()
+    }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
-
     console.debug('questionnaireId', this.questionnaireId)
     console.debug('controlId', this.controlId)
     if (this.controlId === undefined && this.questionnaireId === undefined) {
@@ -288,13 +292,48 @@ export default Vue.extend({
     }
   },
   methods: {
+      loadNewQuestionnaire: function(){
+        const newQuestionnaire = {
+          control: this.controlId,
+          description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
+          title: '',
+          themes: [],
+        }
+        this.currentQuestionnaire = newQuestionnaire
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
+        return
+      },
+      loadExistingQuestionnaire: function(){
+        const currentQuestionnaire =
+          this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
+        console.debug('CcurrentQuestionnaire', currentQuestionnaire)
+        if (!currentQuestionnaire) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
+          this.displayErrors(errorMessage)
+          throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
+        }
+        if (!currentQuestionnaire.is_draft) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId +
+                ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
+          this.displayErrors(errorMessage)
+          throw new Error(
+            'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
+        }
+        this.currentQuestionnaire = currentQuestionnaire
+        this.currentQuestionnaire.control = this.controlId
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
+      },
     findCurrentQuestionnaire: function(controls, questionnaireId) {
       for (let i = 0; i < controls.length; i++) {
         const control = controls[i]
+        console.log('control ::', control)
         const foundQuestionnaires =
           control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
         if (foundQuestionnaires.length > 0) {
           this.questionnaire = foundQuestionnaires[0]
+          console.log('foundQuestionnaires ::', foundQuestionnaires)
           return foundQuestionnaires[0]
         }
       }
@@ -451,7 +490,6 @@ export default Vue.extend({
           console.debug('Successful draft save.')
           self.currentQuestionnaire = response.data
           self.emitQuestionnaireUpdated()
-
           self.displaySavingDone(nowTimeString())
           return response.data
         })
