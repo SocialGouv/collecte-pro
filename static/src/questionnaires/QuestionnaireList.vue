@@ -384,10 +384,10 @@ export default Vue.extend({
       })
     },
     getControlsInspectedFromUser() {
-      axios.get(backendUrls.getControlsInspectedFromUser(this.user.id))
+      /*axios.get(backendUrls.getControlsInspectedFromUser(this.user.id))
         .then((response) => {
           this.controlsInspected = response.data.filter(obj => obj.id !== this.control.id)
-        })
+        })*/
     },
     toggleView() {
       if (this.isList) {

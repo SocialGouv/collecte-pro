@@ -71,14 +71,16 @@ export const store = new Vuex.Store({
       })
     },
     fetchControls({ commit }) {
-      axios.get(backendUrls.control()).then(response => {
+      commit('updateControls', this.controls)
+      commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+      /*axios.get(backendUrls.control()).then(response => {
         console.debug('Store got controls', response.data)
         commit('updateControls', response.data)
         commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
       }).catch(err => {
         console.error('Store got esrror fetching controls', err)
         commit('updateControlsLoadStatus', loadStatuses.ERROR)
-      })
+      })*/
     },
   },
 })

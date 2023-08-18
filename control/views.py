@@ -151,6 +151,18 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
         )
         return questionnaires
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        control_list = context['controls']
+        controls_serialized = []
+        for control in control_list:
+            control_serialized = ControlDetailControlSerializer(instance=control).data
+            controls_serialized.append(control_serialized)
+        context['controls_json'] = json.dumps(controls_serialized)
+        user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
+        user_serialized['is_inspector'] = self.request.user.profile.is_inspector
+        context['user_json'] = json.dumps(user_serialized)
+        return context
 
 class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailView):
     """
@@ -164,7 +176,19 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         user_access = self.request.user.profile.access.filter(access_type='demandeur').all()
         return Control.objects.filter(access__in=user_access)
 
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        control_list = context['controls']
+        controls_serialized = []
+        for control in control_list:
+            control_serialized = ControlDetailControlSerializer(instance=control).data
+            controls_serialized.append(control_serialized)
+        context['controls_json'] = json.dumps(controls_serialized)
+        user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
+        user_serialized['is_inspector'] = self.request.user.profile.is_inspector
+        context['user_json'] = json.dumps(user_serialized)
+        return context
+    
 class UploadResponseFile(LoginRequiredMixin, CreateView):
     model = ResponseFile
     fields = ('file',)
