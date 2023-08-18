@@ -215,14 +215,12 @@ export default Vue.extend({
     // Watch change of loadStatus coming from the store, to know when the data is ready.
     controlsLoadStatus(newValue, oldValue) {
       const loadNewQuestionnaire = () => {
-        console.debug('loadNewQuestionnaire')
         const newQuestionnaire = {
           control: this.controlId,
           description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
           title: '',
           themes: [],
         }
-        console.debug('currentQuestionnaire is new', newQuestionnaire)
         this.currentQuestionnaire = newQuestionnaire
         this.emitQuestionnaireUpdated()
         this.moveToState(STATES.START)
@@ -230,10 +228,8 @@ export default Vue.extend({
       }
 
       const loadExistingQuestionnaire = () => {
-        console.debug('loadExistingQuestionnaire')
         const currentQuestionnaire =
           this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
-        console.debug('currentQuestionnaire', currentQuestionnaire)
         if (!currentQuestionnaire) {
           const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
           this.displayErrors(errorMessage)
@@ -285,8 +281,6 @@ export default Vue.extend({
       this.loadExistingQuestionnaire()
     }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
-    console.debug('questionnaireId', this.questionnaireId)
-    console.debug('controlId', this.controlId)
     if (this.controlId === undefined && this.questionnaireId === undefined) {
       throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
     }
@@ -305,9 +299,7 @@ export default Vue.extend({
         return
       },
       loadExistingQuestionnaire: function(){
-        const currentQuestionnaire =
-          this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
-        console.debug('CcurrentQuestionnaire', currentQuestionnaire)
+        const currentQuestionnaire =this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
         if (!currentQuestionnaire) {
           const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
           this.displayErrors(errorMessage)
@@ -322,18 +314,17 @@ export default Vue.extend({
         }
         this.currentQuestionnaire = currentQuestionnaire
         this.currentQuestionnaire.control = this.controlId
+        this.loadQuestionnaire()
         this.emitQuestionnaireUpdated()
         this.moveToState(STATES.START)
       },
     findCurrentQuestionnaire: function(controls, questionnaireId) {
       for (let i = 0; i < controls.length; i++) {
         const control = controls[i]
-        console.log('control ::', control)
         const foundQuestionnaires =
           control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
         if (foundQuestionnaires.length > 0) {
           this.questionnaire = foundQuestionnaires[0]
-          console.log('foundQuestionnaires ::', foundQuestionnaires)
           return foundQuestionnaires[0]
         }
       }
@@ -537,6 +528,22 @@ export default Vue.extend({
           if (this.state === STATES.CREATING_BODY) {
             $(this.$refs.questionnaireBodyCreate.$refs.moveThemesModal.$el).modal('show')
           }
+        })
+    },
+    loadQuestionnaire() {
+      const self = this
+      self.currentQuestionnaire.is_draft = true
+      return self._doSave()
+        .then((response) => {
+          self.currentQuestionnaire = response.data
+          self.emitQuestionnaireUpdated()
+          return response.data
+        })
+        .catch((error) => {
+          const errorToDisplay =
+            (error.response && error.response.data) ? error.response.data : error
+          self.displayErrors('Erreur lors de la modification.', errorToDisplay)
+          self.displaySavingDoneWithError()
         })
     },
   },
