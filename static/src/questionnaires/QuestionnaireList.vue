@@ -12,11 +12,11 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label v-for="ctrl in controlsInspected"
-                :for="questionnaireId + '_' + ctrl.id"
+          <label v-for="ctrl in controls"
+                :for="ctrl.id"
                 :key="ctrl.id"
                 class="custom-control custom-checkbox">
-            <input :id="questionnaireId + '_' + ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
+            <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
             <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
           </label>
         </div>
@@ -233,7 +233,6 @@ Finalisé : l'instruction des pièces déposées est achevée">
                         class="dropdown-item"
                         type="button"
                         @click="showModal(questionnaire.id)"
-                        v-if="controlsInspected.length"
                       >
                         <span class="fe fe-copy" aria-hidden="true"></span>
                         Dupliquer
@@ -314,12 +313,13 @@ export default Vue.extend({
       checkedCtrls: [],
       currentView: 'questions',
       isList: true,
-      controlsInspected:[],
+      currentQuestionnaireThemes: [],
     }
   },
   computed: {
     ...mapState({
       controls: 'controls',
+      
     }),
     accessibleControls() {
       return this.controls
@@ -341,7 +341,7 @@ export default Vue.extend({
     },
   },
   mounted() {
-    this.getControlsInspectedFromUser()
+   
   },
   methods: {
     questionnaireDetailUrl(questionnaireId) {
@@ -383,12 +383,6 @@ export default Vue.extend({
         window.location.reload();
       })
     },
-    getControlsInspectedFromUser() {
-      /*axios.get(backendUrls.getControlsInspectedFromUser(this.user.id))
-        .then((response) => {
-          this.controlsInspected = response.data.filter(obj => obj.id !== this.control.id)
-        })*/
-    },
     toggleView() {
       if (this.isList) {
         this.currentView = 'tree';
@@ -397,12 +391,15 @@ export default Vue.extend({
       }
       this.isList = !this.isList;
     },
-    cloneQuestionnaire() {
+    async cloneQuestionnaire() {
       let self = this
       const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 
       if (this.checkedCtrls.length) {
+
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(this.user.id))
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
         const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
         const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
 
@@ -421,8 +418,6 @@ export default Vue.extend({
 
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
-
-              // Update questionnaires list render when duplicated
               self.$root.$emit('questionnaire-created')
               curQ.themes.forEach(t => {
                 t.questions.forEach(q => {

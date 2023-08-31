@@ -314,6 +314,7 @@ export default Vue.extend({
       return 'Répondant'
     },
     cloneControl(newRefCode) {
+
       const valid = this.reference_code &&
                     !this.controls.find(ctrl => ctrl.reference_code === newRefCode)
 
@@ -333,19 +334,25 @@ export default Vue.extend({
           reference_code: newRefCode,
           questionnaires: questionnaires,
         }
-
-        getCreateMethodCtrl()(ctrl).then(response => {
+       
+        getCreateMethodCtrl()(ctrl).then(async response => {
           // Copy users for new control
+          
           const controlId = response.data.id
-
-          this.users
+         
+          /*this.users
             .filter(u => u.profile_type === 'inspector')
             .map(i => {
               const inspector = { ...i, control: controlId }
               axios.post(backendUrls.user(), inspector)
-            })
+          })*/
+        
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(this.users[0].id))
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
 
-          // Copy questionnaires for new control
+        this.accessibleQuestionnaires = this.control.questionnaires
+          .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+
           const promises = this.accessibleQuestionnaires
             .filter(aq => this.checkedQuestionnaires.includes(aq.id))
             .map(q => {
@@ -359,7 +366,7 @@ export default Vue.extend({
             })
 
           Promise.all(promises).then((values) => {
-            setTimeout(() => { window.location.href = backendUrls.home(); }, 2000);
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 3000);
           });
         })
 
@@ -400,7 +407,6 @@ export default Vue.extend({
                   const formData = new FormData()
                   formData.append('file', response.data, qf.basename)
                   formData.append('question', qId)
-                  console.log('fileresponse', response.data)
                   axios.post(backendUrls.annexe(), formData, {
                     headers: {
                       'Content-Type': 'multipart/form-data',

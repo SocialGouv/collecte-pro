@@ -7,6 +7,10 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 
 ## [En cours]
 
+## [2.2.18] - 2023-08-31
+### Modifications
+- Optimisation de l'application LOT 2
+
 ## [2.2.17] - 2023-08-18
 ### Modifications
 - Optimisation de l'application LOT 1
