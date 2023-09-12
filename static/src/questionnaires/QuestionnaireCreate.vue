@@ -159,6 +159,7 @@ import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
 import Vue from 'vue'
 import Wizard from '../utils/Wizard'
+import backendUrls from '../utils/backend'
 
 // State machine
 const STATES = {
@@ -298,7 +299,7 @@ export default Vue.extend({
         this.moveToState(STATES.START)
         return
       },
-      loadExistingQuestionnaire: function(){
+      loadExistingQuestionnaire: async function(){
         const currentQuestionnaire =this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
         if (!currentQuestionnaire) {
           const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
@@ -312,9 +313,31 @@ export default Vue.extend({
           throw new Error(
             'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
         }
-        this.currentQuestionnaire = currentQuestionnaire
-        this.currentQuestionnaire.control = this.controlId
-        this.loadQuestionnaire()
+      
+
+      //const res = await axios.get(backendUrls.getQuestionnaireAndThemesByQuestionnaireId(2))
+      //console.log('res :: ', res.data)
+
+
+      this.currentQuestionnaire = currentQuestionnaire
+      this.currentQuestionnaire.control = this.controlId
+      const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(2))
+      this.control = resp.data.filter(obj => obj.id === this.controlId)[0]
+      const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
+      console.log('curQ :: ', curQ)
+      const themes = curQ.themes.map(t => {
+            const qq = t.questions.map(q => {
+                const qf = q.question_files.map(ff=>{
+                   return { id : ff.id, url: ff.url, basename : ff.basename , file : ff.file, question : ff.question}
+                })
+              return { description: q.description,  question_files : qf}
+            })
+            return { title: t.title, questions: qq }
+          })
+        
+        this.currentQuestionnaire.description=curQ.description
+        this.currentQuestionnaire.themes = themes
+
         this.emitQuestionnaireUpdated()
         this.moveToState(STATES.START)
       },
@@ -480,6 +503,7 @@ export default Vue.extend({
         .then((response) => {
           console.debug('Successful draft save.')
           self.currentQuestionnaire = response.data
+          console.log('self.currentQuestionnaire : ',self.currentQuestionnaire)
           self.emitQuestionnaireUpdated()
           self.displaySavingDone(nowTimeString())
           return response.data
@@ -528,22 +552,6 @@ export default Vue.extend({
           if (this.state === STATES.CREATING_BODY) {
             $(this.$refs.questionnaireBodyCreate.$refs.moveThemesModal.$el).modal('show')
           }
-        })
-    },
-    loadQuestionnaire() {
-      const self = this
-      self.currentQuestionnaire.is_draft = true
-      return self._doSave()
-        .then((response) => {
-          self.currentQuestionnaire = response.data
-          self.emitQuestionnaireUpdated()
-          return response.data
-        })
-        .catch((error) => {
-          const errorToDisplay =
-            (error.response && error.response.data) ? error.response.data : error
-          self.displayErrors('Erreur lors de la modification.', errorToDisplay)
-          self.displaySavingDoneWithError()
         })
     },
   },
