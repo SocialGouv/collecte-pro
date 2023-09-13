@@ -1,7 +1,7 @@
 from functools import partial
 
 import django.dispatch
-import psycopg2
+from control.serializers import ControlSerializer
 from django.http import HttpResponse
 from django.db import connection
 from actstream import action
@@ -83,6 +83,14 @@ class ControlViewSet(mixins.CreateModelMixin,
         self.add_log_entry(control=control, verb='updated control')
         return response
 
+    
+    @decorators.action(detail=True, methods=['get'], url_path='quest_themes')
+    def quest_themes(self, request, pk):
+        quest_themes_list = Control.objects.filter(id=pk)
+        ctl_Serializer = ControlSerializer(quest_themes_list, many=True)
+        return Response(ctl_Serializer.data)
+    
+    
     @decorators.action(detail=True, methods=['get'], url_path='users')
     def users(self, request, pk):
         users = []

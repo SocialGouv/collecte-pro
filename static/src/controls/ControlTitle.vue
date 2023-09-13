@@ -347,7 +347,7 @@ export default Vue.extend({
               axios.post(backendUrls.user(), inspector)
           })*/
         
-        const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(this.users[0].id))
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
         this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
 
         this.accessibleQuestionnaires = this.control.questionnaires

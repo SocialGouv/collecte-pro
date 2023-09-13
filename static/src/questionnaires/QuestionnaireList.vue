@@ -398,7 +398,7 @@ export default Vue.extend({
 
       if (this.checkedCtrls.length) {
 
-        const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(this.user.id))
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
         this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
         const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
         const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))

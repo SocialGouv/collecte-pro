@@ -59,10 +59,3 @@ class UserProfileViewSet(
         controls_inspected = profile.user_controls("demandeur", True)
         serialized_controls = ControlSerializer(controls_inspected, many=True)
         return Response(serialized_controls.data)
-
-    @decorators.action(detail=True, methods=['get'], url_path='questionnaire-themes')
-    def questionnaire_themes(self, request, pk):
-        profile = self.get_object()
-        controls_inspected = profile.user_controls("demandeur", True)
-        serialized_controls = ControlSerializer(controls_inspected, many=True)
-        return Response(serialized_controls.data)
