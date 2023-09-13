@@ -189,6 +189,7 @@ export default Vue.extend({
       errorMessage: '',
       errors: [],
       hasErrors: false,
+      userId:'',
       STATES: STATES,
       state: STATES.LOADING,
       saveMessage: {
@@ -314,17 +315,11 @@ export default Vue.extend({
             'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
         }
       
-
-      //const res = await axios.get(backendUrls.getQuestionnaireAndThemesByQuestionnaireId(2))
-      //console.log('res :: ', res.data)
-
-
       this.currentQuestionnaire = currentQuestionnaire
       this.currentQuestionnaire.control = this.controlId
-      const resp = await axios.get(backendUrls.getQuestionnaireAndThemes(2))
+      const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.controlId))
       this.control = resp.data.filter(obj => obj.id === this.controlId)[0]
       const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
-      console.log('curQ :: ', curQ)
       const themes = curQ.themes.map(t => {
             const qq = t.questions.map(q => {
                 const qf = q.question_files.map(ff=>{
