@@ -325,11 +325,12 @@ export default Vue.extend({
                 const qf = q.question_files.map(ff=>{
                    return { id : ff.id, url: ff.url, basename : ff.basename , file : ff.file, question : ff.question}
                 })
-              return { description: q.description,  question_files : qf}
+              return { description: q.description,  id: q.id, order:q.order,  question_files : qf}
             })
-            return { title: t.title, questions: qq }
+            return { id : t.id, order: t.order, questionnaire:t.questionnaire, questions: qq, title: t.title }
           })
         
+        this.currentQuestionnaire.questionnaire_files=curQ.questionnaire_files
         this.currentQuestionnaire.description=curQ.description
         this.currentQuestionnaire.themes = themes
 
