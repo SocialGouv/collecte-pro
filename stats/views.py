@@ -1,3 +1,4 @@
+import csv
 from datetime import datetime, timedelta, timezone
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,8 +7,10 @@ from django.views.generic import TemplateView
 
 from actstream.models import Action
 from dateutil.relativedelta import relativedelta
-
-
+from django.db import connection
+from django.http import HttpResponse 
+import zipfile
+from io import StringIO, BytesIO
 
 ACTION_CREATED_CONTROL = "created control"
 ACTION_PUBLISHED_QUESTIONNAIRE = "published questionnaire"
@@ -18,6 +21,63 @@ ACTION_LOGGED_IN = "logged in"
 
 class Stats(LoginRequiredMixin, TemplateView):
     template_name = "stats/stats.html"
+
+    def call_get_top_20(request):
+        zip_buffer = BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
+
+            with connection.cursor() as cursor:
+                
+                cursor.callproc('get_top_20', [1])
+                results = cursor.fetchall()
+                
+                csv_buffer = StringIO()
+                csv_writer = csv.writer(csv_buffer)
+                csv_writer.writerow(['Utilisateur', 'Nombre d\'espaces'])
+                csv_writer.writerows(results)
+                
+                zip_file.writestr('top_20_espaces_de_depot.csv', csv_buffer.getvalue())
+                
+                csv_buffer.close()
+                csv_buffer = StringIO()
+                
+                cursor.callproc('get_top_20', [2])
+                results = cursor.fetchall()
+                
+                csv_writer = csv.writer(csv_buffer)
+                csv_writer.writerow(['Utilisateur', 'Nombre de questionnaires'])
+                csv_writer.writerows(results)
+                
+                zip_file.writestr('top_20_questionnaires.csv', csv_buffer.getvalue())
+                
+                csv_buffer.close()
+                csv_buffer = StringIO()
+                
+                cursor.callproc('get_top_20', [3])
+                results = cursor.fetchall()
+                
+                csv_writer = csv.writer(csv_buffer)
+                csv_writer.writerow(['Utilisateur', 'Nombre de questions'])
+                csv_writer.writerows(results)
+                
+                zip_file.writestr('top_20_questions.csv', csv_buffer.getvalue())
+                
+                csv_buffer.close()
+                csv_buffer = StringIO()
+                
+                cursor.callproc('get_top_20', [4])
+                results = cursor.fetchall()
+                
+                csv_writer = csv.writer(csv_buffer)
+                csv_writer.writerow(['Utilisateur', 'Nombre de themes'])
+                csv_writer.writerows(results)
+                
+                zip_file.writestr('top_20_themes.csv', csv_buffer.getvalue())
+
+        response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+        response['Content-Disposition'] = 'attachment; filename="top_20.zip"'
+
+        return response
 
     def complete_datas(self, datas):
         """
