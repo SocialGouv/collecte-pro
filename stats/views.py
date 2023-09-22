@@ -23,6 +23,8 @@ class Stats(LoginRequiredMixin, TemplateView):
     template_name = "stats/stats.html"
 
     def call_get_top_20(request):
+        
+        current_week_number = datetime.now().strftime("%U")
         zip_buffer = BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
 
@@ -36,8 +38,8 @@ class Stats(LoginRequiredMixin, TemplateView):
                 csv_writer.writerow(['Utilisateur', 'Nombre d\'espaces'])
                 csv_writer.writerows(results)
                 
-                zip_file.writestr('top_20_espaces_de_depot.csv', csv_buffer.getvalue())
-                
+                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_espaces_de_depot_par_utilisateur.csv', csv_buffer.getvalue())
+
                 csv_buffer.close()
                 csv_buffer = StringIO()
                 
@@ -48,7 +50,7 @@ class Stats(LoginRequiredMixin, TemplateView):
                 csv_writer.writerow(['Utilisateur', 'Nombre de questionnaires'])
                 csv_writer.writerows(results)
                 
-                zip_file.writestr('top_20_questionnaires.csv', csv_buffer.getvalue())
+                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_questionnaires_par_utilisateur.csv', csv_buffer.getvalue())
                 
                 csv_buffer.close()
                 csv_buffer = StringIO()
@@ -60,7 +62,7 @@ class Stats(LoginRequiredMixin, TemplateView):
                 csv_writer.writerow(['Utilisateur', 'Nombre de questions'])
                 csv_writer.writerows(results)
                 
-                zip_file.writestr('top_20_questions.csv', csv_buffer.getvalue())
+                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_questions_par_utilisateur.csv', csv_buffer.getvalue())
                 
                 csv_buffer.close()
                 csv_buffer = StringIO()
@@ -72,10 +74,10 @@ class Stats(LoginRequiredMixin, TemplateView):
                 csv_writer.writerow(['Utilisateur', 'Nombre de themes'])
                 csv_writer.writerows(results)
                 
-                zip_file.writestr('top_20_themes.csv', csv_buffer.getvalue())
+                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_themes_par_utilisateur.csv', csv_buffer.getvalue())
 
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename="top_20.zip"'
+        response['Content-Disposition'] = f'attachment; filename="collecte-pro_{current_week_number}_TOP20.zip"'
 
         return response
 
