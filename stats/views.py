@@ -77,7 +77,7 @@ class Stats(LoginRequiredMixin, TemplateView):
                 zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_themes_par_utilisateur.csv', csv_buffer.getvalue())
 
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename="collecte-pro_{current_week_number}_TOP20.zip"'
+        response['Content-Disposition'] = f'attachment; filename="collecte-pro_S{current_week_number}_TOP20.zip"'
 
         return response
 
