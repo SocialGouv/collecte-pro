@@ -1,10 +1,10 @@
-CREATE OR REPLACE FUNCTION get_top_20(val integer)
+CREATE OR REPLACE FUNCTION get_top_20(val text)
 RETURNS TABLE (
     username text,
     nb text
 ) AS $$
 BEGIN
-    IF val = 1 THEN
+    IF val = 'espaces_de_depot_par_utilisateur' THEN
         RETURN QUERY
         SELECT DISTINCT au.username::text, count(upa.control_id)::text as nb
         FROM user_profiles_access upa
@@ -13,7 +13,7 @@ BEGIN
         GROUP BY au.username
         ORDER BY nb DESC
         LIMIT 20;
-    ELSIF val = 2 THEN
+    ELSIF val = 'questionnaires_par_utilisateur' THEN
         RETURN QUERY
         SELECT DISTINCT au.username::text, count(cq.id)::text as nb
         FROM user_profiles_access upa
@@ -22,7 +22,7 @@ BEGIN
         GROUP BY au.username
         ORDER BY nb DESC
         LIMIT 20;
-    ELSIF val = 3 THEN
+    ELSIF val = 'questions_par_utilisateur' THEN
         RETURN QUERY
         SELECT DISTINCT au.username::text, count(cqu.id)::text as nb
         FROM user_profiles_access upa
@@ -33,7 +33,7 @@ BEGIN
         GROUP BY au.username
         ORDER BY nb DESC
         LIMIT 20;
-    ELSIF val = 4 THEN
+    ELSIF val = 'themes_par_utilisateur' THEN
         RETURN QUERY
         SELECT DISTINCT au.username::text, count(ct.id)::text as nb
         FROM user_profiles_access upa

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_statistique(_verb TEXT)
+CREATE OR REPLACE FUNCTION get_statistiques(_verb TEXT)
 RETURNS TABLE (nb BIGINT, mois TEXT)
 LANGUAGE plpgsql AS $func$
 BEGIN

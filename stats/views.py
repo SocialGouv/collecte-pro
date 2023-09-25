@@ -28,67 +28,36 @@ class Stats(LoginRequiredMixin, TemplateView):
     }
 
     def call_get_top_20(request):
-        
         current_week_number = datetime.now().strftime("%U")
         zip_buffer = BytesIO()
+        
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
-
-            with connection.cursor() as cursor:
-                
-                cursor.callproc('get_top_20', [1])
-                results = cursor.fetchall()
-                
+            data_types = [
+                ('espaces_de_depot_par_utilisateur', 'Nombre d\'espaces'),
+                ('questionnaires_par_utilisateur', 'Nombre de questionnaires'),
+                ('questions_par_utilisateur', 'Nombre de questions'),
+                ('themes_par_utilisateur', 'Nombre de themes')
+            ]
+            
+            for data_type, data_label in data_types:
                 csv_buffer = StringIO()
                 csv_writer = csv.writer(csv_buffer, delimiter=';') 
-                csv_writer.writerow(['Utilisateur', 'Nombre d\'espaces'])
-                csv_writer.writerows(results)
+                with connection.cursor() as cursor:
+                    cursor.callproc('get_top_20', [data_type])
+                    results = cursor.fetchall()
+                    csv_writer.writerow(['Utilisateur', data_label])
+                    csv_writer.writerows(results)
                 
-                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_espaces_de_depot_par_utilisateur.csv', csv_buffer.getvalue())
-
-                csv_buffer.close()
-                csv_buffer = StringIO()
-                
-                cursor.callproc('get_top_20', [2])
-                results = cursor.fetchall()
-                
-                csv_writer = csv.writer(csv_buffer, delimiter=';') 
-                csv_writer.writerow(['Utilisateur', 'Nombre de questionnaires'])
-                csv_writer.writerows(results)
-                
-                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_questionnaires_par_utilisateur.csv', csv_buffer.getvalue())
-                
-                csv_buffer.close()
-                csv_buffer = StringIO()
-                
-                cursor.callproc('get_top_20', [3])
-                results = cursor.fetchall()
-                
-                csv_writer = csv.writer(csv_buffer, delimiter=';') 
-                csv_writer.writerow(['Utilisateur', 'Nombre de questions'])
-                csv_writer.writerows(results)
-                
-                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_questions_par_utilisateur.csv', csv_buffer.getvalue())
-                
-                csv_buffer.close()
-                csv_buffer = StringIO()
-                
-                cursor.callproc('get_top_20', [4])
-                results = cursor.fetchall()
-                
-                csv_writer = csv.writer(csv_buffer, delimiter=';') 
-                csv_writer.writerow(['Utilisateur', 'Nombre de themes'])
-                csv_writer.writerows(results)
-                
-                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_themes_par_utilisateur.csv', csv_buffer.getvalue())
-
+                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_{data_type}.csv', csv_buffer.getvalue())
+        
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="collecte-pro_S{current_week_number}_TOP20.zip"'
-
+    
         return response
 
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
-            cursor.callproc('get_statistique', [action])
+            cursor.callproc('get_statistiques', [action])
             results = cursor.fetchall()
             
         months = []
