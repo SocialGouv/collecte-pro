@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.21] - 2023-09-27
+### Modifications
+- Correctif : Voir les documents
 
 ## [2.2.20] - 2023-09-21
 ### Modifications

@@ -24,7 +24,7 @@
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
     <div class="card-header" style="display: block; padding: 1rem">
-      <div class="float-right" v-if="hasAnyAnswer">
+      <div class="float-right" v-if="hasAnyAnswerValue">
         <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
       <h2 class="card-title">
@@ -314,6 +314,7 @@ export default Vue.extend({
       currentView: 'questions',
       isList: true,
       currentQuestionnaireThemes: [],
+      hasAnyAnswerValue: false,
     }
   },
   computed: {
@@ -335,15 +336,24 @@ export default Vue.extend({
     questionnaireCreateUrl() {
       return backendUrls['questionnaire-create'](this.control.id)
     },
-    hasAnyAnswer() {
-      let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies)
-      return (questionnaires.length > 0)
-    },
+    
   },
   mounted() {
-   
+    this.checkAnyAnswer();
   },
   methods: {
+    async checkAnyAnswer() {
+          
+    try {
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
+        let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies);
+        this.hasAnyAnswerValue = questionnaires.length > 0;
+      } catch (error) {
+        console.error('Erreur lors de la requête HTTP :', error);
+        this.hasAnyAnswerValue = false; 
+      }
+    },
     questionnaireDetailUrl(questionnaireId) {
       return backendUrls['questionnaire-detail'](questionnaireId)
     },
