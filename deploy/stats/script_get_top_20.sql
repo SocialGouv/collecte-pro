@@ -1,12 +1,12 @@
 CREATE OR REPLACE FUNCTION get_top_20(val text)
 RETURNS TABLE (
-    username text,
-    nb text
+    username varchar,
+    nb bigint
 ) AS $$
 BEGIN
     IF val = 'espaces_de_depot_par_utilisateur' THEN
         RETURN QUERY
-        SELECT DISTINCT au.username::text, count(upa.control_id)::text as nb
+        SELECT DISTINCT au.username, count(upa.control_id) as nb
         FROM user_profiles_access upa
         INNER JOIN auth_user au ON au.id = upa.userprofile_id
         INNER JOIN control_control cc ON cc.id = upa.control_id
@@ -15,7 +15,7 @@ BEGIN
         LIMIT 20;
     ELSIF val = 'questionnaires_par_utilisateur' THEN
         RETURN QUERY
-        SELECT DISTINCT au.username::text, count(cq.id)::text as nb
+        SELECT DISTINCT au.username, count(cq.id) as nb
         FROM user_profiles_access upa
         INNER JOIN auth_user au ON au.id = upa.userprofile_id
         INNER JOIN control_questionnaire cq ON cq.control_id = upa.control_id
@@ -24,7 +24,7 @@ BEGIN
         LIMIT 20;
     ELSIF val = 'questions_par_utilisateur' THEN
         RETURN QUERY
-        SELECT DISTINCT au.username::text, count(cqu.id)::text as nb
+        SELECT DISTINCT au.username, count(cqu.id) as nb
         FROM user_profiles_access upa
         INNER JOIN auth_user au ON au.id = upa.userprofile_id
         INNER JOIN control_questionnaire cq ON cq.control_id = upa.control_id
@@ -35,7 +35,7 @@ BEGIN
         LIMIT 20;
     ELSIF val = 'themes_par_utilisateur' THEN
         RETURN QUERY
-        SELECT DISTINCT au.username::text, count(ct.id)::text as nb
+        SELECT DISTINCT au.username, count(ct.id) as nb
         FROM user_profiles_access upa
         INNER JOIN auth_user au ON au.id = upa.userprofile_id
         INNER JOIN control_questionnaire cq ON cq.control_id = upa.control_id
