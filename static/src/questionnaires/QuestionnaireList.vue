@@ -421,11 +421,25 @@ export default Vue.extend({
             return { title: t.title, questions: qq }
           })
 
-          let newQ = { ...curQ, control: ctrl.id, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
+          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
+          
           getCreateMethod()(newQ).then(response => {
             const qId = response.data.id
-            newQ = { ...newQ, id: qId, themes: themes }
+            newQ = { ...newQ, id: qId, questionnaire_files:curQ.questionnaire_files, themes: themes }
+            curQ.questionnaire_files.forEach(qf => {
+                    axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                      const formData = new FormData()
+                      formData.append('file', response.data, qf.basename)
+                      formData.append('questionnaire', qId)
 
+                      axios.post(backendUrls.piecejointe(), formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                      })
+                    })
+              })
+            
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
               self.$root.$emit('questionnaire-created')
@@ -433,13 +447,13 @@ export default Vue.extend({
                 t.questions.forEach(q => {
                   const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
                     .questions.find(updatedQ => updatedQ.order === q.order).id
-
-                  q.question_files.forEach(qf => {
+                  
+                    q.question_files.forEach(qf => {
                     axios.get(qf.url, { responseType: 'blob' }).then(response => {
                       const formData = new FormData()
                       formData.append('file', response.data, qf.basename)
                       formData.append('question', qId)
-
+                      
                       axios.post(backendUrls.annexe(), formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
@@ -451,9 +465,11 @@ export default Vue.extend({
               })
             })
           })
+              
         });
       }
     },
+   
     exportControl(questionnaireId) {
       this.$parent.$children[0].loaderActive = true;
 
