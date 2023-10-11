@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.23] - 2023-10-11
+### Modifications
+- Anomalie : Pièce jointe introuvable lors de la duplication
+
 ## [2.2.22] - 2023-10-09
 ### Modifications
 - Automatisation de la production des indicateurs du TOP 20
