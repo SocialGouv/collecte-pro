@@ -25,8 +25,18 @@
                                             const url = window.URL.createObjectURL(blob);
                                             const a = document.createElement('a');
                                             a.href = url;
-                                            const filename = response.headers.get('content-disposition').split('=')[1];
-                                            a.download = filename;
+
+                                            const contentDisposition = response.headers.get('content-disposition');
+                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                            const filename = matches[1].replace(/['"]/g, '');
+
+                                            const sanitizedFilename = filename.replace(/^_+|_+$/g, '');
+
+                                            const extensionIndex = sanitizedFilename.lastIndexOf('.zip');
+                                            const finalFilename = sanitizedFilename.substring(0, extensionIndex) + '.zip';
+
+                                            a.download = finalFilename;
+
                                             a.click();
                                             window.URL.revokeObjectURL(url);
                                         });
