@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.25] - 2023-10-16
+### Modifications
+- Ajout de la fonctionnalité TOP 20 et optimisation de la partie statistiques.
+
 ## [2.2.24] - 2023-10-12
 ### Modifications
 - Adaptation du téléchargement du fichier ZIP sur les différents navigateurs
