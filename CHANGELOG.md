@@ -6,9 +6,12 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.26] - 2023-11-15
+###
+- Passage en pre-prod de la CP-110
 ## [2.2.25] - 2023-10-16
 ### Modifications
-- Ajout de la fonctionnalité TOP 20 et optimisation de la partie statistiques.
+- Passage en pre-prod et prod sans la CP-110 : Ajout de la fonctionnalité TOP 20 et optimisation de la partie statistiques.
 
 ## [2.2.24] - 2023-10-12
 ### Modifications
