@@ -120,14 +120,13 @@
     </div>
     <div class="flex-row justify-content-end mt-2">
       <div v-if="saveMessage.isWaitingForMinDisplayTime || saveMessage.isSaveHappening"
-           style="min-height: 1.5rem;">
+           class="save-message">
         <span class="fas fa-sync-alt mr-2" aria-hidden="true"></span>
         Enregistrement en cours ...
       </div>
       <div v-else
            :class="{ 'text-danger': hasErrors, 'text-muted': !hasErrors }"
-           class="flex-row align-items-center"
-           style="min-height: 1.5rem;">
+           class="flex-row align-items-center save-message">
         <span v-if="hasErrors" class="fe fe-alert-triangle mr-2" aria-hidden="true"></span>
         <span v-else class="fe fe-check-circle mr-2" aria-hidden="true"></span>
         {{ saveMessage.text }}
@@ -145,6 +144,7 @@
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios'
 import backend from '../utils/backend'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
@@ -553,10 +553,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-  #bottom-bar {
-    margin-left: -2rem;
-    margin-right: -0.75rem;
-  }
-</style>

@@ -1,0 +1,98 @@
+.question-list-move {
+    transition: transform 1s;
+    /* same as SwapMixin.ANIMATION_DURATION_SECONDS */
+}
+
+.question-list-move.selected {
+    z-index: 999;
+    background-color: #ecf7fe;
+    /* azure-lightest */
+}
+
+#bottom-bar {
+    margin-left: -2rem;
+    margin-right: -0.75rem;
+}
+
+.loader-container {
+    text-align: center;
+    z-index: 9999;
+    padding-top: 100px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+.loader-wrapper {
+    background-color: rgba(255, 255, 255, .9);
+    width: 200px;
+    margin: auto;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.loader {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.loader div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #6916a0;
+    border-radius: 50%;
+    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #6916a0 transparent transparent transparent;
+}
+
+.tag-column {
+    max-width: 7em;
+}
+
+.editor-column {
+    min-width: 9em;
+}
+
+.editor-date {
+    display: block;
+}
+
+.end-date-column {
+    min-width: 9em;
+}
+
+.action-column {
+    min-width: 10em;
+}
+
+.selected_row {
+    color: white;
+    background-color: #3473cb;
+}
+
+.selectable_row {
+    cursor: pointer
+}
+
+.save-message {
+    min-height: 1.5rem;
+}
+
+.custom-card-header {
+    display: block;
+    padding: 1rem;
+}
+
+.view-button {
+    font-size: smaller;
+}

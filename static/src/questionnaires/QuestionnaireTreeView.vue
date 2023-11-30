@@ -148,6 +148,7 @@
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios';
 import backendUrls from '../utils/backend';
 
@@ -767,13 +768,3 @@ export default Vue.extend({
     },
 });
 </script>
-
-<style>
-.selected_row{
-  color: white;
-  background-color: #3473cb;
-}
-.selectable_row{
-  cursor: pointer
-}
-</style>

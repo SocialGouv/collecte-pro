@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import '../../css/controls.css'
 import ControlCreate from './ControlCreate'
 import Vue from 'vue'
 
@@ -59,8 +60,4 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped>
-  #steps {
-    max-width: 670px;
-  }
-</style>
+

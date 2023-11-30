@@ -126,5 +126,3 @@ QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT = DESCRIPTION_DEFAULT
 export default QuestionnaireMetadataCreate
 
 </script>
-
-<style></style>

@@ -120,6 +120,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ecc.custom_cache_control_middleware.CustomCacheControlMiddleware',
 ]
 
 ROOT_URLCONF = 'ecc.urls'
@@ -198,7 +199,8 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 30
 # Content-Security-Policy
 CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'", "'frame-src youtube.com www.youtube.com;'"))
-CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
+#CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
+CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'",))
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
 CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
 
@@ -361,3 +363,4 @@ JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
 
 # Indique si la page par défaut est celle de présentation
 PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=True)
+    

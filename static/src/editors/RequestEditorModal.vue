@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import '../../css/editors.css'
 import ContactSupport from '../utils/ContactSupport'
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -79,10 +80,6 @@ export default Vue.extend({
   },
 })
 </script>
-<style scoped>
-.large-modal {
-    width: 1000px;
-    max-width: 100%;
-    margin: 2% auto;
-}
-</style>
+
+
+

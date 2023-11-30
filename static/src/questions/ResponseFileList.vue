@@ -16,10 +16,10 @@
                     card-table">
         <thead>
           <tr>
-            <th style="width: 16%;">Date de dépôt</th>
+            <th class="date-column">Date de dépôt</th>
             <th>Nom du document</th>
-            <th style="width: 25%;">Déposant</th>
-            <th style="width: 19%;" v-if="isAudited">Mettre à la corbeille</th>
+            <th class="deposant-column">Déposant</th>
+            <th class="corbeille-column" v-if="isAudited">Mettre à la corbeille</th>
           </tr>
         </thead>
         <tbody>
@@ -175,7 +175,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-
-</style>
