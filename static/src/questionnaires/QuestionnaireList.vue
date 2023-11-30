@@ -23,9 +23,9 @@
       </form>
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
-    <div class="card-header" style="display: block; padding: 1rem">
+    <div class="card-header custom-card-header">
       <div class="float-right" v-if="hasAnyAnswerValue">
-        <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
+        <button @click="toggleView()" class="card-title btn btn-primary ml-4 view-button" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
       <h2 class="card-title">
         <span class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></span>
@@ -280,6 +280,7 @@ Finalisé : l'instruction des pièces déposées est achevée">
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import DateFormat from '../utils/DateFormat.js'
@@ -577,25 +578,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-.tag-column {
-  max-width: 7em;
-}
-
-.editor-column {
-  min-width: 9em;
-}
-
-.editor-date {
-  display: block;
-}
-
-.end-date-column {
-  min-width: 9em;
-}
-
-.action-column {
-  min-width: 10em;
-}
-</style>

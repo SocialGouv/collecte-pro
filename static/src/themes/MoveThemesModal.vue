@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import '../../css/themes.css'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import ConfirmModal from '../utils/ConfirmModal'
@@ -110,13 +111,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style>
-.theme-list-move {
-  transition: transform 1s; /* same as SwapMixin.ANIMATION_DURATION_SECONDS */
-}
-.theme-list-move.selected {
-  z-index: 999;
-  background-color: var(--azure-lightest);
-}
-</style>

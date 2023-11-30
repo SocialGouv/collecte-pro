@@ -13,7 +13,6 @@
 
 <script>
   import Vue from 'vue'
-
   import ControlCreate from './ControlCreate'
   import ControlTitle from './ControlTitle'
   import QuestionnaireList from '../questionnaires/QuestionnaireList'

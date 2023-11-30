@@ -396,3 +396,22 @@ max-width: 26rem;
 text-align: left;
 max-width: 100%;
 }
+
+.logo {
+    max-height: 110px;
+    min-width: 150px;
+}
+
+.small {
+    max-height: 50px;
+    min-width: 50px;
+}
+
+.partner-img {
+    width: 9rem;
+}
+
+.trebuchet-style {
+    font-family: Trebuchet MS;
+    font-size: 5em;
+}

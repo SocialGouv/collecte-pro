@@ -1,0 +1,9 @@
+.theme-list-move {
+    transition: transform 1s;
+    /* same as SwapMixin.ANIMATION_DURATION_SECONDS */
+}
+
+.theme-list-move.selected {
+    z-index: 999;
+    background-color: var(--azure-lightest);
+}

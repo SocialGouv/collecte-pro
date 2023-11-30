@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import '../../css/questions.css'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import { clearCache } from '../utils/utils'
@@ -178,34 +179,3 @@ export default Vue.extend({
 })
 
 </script>
-
-<style>
-  /* Shift the error bubble down, it's overlapping the "Remove file" link. */
-  .response-dropzone .dropzone .dz-preview .dz-error-message {
-    top:150px;
-  }
-
-  /* The progress bar and success/error mark are on top of the filename. Move it up. */
-  .dropzone .dz-preview .dz-details {
-    padding-top: 0.7em;
-  }
-  .dropzone .dz-preview .dz-details .dz-size {
-    margin-bottom: 0.3em;
-  }
-  .dropzone .dz-preview .dz-success-mark, .dropzone .dz-preview .dz-error-mark {
-    top: 60%;
-  }
-
-  /*
-    Make the checkmark for success stay visible, instead of disappearing after a while.
-    We just copy the animation for the error case.
-  */
-  .response-dropzone .dropzone .dz-preview.dz-success .dz-success-mark {
-    opacity: 1;
-    -webkit-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-    -moz-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-    -ms-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-    -o-animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-    animation: slide-in 3s cubic-bezier(0.77, 0, 0.175, 1);
-  }
-</style>

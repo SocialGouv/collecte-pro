@@ -216,6 +216,7 @@
 </template>
 
 <script>
+import '../../css/controls.css'
 import { mapState } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 import axios from 'axios'
@@ -599,45 +600,4 @@ export default Vue.extend({
 
 </script>
 
-<style scoped>
-  .break-word {
-    word-break: break-all;
-  }
-  .loader-container {
-    text-align: center;
-    z-index:9999;
-    padding-top:100px;
-    position:fixed;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    overflow:auto;
-    background-color:rgba(0,0,0,.4);
-  }
-  .loader-wrapper {
-    background-color:rgba(255,255,255,.9);
-    width: 200px;
-    margin: auto;
-    padding: 6px;
-    border-radius: 6px;
-  }
-  .loader {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-  }
-  .loader div {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border: 8px solid #6916a0;
-    border-radius: 50%;
-    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #6916a0 transparent transparent transparent;
-  }
-</style>
+

@@ -224,8 +224,8 @@
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import Vue from 'vue'
-
 import ConfirmModal from '../utils/ConfirmModal'
 import InfoBar from '../utils/InfoBar'
 import { mapFields } from 'vuex-map-fields'
@@ -308,13 +308,5 @@ export default Vue.extend({
 })
 </script>
 
-<style>
-.question-list-move {
-  transition: transform 1s; /* same as SwapMixin.ANIMATION_DURATION_SECONDS */
-}
-.question-list-move.selected {
-  z-index: 999;
-  background-color: #ecf7fe; /* azure-lightest */
-}
 
-</style>
+

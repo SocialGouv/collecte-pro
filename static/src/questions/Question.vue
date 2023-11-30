@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-
+import '../../css/questions.css'
 import Vue from 'vue'
 
 import EventBus from '../events'
@@ -69,12 +69,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-  .cursor-pointer {
-    cursor: pointer;
-  }
-  .btn-file {
-    border: 0px;
-  }
-</style>
