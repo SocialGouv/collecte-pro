@@ -1,7 +1,7 @@
 from functools import partial
 
 import django.dispatch
-from control.serializers import ControlSerializer
+from control.serializers import ControlSerializer, ControlListSerializer
 from django.http import HttpResponse
 from django.db import connection
 from actstream import action
@@ -90,6 +90,11 @@ class ControlViewSet(mixins.CreateModelMixin,
         ctl_Serializer = ControlSerializer(quest_themes_list, many=True)
         return Response(ctl_Serializer.data)
     
+    @decorators.action(detail=False, methods=['get'], url_path='controls_list')
+    def controls_list(self, request):
+        ctl_list = Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
+        ctl_Serializer = ControlListSerializer(ctl_list, many=True)
+        return Response(ctl_Serializer.data)
     
     @decorators.action(detail=True, methods=['get'], url_path='users')
     def users(self, request, pk):
