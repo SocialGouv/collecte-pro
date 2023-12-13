@@ -70,7 +70,14 @@ export const store = new Vuex.Store({
         commit('updateSessionUserLoadStatus', loadStatuses.ERROR)
       })
     },
-    fetchControls({ commit }) {
+    async fetchControls({ commit }) {
+      const currentURL = window.location.pathname
+      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/') {
+        await axios.get(backendUrls.getControlsList()).then(response => {
+          this.controls = response.data
+        }).catch(err => {
+        })
+      }
       commit('updateControls', this.controls)
       commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
     },

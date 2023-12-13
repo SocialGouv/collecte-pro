@@ -132,6 +132,10 @@ class ControlUpdateSerializer(serializers.ModelSerializer):
         model = Control
         fields = ('id', 'title', 'depositing_organization')
 
+class ControlListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Control
+        fields = ('id', 'title', 'depositing_organization', 'reference_code')
 
 class QuestionUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
