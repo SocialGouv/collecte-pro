@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.28] - 2023-12-13
+### Modifications
+- CP-134 : bug affichage espaces dépôts
 ## [2.2.27] - 2023-11-30
 ### Modifications
 - CP-12 et 15 : En-tête Cache-Control et En-tête Content-Security-Policy
