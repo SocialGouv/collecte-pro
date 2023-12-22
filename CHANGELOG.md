@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.29] - 2023-12-22
+### Modifications
+- Correction de l'anomalie de l'affichage de la date ainsi que la résolution de la lenteur de chargement des images sur la page d'accueil
 ## [2.2.28] - 2023-12-13
 ### Modifications
 - CP-134 : bug affichage espaces dépôts
