@@ -72,7 +72,7 @@ export const store = new Vuex.Store({
     },
     async fetchControls({ commit }) {
       const currentURL = window.location.pathname
-      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/') {
+      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/' || currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/') {
         await axios.get(backendUrls.getControlsList()).then(response => {
           this.controls = response.data
         }).catch(err => {
