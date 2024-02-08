@@ -2,7 +2,7 @@ import "@babel/polyfill"
 import './utils/polyfills.js'
 
 import Vue from 'vue/dist/vue.js'
-import SessionTimeout from './session/SessionTimeout'
+import SessionTimeout from './session/SessionTimeout.vue'
 
 new Vue({
   el: '#session-management-vm',
