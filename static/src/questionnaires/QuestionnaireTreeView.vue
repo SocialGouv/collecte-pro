@@ -261,16 +261,27 @@ export default Vue.extend({
     watch: {
         'filter': function(val, oldVal) {
             this.selected = [];
+            this.refreshFiles();
         },
         'date_filter_start': function(val, oldVal) {
+          if (this.date_filter_start) {
             this.date_filter_start.setHours(0,0,0,0);
             this.selected = [];
             this.refreshFiles();
+          }else{
+            this.selected = [];
+            this.refreshFiles();
+          }
         },
         'date_filter_end': function(val, oldVal) {
+          if (this.date_filter_end) {
             this.date_filter_end.setHours(0,0,0,0);
             this.selected = [];
             this.refreshFiles();
+          }else{
+            this.selected = [];
+            this.refreshFiles();
+          }
         }
     },
     methods: {
