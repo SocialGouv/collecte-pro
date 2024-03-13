@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.32] - 2024-03-13
+### Modifications
+- CP-144 : Désactiver temporairement le traitement relatif au formulaire de contact
 ## [2.2.31] - 2024-02-08
 ### Modifications
 - Retour pre-prod : CP-134, CP-137, CP-138
