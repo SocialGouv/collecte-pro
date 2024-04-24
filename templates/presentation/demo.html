@@ -27,7 +27,7 @@
                 </p>
               </div>
               <div class="form right">
-                <form class="contact" method="post" action="">
+                <form id="demo-form" class="contact" method="post" action="{% url 'presentation:validationFormulaire' %}">
                   {% csrf_token %}
                   <h2 class="text-center">Pour en savoir plus sur collecte-pro</h2>
                   <div class="form-group">
@@ -86,8 +86,93 @@
                     <label for="message">Votre message :</label>
                     <textarea class="form-control" name="message" id="message" rows="3"></textarea>
                   </div>
+                  <div class="form-group">
+                    <label for="code" class="form-label">Captcha :</label>
+                    <div name="botdetect-captcha" id="botdetect-captcha" data-captchastylename="captchaFR"></div>
+                    <label for="code-rec">Recopiez le code de sécurité:</label>
+                    <input class="form-control {% if form.errors %}state-invalid {% endif %}" name="captchaFormulaireExtInput"
+                      id="captchaFormulaireExtInput" type="text" required />
+                  </div>
+                  <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">Soumettre</button>
+                  </div>
                 </form>
               </div>
             </div>
           </section>
+
 {% endblock page_main_container %}
+{% block js_bundle %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'js/jquery-captcha.min.js' %}"></script>
+<!--<script src="../../node_modules/jquery-captcha/dist/jquery-captcha.min.js"></script>-->
+<script>
+  $(document).ready(function () {
+    console.log("Start read...");
+    var captcha = $('#botdetect-captcha').captcha({
+      //captchaEndpoint: 'URL_BACKEND/simple-captcha-endpoint'
+      captchaEndpoint: '{% url "presentation:simple-captcha-endpoint" %}'
+
+    });
+
+    $('#demo-form').submit(function (event) {
+      console.log("Start demo-form...");
+      //var userEnteredCaptchaCode = captcha.getUserEnteredCaptchaCode();
+      //var captchaId = captcha.getCaptchaId();
+      var postData = {
+        //userEnteredCaptchaCode: userEnteredCaptchaCode,
+        //captchaId: captchaId
+      };
+
+      $.ajax({
+        method: 'POST',
+        url: '{% url "presentation:validationFormulaire" %}',
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(postData),
+        success: function (response) {
+          if (response.success == false) {
+            captcha.reloadImage();
+            console.log("Le code saisi ne correspond pas au code affiché. Veuillez recopier le nouveau code de sécurité proposé.");
+
+          } else {
+
+          }
+        }
+      });
+    });
+  });
+
+
+
+
+
+
+
+  /*$(document).ready(function () {
+    console.log('start...')
+    $('#demo-form').submit(function (event) {
+      //event.preventDefault();
+      var formData = $(this).serialize();
+      $.ajax({
+        type: "POST",
+        url: "demo",
+        data: formData,
+        success: function (response) {
+          console.log('Formulaire envoyé avec succès');
+
+        },
+        error: function (xhr, status, error) {
+          console.error('Erreur lors de l\'envoi du formulaire : ', error);
+        }
+      });
+      //event.preventDefault();
+    });
+
+  });*/
+
+
+
+
+</script>
+{% endblock js_bundle %}

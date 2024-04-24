@@ -203,6 +203,8 @@ CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'", "'frame-src youtube.
 CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
 #CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'",))
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://code.jquery.com")
+
 CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
 
 if DEBUG:
