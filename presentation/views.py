@@ -8,6 +8,10 @@ from utils.email import send_email
 
 from django.http import HttpResponse, JsonResponse
 
+from django.conf import settings
+
+from django.views.decorators.csrf import csrf_exempt
+
 import requests
 
 
@@ -18,88 +22,88 @@ class Accueil(TemplateView):
 class Presentation(TemplateView):
     template_name = "presentation/presentation.html"
 
-import requests
-from django.http import JsonResponse
 
 def simple_captcha_endpoint(request):
-    
-    oauth_token = get_oauth_token()
+    try:
+        oauth_token = get_oauth_token()
 
-    if not oauth_token:
-        return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
+        if not oauth_token:
+            return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
 
-    headers = {
-        'Authorization': 'Bearer ' + oauth_token,
-        'Content-Type': 'application/json'
-    }
+        headers = {
+            'Authorization': 'Bearer ' + oauth_token,
+            'Content-Type': 'application/json'
+        }
+        
+        params = request.GET.dict()
+        
+        response = requests.get(settings.SIMPLE_CAPTCHA_ENDPOINT_URL, headers=headers, params=params)
 
-    response = requests.get('https://piste.gouv.fr/piste/captcha/simple-captcha-endpoint', headers=headers)
+        if response.status_code == 200:
+            return HttpResponse(response.content, content_type=response.headers['Content-Type'])
+        else:
+            response.raise_for_status()
+    except requests.RequestException as e:
+        error_message = "Internal Server Error. Erreur Interne du Serveur"
+        return JsonResponse({"error": error_message}, status=500)
 
-    if response.status_code == 200:
-        return JsonResponse(response.json())
-    else:
-        return JsonResponse({"error": "Failed to retrieve captcha from PISTE."}, status=response.status_code)
-
-
-
+@csrf_exempt
 def validationFormulaire(request):
-    id = 123988 # provisoire // à rempalcer par CaptchaId
-    code = request.POST["captchaFormulaireExtInput"]
+    if request.method == 'POST':
+        post_data = request.POST
+        user_entered_captcha_code = post_data.get('userEnteredCaptchaCode')
+        captcha_id = post_data.get('captchaId')
 
-    if validate_captcha(id, code):
-        demo(request)
-        return JsonResponse({"success": True})
-    else:
-        return JsonResponse({"success": False})
+        oauth_token = get_oauth_token()
+        if not oauth_token:
+            return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
 
-def validate_captcha(id, code):
-    oauth_token = get_oauth_token()
+        headers = {
+            'Authorization': 'Bearer ' + oauth_token,
+            'Content-Type': 'application/json'
+        }
 
-    headers = {
-        'Authorization': 'Bearer ' + oauth_token,
-        'Content-Type': 'application/json'
-    }
+        data = {
+            'id': captcha_id,
+            'code': user_entered_captcha_code
+        }
 
-    data = {
-        'id': id,
-        'code': code
-    }
-
-    url = 'https://piste.gouv.fr/piste/captcha/validate-captcha'
-
-    response = requests.post(url, json=data, headers=headers)
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Error validating captcha:", response.text)
-        return False
-
+        try:
+            response = requests.post(settings.VALIDER_CAPTCHA_URL, json=data, headers=headers)
+            response.raise_for_status()  # Vérifie si la requête a réussi, sinon lève une exception
+            response_data = response.json()
+            if response_data == True:
+                demo(request)
+            return JsonResponse(response_data, safe=False)
+        except requests.RequestException as e:
+            # Gère les erreurs de requête HTTP
+            error_message = {"error": "Error validating captcha"}
+            return JsonResponse(error_message, status=500)
+     
 def get_oauth_token():
- 
+    
     data = {
-        "grant_type": "client_credentials",#
-        "client_id": "XXXX", # 
-        "client_secret": "YYYY", # 
-        "scope": "piste.captchetat"#
+        "grant_type": settings.GRANT_TYPE,
+        "client_id": settings.CLIENT_ID,
+        "client_secret": settings.CLIENT_SECRET,
+        "scope": settings.SCOPE,
     }
-
-    api_url = "https://oauth.piste.gouv.fr/api/oauth/token"
-
+            
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
-    response = requests.post(api_url, data=data, headers=headers)
-
-    if response.status_code == 200:
+    try:
+        response = requests.post(settings.OAUTH_URL, data=data, headers=headers)
+        response.raise_for_status()
         token_data = response.json()
         access_token = token_data.get("access_token")
         return access_token
-    else:
-        print("Failed to retrieve OAuth token:", response.text)
+    except requests.RequestException as e:
+        print("Failed to retrieve OAuth token:", e)
         return None
-
-
+   
+@csrf_exempt
 def demo(request):
+    print ("Start demo-envoi mail...")
     accounts = [
         {
             "demandeur": {"identifiant": "demandeur1@example.org", "mot_de_passe": "collecte-pro"},
@@ -115,20 +119,27 @@ def demo(request):
         },
     ]
 
+    
     if request.method == "POST":
         lastname = request.POST["lastname"]
         firstname = request.POST["firstname"]
         email = request.POST["email"]
         position = request.POST["position"]
         phone = request.POST["phone"]
-        contact = request.POST.get("contact", False) == "on"
-        access = request.POST.get("access", False) == "on"
+        contact = (request.POST.get("contact", False) == "on") or (request.POST.get("contact", False) == "true")
+        access = (request.POST.get("access", False) == "on") or (request.POST.get("access", False) == "true")
         message = request.POST["message"]
         
+        print("Nom:", lastname)
+        print("Prénom:", firstname)
+        print("Email:", email)
+        print("Position:", position)
+        print("Téléphone:", phone)
+        print("Contact:", contact)
+        print("Accès:", access)
+        print("Message:", message)
         
-        
-        #recipients = ["contact@collecte-pro.gouv.fr", ]
-        recipients = ["m.benhmida@cat-amania.com", ]
+        recipients = ["contact@collecte-pro.gouv.fr", ]
         context = {
             "lastname": lastname,
             "firstname": firstname,
@@ -150,3 +161,4 @@ def demo(request):
             return render(request, "presentation/access.html", choice(accounts))
         return render(request, "presentation/access.html")
     return render(request, "presentation/demo.html")
+    

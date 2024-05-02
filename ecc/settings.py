@@ -1,5 +1,6 @@
 import os
 import environ
+from dotenv import load_dotenv
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -200,7 +201,9 @@ SECURE_HSTS_SECONDS = 30
 # Content-Security-Policy
 CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'", "'frame-src youtube.com www.youtube.com;'"))
 #Activation temporaire
-CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
+#CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://static.piste.gouv.fr")
+
 #CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'",))
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://code.jquery.com")
@@ -366,4 +369,17 @@ JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
 
 # Indique si la page par défaut est celle de présentation
 PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=True)
+
+#Captcha
+load_dotenv()
+GRANT_TYPE = os.getenv('GRANT_TYPE')
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+SCOPE = os.getenv('SCOPE')
+
+OAUTH_URL = os.getenv('OAUTH_URL')
+SIMPLE_CAPTCHA_ENDPOINT_URL = os.getenv('SIMPLE_CAPTCHA_ENDPOINT_URL')
+VALIDER_CAPTCHA_URL = os.getenv('VALIDER_CAPTCHA_URL')
+
+
     
