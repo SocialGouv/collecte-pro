@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 import './utils/polyfills.js'
 
-import QuestionnaireDetail from './questionnaires/QuestionnaireDetail'
+import QuestionnaireDetail from './questionnaires/QuestionnaireDetail.vue'
 
 import Vue from 'vue/dist/vue.js'
 import Vuex, { mapActions } from 'vuex'

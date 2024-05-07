@@ -20,17 +20,19 @@
           </label>
           <div class="flex-row align-items-center">
             <span class="input-group-prepend" id="prepend">
-              <span class="input-group-text">{{new Date().getFullYear()}}_</span>
+              <span class="input-group-text">{{ new Date().getFullYear() }}_</span>
             </span>
-            <input id="reference"
-                   type="text"
-                   class="form-control"
-                   v-model="reference_code"
-                   required aria-labelledby="reference-label"
-                   maxlength="25"
-                   title="Ce champ ne doit pas contenir de caractères spéciaux
-                         ( ! , @ # $ / \ ' &quot; + etc)"
-                   @focus="referenceChanged">
+            <input
+              id="reference"
+              type="text"
+              class="form-control"
+              v-model="reference_code"
+              required
+              :aria-labelledby="reference-label"
+              maxlength="25"
+              title="Ce champ ne doit pas contenir de caractères spéciaux ( ! , @ # $ / \ ' &quot; + etc)"
+              @focus="referenceChanged"
+            />
           </div>
           <span class="text-danger" v-if="reference_code.length > 24">
             <p>Ce champ ne peut contenir plus de 25 caractères.</p>
@@ -38,14 +40,27 @@
         </div>
         <div class="form-group mb-6">
           <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
-            <span class="custom-control-label font-weight-bold">Sélectionner Tout
+            <input
+              type="checkbox"
+              class="custom-control-input"
+              @click="checkAllQuestionnaires"
+              v-model="allChecked"
+            />
+            <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
-          <label v-for="q in accessibleQuestionnaires"
-                :for="q.id"
-                :key="q.id"
-                class="custom-control custom-checkbox">
-            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
+          <label
+            v-for="q in accessibleQuestionnaires"
+            :for="q.id"
+            :key="q.id"
+            class="custom-control custom-checkbox"
+          >
+            <input
+              :id="q.id"
+              type="checkbox"
+              class="custom-control-input"
+              :value="q.id"
+              v-model="checkedQuestionnaires"
+            />
             <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>
@@ -64,23 +79,34 @@
       <form>
         <div class="form-group mb-6">
           <label for="checkAll" class="custom-control custom-checkbox">
-            <input id="checkAll" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
-            <span class="custom-control-label font-weight-bold">Sélectionner Tout
+            <input
+              id="checkAll"
+              type="checkbox"
+              class="custom-control-input"
+              @click="checkAllQuestionnaires"
+              v-model="allChecked"
+            />
+            <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
-          <label v-for="q in accessibleQuestionnaires"
-                :for="q.id"
-                :key="q.id"
-                class="custom-control custom-checkbox">
-            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
+          <label
+            v-for="q in accessibleQuestionnaires"
+            :for="q.id"
+            :key="q.id"
+            class="custom-control custom-checkbox"
+          >
+            <input
+              :id="q.id"
+              type="checkbox"
+              class="custom-control-input"
+              :value="q.id"
+              v-model="checkedQuestionnaires"
+            />
             <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>
       </form>
     </confirm-modal>
-    <div
-      v-if="this.loaderActive"
-      class="loader-container"
-    >
+    <div v-if="this.loaderActive" class="loader-container">
       <div class="loader-wrapper">
         <div class="loader"></div>
         <p>Téléchargement en cours</p>
@@ -90,7 +116,7 @@
     <template v-if="editMode">
       <div class="card-body">
         <error-bar v-if="hasErrors" :noclose="true">
-            <p>L'espace de dépôt n'a pas pu être modifié. Erreur : {{JSON.stringify(errors)}}</p>
+          <p>L'espace de dépôt n'a pas pu être modifié. Erreur : {{ JSON.stringify(errors) }}</p>
         </error-bar>
 
         <form @submit.prevent="updateControl">
@@ -103,7 +129,15 @@
               </label>
               <div class="flex-row align-items-center">
                 <span class="fa fa-building mr-2 text-muted" aria-hidden="true"></span>
-                <input id="organisme" type="text" class="form-control" v-model="organization" required aria-labelledby="organization-label" maxlength="255">
+                <input
+                  id="organisme"
+                  type="text"
+                  class="form-control"
+                  v-model="organization"
+                  required
+                  :aria-labelledby="organization-label"
+                  maxlength="255"
+                />
               </div>
             </div>
             <div class="form-group">
@@ -113,30 +147,32 @@
               </label>
               <div class="flex-row align-items-center">
                 <span class="fa fa-award mr-2 text-muted" aria-hidden="true"></span>
-                <input id="procedure" type="text" class="form-control" v-model="title" required aria-labelledby="title-label" maxlength="255">
+                <input
+                  id="procedure"
+                  type="text"
+                  class="form-control"
+                  v-model="title"
+                  required
+                  :aria-labelledby="title-label"
+                  maxlength="255"
+                />
               </div>
             </div>
           </div>
           <div class="text-right">
-            <button @click="cancel"
-                    type="button"
-                    class="btn btn-secondary">
+            <button @click="cancel" type="button" class="btn btn-secondary">
               Annuler
             </button>
-            <button id="control-title-submit-button"
-                    type="submit"
-                    class="btn btn-primary">
+            <button id="control-title-submit-button" type="submit" class="btn btn-primary">
               Modifier l'espace de dépôt
             </button>
           </div>
         </form>
-
       </div>
     </template>
 
     <template v-else>
       <div class="card-body flex-row justify-content-between">
-
         <div v-if="organization">
           <div class="mb-3">
             <div class="text-muted font-italic">
@@ -166,39 +202,37 @@
 
         <div class="col-4 flex-column ie-flex-column-fix align-items-end ml-6">
           <div v-if="accessType === 'demandeur'" class="btn-group">
-            <button type="button"
-                    class="btn btn-secondary"
-                    @click="enterEditMode">
+            <button type="button" class="btn btn-secondary" @click="enterEditMode">
               <span class="fe fe-edit mr-2" aria-hidden="true"></span>
               Modifier
             </button>
-            <button type="button"
-                    class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false">
+            <button
+              type="button"
+              class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
               <span class="sr-only">Menu d'actions</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
               <button
-                      v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
-                      class="dropdown-item"
-                      type="button"
-                      @click="showCloneModal"
+                v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
+                class="dropdown-item"
+                type="button"
+                @click="showCloneModal"
               >
                 <span class="fe fe-copy mr-2" aria-hidden="true"></span>
                 Dupliquer
-            </button>
-              <button class="dropdown-item"
-                      type="button"
-                      @click="showExportModal"
-              >
+              </button>
+              <button class="dropdown-item" type="button" @click="showExportModal">
                 <span class="fas fa-file-export mr-2" aria-hidden="true"></span>
                 Exporter (.zip)
               </button>
-              <button class="dropdown-item text-danger"
-                      type="button"
-                      @click="startControlDeleteFlow"
+              <button
+                class="dropdown-item text-danger"
+                type="button"
+                @click="startControlDeleteFlow"
               >
                 <span class="fe fe-trash-2 mr-2" aria-hidden="true"></span>
                 Supprimer cet espace...
@@ -206,12 +240,10 @@
             </div>
           </div>
         </div>
-
       </div>
     </template>
 
     <control-delete-flow ref="controlDeleteFlow" :control="control"></control-delete-flow>
-
   </div>
 </template>
 
