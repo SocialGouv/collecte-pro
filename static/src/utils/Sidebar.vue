@@ -1,33 +1,26 @@
 <template>
   <nav class="sidebar" :class="{ collapsed: collapsed }">
     <div v-if="showSidebar">
-      <button
-        id="sidebar-toggle-button"
-        class="btn btn-secondary"
-        @click="toggleCollapse"
-        title="Replier le panneau latéral"
-      >
-        <span v-show="!collapsed" :class="$style['fa fa-chevron-left']"></span>
-        <span v-show="collapsed" :class="$style['fa fa-chevron-down']"></span>
+      <button id="sidebar-toggle-button" class="btn btn-secondary" @click="toggleCollapse" title="Replier le panneau latéral">
+        <span v-show="!collapsed" class="fa fa-chevron-left"></span>
+        <span v-show="collapsed" class="fa fa-chevron-down"></span>
         <span v-show="collapsed">Ouvrir le menu</span>
         <span v-show="!collapsed" class="hidden">Replier le panneau latéral</span>
       </button>
-      <sidebar-menu
-        class="sidebar-body"
-        :menu="menu"
-        :relative="true"
-        :hideToggle="true"
-        :show-one-child="true"
-        theme="white-theme"
-        :collapsed="collapsed"
-        v-if="!collapsed"
-        role="navigation"
+      <sidebar-menu class="sidebar-body"
+                    id="sidebar"
+                    :menu="menu"
+                    :relative="true"
+                    :hideToggle="true"
+                    :show-one-child="true"
+                    theme="white-theme"
+                    :collapsed="collapsed"
+                    v-if="!collapsed"
+                    role="navigation"
       >
-        <template #header>
-          <div
-            id="sidebar-title"
-            class="card-header flex-row justify-content-center"
-          >
+        <template v-slot:header>
+          <div id="sidebar-title"
+               class="card-header flex-row justify-content-center">
             <h1 class="card-title text-nowrap text-center">
               Mes espaces de dépôt
             </h1>
@@ -44,29 +37,23 @@
             </div>
           </div>
 
-          <div
-            v-if="user && user.is_inspector"
-            class="card-header flex-row justify-content-center border-0"
-          >
+          <div v-if="user && user.is_inspector"
+              class="card-header flex-row justify-content-center border-0">
             <control-create></control-create>
           </div>
 
-          <div
-            v-if="isLoaded && controls.length === 0"
-            class="ie-margin-for-footer"
-          >
+          <div v-if="isLoaded && controls.length === 0"
+              class="ie-margin-for-footer">
             <!-- empty div. Adds margin-bottom to fix a footer bug for IE. -->
           </div>
 
-          <div
-            v-if="!isLoaded && !hasError"
-            class="sidebar-load-message card-header border-0 mt-4 mb-4"
-          >
+          <div v-if="!isLoaded && !hasError"
+              class="sidebar-load-message card-header border-0 mt-4 mb-4">
             <div class="loader mr-2"></div>
             En attente de la liste d'espaces...
           </div>
 
-          <error-bar v-if="hasError" :noclose="true">
+          <error-bar id="sidebar-error-bar" v-if="hasError" noclose=true>
             <div>
               <p>Nous n'avons pas pu obtenir vos espaces de dépôt.</p>
             </div>
@@ -74,21 +61,19 @@
               <p>Erreur : {{ errorMessage }}</p>
             </div>
             <div class="mt-2">
-              <p>
-                Vous pouvez essayer de recharger la page
-                <template v-if="!errorEmailLink">.</template>
-                <template v-else>
-                  , ou
-                  <a
-                    :href="'mailto:' + errorEmailLink + JSON.stringify(error)"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    cliquez ici pour nous contacter
-                  </a>
-                  .
-                </template>
-              </p>
+              <p>Vous pouvez essayer de recharger la page
+              <template v-if="!errorEmailLink">
+                .
+              </template>
+              <template v-else>
+                , ou
+                <a :href="'mailto:' + errorEmailLink + JSON.stringify(error)"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  cliquez ici pour nous contacter
+                </a>.</p>
+              </template>
             </div>
           </error-bar>
         </template>
@@ -105,9 +90,7 @@ import { mapState } from 'vuex'
 import { loadStatuses } from '../store'
 import { SidebarMenu } from 'vue-sidebar-menu'
 import Vue from 'vue'
-import * as style from "style:./Sidebar.vue";
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
-
 
 import axios from 'axios'
 
@@ -292,7 +275,7 @@ export default Vue.extend({
 })
 </script>
 
-<style scoped module>
+<style scoped>
 </style>
 
 <style>

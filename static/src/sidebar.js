@@ -1,7 +1,7 @@
 import '@babel/polyfill'
 import './utils/polyfills.js'
 
-import Sidebar from './utils/Sidebar.vue'
+import Sidebar from './utils/Sidebar'
 import { store } from './store'
 import Vue from 'vue/dist/vue.js'
 import Vuex from 'vuex'

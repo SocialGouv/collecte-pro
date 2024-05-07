@@ -3,7 +3,7 @@ import '@babel/polyfill'
 import Vuex, { mapActions } from 'vuex'
 import Vue from 'vue/dist/vue.js'
 
-import ControlDetail from './controls/ControlDetail.vue'
+import ControlDetail from './controls/ControlDetail'
 import { loadStatuses, store } from './store'
 
 Vue.use(Vuex)
