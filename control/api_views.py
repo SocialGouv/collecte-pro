@@ -1,7 +1,9 @@
 from functools import partial
 
 import django.dispatch
+from control.serializers import ControlSerializer, ControlListSerializer
 from django.http import HttpResponse
+from django.db import connection
 from actstream import action
 from django.core.files import File
 from django.db.models import Q
@@ -81,6 +83,19 @@ class ControlViewSet(mixins.CreateModelMixin,
         self.add_log_entry(control=control, verb='updated control')
         return response
 
+    
+    @decorators.action(detail=True, methods=['get'], url_path='quest_themes')
+    def quest_themes(self, request, pk):
+        quest_themes_list = Control.objects.filter(id=pk)
+        ctl_Serializer = ControlSerializer(quest_themes_list, many=True)
+        return Response(ctl_Serializer.data)
+    
+    @decorators.action(detail=False, methods=['get'], url_path='controls_list')
+    def controls_list(self, request):
+        ctl_list = Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
+        ctl_Serializer = ControlListSerializer(ctl_list, many=True)
+        return Response(ctl_Serializer.data)
+    
     @decorators.action(detail=True, methods=['get'], url_path='users')
     def users(self, request, pk):
         users = []
@@ -250,13 +265,18 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
             return [permission() for permission in self.permission_classes_by_action["create"]]
 
     def get_queryset(self):
-        questionnaire = Questionnaire.objects.get(pk=self.request.data.get("id"))
-        control = questionnaire.control
+        try:
+            questionnaire = Questionnaire.objects.get(pk=self.request.data.get("id"))
+            control = questionnaire.control
+        except Exception:
+            control = Control.objects.get(pk=self.request.data.get("control"))
         queryset = Questionnaire.objects.filter(
             control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
         return queryset
+
+    
 
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:

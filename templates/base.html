@@ -17,14 +17,14 @@
         <header class="header flex-row justify-content-between" role="banner"> <!--// opening: top_header  //-->
           <div class="container flex-row">
             <div class="flex-column">
-              <a class="header-brand" href="/accueil" title="Accueil - Collecte-pro">
+              <a class="header-brand" href="/accueil" title="Accueil - collecte-pro">
                 {% get_logo_footer_item as logo_footer %}
                 {% if logo_footer.url|slice:":4" == "http" %}
-                <img src="{{ logo_footer.url }}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+                <img src="{{ logo_footer.url }}" class="logo" alt="{{ logo_footer.title }}" />
                 {% else %}
-                <img src="{% static logo_footer.url %}" class="img" alt="{{ logo_footer.title }}" style="max-height: 110px; min-width: 150px"/>
+                <img src="{% static logo_footer.url %}" class="logo" alt="{{ logo_footer.title }}" />
                 {% endif %}
-                <span class="mx-5">collecte-pro</span>
+                <img src="/static/img/collecte-pro-3D.png" class="logo small" />
               </a>
             </div>
 

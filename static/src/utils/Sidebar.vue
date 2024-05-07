@@ -220,7 +220,11 @@ export default Vue.extend({
           icon: 'fa fa-archive',
           href: backend['control-detail'](control.id),
           title: makeControlTitle(control),
+          ctrl_id: control.id,
         }
+
+      const currentURL = this.window.location.pathname
+      if (currentURL !== '/faq/' && currentURL !== '/declaration-conformite/' && currentURL !== '/cgu/' && currentURL.replace(/\d+\/$/, '') !== '/questionnaire/corbeille/') {
 
         const resp = await axios.get(backend.getAccessToControl(control.id))
         const accessType = resp.data[0].access_type
@@ -253,10 +257,12 @@ export default Vue.extend({
             title: 'Q' + (controlMenu.child.length + 1),
           })
         }
+      }
         menu.push(controlMenu)
+        menu.sort((a, b) => { return b.ctrl_id - a.ctrl_id })
       })
       this.isMenuBuilt = true
-      this.menu = menu.sort((a, b) => { return b.id - a.id })
+      this.menu = menu
     },
     toggleCollapse() {
       this.collapsed = !this.collapsed;

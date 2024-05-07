@@ -148,6 +148,7 @@
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios';
 import backendUrls from '../utils/backend';
 
@@ -260,16 +261,27 @@ export default Vue.extend({
     watch: {
         'filter': function(val, oldVal) {
             this.selected = [];
+            this.refreshFiles();
         },
         'date_filter_start': function(val, oldVal) {
+          if (this.date_filter_start) {
             this.date_filter_start.setHours(0,0,0,0);
             this.selected = [];
             this.refreshFiles();
+          }else{
+            this.selected = [];
+            this.refreshFiles();
+          }
         },
         'date_filter_end': function(val, oldVal) {
+          if (this.date_filter_end) {
             this.date_filter_end.setHours(0,0,0,0);
             this.selected = [];
             this.refreshFiles();
+          }else{
+            this.selected = [];
+            this.refreshFiles();
+          }
         }
     },
     methods: {
@@ -767,13 +779,3 @@ export default Vue.extend({
     },
 });
 </script>
-
-<style>
-.selected_row{
-  color: white;
-  background-color: #3473cb;
-}
-.selectable_row{
-  cursor: pointer
-}
-</style>

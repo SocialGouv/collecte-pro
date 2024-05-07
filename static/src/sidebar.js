@@ -16,6 +16,7 @@ new Vue({ // eslint-disable-line no-new
   },
   mounted() {
     this.$store.dispatch('fetchSessionUser')
+    console.log('fetch controls .....')
     this.$store.dispatch('fetchControls')
     this.$store.dispatch('fetchConfig')
   },

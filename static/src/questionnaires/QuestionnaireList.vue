@@ -12,20 +12,20 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label v-for="ctrl in controlsInspected"
-                :for="questionnaireId + '_' + ctrl.id"
+          <label v-for="ctrl in controls"
+                :for="ctrl.id"
                 :key="ctrl.id"
                 class="custom-control custom-checkbox">
-            <input :id="questionnaireId + '_' + ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
+            <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
             <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
           </label>
         </div>
       </form>
     </confirm-modal>
     <div class="card-status card-status-top bg-blue"></div>
-    <div class="card-header" style="display: block; padding: 1rem">
-      <div class="float-right" v-if="hasAnyAnswer">
-        <button @click="toggleView()" style="font-size:smaller" class="card-title btn btn-primary ml-4" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
+    <div class="card-header custom-card-header">
+      <div class="float-right" v-if="hasAnyAnswerValue">
+        <button @click="toggleView()" class="card-title btn btn-primary ml-4 view-button" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
       <h2 class="card-title">
         <span class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></span>
@@ -110,7 +110,7 @@ Finalisé : l'instruction des pièces déposées est achevée">
                   {{ questionnaire.editor.first_name }}
                   {{ questionnaire.editor.last_name }}
                   <span v-if="questionnaire.modified_date" class="text-muted editor-date">
-                    {{ questionnaire.modified_date | DateFormat }} à
+                    {{ questionnaire.modified_date }} à
                     {{ questionnaire.modified_time }}
                   </span>
                 </small>
@@ -233,7 +233,6 @@ Finalisé : l'instruction des pièces déposées est achevée">
                         class="dropdown-item"
                         type="button"
                         @click="showModal(questionnaire.id)"
-                        v-if="controlsInspected.length"
                       >
                         <span class="fe fe-copy" aria-hidden="true"></span>
                         Dupliquer
@@ -281,6 +280,7 @@ Finalisé : l'instruction des pièces déposées est achevée">
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import DateFormat from '../utils/DateFormat.js'
@@ -314,12 +314,14 @@ export default Vue.extend({
       checkedCtrls: [],
       currentView: 'questions',
       isList: true,
-      controlsInspected:[],
+      currentQuestionnaireThemes: [],
+      hasAnyAnswerValue: false,
     }
   },
   computed: {
     ...mapState({
       controls: 'controls',
+      
     }),
     accessibleControls() {
       return this.controls
@@ -335,15 +337,24 @@ export default Vue.extend({
     questionnaireCreateUrl() {
       return backendUrls['questionnaire-create'](this.control.id)
     },
-    hasAnyAnswer() {
-      let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies)
-      return (questionnaires.length > 0)
-    },
+    
   },
   mounted() {
-    this.getControlsInspectedFromUser()
+    this.checkAnyAnswer();
   },
   methods: {
+    async checkAnyAnswer() {
+          
+    try {
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
+        let questionnaires = this.accessibleQuestionnaires.filter(aq => aq.has_replies);
+        this.hasAnyAnswerValue = questionnaires.length > 0;
+      } catch (error) {
+        console.error('Erreur lors de la requête HTTP :', error);
+        this.hasAnyAnswerValue = false; 
+      }
+    },
     questionnaireDetailUrl(questionnaireId) {
       return backendUrls['questionnaire-detail'](questionnaireId)
     },
@@ -383,12 +394,6 @@ export default Vue.extend({
         window.location.reload();
       })
     },
-    getControlsInspectedFromUser() {
-      axios.get(backendUrls.getControlsInspectedFromUser(this.user.id))
-        .then((response) => {
-          this.controlsInspected = response.data.filter(obj => obj.id !== this.control.id)
-        })
-    },
     toggleView() {
       if (this.isList) {
         this.currentView = 'tree';
@@ -397,12 +402,15 @@ export default Vue.extend({
       }
       this.isList = !this.isList;
     },
-    cloneQuestionnaire() {
+    async cloneQuestionnaire() {
       let self = this
       const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 
       if (this.checkedCtrls.length) {
+
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
         const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
         const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
 
@@ -414,27 +422,39 @@ export default Vue.extend({
             return { title: t.title, questions: qq }
           })
 
-          let newQ = { ...curQ, control: ctrl.id, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
+          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, has_replies:false, is_finalized: false, id: null, themes: [] }
+          
           getCreateMethod()(newQ).then(response => {
             const qId = response.data.id
-            newQ = { ...newQ, id: qId, themes: themes }
+            newQ = { ...newQ, id: qId, questionnaire_files:curQ.questionnaire_files, themes: themes }
+            curQ.questionnaire_files.forEach(qf => {
+                    axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                      const formData = new FormData()
+                      formData.append('file', response.data, qf.basename)
+                      formData.append('questionnaire', qId)
 
+                      axios.post(backendUrls.piecejointe(), formData, {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
+                      })
+                    })
+              })
+            
             getUpdateMethod(qId)(newQ).then(response => {
               const updatedQ = response.data
-
-              // Update questionnaires list render when duplicated
               self.$root.$emit('questionnaire-created')
               curQ.themes.forEach(t => {
                 t.questions.forEach(q => {
                   const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
                     .questions.find(updatedQ => updatedQ.order === q.order).id
-
-                  q.question_files.forEach(qf => {
+                  
+                    q.question_files.forEach(qf => {
                     axios.get(qf.url, { responseType: 'blob' }).then(response => {
                       const formData = new FormData()
                       formData.append('file', response.data, qf.basename)
                       formData.append('question', qId)
-
+                      
                       axios.post(backendUrls.annexe(), formData, {
                         headers: {
                           'Content-Type': 'multipart/form-data',
@@ -446,9 +466,11 @@ export default Vue.extend({
               })
             })
           })
+              
         });
       }
     },
+   
     exportControl(questionnaireId) {
       this.$parent.$children[0].loaderActive = true;
 
@@ -556,25 +578,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-.tag-column {
-  max-width: 7em;
-}
-
-.editor-column {
-  min-width: 9em;
-}
-
-.editor-date {
-  display: block;
-}
-
-.end-date-column {
-  min-width: 9em;
-}
-
-.action-column {
-  min-width: 10em;
-}
-</style>

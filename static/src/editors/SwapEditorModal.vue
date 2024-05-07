@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import '../../css/editors.css'
 import { mapFields } from 'vuex-map-fields'
 import axios from 'axios'
 import backendUrls from '../utils/backend.js'
@@ -126,10 +127,3 @@ export default Vue.extend({
   },
 })
 </script>
-<style scoped>
-  .large-modal {
-      width: 1000px;
-      max-width: 100%;
-      margin: 2% auto;
-  }
-</style>

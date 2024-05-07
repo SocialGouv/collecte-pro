@@ -216,6 +216,7 @@
 </template>
 
 <script>
+import '../../css/controls.css'
 import { mapState } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 import axios from 'axios'
@@ -314,6 +315,7 @@ export default Vue.extend({
       return 'Répondant'
     },
     cloneControl(newRefCode) {
+
       const valid = this.reference_code &&
                     !this.controls.find(ctrl => ctrl.reference_code === newRefCode)
 
@@ -333,19 +335,25 @@ export default Vue.extend({
           reference_code: newRefCode,
           questionnaires: questionnaires,
         }
-
-        getCreateMethodCtrl()(ctrl).then(response => {
+       
+        getCreateMethodCtrl()(ctrl).then(async response => {
           // Copy users for new control
+          
           const controlId = response.data.id
-
-          this.users
+         
+          /*this.users
             .filter(u => u.profile_type === 'inspector')
             .map(i => {
               const inspector = { ...i, control: controlId }
               axios.post(backendUrls.user(), inspector)
-            })
+          })*/
+        
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
+        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
 
-          // Copy questionnaires for new control
+        this.accessibleQuestionnaires = this.control.questionnaires
+          .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+
           const promises = this.accessibleQuestionnaires
             .filter(aq => this.checkedQuestionnaires.includes(aq.id))
             .map(q => {
@@ -354,12 +362,12 @@ export default Vue.extend({
                 return { title: t.title, questions: qq }
               })
 
-              const newQ = { ...q, control: controlId, is_draft: true, id: null, themes: [] }
+              const newQ = { ...q, control: controlId, is_draft: true, is_replied:false, has_replies:false, is_finalized:false, id: null, themes: [] }
               return this.cloneQuestionnaire(newQ, themes, q.themes)
             })
 
           Promise.all(promises).then((values) => {
-            setTimeout(() => { window.location.href = backendUrls.home(); }, 500);
+            setTimeout(() => { window.location.href = backendUrls.home(); }, 3000);
           });
         })
 
@@ -374,6 +382,19 @@ export default Vue.extend({
         const qId = response.data.id
         const newQ = { ...questionnaire, themes: themes }
 
+          newQ.questionnaire_files.map(qf => {
+                axios.get(qf.url, { responseType: 'blob' }).then(response => {
+                  const formData = new FormData()
+                  formData.append('file', response.data, qf.basename)
+                  formData.append('questionnaire', qId)
+                  axios.post(backendUrls.piecejointe(), formData, {
+                    headers: {
+                      'Content-Type': 'multipart/form-data',
+                    },
+                  })
+                })
+              }) 
+
         await getUpdateMethod(qId)(newQ).then(response => {
           const updatedQ = response.data
 
@@ -387,7 +408,6 @@ export default Vue.extend({
                   const formData = new FormData()
                   formData.append('file', response.data, qf.basename)
                   formData.append('question', qId)
-                  console.log('fileresponse', response.data)
                   axios.post(backendUrls.annexe(), formData, {
                     headers: {
                       'Content-Type': 'multipart/form-data',
@@ -580,45 +600,4 @@ export default Vue.extend({
 
 </script>
 
-<style scoped>
-  .break-word {
-    word-break: break-all;
-  }
-  .loader-container {
-    text-align: center;
-    z-index:9999;
-    padding-top:100px;
-    position:fixed;
-    left:0;
-    top:0;
-    width:100%;
-    height:100%;
-    overflow:auto;
-    background-color:rgba(0,0,0,.4);
-  }
-  .loader-wrapper {
-    background-color:rgba(255,255,255,.9);
-    width: 200px;
-    margin: auto;
-    padding: 6px;
-    border-radius: 6px;
-  }
-  .loader {
-    display: inline-block;
-    position: relative;
-    width: 80px;
-    height: 80px;
-  }
-  .loader div {
-    box-sizing: border-box;
-    display: block;
-    position: absolute;
-    width: 64px;
-    height: 64px;
-    margin: 8px;
-    border: 8px solid #6916a0;
-    border-radius: 50%;
-    animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #6916a0 transparent transparent transparent;
-  }
-</style>
+

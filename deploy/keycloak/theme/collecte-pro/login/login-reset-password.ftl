@@ -17,7 +17,7 @@
                     </#if>
                 </div>
                 <div class="${properties.kcInputWrapperClass!}">
-                    <span class="kc-social-section kc-social-gray" aria-live="polite">Si vous ne recevez pas le lien de connexion, c'est que votre adresse de courriel n'est pas identifiée comme utilisatrice de Collecte-pro.</span>
+                    <span class="kc-social-section kc-social-gray" aria-live="polite">Si vous ne recevez pas le lien de connexion, c'est que votre adresse de courriel n'est pas identifiée comme utilisatrice de collecte-pro.</span>
                 </div>
             </div>
             <div class="${properties.kcFormGroupClass!} ${properties.kcFormSettingClass!}">

@@ -70,15 +70,16 @@ export const store = new Vuex.Store({
         commit('updateSessionUserLoadStatus', loadStatuses.ERROR)
       })
     },
-    fetchControls({ commit }) {
-      axios.get(backendUrls.control()).then(response => {
-        console.debug('Store got controls', response.data)
-        commit('updateControls', response.data)
-        commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
-      }).catch(err => {
-        console.error('Store got esrror fetching controls', err)
-        commit('updateControlsLoadStatus', loadStatuses.ERROR)
-      })
+    async fetchControls({ commit }) {
+      const currentURL = window.location.pathname
+      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/' || currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/') {
+        await axios.get(backendUrls.getControlsList()).then(response => {
+          this.controls = response.data
+        }).catch(err => {
+        })
+      }
+      commit('updateControls', this.controls)
+      commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
     },
   },
 })

@@ -51,13 +51,13 @@ def demo(request):
             "access": access,
             "message": message,
         }
-        send_email(
+        """send_email(
             to=recipients,
             subject="collecte-pro - Formulaire de contact",
             html_template='presentation/email_contact.html',
             text_template='presentation/email_contact.txt',
             extra_context=context,
-        )
+        )"""
 
         if access:
             return render(request, "presentation/access.html", choice(accounts))

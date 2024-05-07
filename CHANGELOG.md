@@ -6,6 +6,113 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.33] - 2024-04-08
+### Modifications
+- CP-155 : Questionnaire marqué comme répondu par un profil inspecteur
+## [2.2.32] - 2024-03-13
+### Modifications
+- CP-144 : Désactiver temporairement le traitement relatif au formulaire de contact
+## [2.2.31] - 2024-02-08
+### Modifications
+- Retour pre-prod : CP-134, CP-137, CP-138
+## [2.2.30] - 2024-01-08
+### Modifications
+- CP-133 : Réduction de la taille des images sur la page de présentation
+## [2.2.29] - 2023-12-22
+### Modifications
+- Correction de l'anomalie de l'affichage de la date ainsi que la résolution de la lenteur de chargement des images sur la page d'accueil
+## [2.2.28] - 2023-12-13
+### Modifications
+- CP-134 : bug affichage espaces dépôts
+## [2.2.27] - 2023-11-30
+### Modifications
+- CP-12 et 15 : En-tête Cache-Control et En-tête Content-Security-Policy
+## [2.2.26] - 2023-11-15
+###
+- Passage en pre-prod de la CP-110
+## [2.2.25] - 2023-10-16
+### Modifications
+- Passage en pre-prod et prod sans la CP-110 : Ajout de la fonctionnalité TOP 20 et optimisation de la partie statistiques.
+
+## [2.2.24] - 2023-10-12
+### Modifications
+- Adaptation du téléchargement du fichier ZIP sur les différents navigateurs
+
+### Modifications
+- Anomalie : Pièce jointe introuvable lors de la duplication
+
+## [2.2.22] - 2023-10-09
+### Modifications
+- Automatisation de la production des indicateurs du TOP 20
+- Optimisation de la page statistiques
+
+## [2.2.21] - 2023-09-27
+### Modifications
+- Correctif : Voir les documents
+
+## [2.2.20] - 2023-09-21
+### Modifications
+- Correction de l'anomalie des fichiers
+
+## [2.2.19] - 2023-09-13
+### Modifications
+- Optimisation de l'application LOT 3
+
+## [2.2.18] - 2023-08-31
+### Modifications
+- Optimisation de l'application LOT 2
+
+## [2.2.17] - 2023-08-18
+### Modifications
+- Optimisation de l'application LOT 1
+
+## [2.2.16] - 2023-06-26
+### Modifications
+- Activation des pages de présentation
+
+## [2.2.15] - 2023-06-12
+### Modifications
+Evolution pages communication : 
+    -harmonisation de la typographie pour le nom 'collecte-pro'
+    -remplacement de trois images
+    -mise à jour des logos avec l'aspect du logo en pièce jointe
+
+## [2.2.14] - 2023-06-06
+### Modifications
+- Optimisation de l'accès aux statistiques : garder le nombre de fichiers déposés mais pas la taille qui présente un goulot d'étranglement.
+
+## [2.2.13] - 2023-05-10
+### Modifications
+- Suppression du formatage modified_date des questionnaires
+
+## [2.2.12] - 2023-05-09
+### Modifications
+- Correction d'affichage de la date de création/modification d'un brouillon dans Firefox
+
+## [2.2.11] - 2023-04-25
+### Modifications
+- Renfort du script de suppression des données sur l'espace de démo
+- Mise à jour de CHANGELOG
+
+
+## [2.2.10] - 2023-04-21
+### Modifications
+- Optimisation de l'accès aux statistiques 
+
+
+## [2.2.9] - 2023-03-27
+### Corrections
+- Les espaces de dépôt ne s'affichent plus par ordre chronologique décroissant
+
+
+## [2.2.8] - 2023-03-22
+### Corrections
+- Perte de PJ lors de la duplication d'un espace de dépôt 
+
+
+## [2.2.7] - 2023-03-17
+### Corrections
+- La duplication des questionnaires est KO
 
 
 ## [2.2.6] - 2023-03-03

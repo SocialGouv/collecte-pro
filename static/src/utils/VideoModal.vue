@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import '../../css/utils.css'
 import Vue from 'vue'
 
 export default Vue.extend({
@@ -33,11 +34,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-  .modal-video {
-      width: 1000px;
-      max-width: 100%;
-      margin: 2% auto;
-  }
-</style>

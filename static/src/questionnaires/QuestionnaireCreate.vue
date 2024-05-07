@@ -120,14 +120,13 @@
     </div>
     <div class="flex-row justify-content-end mt-2">
       <div v-if="saveMessage.isWaitingForMinDisplayTime || saveMessage.isSaveHappening"
-           style="min-height: 1.5rem;">
+           class="save-message">
         <span class="fas fa-sync-alt mr-2" aria-hidden="true"></span>
         Enregistrement en cours ...
       </div>
       <div v-else
            :class="{ 'text-danger': hasErrors, 'text-muted': !hasErrors }"
-           class="flex-row align-items-center"
-           style="min-height: 1.5rem;">
+           class="flex-row align-items-center save-message">
         <span v-if="hasErrors" class="fe fe-alert-triangle mr-2" aria-hidden="true"></span>
         <span v-else class="fe fe-check-circle mr-2" aria-hidden="true"></span>
         {{ saveMessage.text }}
@@ -145,6 +144,7 @@
 </template>
 
 <script>
+import '../../css/questionnaires.css'
 import axios from 'axios'
 import backend from '../utils/backend'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
@@ -159,6 +159,7 @@ import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
 import Vue from 'vue'
 import Wizard from '../utils/Wizard'
+import backendUrls from '../utils/backend'
 
 // State machine
 const STATES = {
@@ -188,6 +189,7 @@ export default Vue.extend({
       errorMessage: '',
       errors: [],
       hasErrors: false,
+      userId:'',
       STATES: STATES,
       state: STATES.LOADING,
       saveMessage: {
@@ -215,14 +217,12 @@ export default Vue.extend({
     // Watch change of loadStatus coming from the store, to know when the data is ready.
     controlsLoadStatus(newValue, oldValue) {
       const loadNewQuestionnaire = () => {
-        console.debug('loadNewQuestionnaire')
         const newQuestionnaire = {
           control: this.controlId,
           description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
           title: '',
           themes: [],
         }
-        console.debug('currentQuestionnaire is new', newQuestionnaire)
         this.currentQuestionnaire = newQuestionnaire
         this.emitQuestionnaireUpdated()
         this.moveToState(STATES.START)
@@ -230,10 +230,8 @@ export default Vue.extend({
       }
 
       const loadExistingQuestionnaire = () => {
-        console.debug('loadExistingQuestionnaire')
         const currentQuestionnaire =
           this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
-        console.debug('currentQuestionnaire', currentQuestionnaire)
         if (!currentQuestionnaire) {
           const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
           this.displayErrors(errorMessage)
@@ -279,15 +277,66 @@ export default Vue.extend({
     StickyBottomMixin,
   ],
   mounted() {
+    if (typeof this.questionnaireId === 'undefined') {
+      this.loadNewQuestionnaire()
+    }else{
+      this.loadExistingQuestionnaire()
+    }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
-
-    console.debug('questionnaireId', this.questionnaireId)
-    console.debug('controlId', this.controlId)
     if (this.controlId === undefined && this.questionnaireId === undefined) {
       throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
     }
   },
   methods: {
+      loadNewQuestionnaire: function(){
+        const newQuestionnaire = {
+          control: this.controlId,
+          description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
+          title: '',
+          themes: [],
+        }
+        this.currentQuestionnaire = newQuestionnaire
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
+        return
+      },
+      loadExistingQuestionnaire: async function(){
+        const currentQuestionnaire =this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
+        if (!currentQuestionnaire) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
+          this.displayErrors(errorMessage)
+          throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
+        }
+        if (!currentQuestionnaire.is_draft) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId +
+                ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
+          this.displayErrors(errorMessage)
+          throw new Error(
+            'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
+        }
+      
+      this.currentQuestionnaire = currentQuestionnaire
+      this.currentQuestionnaire.control = this.controlId
+      const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.controlId))
+      this.control = resp.data.filter(obj => obj.id === this.controlId)[0]
+      const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
+      const themes = curQ.themes.map(t => {
+            const qq = t.questions.map(q => {
+                const qf = q.question_files.map(ff=>{
+                   return { id : ff.id, url: ff.url, basename : ff.basename , file : ff.file, question : ff.question}
+                })
+              return { description: q.description,  id: q.id, order:q.order,  question_files : qf}
+            })
+            return { id : t.id, order: t.order, questionnaire:t.questionnaire, questions: qq, title: t.title }
+          })
+        
+        this.currentQuestionnaire.questionnaire_files=curQ.questionnaire_files
+        this.currentQuestionnaire.description=curQ.description
+        this.currentQuestionnaire.themes = themes
+
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
+      },
     findCurrentQuestionnaire: function(controls, questionnaireId) {
       for (let i = 0; i < controls.length; i++) {
         const control = controls[i]
@@ -450,8 +499,8 @@ export default Vue.extend({
         .then((response) => {
           console.debug('Successful draft save.')
           self.currentQuestionnaire = response.data
+          console.log('self.currentQuestionnaire : ',self.currentQuestionnaire)
           self.emitQuestionnaireUpdated()
-
           self.displaySavingDone(nowTimeString())
           return response.data
         })
@@ -504,10 +553,3 @@ export default Vue.extend({
   },
 })
 </script>
-
-<style scoped>
-  #bottom-bar {
-    margin-left: -2rem;
-    margin-right: -0.75rem;
-  }
-</style>

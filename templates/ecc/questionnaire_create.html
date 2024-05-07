@@ -10,6 +10,10 @@
 
 {% block page_main_container_with_sidebar %}
   <div id="questionnaire-create-vm" class="page-main flex-row">
+    <link rel="stylesheet" href="{% static 'css/utils.css' %}">
+    <div id="controls-data" class="hidden">
+      {{ controls_json }}
+    </div>
     <div id="sidebar-vm" class="border-right">
       <sidebar></sidebar>
     </div>

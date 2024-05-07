@@ -2,6 +2,7 @@ import '@babel/polyfill'
 import './utils/polyfills.js'
 
 import QuestionnaireDetail from './questionnaires/QuestionnaireDetail'
+
 import Vue from 'vue/dist/vue.js'
 import Vuex, { mapActions } from 'vuex'
 import { loadStatuses, store } from './store'
@@ -21,7 +22,6 @@ It does adds a delay for the user, since they will wait for the ajax-requested d
 const controlsDataEl = document.getElementById('controls-data')
 // decode and parse the content of the div
 const controls = JSON.parse(controlsDataEl.textContent)
-
 // This data is safe because not user-provided. But we have to get it like this too.
 const questionnaireIdDataEl = document.getElementById('questionnaire-id-data')
 const questionnaireId = Number(questionnaireIdDataEl.textContent.trim())
@@ -39,15 +39,14 @@ new Vue({
         controlId: controlId,
         questionnaireId: questionnaireId,
       },
-    }),
+    },
+  ),
   methods: {
-    ...mapActions(['fetchConfig', 'fetchControls', 'fetchSessionUser']),
+    ...mapActions(['fetchConfig', , 'fetchSessionUser']),
   },
   created() {
     this.fetchConfig()
     this.fetchSessionUser()
-
-    // Store the controls in the Vuex store
     this.$store.commit('updateControls', controls)
     this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
   },
