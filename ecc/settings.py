@@ -375,7 +375,7 @@ load_dotenv()
 GRANT_TYPE = os.getenv('GRANT_TYPE')
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-SCOPE = os.getenv('SCOPE')
+#SCOPE = os.getenv('SCOPE')
 
 OAUTH_URL = os.getenv('OAUTH_URL')
 SIMPLE_CAPTCHA_ENDPOINT_URL = os.getenv('SIMPLE_CAPTCHA_ENDPOINT_URL')

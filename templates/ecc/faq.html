@@ -31,6 +31,8 @@
           <div class="card-body">
             <p>
             Si vous ne trouvez pas de réponses à vos questions, contactez-nous par email.
+            {% get_support_email_item as support_email %}
+            {{ support_email.url|obfuscate_mailto:"contactez-nous par email" }}.
             </p>
           </div>
         </div>

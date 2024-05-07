@@ -44,7 +44,7 @@ def simple_captcha_endpoint(request):
         else:
             response.raise_for_status()
     except requests.RequestException as e:
-        error_message = "Internal Server Error. Erreur Interne du Serveur"
+        error_message = "Internal Server Error."
         return JsonResponse({"error": error_message}, status=500)
 
 @csrf_exempt
@@ -70,13 +70,12 @@ def validationFormulaire(request):
 
         try:
             response = requests.post(settings.VALIDER_CAPTCHA_URL, json=data, headers=headers)
-            response.raise_for_status()  # Vérifie si la requête a réussi, sinon lève une exception
+            response.raise_for_status()  
             response_data = response.json()
             if response_data == True:
                 demo(request)
             return JsonResponse(response_data, safe=False)
         except requests.RequestException as e:
-            # Gère les erreurs de requête HTTP
             error_message = {"error": "Error validating captcha"}
             return JsonResponse(error_message, status=500)
      
@@ -86,7 +85,7 @@ def get_oauth_token():
         "grant_type": settings.GRANT_TYPE,
         "client_id": settings.CLIENT_ID,
         "client_secret": settings.CLIENT_SECRET,
-        "scope": settings.SCOPE,
+        #"scope": settings.SCOPE,
     }
             
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
@@ -103,7 +102,6 @@ def get_oauth_token():
    
 @csrf_exempt
 def demo(request):
-    print ("Start demo-envoi mail...")
     accounts = [
         {
             "demandeur": {"identifiant": "demandeur1@example.org", "mot_de_passe": "collecte-pro"},
@@ -130,14 +128,6 @@ def demo(request):
         access = (request.POST.get("access", False) == "on") or (request.POST.get("access", False) == "true")
         message = request.POST["message"]
         
-        print("Nom:", lastname)
-        print("Prénom:", firstname)
-        print("Email:", email)
-        print("Position:", position)
-        print("Téléphone:", phone)
-        print("Contact:", contact)
-        print("Accès:", access)
-        print("Message:", message)
         
         recipients = ["contact@collecte-pro.gouv.fr", ]
         context = {
@@ -150,13 +140,13 @@ def demo(request):
             "access": access,
             "message": message,
         }
-        """send_email(
+        send_email(
             to=recipients,
             subject="collecte-pro - Formulaire de contact",
             html_template='presentation/email_contact.html',
             text_template='presentation/email_contact.txt',
             extra_context=context,
-        )"""
+        )
         if access:
             return render(request, "presentation/access.html", choice(accounts))
         return render(request, "presentation/access.html")
