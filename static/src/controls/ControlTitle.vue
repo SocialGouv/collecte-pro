@@ -394,7 +394,7 @@ export default Vue.extend({
                 return { title: t.title, questions: qq }
               })
 
-              const newQ = { ...q, control: controlId, is_draft: true, id: null, themes: [] }
+              const newQ = { ...q, control: controlId, is_draft: true, is_replied:false, has_replies:false, is_finalized:false, id: null, themes: [] }
               return this.cloneQuestionnaire(newQ, themes, q.themes)
             })
 
