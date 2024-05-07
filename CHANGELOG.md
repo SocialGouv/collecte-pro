@@ -6,6 +6,18 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [2.2.33] - 2024-04-08
+### Modifications
+- CP-155 : Questionnaire marqué comme répondu par un profil inspecteur
+## [2.2.32] - 2024-03-13
+### Modifications
+- CP-144 : Désactiver temporairement le traitement relatif au formulaire de contact
+## [2.2.31] - 2024-02-08
+### Modifications
+- Retour pre-prod : CP-134, CP-137, CP-138
+## [2.2.30] - 2024-01-08
+### Modifications
+- CP-133 : Réduction de la taille des images sur la page de présentation
 ## [2.2.29] - 2023-12-22
 ### Modifications
 - Correction de l'anomalie de l'affichage de la date ainsi que la résolution de la lenteur de chargement des images sur la page d'accueil
