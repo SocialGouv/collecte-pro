@@ -1,249 +1,186 @@
 <template>
-  <div
-    class="modal fade add-user-modal"
-    id="addUserModal"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="modal_title"
-    aria-hidden="true"
-    aria-modal="true"
-  >
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div id="modal_title" class="modal-title">{{ editingControl.title }}</div>
-        </div>
-        <div class="modal-body">
-          <div v-if="hasErrors" class="alert alert-danger" role="alert">
-            L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
-          </div>
-          <div v-if="editingProfileType === 'inspector'" class="text-center">
-            <h4>
-              <span class="fa fa-university mr-2" aria-hidden="true"></span
-              ><strong>Équipe d'instruction</strong>
-            </h4>
-          </div>
-          <div v-if="editingProfileType === 'audited'" class="text-center">
-            <h4>
-              <span class="fa fa-building mr-2" aria-hidden="true"></span
-              ><strong>Organisme interrogé</strong>
-            </h4>
-          </div>
 
-          <info-bar>
-            <p>Tous les champs sont obligatoires.</p>
-          </info-bar>
-          <form @submit.prevent="validateEmail" v-if="stepShown === 1" @keydown.esc="resetFormData">
-            <div class="form-fieldset">
-              <div class="form-group">
-                <label
-                  id="email-label"
-                  class="form-label"
-                  for="email"
-                >
-                  Email
-                  <span class="form-required">*</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  autocapitalize=off
-                  autocorrect=off
-                  class="form-control"
-                  :class="{ 'state-invalid': errors.email }"
-                  v-model="formData.email"
-                  placeholder="prenom.nom@example.org"
-                  required
-                  :aria-labelledby="email-label"
-                  aria-describedby="erreur-email"
-                />
-              </div>
-              <div class="form-group">
-                <label
-                  id="email-confirm-label"
-                  class="form-label"
-                  for="confirm_email"
-                >
-                  Confirmer l'Email
-                  <span class="form-required">*</span>
-                </label>
-                <input
-                  id="confirm_email"
-                  type="email"
-                  autocapitalize=off
-                  autocorrect=off
-                  class="form-control"
-                  :class="{ 'state-invalid': errors.email }"
-                  v-model="formData.email_confirm"
-                  placeholder="prenom.nom@example.org"
-                  required
-                  :aria-labelledby="email-confirm-label"
-                  aria-describedby="erreur-email"
-                />
-                <p class="text-muted pl-2" v-if="errors.email" id="erreur-email">
-                  <span class="fa fa-warning" aria-hidden="true"></span>
-                  {{ errors.email.join(' / ')}}
-                </p>
-              </div>
+<div class="modal fade add-user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="modal_title" aria-hidden="true" aria-modal="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div id="modal_title" class="modal-title">{{ editingControl.title }}</div>
+      </div>
+      <div class="modal-body">
+        <div v-if="hasErrors" class="alert alert-danger" role="alert">
+          L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
+        </div>
+        <div v-if="editingProfileType==='inspector'" class="text-center">
+            <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
+        </div>
+        <div v-if="editingProfileType==='audited'" class="text-center">
+            <h4><span class="fa fa-building mr-2" aria-hidden="true"></span><strong>Organisme interrogé</strong></h4>
+        </div>
+
+        <info-bar>
+          <p>Tous les champs sont obligatoires.</p>
+        </info-bar>
+        <form @submit.prevent="validateEmail" v-if="stepShown === 1" @keydown.esc="resetFormData">
+          <div class="form-fieldset">
+            <div class="form-group">
+              <label id="email-label" class="form-label" for="email">
+                Email
+                <span class="form-required">*</span>
+              </label>
+              <input id="email"
+                     type="email"
+                     autocapitalize=off
+                     autocorrect=off
+                     class="form-control"
+                     v-bind:class="{ 'state-invalid': errors.email }"
+                     v-model="formData.email"
+                     placeholder="prenom.nom@example.org"
+                     required
+                     aria-labelledby="email-label"
+                     aria-describedby="erreur-email">
             </div>
-            <div class="flex-row justify-content-between">
-              <button type="button" class="btn btn-secondary" @click="cancel">
-                <span class="fa fa-times mr-2" aria-hidden="true"></span>
-                Annuler
+            <div class='form-group'>
+              <label id="email-confirm-label" class="form-label" for="confirm_email">
+                Confirmer l'Email
+                <span class="form-required">*</span>
+              </label>
+              <input id="confirm_email"
+                     type="email"
+                     autocapitalize=off
+                     autocorrect=off
+                     class="form-control"
+                     v-bind:class="{ 'state-invalid': errors.email }"
+                     v-model="formData.email_confirm"
+                     placeholder="prenom.nom@example.org"
+                     required
+                     aria-labelledby="email-confirm-label"
+                     aria-describedby="erreur-email">
+              <p class="text-muted pl-2" v-if="errors.email" id="erreur-email">
+                <span class="fa fa-warning" aria-hidden="true"></span>
+                {{ errors.email.join(' / ')}}
+              </p>
+            </div>
+          </div>
+          <div class="flex-row justify-content-between">
+            <button type="button" class="btn btn-secondary" @click="cancel">
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
+              Annuler
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Suivant
+              <span class="fa fa-chevron-right ml-2" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+
+        <form @submit.prevent="findUser" v-if="stepShown === 1.5" @keydown.esc="resetFormData">
+          <div class="alert alert-warning alert-icon my-8" role="alert">
+            <span class="fa fa-exclamation-circle mr-2" aria-hidden="true" aria-hidden="true"></span>
+            <div class="mb-4">
+              Vous allez ajouter
+              <strong>{{ formData.email }}</strong>
+              comme
+              <strong>Demandeur</strong>
+              .
+            </div>
+            <div> Cet email ne finit pas par
+              <template v-for="(ending, index) in expectedEndingsArray">
+                <strong :key="index">{{ ending }}</strong>
+                <span v-if="index < expectedEndingsArray.length - 2" :key="index">,</span>
+                <span v-if="index === expectedEndingsArray.length - 2" class="mr-1" :key="index">ou</span>
+              </template>
+              .
+            </div>
+          </div>
+          <div class="flex-row justify-content-between">
+            <button type="button" class="btn btn-secondary" @click="cancel">
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
+              Annuler
+            </button>
+            <div class="text-right">
+              <button type="button" class="btn btn-secondary" @click="back">
+                C'est une erreur,<br/>
+                <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
+                Retour
               </button>
               <button type="submit" class="btn btn-primary">
-                Suivant
+                C'est volontaire,<br/>Suivant
                 <span class="fa fa-chevron-right ml-2" aria-hidden="true"></span>
               </button>
             </div>
-          </form>
+          </div>
+        </form>
 
-          <form @submit.prevent="findUser" v-if="stepShown === 1.5" @keydown.esc="resetFormData">
-            <div class="alert alert-warning alert-icon my-8" role="alert">
-              <span
-                class="fa fa-exclamation-circle mr-2"
-                aria-hidden="true"
-              ></span>
-              <div class="mb-4">
-                Vous allez ajouter
-                <strong>{{ formData.email }}</strong>
-                comme
-                <strong>Demandeur</strong>.
-              </div>
-              <div>
-                Cet email ne finit pas par
-                <template v-for="(ending, index) in expectedEndingsArray" :key="index">
-                  <strong>{{ ending }}</strong>
-                  <span v-if="index < expectedEndingsArray.length - 2">, </span>
-                  <span v-else-if="index === expectedEndingsArray.length - 2"> ou </span>
-                </template>
-                .
-              </div>
-
+        <form @submit.prevent="addUser" v-if="stepShown === 2" @keydown.esc="resetFormData">
+          <div class="form-fieldset">
+            <p class="form-label">Email : {{ formData.email}}</p>
+          </div>
+          <div v-if="foundUser" class="form-fieldset">
+            <p class="form-label">Prénom : {{ formData.first_name}}</p>
+            <p class="form-label">Nom : {{ formData.last_name}}</p>
+          </div>
+          <fieldset v-else class="form-fieldset">
+            <div class="form-group">
+              <label class="form-label" for="prenom">Prénom<span class="form-required"></span></label>
+              <input id="prenom" type="given-name" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" placeholder="prenom" required>
+              <p class="text-muted pl-2" v-if="errors.first_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.first_name.join(' / ')}}</p>
             </div>
-            <div class="flex-row justify-content-between">
-              <button type="button" class="btn btn-secondary" @click="cancel">
-                <span class="fa fa-times mr-2" aria-hidden="true"></span>
-                Annuler
+            <div class="form-group">
+              <label class="form-label" for="nom">Nom<span class="form-required"></span></label>
+              <input id="nom" type="family-name" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" placeholder="nom" required>
+              <p class="text-muted pl-2" v-if="errors.last_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.last_name.join(' / ')}}</p>
+            </div>
+          </fieldset>
+          <div class="flex-row justify-content-between">
+            <button type="button" class="btn btn-secondary" @click="cancel">
+              <span class="fa fa-times mr-2" aria-hidden="true"></span>
+              Annuler
+            </button>
+            <div class="text-right">
+              <button type="button" class="btn btn-secondary" @click="back">
+                <span class="fa fa-chevron-left mr-2" aria-hidden="true"></span>
+                Retour
               </button>
-              <div class="text-right">
-                <button type="button" class="btn btn-secondary" @click="back">
-                  C'est une erreur,<br />
-                  <span
-                    class="fa fa-chevron-left mr-2"
-                    aria-hidden="true"
-                  ></span>
-                  Retour
-                </button>
-                <button type="submit" class="btn btn-primary">
-                  C'est volontaire,<br />Suivant
-                  <span
-                    class="fa fa-chevron-right ml-2"
-                    aria-hidden="true"
-                  ></span>
-                </button>
-              </div>
+              <button type="submit" class="btn btn-primary">Ajouter</button>
             </div>
-          </form>
+          </div>
+        </form>
 
-          <form @submit.prevent="addUser" v-if="stepShown === 2" @keydown.esc="resetFormData">
-            <div class="form-fieldset">
-              <p class="form-label">Email : {{ formData.email }}</p>
-            </div>
-            <div v-if="foundUser" class="form-fieldset">
-              <p class="form-label">Prénom : {{ formData.first_name }}</p>
-              <p class="form-label">Nom : {{ formData.last_name }}</p>
-            </div>
-            <fieldset v-else class="form-fieldset">
-              <div class="form-group">
-                <label class="form-label" for="prenom">
-                  Prénom<span class="form-required"></span>
-                </label>
-                <input
-                  id="prenom"
-                  type="given-name"
-                  class="form-control"
-                  :class="{ 'state-invalid': errors.first_name }"
-                  v-model="formData.first_name"
-                  placeholder="prenom"
-                  required
-                />
-                <p class="text-muted pl-2" v-if="errors.first_name">
-                  <span class="fa fa-warning" aria-hidden="true"></span>
-                  {{ errors.first_name.join(' / ') }}
-                </p>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="nom">
-                  Nom<span class="form-required"></span>
-                </label>
-                <input
-                  id="nom"
-                  type="family-name"
-                  class="form-control"
-                  :class="{ 'state-invalid': errors.last_name }"
-                  v-model="formData.last_name"
-                  placeholder="nom"
-                  required
-                />
-                <p class="text-muted pl-2" v-if="errors.last_name">
-                  <span class="fa fa-warning" aria-hidden="true"></span>
-                  {{ errors.last_name.join(' / ') }}
-                </p>
-              </div>
-            </fieldset>
-            <div class="flex-row justify-content-between">
-              <button type="button" class="btn btn-secondary" @click="cancel">
-                <span class="fa fa-times mr-2" aria-hidden="true"></span>
-                Annuler
-              </button>
-              <div class="text-right">
-                <button type="button" class="btn btn-secondary" @click="back">
-                  <span
-                    class="fa fa-chevron-left mr-2"
-                    aria-hidden="true"
-                  ></span>
-                  Retour
-                </button>
-                <button type="submit" class="btn btn-primary">Ajouter</button>
-              </div>
-            </div>
-          </form>
+        <div v-if="stepShown === 3" class="flex-column align-items-center">
 
-          <div v-if="stepShown === 3" class="flex-column align-items-center">
-            <div class="flex-row align-items-center">
-              <span
-                class="fe fe-check-circle fg-success big-icon mr-4"
-                aria-hidden="true"
-              ></span>
-              <h4 class="mb-0"> Utilisateur ajouté</h4>
-            </div>
-            <div class="mt-5">
-              Vous avez ajouté {{ this.postResult.first_name }} {{ this.postResult.last_name }}.
-            </div>
-            <div class="mt-5">
-              Pensez à l'informer qu'elle.il pourra désormais se connecter avec son email.
-            </div>
-            <div class="mt-5 flex-row justify-content-end">
-              <button type="button" class="btn btn-secondary" @click="cancel">
-                Je l'ai informé.e
-              </button>
-              <a
-                class="btn btn-primary ml-2"
-                :href="`mailto:${postResult.email}?subject=${emailSubject}&body=${emailBody}`"
+          <div class="flex-row align-items-center">
+            <span class="fe fe-check-circle fg-success big-icon mr-4" aria-hidden="true"></span>
+            <h4 class="mb-0"> Utilisateur ajouté</h4>
+          </div>
+
+          <div class="mt-5">
+            Vous avez ajouté {{ this.postResult.first_name }} {{ this.postResult.last_name }}.
+          </div>
+
+          <div class="mt-5">
+            Pensez à l'informer qu'elle.il pourra désormais se connecter avec son email.
+          </div>
+
+          <div class="mt-5 flex-row justify-content-end">
+            <button type="button" class="btn btn-secondary" @click="cancel">
+              Je l'ai informé.e
+            </button>
+            <a class="btn btn-primary ml-2"
+                :href="'mailto:' + postResult.email +
+                      '?subject=' + emailSubject +
+                      '&body=' + emailBody"
                 target="_blank"
                 rel="noopener noreferrer"
-              >
-                Créer un mail pour l'informer
-              </a>
-            </div>
+            >
+              Créer un mail pour l'informer
+            </a>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
-
 
 <script lang="ts">
 import { mapFields } from 'vuex-map-fields'

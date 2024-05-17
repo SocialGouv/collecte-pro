@@ -3,7 +3,7 @@ import '@babel/polyfill'
 import Vuex, { mapActions } from 'vuex'
 import Vue from 'vue/dist/vue.js'
 
-import ControlDetail from './controls/ControlDetail.vue'
+import ControlDetail from './controls/ControlDetail'
 import { loadStatuses, store } from './store'
 
 Vue.use(Vuex)
@@ -44,7 +44,7 @@ new Vue({ // eslint-disable-line no-new
     // Ask the store to fetch the config from server and store it.
     this.fetchConfig()
     this.updateControls()
-    
+
     // Store the current user in the Vuex store, for use for other components (e.g. Sidebar)
     this.$store.commit('updateSessionUser', user)
     this.$store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)

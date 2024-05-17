@@ -11,6 +11,7 @@
         <transition-group name="theme-list" tag="tbody">
 
           <tr v-for="(theme, themeIndex) in themes"
+              :id="'move-themes-modal-theme-' + themeIndex"
               :key="theme.id || (Math.random() + themeIndex)"
               class="flex-row">
             <td>
@@ -34,7 +35,7 @@
                   @click="moveThemeDown(themeIndex)">
                   <span class="fa fa-chevron-down" aria-hidden="true"></span>
                 </button>
-              </div>
+              <div>
             </td>
             <td class="flex-grow-1 flex-column justify-content-center">
               {{ theme.title }}
@@ -46,6 +47,7 @@
     </div>
   </confirm-modal>
 </template>
+
 <script>
 import '../../css/themes.css'
 import axios from 'axios'

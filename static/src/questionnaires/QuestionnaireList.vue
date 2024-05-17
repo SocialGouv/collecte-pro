@@ -12,7 +12,10 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label v-for="ctrl in controls" :for="ctrl.id" :key="ctrl.id" class="custom-control custom-checkbox">
+          <label v-for="ctrl in controls"
+                :for="ctrl.id"
+                :key="ctrl.id"
+                class="custom-control custom-checkbox">
             <input :id="ctrl.id" type="checkbox" class="custom-control-input" :value="ctrl.id" v-model="checkedCtrls">
             <span class="custom-control-label">{{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})</span>
           </label>
@@ -25,13 +28,17 @@
         <button @click="toggleView()" class="card-title btn btn-primary ml-4 view-button" :title="isList ? 'Voir les documents' : 'Voir les questionnaires'">{{isList ? 'Voir les documents' : 'Voir les questionnaires'}}</button>
       </div>
       <h2 class="card-title">
-        <span :class="['fe', 'fe-folder', {'fe-list': isList}]" aria-hidden="true"></span>
+        <span class="fe fe-folder mr-2" :class="{'fe-list':isList}" aria-hidden="true"></span>
         <span>{{isList ? 'Questionnaires' : 'Documents'}}</span>
       </h2>
     </div>
 
     <div v-if="currentView === 'questions'">
-      <div v-if="accessibleQuestionnaires.length === 0" class="alert alert-icon alert-secondary m-2" role="status">
+      <div
+        v-if="accessibleQuestionnaires.length === 0"
+        class="alert alert-icon alert-secondary m-2"
+        role="status"
+      >
         <span class="fe fe-info mr-2" aria-hidden="true"></span>
         Il n'y a pas encore de questionnaire pour cet espace de dépôt.
       </div>
@@ -43,11 +50,11 @@
               Statut
               <help-tooltip
                 text="Brouillon : modifiable, l'organisme interrogé ne le voit pas<br />
-                      Publié : non modifiable, l'organisme interrogé le voit<br />
-                      En cours : l'organisme interrogé a commencé à déposer les réponses<br />
-                      Répondu : l'organisme interrogé a fini de répondre au questionnaire<br />
-                      Finalisé : l'instruction des pièces déposées est achevée"
-              ></help-tooltip>
+Publié : non modifiable, l'organisme interrogé le voit<br />
+En cours : l'organisme interrogé a commencé à déposer les réponses<br />
+Répondu : l'organisme interrogé a fini de répondre au questionnaire<br />
+Finalisé : l'instruction des pièces déposées est achevée">
+              </help-tooltip>
             </th>
             <th scope="col">Titre</th>
             <th scope="col">Date de réponse</th>
@@ -56,7 +63,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="questionnaire in accessibleQuestionnaires" :key="'questionnaire-' + questionnaire.id">
+          <tr
+            v-for="questionnaire in accessibleQuestionnaires"
+            :key="'questionnaire-' + questionnaire.id"
+          >
             <td class="tag-column" v-if="accessType === 'demandeur'">
               <div v-if="questionnaire.is_draft">
                 <div class="tag tag-azure round-tag font-italic">Brouillon</div>
@@ -80,7 +90,9 @@
             </td>
             <td class="end-date-column">
               <div v-if="questionnaire.end_date">
-                <small>{{ questionnaire.end_date | DateFormat }}</small>
+                <small>
+                  {{ questionnaire.end_date | DateFormat }}
+                </small>
               </div>
             </td>
             <td v-if="accessType === 'demandeur'" class="editor-column">
@@ -88,11 +100,12 @@
                 <help-tooltip
                   v-if="questionnaire.editor.id !== user.id"
                   text="Cette personne dispose des droits pour modifier ce
-                      questionnaire. Vous pourrez modifier ce questionnaire en
-                      cliquant sur 'Consulter', puis 'Obtenir les droits de
-                      rédaction'."
+                                    questionnaire. Vous pourrez modifier ce questionnaire en
+                                    cliquant sur 'Consulter', puis 'Obtenir les droits de
+                                    rédaction'."
                   icon-class="fe fe-lock"
-                ></help-tooltip>
+                >
+                </help-tooltip>
                 <small>
                   {{ questionnaire.editor.first_name }}
                   {{ questionnaire.editor.last_name }}
@@ -106,16 +119,14 @@
             <td class="w-1 action-column">
               <template v-if="accessType !== 'demandeur'">
                 <div v-if="questionnaire.has_replies && !questionnaire.is_replied" class="text-right">
-                  <div class="btn-group">
-                    <a
-                      class="btn btn-secondary"
-                      :href="questionnaireDetailUrl(questionnaire.id)"
-                      title="Déposer et consulter vos réponses"
-                    >
-                      <span class="fe fe-eye" aria-hidden="true"></span>
-                      Répondre
-                    </a>
-                    <button
+                   <div class="btn-group">
+                      <a class="btn btn-secondary"
+                        :href="questionnaireDetailUrl(questionnaire.id)"
+                        title="Déposer et consulter vos réponses">
+                        <span class="fe fe-eye" aria-hidden="true"></span>
+                        Répondre
+                      </a>
+                       <button
                       type="button"
                       class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
                       data-toggle="dropdown"
@@ -157,40 +168,38 @@
                 >
                   <div class="text-right">
                     <div class="btn-group">
-                      <a
-                        class="btn btn-secondary"
+                      <a class="btn btn-secondary"
                         :href="questionnaireEditUrl(questionnaire.id)"
-                        title="Modifier le brouillon de questionnaire"
-                      >
+                        title="Modifier le brouillon de questionnaire">
                         <span class="fe fe-edit" aria-hidden="true"></span>
                         Modifier
                       </a>
+                       <button
+                      type="button"
+                      class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span class="sr-only">Menu d'actions</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
                       <button
+                        class="dropdown-item text-danger"
                         type="button"
-                        class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
+                        @click="startQuestionnaireDeleteFlow(questionnaire.id)"
                       >
-                        <span class="sr-only">Menu d'actions</span>
+                        <span class="fe fe-trash-2" aria-hidden="true"></span>
+                        Supprimer
                       </button>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <button
-                          class="dropdown-item text-danger"
-                          type="button"
-                          @click="startQuestionnaireDeleteFlow(questionnaire.id)"
-                        >
-                          <span class="fe fe-trash-2" aria-hidden="true"></span>
-                          Supprimer
-                        </button>
-                      </div>
                     </div>
                   </div>
                 </template>
-                <template v-else-if="questionnaire.is_draft && questionnaire.editor.id !== user.id">
+                <template v-else-if="questionnaire.is_draft &&
+                                    questionnaire.editor.id !== user.id"
+                >
                   <div class="text-right">
-                    <a
-                      :href="questionnaireDetailUrl(questionnaire.id)"
+                    <a :href="questionnaireDetailUrl(questionnaire.id)"
                       class="btn btn-primary ml-2"
                       title="Voir le brouillon de questionnaire"
                     >
@@ -202,50 +211,48 @@
                 <template v-else>
                   <div class="text-right">
                     <div class="btn-group">
-                      <a
-                        :href="questionnaireDetailUrl(questionnaire.id)"
-                        title="Voir le questionnaire publié"
-                        class="btn btn-secondary"
-                      >
-                        <span class="fe fe-eye" aria-hidden="true"></span>
-                        Consulter
-                      </a>
+                    <a
+                      :href="questionnaireDetailUrl(questionnaire.id)"
+                      title="Voir le questionnaire publié"
+                      class="btn btn-secondary"
+                    >
+                      <span class="fe fe-eye" aria-hidden="true"></span>
+                      Consulter
+                    </a>
+                    <button
+                      type="button"
+                      class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      <span class="sr-only">Menu d'actions</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
                       <button
+                        class="dropdown-item"
                         type="button"
-                        class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
+                        @click="showModal(questionnaire.id)"
                       >
-                        <span class="sr-only">Menu d'actions</span>
+                        <span class="fe fe-copy" aria-hidden="true"></span>
+                        Dupliquer
                       </button>
-                      <div class="dropdown-menu dropdown-menu-right">
-                        <button
-                          class="dropdown-item"
-                          type="button"
-                          @click="showModal(questionnaire.id)"
-                        >
-                          <span class="fe fe-copy" aria-hidden="true"></span>
-                          Dupliquer
-                        </button>
-                        <button
-                          class="dropdown-item"
-                          type="button"
-                          @click="exportControl(questionnaire.id)"
-                        >
-                          <span class="fas fa-file-export mr-2" aria-hidden="true"></span>
-                          Exporter (.zip)
-                        </button>
-                        <button
-                          v-if="questionnaire.is_replied && !questionnaire.is_finalized"
-                          class="dropdown-item text-success"
-                          type="button"
-                          @click="markQuestionnaireAsFinalized(questionnaire.id)"
-                        >
-                          <span class="fe fe-check" aria-hidden="true"></span>
-                          Marquer comme finalisé
-                        </button>
-                      </div>
+                      <button class="dropdown-item"
+                              type="button"
+                              @click="exportControl(questionnaire.id)"
+                      >
+                        <span class="fas fa-file-export mr-2" aria-hidden="true"></span>
+                        Exporter (.zip)
+                      </button>
+                      <button
+                        v-if="questionnaire.is_replied && !questionnaire.is_finalized"
+                        class="dropdown-item text-success"
+                        type="button"
+                        @click="markQuestionnaireAsFinalized(questionnaire.id)"
+                      >
+                        <span class="fe fe-check" aria-hidden="true"></span>
+                        Marquer comme finalisé
+                      </button>
                     </div>
                   </div>
                 </template>
@@ -260,7 +267,10 @@
       <questionnaire-tree-view :control="control"></questionnaire-tree-view>
     </div>
 
-    <div v-if="accessType === 'demandeur'" class="card-footer flex-row justify-content-end">
+    <div
+      v-if="accessType === 'demandeur'"
+      class="card-footer flex-row justify-content-end"
+    >
       <a :href="questionnaireCreateUrl" class="btn btn-primary">
         <span class="fe fe-plus" aria-hidden="true"></span>
         Ajouter un questionnaire
@@ -268,8 +278,6 @@
     </div>
   </div>
 </template>
-
-
 
 <script>
 import '../../css/questionnaires.css'
@@ -414,7 +422,7 @@ export default Vue.extend({
             return { title: t.title, questions: qq }
           })
 
-          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, has_replies:false, is_finalized: false, id: null, themes: [] }
+          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
           
           getCreateMethod()(newQ).then(response => {
             const qId = response.data.id

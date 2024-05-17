@@ -17,7 +17,7 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
-.parcel-cache
+.cache
 nosetests.xml
 coverage.xml
 *.cover
@@ -36,4 +36,3 @@ celerybeat-schedule
 # Environment
 venv*/
 .vscode/tasks.json
-.babelrc
