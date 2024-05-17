@@ -12,10 +12,11 @@ from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
 
-
+from django.http import HttpResponse
+from django.http import FileResponse
+import mimetypes
 from actstream import action
 from actstream.models import model_stream
-from sendfile import sendfile
 import json
 
 from .docx import generate_questionnaire_file
@@ -322,7 +323,19 @@ class SendFileMixin(SingleObjectMixin):
         # get the object fetched by SingleObjectMixin
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
-        return sendfile(request, obj.file.path, attachment=True, attachment_filename=obj.downloadname)
+        
+        content_type, encoding = mimetypes.guess_type(obj.file.path)
+        content_type = content_type or 'application/octet-stream'
+
+        with open(obj.file.path, 'rb') as f:
+            file_data = f.read()
+
+        response = HttpResponse(file_data, content_type=content_type)
+        
+        filename = os.path.basename(obj.file.path)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+        return response
 
     def add_access_log_entry(self, accessed_object):
         verb = f'accessed {self.file_type}'
@@ -403,14 +416,12 @@ class SendResponseFileList(SingleObjectMixin, LoginRequiredMixin, View):
         try:
             file = generate_response_file_list_in_xlsx(questionnaire)
             self.add_log_entry(verb='exported responses in xls', questionnaire=questionnaire)
-            return sendfile(
-                request,
-                file.name,
-                attachment=True,
-                attachment_filename=f'réponses_questionnaire_{questionnaire.numbering}.xlsx')
+            response = FileResponse(open(file.name, 'rb'), as_attachment=True,
+                                    filename=f'réponses_questionnaire_{questionnaire.numbering}.xlsx')
+            return response
         except Exception as e:
             self.add_log_entry(
-                verb='exported responses in xls - fail', questionnaire=questionnaire, description=e
+                verb='exported responses in xls - fail', questionnaire=questionnaire, description=str(e)
             )
         finally:
             os.remove(file.name)

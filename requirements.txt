@@ -34,7 +34,7 @@ django-filter==22.1
 django-js-asset==2.0.0
 django-model-utils==4.3.1
 django-ordered-model==3.6
-django-sendfile==0.3.11
+django-sendfile2==0.7.1
 django-session-timeout==0.1.0
 django-settings-export==1.2.1
 django-six==1.0.5
