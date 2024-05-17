@@ -16,6 +16,7 @@
     "watch-session-management": "parcel watch static/src/session-management.js --out-dir ./static/dist/ --out-file session-management-bundle.js",
     "watch-sidebar": "parcel watch static/src/sidebar.js --out-dir ./static/dist/ --out-file sidebar-bundle.js",
     "postinstall": "npm run build-all",
+    
     "test": "jest"
   },
   "dependencies": {
