@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.1] - 2024-05-17
+### Modifications
+- CP-129 : Correction migration technique (retour arrière vueJs 3 -> vueJs 2)
 ## [3.0.0] - 2024-05-13
 ### Modifications
 - CP-129 : Migration technique
