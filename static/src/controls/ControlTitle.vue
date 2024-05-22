@@ -470,10 +470,10 @@ export default Vue.extend({
   try {
     const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
     this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
-    this.accessibleQuestionnaires = this.control.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
+    const filteredQuestionnaires = this.control.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
     let files = [];
 
-    for (const fq of this.accessibleQuestionnaires) {
+    for (const fq of filteredQuestionnaires) {
       if (fq.themes) {
         for (const t of fq.themes) {
           if (t.questions) {
@@ -499,7 +499,7 @@ export default Vue.extend({
       }
     }
 
-    for (const fq of this.accessibleQuestionnaires) {
+    for (const fq of filteredQuestionnaires) {
       if (fq.themes) {
         for (const t of fq.themes) {
           if (t.questions) {
