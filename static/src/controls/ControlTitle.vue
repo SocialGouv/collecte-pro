@@ -440,115 +440,127 @@ export default Vue.extend({
         })
       }
     },
-    exportControl() {
-      if (!this.checkedQuestionnaires.length) {
-        this.hideExportModal();
-        return;
-      }
+  async exportControl() {
+  if (!this.checkedQuestionnaires.length) {
+    this.hideExportModal();
+    return;
+  }
 
-      this.loaderActive = true;
-      const formatFilename = (file) => {
-        const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
-        const questionnaireId = `Q${questionnaireNb}`;
-        let themeId = '';
-        let filename = ''
-        if (file.category == 'question_file') {
-          themeId = 'ANNEXES-AUX-QUESTIONS';
-          filename = `Q${questionnaireNb}-${file.basename}`;
-        } else if (file.is_deleted) {
-          themeId = 'CORBEILLE';
-          filename = `Q${questionnaireNb}-${file.basename}`;
-        } else {
-          themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
-          const questionId = String(file.questionId + 1).padStart(2, '0');
-          filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+  this.loaderActive = true;
+
+  const formatFilename = (file) => {
+    const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
+    const questionnaireId = `Q${questionnaireNb}`;
+    let themeId = '';
+    let filename = ''
+    if (file.category == 'question_file') {
+      themeId = 'ANNEXES-AUX-QUESTIONS';
+      filename = `Q${questionnaireNb}-${file.basename}`;
+    } else if (file.is_deleted) {
+      themeId = 'CORBEILLE';
+      filename = `Q${questionnaireNb}-${file.basename}`;
+    } else {
+      themeId = 'T' + String(file.themeId + 1).padStart(2, '0');
+      const questionId = String(file.questionId + 1).padStart(2, '0');
+      filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+    }
+    return { questionnaireId, themeId, filename };
+  };
+
+  try {
+    const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
+    this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
+    const filteredQuestionnaires = this.control.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
+    let files = [];
+
+    for (const fq of filteredQuestionnaires) {
+      if (fq.themes) {
+        for (const t of fq.themes) {
+          if (t.questions) {
+            for (const q of t.questions) {
+              if (q.response_files) {
+                for (const rf of q.response_files) {
+                  if (rf) {
+                    files.push({
+                      questionnaireNb: fq.numbering,
+                      themeId: t.order,
+                      questionId: q.order,
+                      category: 'response_file',
+                      basename: rf.basename,
+                      url: rf.url,
+                      is_deleted: rf.is_deleted,
+                    });
+                  }
+                }
+              }
+            }
+          }
         }
-        return { questionnaireId, themeId, filename };
       }
+    }
 
-      let files = this.accessibleQuestionnaires
-        .filter(aq => this.checkedQuestionnaires.includes(aq.id))
-        .flatMap(fq => {
-          if (fq.themes) {
-            return fq.themes.flatMap(t => {
-              if (t.questions) {
-                return t.questions.flatMap(q => {
-                  return q.response_files.flatMap(rf => {
-                    if (rf) {
-                      return {
-                        questionnaireNb: fq.numbering,
-                        themeId: t.order,
-                        questionId: q.order,
-                        category: 'response_file',
-                        basename: rf.basename,
-                        url: rf.url,
-                        is_deleted: rf.is_deleted,
-                      }
-                    }
-                  })
-                })
+    for (const fq of filteredQuestionnaires) {
+      if (fq.themes) {
+        for (const t of fq.themes) {
+          if (t.questions) {
+            for (const q of t.questions) {
+              if (q.question_files) {
+                for (const qf of q.question_files) {
+                  if (qf) {
+                    files.push({
+                      questionnaireNb: fq.numbering,
+                      themeId: t.order,
+                      questionId: q.order,
+                      category: 'question_file',
+                      basename: qf.basename,
+                      url: qf.url,
+                      is_deleted: qf.is_deleted,
+                    });
+                    
+                  }
+                }
               }
-            })
+            }
           }
-        })
-      files.push.apply(
-        files,
-        this.accessibleQuestionnaires
-        .filter(aq => this.checkedQuestionnaires.includes(aq.id))
-        .flatMap(fq => {
-          if (fq.themes) {
-            return fq.themes.flatMap(t => {
-              if (t.questions) {
-                return t.questions.flatMap(q => {
-                  return q.question_files.flatMap(qf => {
-                    if (qf) {
-                      return {
-                        questionnaireNb: fq.numbering,
-                        themeId: t.order,
-                        questionId: q.order,
-                        category: 'question_file',
-                        basename: qf.basename,
-                        url: qf.url,
-                        is_deleted: qf.is_deleted,
-                      }
-                    }
-                  })
-                })
-              }
-            })
-          }
-        })
-      );
-
-      const zipFilename = this.control.reference_code + '.zip'
-      const zip = new JSZip()
-      let cnt = 0
-
-      if (files.length==0) {
-        this.loaderActive = false;
+        }
       }
+    }
 
-      files.map(file => {
-        const url = window.location.origin + file.url;
-        JSZipUtils.getBinaryContent(url, (err, data) => {
-          if (err) throw err;
-          const formatted = formatFilename(file);
-          zip.folder(formatted.questionnaireId)
-            .folder(formatted.themeId)
-            .file(formatted.filename, data, { binary: true });
+    const zipFilename = this.control.reference_code + '.zip';
+    const zip = new JSZip();
+    let cnt = 0;
 
-          cnt++;
-          if (cnt === files.length) {
-            zip.generateAsync({ type: 'blob' }).then((content) => {
-              this.loaderActive = false;
-              saveAs(content, zipFilename)
-            })
-          }
-        })
-      })
+    if (files.length === 0) {
+      this.loaderActive = false;
+    }
 
-      this.hideExportModal()
-    },
+    files.forEach(file => {
+      const url = window.location.origin + file.url;
+      JSZipUtils.getBinaryContent(url, (err, data) => {
+        if (err) throw err;
+        const formatted = formatFilename(file);
+        zip.folder(formatted.questionnaireId)
+          .folder(formatted.themeId)
+          .file(formatted.filename, data, { binary: true });
+
+        cnt++;
+        if (cnt === files.length) {
+          zip.generateAsync({ type: 'blob' }).then((content) => {
+            this.loaderActive = false;
+            saveAs(content, zipFilename);
+          });
+        }
+      });
+    });
+
+    this.hideExportModal();
+  } catch (error) {
+    console.error('Error exporting control:', error);
+    this.loaderActive = false;
+    this.hideExportModal();
+  }
+},
+
     restoreForm() {
       this.title = this.control.title
       this.organization = this.control.depositing_organization
@@ -599,5 +611,3 @@ export default Vue.extend({
 })
 
 </script>
-
-
