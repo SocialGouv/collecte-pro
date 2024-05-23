@@ -12,7 +12,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 ## [3.0.0] - 2024-05-13
 ### Modifications
 - CP-129 : Migration technique
-## [2.2.33] - 2024-04-08
+## [2.2.34] - 2024-05-23
 ### Modifications
 - CP-160 : Fonctionnalité d'export d'un espace de dépôt KO
 ## [2.2.33] - 2024-04-08
