@@ -14,6 +14,9 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 - CP-129 : Migration technique
 ## [2.2.33] - 2024-04-08
 ### Modifications
+- CP-160 : Fonctionnalité d'export d'un espace de dépôt KO
+## [2.2.33] - 2024-04-08
+### Modifications
 - CP-155 : Questionnaire marqué comme répondu par un profil inspecteur
 ## [2.2.32] - 2024-03-13
 ### Modifications
