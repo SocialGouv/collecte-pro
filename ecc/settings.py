@@ -200,13 +200,12 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_HSTS_SECONDS = 30
 # Content-Security-Policy
 CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'", "'frame-src youtube.com www.youtube.com;'"))
-#Activation temporaire
-#CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://static.piste.gouv.fr")
 
-#CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'",))
+CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
+CSP_STYLE_SRC += ("https://static.piste.gouv.fr",)
+
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://code.jquery.com")
+CSP_SCRIPT_SRC += ("https://code.jquery.com",)
 
 CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
 
