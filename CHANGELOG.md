@@ -6,12 +6,18 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.2] - 2024-05-27
+### Modifications
+- CP-160 : Livraison sur la nouvelle stack technique en recette
 ## [3.0.1] - 2024-05-17
 ### Modifications
 - CP-129 : Correction migration technique (retour arrière vueJs 3 -> vueJs 2)
 ## [3.0.0] - 2024-05-13
 ### Modifications
 - CP-129 : Migration technique
+## [2.2.34] - 2024-05-24
+### Modifications
+- CP-160 : Fonctionnalité d'export d'un espace de dépôt KO
 ## [2.2.33] - 2024-04-08
 ### Modifications
 - CP-155 : Questionnaire marqué comme répondu par un profil inspecteur
