@@ -6,6 +6,12 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.4] - 2024-06-05
+### Modifications
+- CP-145 : Doublon de mails
+## [3.0.3] - 2024-05-30
+### Modifications
+- CP-145 : Mettre un captcha sur le formulaire de contact 
 ## [3.0.2] - 2024-05-27
 ### Modifications
 - CP-160 : Livraison sur la nouvelle stack technique en recette
