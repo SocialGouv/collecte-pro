@@ -152,11 +152,9 @@
         },
         success: function (response) {
           if (response) {
-            console.log("Reponse OK")
             $('#demo-form').off('submit').submit();
           } else {
             captcha.reloadImage();
-            console.log("Reponse Ko")
             $('#captchaError').show();
             
           }

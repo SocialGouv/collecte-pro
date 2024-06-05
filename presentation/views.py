@@ -72,8 +72,6 @@ def validationFormulaire(request):
             response = requests.post(settings.VALIDER_CAPTCHA_URL, json=data, headers=headers)
             response.raise_for_status()  
             response_data = response.json()
-            if response_data == True:
-                demo(request)
             return JsonResponse(response_data, safe=False)
         except requests.RequestException as e:
             error_message = {"error": "Error validating captcha"}
