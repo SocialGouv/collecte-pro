@@ -6,6 +6,12 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.6] - 2024-06-17
+### Modifications
+- CP-168 : Le message d'alerte n'apparaît plus sur l'application
+## [3.0.5] - 2024-06-14
+### Modifications
+- CP-167 : Fonction d'export Excel des fichiers par le répondant KO
 ## [3.0.4] - 2024-06-05
 ### Modifications
 - CP-145 : Doublon de mails
