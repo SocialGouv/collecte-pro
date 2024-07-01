@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import environ
 
 env = environ.Env(
@@ -203,6 +204,7 @@ CSP_DEFAULT_SRC = env('CSP_DEFAULT_SRC', default=("'self'", "'frame-src youtube.
 CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'", "'unsafe-inline'"))
 #CSP_STYLE_SRC = env('CSP_STYLE_SRC', default=("'self'",))
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
+CSP_SCRIPT_SRC += ("https://code.jquery.com",)
 CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
 
 if DEBUG:
@@ -365,3 +367,13 @@ JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
 # Indique si la page par défaut est celle de présentation
 PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=True)
     
+# Configuration CAPTCHA (developpeur Nessim KHAMMAR)
+load_dotenv()
+GRANT_TYPE = os.getenv('GRANT_TYPE')
+CLIENT_ID = os.getenv('CLIENT_ID')
+CLIENT_SECRET = os.getenv('CLIENT_SECRET')
+#SCOPE = os.getenv('SCOPE')
+
+OAUTH_URL = os.getenv('OAUTH_URL')
+SIMPLE_CAPTCHA_ENDPOINT_URL = os.getenv('SIMPLE_CAPTCHA_ENDPOINT_URL')
+VALIDER_CAPTCHA_URL = os.getenv('VALIDER_CAPTCHA_URL')

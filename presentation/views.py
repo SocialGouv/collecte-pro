@@ -1,13 +1,17 @@
 from random import choice
 
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import TemplateView
 from django.shortcuts import render
+import requests
 
+#from ecc import settings
+from django.conf import settings
 from utils.email import send_email
 from alerte.models import Alert
 from datetime import datetime
 from django.db.models import Q
-
+from django.views.decorators.csrf import csrf_exempt
 
 class Accueil(TemplateView):
     template_name = "presentation/accueil.html"
@@ -26,6 +30,83 @@ class Accueil(TemplateView):
 class Presentation(TemplateView):
     template_name = "presentation/presentation.html"
 
+
+#START CAPTCHA
+def simple_captcha_endpoint(request):
+    try:
+        oauth_token = get_oauth_token()
+        
+        if not oauth_token:
+            return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
+        
+        headers = {
+            'Authorization': 'Bearer ' + oauth_token,
+            'Content-Type': 'application/json'
+        }
+        
+        params = request.GET.dict()
+        
+        response = requests.get(settings.SIMPLE_CAPTCHA_ENDPOINT_URL, headers=headers, params=params)
+        
+        if response.status_code == 200:
+            return HttpResponse(response.content, content_type=response.headers['Content-Type'])
+        else:
+            response.raise_for_status()
+    
+    except request.RequestException as e:
+        error_message="Internal Server Error."
+        return JsonResponse({"error": error_message}, status=500)
+    
+def get_oauth_token():
+    data = {
+        "grant_type": settings.GRANT_TYPE,
+        "client_id": settings.CLIENT_ID,
+        "client_secret": settings.CLIENT_SECRET,
+        #"scope": settings.SCOPE,
+    }
+
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    
+    try:
+        response = requests.post(settings.OAUTH_URL, data=data, headers=headers)
+        response.raise_for_status()
+        token_data = response.json()
+        access_token = token_data.get("access_token")
+        return access_token
+    except requests.RequestException as e:
+        print("Failed to retrieve OAuth token:", e)
+        return None
+
+@csrf_exempt
+def validationFormulaire(request):
+    if request.method == 'POST':
+        post_data = request.POST
+        user_entered_captcha_code = post_data.get('userEnteredCaptchaCode')
+        captcha_id = post_data.get('captchaId')
+
+        oauth_token = get_oauth_token()
+        if not oauth_token:
+            return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
+
+        headers = {
+            'Authorization': 'Bearer ' + oauth_token,
+            'Content-Type': 'application/json'
+        }
+
+        data = {
+            'id': captcha_id,
+            'code': user_entered_captcha_code
+        }
+
+        try:
+            response = requests.post(settings.VALIDER_CAPTCHA_URL, json=data, headers=headers)
+            response.raise_for_status()  
+            response_data = response.json()
+            return JsonResponse(response_data, safe=False)
+        except requests.RequestException as e:
+            error_message = {"error": "Error validating captcha"}
+            return JsonResponse(error_message, status=500)
+#END CAPTCHA
 
 def demo(request):
     accounts = [
@@ -53,7 +134,7 @@ def demo(request):
         access = request.POST.get("access", False) == "on"
         message = request.POST["message"]
 
-        recipients = ["contact@collecte-pro.gouv.fr", ]
+        #recipients = ["contact@collecte-pro.gouv.fr", ]
         context = {
             "lastname": lastname,
             "firstname": firstname,
