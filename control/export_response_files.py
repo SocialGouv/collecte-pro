@@ -11,7 +11,7 @@ def get_files_for_export(questionnaire):
     queryset = ResponseFile.objects \
             .filter(question__theme__questionnaire=questionnaire) \
             .filter(is_deleted=False) \
-            .order_by('question__theme__numbering', 'question__numbering', 'created') \
+            .order_by('question__theme__order', 'question__order', 'created') \
             .all()
     return queryset
 

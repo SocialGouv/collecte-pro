@@ -89,7 +89,7 @@ urlpatterns = [
 ]
 
 # Si les pages de présentation sont activées, la page par défaut est remplacée
-if settings.PRESENTATION_ACTIVE:
+if settings.PRESENTATION_ACTIVE and settings.KEYCLOAK_ACTIVE:
     urlpatterns.insert(
         0,
         path('', RedirectView.as_view(url='/presentation'), name='login'),
