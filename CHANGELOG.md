@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.7] - 2024-07-04
+### Modifications
+- CP-158 : Problème d'accès à l'espace de démo
+- CP-145 : Livraison de Captcha V1
 ## [3.0.6] - 2024-06-17
 ### Modifications
 - CP-168 : Le message d'alerte n'apparaît plus sur l'application
