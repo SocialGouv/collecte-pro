@@ -60,6 +60,16 @@
       </header>  <!--// closing: top_header  //-->
       <div id="presentation" class="page-main flex-row"> <!--// opening: main_page  //-->
         <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
+          {%if alerte%}
+          <div id="alerte">
+            <div class="justify-content-center align-items-center row">
+              <div class="alert alert-danger alert-icon" role="alert">
+                <span class="fe fe-alert-triangle" aria-hidden="true"></span>
+                <p>{{alerte.text}}</p>
+              </div>
+            </div>
+          </div>
+          {%endif%}
           {% block page_main_container %}
           <section>
             <div class="presentation">

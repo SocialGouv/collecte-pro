@@ -215,3 +215,7 @@ class Megacontrol(LoginRequiredMixin, QuestionnaireDuplicateMixin, SingleObjectM
         messages.success(self.request, message)
 
         return super().get(*args, **kwargs)
+
+admin.site.register(QuestionFile)
+admin.site.register(QuestionnaireFile)
+admin.site.register(ResponseFile)

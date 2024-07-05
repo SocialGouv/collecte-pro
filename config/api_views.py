@@ -8,15 +8,13 @@ from parametres.models import Parametre
 
 
 class ConfigViewSet(viewsets.ViewSet):
-    
+
     def list(self, request):
-        support_email_param = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
-
-        if support_email_param:
-            support_email = support_email_param.url
+        support_email = Parametre.objects.filter(code="SUPPORT_EMAIL").filter(deleted_at__isnull=True).first()
+        if isinstance(support_email, dict):
+            support_email = support_email["url"]
         else:
-            support_email = None
-
+            support_email = support_email.url
         config = {
             'expected_inspector_email_endings': settings.EXPECTED_INSPECTOR_EMAIL_ENDINGS,
             'site_url': f'https://{get_current_site(request).domain}',

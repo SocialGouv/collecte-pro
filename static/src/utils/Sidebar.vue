@@ -224,7 +224,7 @@ export default Vue.extend({
         }
 
       const currentURL = this.window.location.pathname
-      if (currentURL !== '/faq/' && currentURL !== '/declaration-conformite/' && currentURL !== '/cgu/' && currentURL.replace(/\d+\/$/, '') !== '/questionnaire/corbeille/') {
+      if (currentURL !== '/faq/' && currentURL !== '/declaration-conformite/' && currentURL !== '/cgu/') {
 
         const resp = await axios.get(backend.getAccessToControl(control.id))
         const accessType = resp.data[0].access_type
