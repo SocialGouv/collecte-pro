@@ -4,10 +4,23 @@ from django.views.generic import TemplateView
 from django.shortcuts import render
 
 from utils.email import send_email
+from alerte.models import Alert
+from datetime import datetime
+from django.db.models import Q
 
 
 class Accueil(TemplateView):
     template_name = "presentation/accueil.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now = datetime.now()
+        alerte = Alert.objects.filter(
+            Q(start_date__lt=now) | Q(start_date=None)
+        ).filter(
+            Q(end_date__gt=now) | Q(end_date=None)
+        ).first()
+        context['alerte'] = alerte
+        return context
 
 
 class Presentation(TemplateView):

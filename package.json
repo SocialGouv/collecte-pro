@@ -1,7 +1,7 @@
 {
   "name": "collectepro",
   "engines": {
-    "node": "10.x"
+    "node": "20.x"
   },
   "scripts": {
     "build-all": "npm run build-control-detail && npm run build-questionnaire-create && npm run build-questionnaire-detail && npm run build-session-management && npm run build-sidebar",
@@ -63,7 +63,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-vue": "^9.26.0",
     "flush-promises": "^1.0.2",
     "htmlhint": "^1.1.4",
     "jest": "^26.1.0",

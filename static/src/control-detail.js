@@ -44,7 +44,7 @@ new Vue({ // eslint-disable-line no-new
     // Ask the store to fetch the config from server and store it.
     this.fetchConfig()
     this.updateControls()
-    
+
     // Store the current user in the Vuex store, for use for other components (e.g. Sidebar)
     this.$store.commit('updateSessionUser', user)
     this.$store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)

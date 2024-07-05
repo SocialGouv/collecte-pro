@@ -422,7 +422,7 @@ export default Vue.extend({
             return { title: t.title, questions: qq }
           })
 
-          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, has_replies:false, is_finalized: false, id: null, themes: [] }
+          let newQ = { ...curQ, control: ctrl.id, questionnaire_files:curQ.questionnaire_files, is_draft: true, is_replied: false, is_finalized: false, id: null, themes: [] }
           
           getCreateMethod()(newQ).then(response => {
             const qId = response.data.id
