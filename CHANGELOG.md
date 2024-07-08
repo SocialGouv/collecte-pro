@@ -6,7 +6,37 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
-
+## [3.0.8] - 2024-07-08
+### Modifications
+- CP-165 : La fonctionnalité Action renvoie un code erreur
+## [3.0.7] - 2024-07-04
+### Modifications
+- CP-158 : Problème d'accès à l'espace de démo
+- CP-145 : Livraison de Captcha V1
+## [3.0.6] - 2024-06-17
+### Modifications
+- CP-168 : Le message d'alerte n'apparaît plus sur l'application
+## [3.0.5] - 2024-06-14
+### Modifications
+- CP-167 : Fonction d'export Excel des fichiers par le répondant KO
+## [3.0.4] - 2024-06-05
+### Modifications
+- CP-145 : Doublon de mails
+## [3.0.3] - 2024-05-30
+### Modifications
+- CP-145 : Mettre un captcha sur le formulaire de contact 
+## [3.0.2] - 2024-05-27
+### Modifications
+- CP-160 : Livraison sur la nouvelle stack technique en recette
+## [3.0.1] - 2024-05-17
+### Modifications
+- CP-129 : Correction migration technique (retour arrière vueJs 3 -> vueJs 2)
+## [3.0.0] - 2024-05-13
+### Modifications
+- CP-129 : Migration technique
+## [2.2.34] - 2024-05-24
+### Modifications
+- CP-160 : Fonctionnalité d'export d'un espace de dépôt KO
 ## [2.2.33] - 2024-04-08
 ### Modifications
 - CP-155 : Questionnaire marqué comme répondu par un profil inspecteur
