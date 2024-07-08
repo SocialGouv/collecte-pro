@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.0.8] - 2024-07-08
+### Modifications
+- CP-165 : La fonctionnalité Action renvoie un code erreur
 ## [3.0.7] - 2024-07-04
 ### Modifications
 - CP-158 : Problème d'accès à l'espace de démo
