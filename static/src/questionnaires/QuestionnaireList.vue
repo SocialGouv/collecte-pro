@@ -408,7 +408,25 @@ export default Vue.extend({
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
 
       if (this.checkedCtrls.length) {
-
+  
+        const payload = {
+        title: this.control.title,
+        depositing_organization: this.control.organization,
+        is_model: true
+        }
+        axios.put(backendUrls.control(this.control.id), payload)
+          .then(response => {
+            console.debug(response)
+            this.control.title = response.data.title
+            this.control.organization = response.data.depositing_organization
+            this.control.isModel = response.data.is_model
+          })
+          .catch((error) => {
+            console.error(error)
+            this.errors = error.response.data
+            this.hasErrors = true
+          })
+        
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
         this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
         const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
