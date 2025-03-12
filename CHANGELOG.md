@@ -8,7 +8,7 @@ projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr
 ## [En cours]
 ## [3.3.0] - 2025-03-12
 ### Modifications
-- CP-184 : Vulnérabilités Collecte-Pro
+- CP-187 : La duplication d'un questionnaire crée un modèle
 ## [3.2.1] - 2025-01-27
 ### Modifications
 - CP-184 : Vulnérabilités Collecte-Pro
