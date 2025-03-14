@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.3.1] - 2025-03-14
+### Modifications
+- CP-189 : Le choix d'un modèle d'espace de dépôt doit être indiqué comme non obligatoire à la création
+- CP-192 : Ajout de la requête CP-190 dans le tableau de bord
 ## [3.3.0] - 2025-03-12
 ### Modifications
 - CP-187 : La duplication d'un questionnaire crée un modèle
