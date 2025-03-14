@@ -9,4 +9,5 @@ urlpatterns = [
     path('', views.Stats.as_view(), name='index'),
     path('call_get_statistique/', views.Stats.as_view(), name='call_get_statistique'),
     path('call_get_top_20/', views.Stats.call_get_top_20, name='call_get_top_20'), 
+    path('call_get_espace_depot_modele/', views.Stats.call_get_espace_depot_modele, name='call_get_espace_depot_modele'), 
 ]
