@@ -97,7 +97,7 @@
 
           <div class="form-group mb-6">
             <label id="title-label" for="nom_controle" class="form-label">
-              Sélectionnez un espace de dépôt modèle :
+              Sélectionnez un espace de dépôt modèle si besoin (non obligatoire) :
             </label>
           
             <div class="flex-row align-items-center">

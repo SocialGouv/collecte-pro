@@ -55,6 +55,22 @@ class Stats(LoginRequiredMixin, TemplateView):
     
         return response
 
+    def call_get_espace_depot_modele(request):
+        generation_date = datetime.now().strftime("%Y-%m-%d")
+        csv_buffer = StringIO()
+        csv_writer = csv.writer(csv_buffer, delimiter=';')
+
+        with connection.cursor() as cursor:
+            cursor.callproc('get_espace_depot_modele')
+            results = cursor.fetchall()
+            csv_writer.writerow(['id_espace_depot', 'nombre_de_duplication', 'date_derniere_duplication'])
+            csv_writer.writerows(results)
+
+        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="identification_modele_{generation_date}.csv"'
+
+        return response
+    
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
             cursor.callproc('get_statistiques', [action])
