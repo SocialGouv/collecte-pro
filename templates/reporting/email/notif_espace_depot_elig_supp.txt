@@ -1,0 +1,13 @@
+Bonjour,
+
+Les espaces de dépôt suivants, créés il y a plus de trois ans, vont bientôt être supprimés :
+
+{% for espace in list_espace_depot %}
+- {{ espace }}
+{% endfor %}
+
+Si vous souhaitez en conserver un, nous vous invitons à vous rapprocher de l’équipe métier.
+
+Cordialement,
+
+L'équipe Collecte-Pro

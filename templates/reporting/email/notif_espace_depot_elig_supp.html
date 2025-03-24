@@ -1,0 +1,22 @@
+{% extends "base_email.html" %}
+{% load email_obfuscator %}
+
+{% block email_content %}
+
+<p>Bonjour,</p>
+
+<p>Les espaces de dépôts suivants, créés il y a plus de trois ans, vont bientôt être supprimés :</p>
+
+<ul>
+    {% for espace in list_espace_depot %}
+    <li>{{ espace }}</li>
+    {% endfor %}
+</ul>
+
+<p>Si vous souhaitez en conserver un, nous vous invitons à vous rapprocher de l’équipe métier.</p>
+
+<p>Cordialement,</p>
+
+<p>L'équipe Collecte-Pro</p>
+
+{% endblock email_content %}

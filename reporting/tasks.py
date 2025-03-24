@@ -1,4 +1,5 @@
 import logging
+from django.db import connection
 import time
 from datetime import date, timedelta
 
@@ -163,3 +164,58 @@ def send_notifs_dates_echeances():
             else:
                 logger.info(f"Aucun email envoyé pour le questionnaire {questionnaire.id}")
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_NOT_SENT)
+
+
+@app.task(queue=settings.CELERY_QUEUE)
+def identify_purgeable_controls(*args, **kwargs):
+    purge_interval = kwargs.get("purge_interval")
+    if not purge_interval:
+        logger.error("Le paramètre 'purge_interval' est manquant !")
+        return 
+    
+    try:
+        with connection.cursor() as cursor:
+            cursor.callproc('identify_purgeable_controls', [purge_interval])
+            results = cursor.fetchall()
+            
+            if not results:
+                logger.info("Aucun espace de dépôt éligible à la suppression.")
+                return
+
+            for mail_inspecteur, espaces_depot, _ in results:
+                logger.info(f"Mail: {mail_inspecteur}, Espaces de dépôt: {espaces_depot}")
+                send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
+            
+            return results  
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+        
+
+def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
+    html_template = "reporting/email/notif_espace_depot_elig_supp.html"
+    text_template = "reporting/email/notif_espace_depot_elig_supp.txt"
+    
+    subject = "Notification : Espaces de dépôt éligibles à la suppression"
+    recipient_list = [mail_inspecteur]
+    
+    logger.info("Destinataire: %s", recipient_list)
+    
+    espaces_depot_list = espaces_depot.split(";") if espaces_depot else []
+
+    context = {
+        "list_espace_depot": espaces_depot_list, 
+    }
+
+    send_email(
+        to=recipient_list,
+        subject=subject,
+        html_template=html_template,
+        text_template=text_template,
+        extra_context=context,
+    )
+    
+    logger.info(f"Email envoyé à {mail_inspecteur} pour les espaces : {espaces_depot}")
+
+
+
+            

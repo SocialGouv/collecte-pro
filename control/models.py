@@ -148,6 +148,22 @@ class Control(SoftDeleteModel):
             return f'[ID{self.id}] - {self.title} - {self.depositing_organization}'
         return f'[ID{self.id}] - {self.title}'
 
+class PurgeEligibleControlTrv(models.Model):
+    control_id = models.IntegerField()
+
+    class Meta:
+        db_table = "purge_eligible_control_trv"
+        
+class PurgeHistoControl(models.Model):
+    control_id = models.IntegerField()
+    is_supp_logique = models.BooleanField(default=False)
+    date_supp_logique = models.DateTimeField(null=True, blank=True)
+    is_supp_physique = models.BooleanField(default=False)
+    date_supp_physique = models.DateTimeField(null=True, blank=True)
+    code_ano = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        db_table = "purge_histo_control"
 
 class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     title = models.CharField("titre", max_length=255)
