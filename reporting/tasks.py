@@ -165,7 +165,7 @@ def send_notifs_dates_echeances():
                 logger.info(f"Aucun email envoyé pour le questionnaire {questionnaire.id}")
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_NOT_SENT)
 
-
+#Les trois tâches de la purge doivent être lancées dans l'ordre !
 @app.task(queue=settings.CELERY_QUEUE)
 def identify_purgeable_controls(*args, **kwargs):
     purge_interval = kwargs.get("purge_interval")
@@ -190,6 +190,22 @@ def identify_purgeable_controls(*args, **kwargs):
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
         
+@app.task(queue=settings.CELERY_QUEUE)
+def logical_delete_controls():
+    try:
+        with connection.cursor() as cursor:
+            cursor.callproc('logical_delete_controls')
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+
+
+@app.task(queue=settings.CELERY_QUEUE)
+def physical_delete_controls():
+    try:
+        with connection.cursor() as cursor:
+            cursor.callproc('physical_delete_controls')
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
 
 def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
     html_template = "reporting/email/notif_espace_depot_elig_supp.html"

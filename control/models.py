@@ -156,6 +156,7 @@ class PurgeEligibleControlTrv(models.Model):
         
 class PurgeHistoControl(models.Model):
     control_id = models.IntegerField()
+    reference_code =models.CharField(max_length=30)
     is_supp_logique = models.BooleanField(default=False)
     date_supp_logique = models.DateTimeField(null=True, blank=True)
     is_supp_physique = models.BooleanField(default=False)
@@ -204,6 +205,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         verbose_name="finalisé", default=False,
         help_text="Ce questionnaire a-t-il été finalisé par le demandeur ?")
     modified = models.DateTimeField('modifié', auto_now=True, null=True)
+    last_response_file_action = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('control', 'order')

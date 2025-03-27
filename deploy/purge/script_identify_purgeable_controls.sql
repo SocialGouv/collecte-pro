@@ -10,8 +10,10 @@ BEGIN
 
     TRUNCATE TABLE purge_eligible_control_trv;
 
-    INSERT INTO purge_eligible_control_trv (control_id, is_elig_supp)
-    SELECT DISTINCT cc.id, TRUE
+    --si end_date est null ? 
+
+    INSERT INTO purge_eligible_control_trv (control_id)
+    SELECT DISTINCT cc.id
     FROM control_control cc
     INNER JOIN control_questionnaire cq ON cq.control_id = cc.id
     WHERE cc.is_model = FALSE
