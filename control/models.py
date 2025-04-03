@@ -150,6 +150,8 @@ class Control(SoftDeleteModel):
 
 class PurgeEligibleControlTrv(models.Model):
     control_id = models.IntegerField()
+    reference_code =models.CharField(max_length=30)
+    date_traitement = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "purge_eligible_control_trv"
@@ -161,7 +163,7 @@ class PurgeHistoControl(models.Model):
     date_supp_logique = models.DateTimeField(null=True, blank=True)
     is_supp_physique = models.BooleanField(default=False)
     date_supp_physique = models.DateTimeField(null=True, blank=True)
-    code_ano = models.CharField(max_length=255, null=True, blank=True)
+    date_traitement = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "purge_histo_control"

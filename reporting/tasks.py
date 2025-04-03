@@ -1,4 +1,6 @@
 import logging
+import os
+import shutil
 from django.db import connection
 import time
 from datetime import date, timedelta
@@ -165,30 +167,53 @@ def send_notifs_dates_echeances():
                 logger.info(f"Aucun email envoyé pour le questionnaire {questionnaire.id}")
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_NOT_SENT)
 
-#Les trois tâches de la purge doivent être lancées dans l'ordre !
+        
 @app.task(queue=settings.CELERY_QUEUE)
 def identify_purgeable_controls(*args, **kwargs):
-    purge_interval = kwargs.get("purge_interval")
-    if not purge_interval:
-        logger.error("Le paramètre 'purge_interval' est manquant !")
-        return 
+    INTERVAL_PURGE = 'interval_purge'
+    ENVOI_NOTIF_MAIL = 'envoi_notif_mail'
     
+    VAL_INTERVAL_PURGE_FR = '3 ans'
+    VAL_INTERVAL_PURGE_EN = '3 years'
+    
+    VAL_ENVOI_NOTIF_MAIL_FR = {'Oui': True, 'Non': False}
+    
+    interval_purge = kwargs.get(INTERVAL_PURGE)
+    envoi_notif_mail = kwargs.get(ENVOI_NOTIF_MAIL)
+
+    if interval_purge != VAL_INTERVAL_PURGE_FR:  
+        logger.error(f"Le paramètre 'interval_purge' est manquant ou différent de {VAL_INTERVAL_PURGE_FR}, valeur par défaut : {VAL_INTERVAL_PURGE_FR} !")  
+        interval_purge = VAL_INTERVAL_PURGE_EN  
+    else:
+        interval_purge = VAL_INTERVAL_PURGE_EN  
+
+    envoi_notif_mail = VAL_ENVOI_NOTIF_MAIL_FR.get(envoi_notif_mail, False)
+    if envoi_notif_mail is False and kwargs.get(ENVOI_NOTIF_MAIL) not in VAL_ENVOI_NOTIF_MAIL_FR:
+        logger.error("Le paramètre 'envoi_notif_mail' est manquant ou erroné, valeur par défaut : 'Non' !")  
+
+    
+    logger.info(f"interval_purge : {interval_purge}")
+    logger.info(f"envoi_notif_mail : {envoi_notif_mail}")
+
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('identify_purgeable_controls', [purge_interval])
+            cursor.callproc('identify_purgeable_controls', [interval_purge])
             results = cursor.fetchall()
             
             if not results:
                 logger.info("Aucun espace de dépôt éligible à la suppression.")
                 return
-
-            for mail_inspecteur, espaces_depot, _ in results:
-                logger.info(f"Mail: {mail_inspecteur}, Espaces de dépôt: {espaces_depot}")
-                send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
+            
+            if envoi_notif_mail:
+                for mail_inspecteur, espaces_depot, _ in results:
+                    logger.info(f"Mail: {mail_inspecteur}, Espaces de dépôt: {espaces_depot}")
+                    send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
             
             return results  
+
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+
         
 @app.task(queue=settings.CELERY_QUEUE)
 def logical_delete_controls():
@@ -206,6 +231,42 @@ def physical_delete_controls():
             cursor.callproc('physical_delete_controls')
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+    
+    
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT reference_code
+                FROM purge_eligible_control_trv 
+            """)
+            results = cursor.fetchall()
+
+            for row in results:
+                reference_code = row[0]
+                delete_media_directory(reference_code)
+
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution de la requête : {e}")
+    
+def delete_media_directory(reference_code):
+    media_root = settings.MEDIA_ROOT
+
+    target_path = os.path.abspath(os.path.join(media_root, reference_code))
+
+    if not target_path.startswith(os.path.abspath(media_root)):
+        logger.error(f"Refusé : le chemin cible sort de MEDIA_ROOT. ({target_path})")
+        return 
+
+    if os.path.exists(target_path) and os.path.isdir(target_path):
+        try:
+            shutil.rmtree(target_path)
+            logger.info(f"Supprimé : {target_path}")
+        except Exception as e:
+            logger.error(f"Erreur pendant la suppression : {e}")
+    else:
+        logger.info(f"Le dossier n'existe pas : {target_path}")
+
+
 
 def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
     html_template = "reporting/email/notif_espace_depot_elig_supp.html"

@@ -10,15 +10,20 @@ BEGIN
 
     TRUNCATE TABLE purge_eligible_control_trv;
 
-    --si end_date est null ? 
-
-    INSERT INTO purge_eligible_control_trv (control_id)
-    SELECT DISTINCT cc.id
+    INSERT INTO purge_eligible_control_trv (control_id, reference_code, date_traitement)
+    WITH latest_dates AS (
+        SELECT 
+            cq.control_id, 
+            MAX(GREATEST(cq.end_date, cq.sent_date, cq.modified)) AS date_plus_recente
+        FROM control_questionnaire cq
+        GROUP BY cq.control_id
+    )
+    SELECT  cc.id, cc.reference_code, NOW()
     FROM control_control cc
-    INNER JOIN control_questionnaire cq ON cq.control_id = cc.id
+    INNER JOIN latest_dates ON latest_dates.control_id = cc.id
     WHERE cc.is_model = FALSE
-      AND cq.end_date < NOW() - purge_interval; 
-
+    AND latest_dates.date_plus_recente < NOW() - purge_interval ;
+    
     RETURN QUERY 
     SELECT
         au.username AS mail_inspecteur,
