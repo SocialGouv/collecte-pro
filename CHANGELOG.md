@@ -6,6 +6,13 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.3.2] - 2025-04-10
+### Modifications
+- CP-191 : Mise en place d'un système de purge des espaces de dépôt
+- CP-194 : Rajouter une date de dernière modification au niveau Questionnaire 
+## [3.0.13] - 2025-03-27
+### Modifications
+- CP-196 : En production, les liens vers les modes d'emploi sont cassés
 ## [3.3.1] - 2025-03-14
 ### Modifications
 - CP-189 : Le choix d'un modèle d'espace de dépôt doit être indiqué comme non obligatoire à la création
