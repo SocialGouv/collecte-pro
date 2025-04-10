@@ -148,6 +148,25 @@ class Control(SoftDeleteModel):
             return f'[ID{self.id}] - {self.title} - {self.depositing_organization}'
         return f'[ID{self.id}] - {self.title}'
 
+class PurgeEligibleControlTrv(models.Model):
+    control_id = models.IntegerField()
+    reference_code =models.CharField(max_length=30)
+    date_traitement = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "purge_eligible_control_trv"
+        
+class PurgeHistoControl(models.Model):
+    control_id = models.IntegerField()
+    reference_code =models.CharField(max_length=30)
+    is_supp_logique = models.BooleanField(default=False)
+    date_supp_logique = models.DateTimeField(null=True, blank=True)
+    is_supp_physique = models.BooleanField(default=False)
+    date_supp_physique = models.DateTimeField(null=True, blank=True)
+    date_traitement = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "purge_histo_control"
 
 class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     title = models.CharField("titre", max_length=255)
@@ -188,6 +207,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         verbose_name="finalisé", default=False,
         help_text="Ce questionnaire a-t-il été finalisé par le demandeur ?")
     modified = models.DateTimeField('modifié', auto_now=True, null=True)
+    last_response_file_action = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('control', 'order')

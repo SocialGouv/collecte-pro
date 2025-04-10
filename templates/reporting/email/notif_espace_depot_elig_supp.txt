@@ -1,0 +1,12 @@
+Bonjour,
+
+Les espaces de dépôt suivants, créés il y a plus de trois ans, seront supprimés dans un mois :
+
+{% for espace in list_espace_depot %}
+- {{ espace }}
+{% endfor %}
+
+Si vous souhaitez en conserver un, veuillez le marquer comme modèle.
+
+Cordialement,
+L'équipe Collecte-Pro

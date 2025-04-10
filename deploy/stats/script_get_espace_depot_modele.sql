@@ -1,23 +1,34 @@
 CREATE OR REPLACE FUNCTION get_espace_depot_modele()
 RETURNS TABLE (
     id_espace_depot VARCHAR, 
+    reference_code VARCHAR,
     nombre_de_duplication BIGINT,
-    date_derniere_duplication TIMESTAMPTZ
+    date_derniere_duplication TIMESTAMPTZ,
+    top_model_coche VARCHAR  
 ) 
 AS $$
 BEGIN
     RETURN QUERY 
     SELECT
-        target_object_id AS id_espace_depot,  
+        aa.target_object_id AS id_espace_depot,  
+        cc.reference_code,
         COUNT(*) AS nombre_de_duplication,
-        MAX(timestamp) AS date_derniere_duplication
+        MAX(aa.timestamp) AS date_derniere_duplication,
+        CAST(
+            CASE 
+                WHEN cc.is_model = TRUE THEN 'Oui' 
+                ELSE 'Non' 
+            END 
+        AS VARCHAR) AS top_model_coche  
     FROM 
-        actstream_action 
+        actstream_action aa
+    JOIN 
+        control_control cc ON cc.id = aa.target_object_id::INTEGER
     WHERE
-        verb = 'created control'
-        AND target_object_id IS NOT NULL
+        aa.verb = 'created control'
+        AND aa.target_object_id IS NOT NULL
     GROUP BY
-        target_object_id
+        aa.target_object_id, cc.reference_code, cc.is_model
     ORDER BY 
         nombre_de_duplication DESC;
 END;
