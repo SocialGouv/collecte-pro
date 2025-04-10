@@ -226,18 +226,14 @@ def logical_delete_controls():
 
 @app.task(queue=settings.CELERY_QUEUE)
 def physical_delete_controls():
-    try:
-        with connection.cursor() as cursor:
-            cursor.callproc('physical_delete_controls')
-    except Exception as e:
-        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
-    
     
     try:
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT reference_code
-                FROM purge_eligible_control_trv 
+                SELECT pec.reference_code
+                FROM purge_eligible_control_trv pec 
+                INNER JOIN control_control cc ON pec.control_id = cc.id
+                WHERE cc.is_model = FALSE
             """)
             results = cursor.fetchall()
 
@@ -246,8 +242,14 @@ def physical_delete_controls():
                 delete_media_directory(reference_code)
 
     except Exception as e:
-        logger.error(f"Erreur lors de l'exécution de la requête : {e}")
+        logger.error(f"Erreur lors de l'exécution de la requête -  delete_media_directory : {e}")
     
+    try:
+        with connection.cursor() as cursor:
+            cursor.callproc('physical_delete_controls')
+    except Exception as e:
+        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+
 def delete_media_directory(reference_code):
     media_root = settings.MEDIA_ROOT
 

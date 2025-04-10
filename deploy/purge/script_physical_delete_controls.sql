@@ -4,7 +4,11 @@ DECLARE
     record_control RECORD;
 BEGIN
     FOR record_control IN 
-        SELECT control_id FROM purge_histo_control WHERE is_supp_physique = FALSE 
+        SELECT phc.control_id 
+        FROM purge_histo_control phc
+        INNER JOIN control_control cc ON phc.control_id = cc.id
+        WHERE phc.is_supp_physique = FALSE 
+        AND cc.is_model = FALSE
     LOOP
 
         DELETE FROM control_responsefile
@@ -16,6 +20,7 @@ BEGIN
             INNER JOIN control_control cc ON cq.control_id = cc.id
             WHERE cc.id = record_control.control_id
             AND cc.is_deleted = TRUE
+            AND cc.is_model = FALSE
         );
 
 
@@ -28,6 +33,7 @@ BEGIN
             INNER JOIN control_control cc ON cq.control_id = cc.id
             WHERE cc.id = record_control.control_id
             AND cc.is_deleted = TRUE
+            AND cc.is_model = FALSE
         );
 
 
@@ -39,6 +45,7 @@ BEGIN
             INNER JOIN control_control cc ON cq.control_id = cc.id
             WHERE cc.id = record_control.control_id
             AND cc.is_deleted = TRUE
+            AND cc.is_model = FALSE
         );
 
 
@@ -49,6 +56,7 @@ BEGIN
             INNER JOIN control_control cc ON cq.control_id = cc.id
             WHERE cc.id = record_control.control_id
             AND cc.is_deleted = TRUE
+            AND cc.is_model = FALSE
         );
 
 
@@ -59,26 +67,34 @@ BEGIN
             INNER JOIN control_control cc ON cq.control_id = cc.id
             WHERE cc.id = record_control.control_id
             AND cc.is_deleted = TRUE
+            AND cc.is_model = FALSE
         );
 
 
         DELETE FROM control_questionnaire
         WHERE control_id = record_control.control_id
         AND control_id IN (
-            SELECT id FROM control_control WHERE is_deleted = TRUE
+            SELECT id 
+            FROM control_control 
+            WHERE is_deleted = TRUE
+            AND is_model = FALSE
         );
 
 
         DELETE FROM user_profiles_access
         WHERE control_id = record_control.control_id
         AND control_id IN (
-            SELECT id FROM control_control WHERE is_deleted = TRUE
+            SELECT id 
+            FROM control_control 
+            WHERE is_deleted = TRUE
+            AND is_model = FALSE
         );
 
 
         DELETE FROM control_control
         WHERE id = record_control.control_id
-        AND is_deleted = TRUE;
+        AND is_deleted = TRUE
+        AND is_model = FALSE;
 
         UPDATE purge_histo_control
         SET is_supp_physique = TRUE, date_supp_physique = NOW(), date_traitement = NOW()
@@ -88,5 +104,6 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         ROLLBACK;
+        --RAISE EXCEPTION 'Erreur lors de la suppression physique : %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
