@@ -63,11 +63,26 @@ class Stats(LoginRequiredMixin, TemplateView):
         with connection.cursor() as cursor:
             cursor.callproc('get_espace_depot_modele')
             results = cursor.fetchall()
-            csv_writer.writerow(['id_espace_depot', 'nombre_de_duplication', 'date_derniere_duplication'])
+            csv_writer.writerow(['id_espace_depot', 'reference_code', 'nombre_de_duplication', 'date_derniere_duplication', 'top_model_coche'])
             csv_writer.writerows(results)
 
         response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="identification_modele_{generation_date}.csv"'
+
+        return response
+    
+    def call_get_espace_depot_elig_supp(request):
+        csv_buffer = StringIO()
+        csv_writer = csv.writer(csv_buffer, delimiter=';')
+
+        with connection.cursor() as cursor:
+            cursor.callproc('get_espace_depot_elig_supp')
+            results = cursor.fetchall()
+            csv_writer.writerow(['id_espace_depot', 'espace_depot', 'procedure', 'organisme_interroge','date_traitement'])
+            csv_writer.writerows(results)
+
+        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="espace_depot_elig_supp.csv"'
 
         return response
     
