@@ -207,7 +207,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         verbose_name="finalisé", default=False,
         help_text="Ce questionnaire a-t-il été finalisé par le demandeur ?")
     modified = models.DateTimeField('modifié', auto_now=True, null=True)
-    last_response_file_action = models.DateTimeField(null=True, blank=True)
+    last_response_file_action = models.DateTimeField("Date de dernière modification", null=True, blank=True)
 
     class Meta:
         ordering = ('control', 'order')

@@ -24,6 +24,16 @@ BEGIN
     WHERE cc.is_model = FALSE
     AND latest_dates.date_plus_recente < NOW() - purge_interval ;
     
+    INSERT INTO purge_eligible_control_trv (control_id, reference_code, date_traitement)
+    SELECT cc.id, cc.reference_code, NOW()
+    FROM control_control cc
+    INNER JOIN actstream_action aa ON cc.id = aa.action_object_object_id::INTEGER
+    LEFT JOIN control_questionnaire cq ON cc.id = cq.control_id
+    WHERE cq.id IS NULL
+        AND cc.is_model = FALSE
+        AND aa.verb = 'created control'
+        AND aa.timestamp < NOW() - purge_interval;
+    
     RETURN QUERY 
     SELECT
         au.username AS mail_inspecteur,

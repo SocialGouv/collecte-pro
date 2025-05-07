@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.3.3] - 2025-05-07
+### Modifications
+- CP-191 : Mise en place d'un système de purge des espaces de dépôt (cas des espaces de dépôt sans questionnaire)
+- CP-194 : Rajouter une date de dernière modification au niveau Questionnaire (ajout de la date de dernière modification dans l'administration)
 ## [3.3.2] - 2025-04-10
 ### Modifications
 - CP-191 : Mise en place d'un système de purge des espaces de dépôt

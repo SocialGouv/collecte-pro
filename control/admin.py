@@ -110,7 +110,7 @@ class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMix
     save_as = True
     list_display = (
         'id', 'numbering', 'title', 'order', 'link_to_control', 'is_draft', 'editor',
-        'sent_date', 'end_date')
+        'sent_date', 'end_date', 'last_response_file_action')
     list_editable = ('order',)
     readonly_fields = ('order', 'editor')
     search_fields = ('title', 'description')
