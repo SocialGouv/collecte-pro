@@ -172,47 +172,63 @@ def send_notifs_dates_echeances():
 def identify_purgeable_controls(*args, **kwargs):
     INTERVAL_PURGE = 'interval_purge'
     ENVOI_NOTIF_MAIL = 'envoi_notif_mail'
-    
-    VAL_INTERVAL_PURGE_FR = '3 ans'
-    VAL_INTERVAL_PURGE_EN = '3 years'
-    
+
+    # Dictionnaire de traduction FR -> EN pour les intervalles
+    INTERVAL_MAP = {
+        **{f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)},
+        **{f"{i} an" + ("s" if i > 1 else ""): f"{i} year" + ("s" if i > 1 else "") for i in range(1, 6)}
+    }
+
     VAL_ENVOI_NOTIF_MAIL_FR = {'Oui': True, 'Non': False}
     
-    interval_purge = kwargs.get(INTERVAL_PURGE)
-    envoi_notif_mail = kwargs.get(ENVOI_NOTIF_MAIL)
+    interval_purge_fr = kwargs.get(INTERVAL_PURGE)
+    if isinstance(interval_purge_fr, str):
+        interval_purge_fr = interval_purge_fr.strip()
 
-    if interval_purge != VAL_INTERVAL_PURGE_FR:  
-        logger.error(f"Le paramètre 'interval_purge' est manquant ou différent de {VAL_INTERVAL_PURGE_FR}, valeur par défaut : {VAL_INTERVAL_PURGE_FR} !")  
-        interval_purge = VAL_INTERVAL_PURGE_EN  
-    else:
-        interval_purge = VAL_INTERVAL_PURGE_EN  
+    envoi_notif_mail_fr = kwargs.get(ENVOI_NOTIF_MAIL)
+    if isinstance(envoi_notif_mail_fr, str):
+        envoi_notif_mail_fr = envoi_notif_mail_fr.strip()
 
-    envoi_notif_mail = VAL_ENVOI_NOTIF_MAIL_FR.get(envoi_notif_mail, False)
-    if envoi_notif_mail is False and kwargs.get(ENVOI_NOTIF_MAIL) not in VAL_ENVOI_NOTIF_MAIL_FR:
-        logger.error("Le paramètre 'envoi_notif_mail' est manquant ou erroné, valeur par défaut : 'Non' !")  
 
     
-    logger.info(f"interval_purge : {interval_purge}")
-    logger.info(f"envoi_notif_mail : {envoi_notif_mail}")
+    interval_purge = INTERVAL_MAP.get(interval_purge_fr)
+    if interval_purge is None:
+        logger.error(
+            f"Le paramètre 'interval_purge' est manquant ou invalide (valeur reçue : '{interval_purge_fr}'). "
+            f"Aucune procédure ne sera appelée."
+        )
+        return  
+
+    
+    envoi_notif_mail = VAL_ENVOI_NOTIF_MAIL_FR.get(envoi_notif_mail_fr, False)
+    if envoi_notif_mail_fr not in VAL_ENVOI_NOTIF_MAIL_FR:
+        logger.error(
+            f"Le paramètre 'envoi_notif_mail' est manquant ou invalide (valeur reçue : '{envoi_notif_mail_fr}'). "
+            f"Valeur par défaut utilisée : 'Non'."
+        )
+
+    logger.info(f"interval_purge (EN) = {interval_purge}")
+    logger.info(f"envoi_notif_mail = {envoi_notif_mail}")
 
     try:
         with connection.cursor() as cursor:
             cursor.callproc('identify_purgeable_controls', [interval_purge])
             results = cursor.fetchall()
-            
+
             if not results:
                 logger.info("Aucun espace de dépôt éligible à la suppression.")
                 return
-            
+
             if envoi_notif_mail:
                 for mail_inspecteur, espaces_depot, _ in results:
-                    logger.info(f"Mail: {mail_inspecteur}, Espaces de dépôt: {espaces_depot}")
+                    logger.info(f"Envoi mail à : {mail_inspecteur} pour espaces : {espaces_depot}")
                     send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
-            
-            return results  
+
+            return results
 
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+
 
         
 @app.task(queue=settings.CELERY_QUEUE)

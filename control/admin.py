@@ -82,11 +82,17 @@ class QuestionnaireInline(OrderedTabularInline):
 
 @admin.register(Control)
 class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, OrderedModelAdmin):
-    list_display = ('id', 'title', 'depositing_organization', 'reference_code')
+    list_display = ('id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action')
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
     inlines = (QuestionnaireInline, )
     list_filter = (IsActiveFilter,IsModelFilter,)
+    
+    @admin.display(description='Date la plus récente')
+    def get_last_response_file_action(self, obj):
+        questionnaire = obj.questionnaires.order_by('-last_response_file_action').first()
+        return questionnaire.last_response_file_action if questionnaire else "Aucun"
+
 
 
 class ThemeInline(OrderedTabularInline):
