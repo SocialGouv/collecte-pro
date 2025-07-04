@@ -9,7 +9,9 @@ from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.views.generic import DetailView, RedirectView
 from django.views.generic.detail import SingleObjectMixin
+from django.db.models import Max, Case, When, Value, DateTimeField, F
 
+from datetime import datetime
 
 from ordered_model.admin import OrderedModelAdmin
 from ordered_model.admin import OrderedTabularInline, OrderedInlineModelAdminMixin
@@ -82,16 +84,49 @@ class QuestionnaireInline(OrderedTabularInline):
 
 @admin.register(Control)
 class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, OrderedModelAdmin):
-    list_display = ('id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action')
+    list_display = ('id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action', 'created_date')
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
     inlines = (QuestionnaireInline, )
     list_filter = (IsActiveFilter,IsModelFilter,)
     
-    @admin.display(description='Date la plus récente')
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.annotate(_last_response_date=Max('questionnaires__last_response_file_action'))
+
+        col_index = 5  
+
+        ordering_param = request.GET.get('o', '') 
+        is_desc = False
+        for part in ordering_param.split('.'):
+            if part.lstrip('-') == str(col_index):
+                is_desc = part.startswith('-')
+                break
+
+        if is_desc:
+            qs = qs.annotate(
+                _date_for_sort=Case(
+                    When(_last_response_date__isnull=True, then=Value(datetime(1900, 1, 1))),
+                    default=F('_last_response_date'),
+                    output_field=DateTimeField(),
+                )
+            )
+        else:
+            qs = qs.annotate(
+                _date_for_sort=Case(
+                    When(_last_response_date__isnull=True, then=Value(datetime(9999, 12, 31))),
+                    default=F('_last_response_date'),
+                    output_field=DateTimeField(),
+                )
+            )
+        return qs
+
+    @admin.display(description='Date la plus récente', ordering='_date_for_sort')
     def get_last_response_file_action(self, obj):
         questionnaire = obj.questionnaires.order_by('-last_response_file_action').first()
-        return questionnaire.last_response_file_action if questionnaire else "Aucun"
+        if questionnaire and questionnaire.last_response_file_action:
+            return questionnaire.last_response_file_action
+        return "Aucun"
 
 
 
@@ -116,7 +151,7 @@ class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMix
     save_as = True
     list_display = (
         'id', 'numbering', 'title', 'order', 'link_to_control', 'is_draft', 'editor',
-        'sent_date', 'end_date', 'last_response_file_action')
+        'sent_date', 'end_date', 'last_response_file_action', 'created_date')
     list_editable = ('order',)
     readonly_fields = ('order', 'editor')
     search_fields = ('title', 'description')

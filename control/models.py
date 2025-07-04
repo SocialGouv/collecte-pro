@@ -112,6 +112,8 @@ class Control(SoftDeleteModel):
         help_text="Indique si cette procédure est épinglée"
     )
     
+    created_date = models.DateTimeField("Date de création", null=True, blank=True)
+    
     objects = DeletableQuerySet.as_manager()
 
     class Meta:
@@ -208,6 +210,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         help_text="Ce questionnaire a-t-il été finalisé par le demandeur ?")
     modified = models.DateTimeField('modifié', auto_now=True, null=True)
     last_response_file_action = models.DateTimeField("Date de dernière modification", null=True, blank=True)
+    created_date = models.DateTimeField("Date de création", null=True, blank=True)
 
     class Meta:
         ordering = ('control', 'order')
