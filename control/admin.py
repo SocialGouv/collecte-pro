@@ -12,6 +12,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Max, Case, When, Value, DateTimeField, F
 
 from datetime import datetime
+from django.utils.timezone import make_aware
 
 from ordered_model.admin import OrderedModelAdmin
 from ordered_model.admin import OrderedTabularInline, OrderedInlineModelAdminMixin
@@ -103,22 +104,15 @@ class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, Order
                 is_desc = part.startswith('-')
                 break
 
-        if is_desc:
-            qs = qs.annotate(
-                _date_for_sort=Case(
-                    When(_last_response_date__isnull=True, then=Value(datetime(1900, 1, 1))),
-                    default=F('_last_response_date'),
-                    output_field=DateTimeField(),
-                )
+        default_value = make_aware(datetime(2000, 1, 1)) if is_desc else make_aware(datetime(2099, 1, 1))
+
+        qs = qs.annotate(
+            _date_for_sort=Case(
+                When(_last_response_date__isnull=True, then=Value(default_value)),
+                default=F('_last_response_date'),
+                output_field=DateTimeField(),
             )
-        else:
-            qs = qs.annotate(
-                _date_for_sort=Case(
-                    When(_last_response_date__isnull=True, then=Value(datetime(9999, 12, 31))),
-                    default=F('_last_response_date'),
-                    output_field=DateTimeField(),
-                )
-            )
+        )
         return qs
 
     @admin.display(description='Date la plus récente', ordering='_date_for_sort')
