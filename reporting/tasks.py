@@ -241,7 +241,29 @@ def logical_delete_controls():
 
 
 @app.task(queue=settings.CELERY_QUEUE)
-def physical_delete_controls():
+def physical_delete_controls(*args, **kwargs):
+    
+    INTERVAL_PURGE_REP_ORPH= 'interval_purge_rep_orph'
+    # Dictionnaire de traduction FR -> EN pour les intervalles
+    INTERVAL_MAP = {
+        **{f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)},
+        **{f"{i} an" + ("s" if i > 1 else ""): f"{i} year" + ("s" if i > 1 else "") for i in range(1, 6)}
+    }
+    
+    interval_purge_rep_orph_fr = kwargs.get(INTERVAL_PURGE_REP_ORPH)
+    if isinstance(interval_purge_rep_orph_fr, str):
+        interval_purge_rep_orph_fr = interval_purge_rep_orph_fr.strip()
+    
+    interval_purge_rep_orph = INTERVAL_MAP.get(interval_purge_rep_orph_fr)
+    if interval_purge_rep_orph is None:
+        logger.error(
+            f"Le paramètre 'interval_purge_rep_orph' est manquant ou invalide (valeur reçue : '{interval_purge_rep_orph_fr}'). "
+            f"Aucune procédure ne sera appelée."
+        )
+        return  
+
+    logger.info(f"interval_purge_rep_orph (EN) = {interval_purge_rep_orph}")
+
     
     try:
         with connection.cursor() as cursor:
@@ -262,7 +284,7 @@ def physical_delete_controls():
     
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('physical_delete_controls')
+            cursor.callproc('physical_delete_controls', [interval_purge_rep_orph])
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
 

@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION physical_delete_controls()
+CREATE OR REPLACE FUNCTION physical_delete_controls(interval_purge_rep_orph INTERVAL)
 RETURNS VOID AS $$
 DECLARE
     record_control RECORD;
@@ -101,9 +101,59 @@ BEGIN
         WHERE control_id = record_control.control_id;
 		
     END LOOP;
+
+    -- Récupération des répondants orphelins
+    INSERT INTO purge_histo_rep_orphelins (
+        user_id,
+        username,
+        profile_type,
+        date_joined,
+        is_physically_deleted,
+        physical_deletion_date
+    )
+    SELECT 
+        au.id AS user_id,
+        au.username,
+        upu.profile_type,
+        au.date_joined,            
+        FALSE,
+        NULL
+    FROM auth_user au
+    INNER JOIN user_profiles_userprofile upu 
+        ON upu.user_id = au.id
+    LEFT JOIN user_profiles_access ua 
+        ON ua.userprofile_id = upu.user_id
+    WHERE upu.profile_type = 'audited'
+    AND ua.id IS NULL
+    AND au.date_joined < NOW() - interval_purge_rep_orph
+    ORDER BY au.date_joined DESC;
+
+    --Purge des répondants orphelins
+    DELETE FROM user_profiles_userprofile
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM user_profiles_useripaddress
+    WHERE username IN (SELECT username FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user_groups
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user_user_permissions
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user
+    WHERE id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+
+    UPDATE purge_histo_rep_orphelins
+    SET 
+        is_physically_deleted = TRUE,
+        physical_deletion_date = NOW()
+    WHERE is_physically_deleted = FALSE;
+
+     
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
-        --RAISE EXCEPTION 'Erreur lors de la suppression physique : %', SQLERRM;
+        RAISE NOTICE 'Erreur lors de la suppression physique : %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
