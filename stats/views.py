@@ -86,6 +86,31 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
     
+    def call_get_repondants_orphelins(request):
+        csv_buffer = StringIO()
+        csv_writer = csv.writer(csv_buffer, delimiter=';')
+
+        with connection.cursor() as cursor:
+            cursor.callproc('get_repondants_orphelins')
+            results = cursor.fetchall()
+            csv_writer.writerow([
+                'user_id', 
+                'username', 
+                'profile_type', 
+                'date_inscription', 
+                'date_derniere_connexion', 
+                'status', 
+                'id_control_associe', 
+                'date_extraction'
+            ])
+
+            csv_writer.writerows(results)
+
+        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="repondants_orphelins.csv"'
+
+        return response
+    
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
             cursor.callproc('get_statistiques', [action])

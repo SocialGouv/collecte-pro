@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION physical_delete_controls(interval_purge_rep_orph INTERVAL)
+CREATE OR REPLACE FUNCTION physical_delete_controls()
 RETURNS VOID AS $$
 DECLARE
     record_control RECORD;
@@ -102,7 +102,7 @@ BEGIN
 		
     END LOOP;
 
-    -- Récupération des répondants orphelins
+    --Purge des répondants orphelins
     INSERT INTO purge_histo_rep_orphelins (
         user_id,
         username,
@@ -112,23 +112,14 @@ BEGIN
         physical_deletion_date
     )
     SELECT 
-        au.id AS user_id,
-        au.username,
-        upu.profile_type,
-        au.date_joined,            
+        per.user_id,
+        per.username,
+        per.profile_type,
+        per.date_joined,            
         FALSE,
         NULL
-    FROM auth_user au
-    INNER JOIN user_profiles_userprofile upu 
-        ON upu.user_id = au.id
-    LEFT JOIN user_profiles_access ua 
-        ON ua.userprofile_id = upu.user_id
-    WHERE upu.profile_type = 'audited'
-    AND ua.id IS NULL
-    AND au.date_joined < NOW() - interval_purge_rep_orph
-    ORDER BY au.date_joined DESC;
+    FROM  purge_eligible_rep_orph_trv per;
 
-    --Purge des répondants orphelins
     DELETE FROM user_profiles_userprofile
     WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
 

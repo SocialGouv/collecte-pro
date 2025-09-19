@@ -89,6 +89,19 @@ class OrphanUserPurgeHistory(models.Model):
     class Meta:
         db_table = "purge_histo_rep_orphelins"
 
+class PurgeEligibleRepOrphTrv(models.Model):
+    user_id = models.IntegerField()
+    username = models.CharField(max_length=255, null=True, blank=True)
+    profile_type = models.CharField(max_length=255, null=True, blank=True)
+    date_joined = models.DateTimeField(null=True, blank=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=255, null=True, blank=True)
+    id_control_associe = models.CharField(max_length=255, null=True, blank=True)
+    date_extraction = models.DateTimeField(null=True, blank=True)
+   
+    class Meta:
+        db_table = "purge_eligible_rep_orph_trv"
+
 class Access(models.Model):
     REPONDANT = 'repondant'
     DEMANDEUR = 'demandeur'
