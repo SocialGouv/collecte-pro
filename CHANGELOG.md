@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.3.7] - 2025-09-19
+### Modifications
+- CP-195 : Purge des répondants "orphelins"
 ## [3.3.6] - 2025-07-09
 ### Modifications
 - CP-191 : Mise en place d'un système de purge des espaces de dépôt (fix bug : tri par date la plus récente dans l’interface d’administration)
