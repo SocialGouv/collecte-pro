@@ -101,9 +101,50 @@ BEGIN
         WHERE control_id = record_control.control_id;
 		
     END LOOP;
+
+    --Purge des répondants orphelins
+    INSERT INTO purge_histo_rep_orphelins (
+        user_id,
+        username,
+        profile_type,
+        date_joined,
+        is_physically_deleted,
+        physical_deletion_date
+    )
+    SELECT 
+        per.user_id,
+        per.username,
+        per.profile_type,
+        per.date_joined,            
+        FALSE,
+        NULL
+    FROM  purge_eligible_rep_orph_trv per;
+
+    DELETE FROM user_profiles_userprofile
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM user_profiles_useripaddress
+    WHERE username IN (SELECT username FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user_groups
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user_user_permissions
+    WHERE user_id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+    DELETE FROM auth_user
+    WHERE id IN (SELECT user_id FROM purge_histo_rep_orphelins);
+
+
+    UPDATE purge_histo_rep_orphelins
+    SET 
+        is_physically_deleted = TRUE,
+        physical_deletion_date = NOW()
+    WHERE is_physically_deleted = FALSE;
+
+     
 EXCEPTION
     WHEN OTHERS THEN
-        ROLLBACK;
-        --RAISE EXCEPTION 'Erreur lors de la suppression physique : %', SQLERRM;
+        RAISE NOTICE 'Erreur lors de la suppression physique : %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;

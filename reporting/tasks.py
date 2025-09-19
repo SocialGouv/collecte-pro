@@ -169,66 +169,66 @@ def send_notifs_dates_echeances():
 
         
 @app.task(queue=settings.CELERY_QUEUE)
-def identify_purgeable_controls(*args, **kwargs):
+def identify_purgeable_controls(**kwargs):
     INTERVAL_PURGE = 'interval_purge'
     ENVOI_NOTIF_MAIL = 'envoi_notif_mail'
+    INTERVAL_PURGE_REP_ORPH= 'interval_purge_rep_orph'
 
-    # Dictionnaire de traduction FR -> EN pour les intervalles
+    interval_purge_fr = kwargs.get(INTERVAL_PURGE, "").strip()
+    envoi_notif_mail_fr = kwargs.get(ENVOI_NOTIF_MAIL, "").strip()
+    interval_purge_rep_orph_fr = kwargs.get(INTERVAL_PURGE_REP_ORPH, "").strip()
+    
+    # Dictionnaires de mapping
     INTERVAL_MAP = {
         **{f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)},
         **{f"{i} an" + ("s" if i > 1 else ""): f"{i} year" + ("s" if i > 1 else "") for i in range(1, 6)}
     }
-
     VAL_ENVOI_NOTIF_MAIL_FR = {'Oui': True, 'Non': False}
-    
-    interval_purge_fr = kwargs.get(INTERVAL_PURGE)
-    if isinstance(interval_purge_fr, str):
-        interval_purge_fr = interval_purge_fr.strip()
 
-    envoi_notif_mail_fr = kwargs.get(ENVOI_NOTIF_MAIL)
-    if isinstance(envoi_notif_mail_fr, str):
-        envoi_notif_mail_fr = envoi_notif_mail_fr.strip()
-
-
-    
     interval_purge = INTERVAL_MAP.get(interval_purge_fr)
-    if interval_purge is None:
-        logger.error(
-            f"Le paramètre 'interval_purge' est manquant ou invalide (valeur reçue : '{interval_purge_fr}'). "
-            f"Aucune procédure ne sera appelée."
-        )
-        return  
-
-    
+    interval_purge_rep_orph = INTERVAL_MAP.get(interval_purge_rep_orph_fr)
     envoi_notif_mail = VAL_ENVOI_NOTIF_MAIL_FR.get(envoi_notif_mail_fr, False)
-    if envoi_notif_mail_fr not in VAL_ENVOI_NOTIF_MAIL_FR:
-        logger.error(
-            f"Le paramètre 'envoi_notif_mail' est manquant ou invalide (valeur reçue : '{envoi_notif_mail_fr}'). "
-            f"Valeur par défaut utilisée : 'Non'."
-        )
+
+    results_controls = []
+    results_orphans = []
 
     logger.info(f"interval_purge (EN) = {interval_purge}")
-    logger.info(f"envoi_notif_mail = {envoi_notif_mail}")
+    logger.info(f"envoi_notif_mail (EN) = {envoi_notif_mail}")
+    logger.info(f"interval_purge_rep_orph (EN) = {interval_purge_rep_orph}")
 
     try:
         with connection.cursor() as cursor:
             cursor.callproc('identify_purgeable_controls', [interval_purge])
-            results = cursor.fetchall()
+            results_controls = cursor.fetchall()
 
-            if not results:
+            if not results_controls:
                 logger.info("Aucun espace de dépôt éligible à la suppression.")
-                return
-
-            if envoi_notif_mail:
-                for mail_inspecteur, espaces_depot, _ in results:
-                    logger.info(f"Envoi mail à : {mail_inspecteur} pour espaces : {espaces_depot}")
-                    send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
-
-            return results
+            else:
+                if envoi_notif_mail:
+                    for mail_inspecteur, espaces_depot, _ in results_controls:
+                        logger.info(f"Envoi mail à : {mail_inspecteur} pour espaces : {espaces_depot}")
+                        send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
 
     except Exception as e:
-        logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+        logger.error(f"Erreur lors de la procédure identify_purgeable_controls : {e}")
 
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.callproc('identify_orphanUser', [interval_purge_rep_orph])
+            results_orphans = cursor.fetchall()
+
+            if not results_orphans:
+                logger.info("Aucun répondant éligible à la suppression.")
+           
+    except Exception as e:
+        logger.error(f"Erreur lors de la procédure identify_orphanUser : {e}")
+
+   
+    return {
+        "espaces_depot": results_controls,
+        "repondants_orphelins": results_orphans
+    }
 
         
 @app.task(queue=settings.CELERY_QUEUE)
@@ -265,6 +265,7 @@ def physical_delete_controls():
             cursor.callproc('physical_delete_controls')
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
+
 
 def delete_media_directory(reference_code):
     media_root = settings.MEDIA_ROOT

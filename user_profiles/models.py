@@ -77,6 +77,31 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
+
+class OrphanUserPurgeHistory(models.Model):
+    user_id = models.IntegerField()
+    username = models.CharField(max_length=255, null=True, blank=True)
+    profile_type = models.CharField(max_length=255, null=True, blank=True)
+    date_joined = models.DateTimeField(null=True, blank=True)
+    is_physically_deleted = models.BooleanField(default=False)
+    physical_deletion_date = models.DateTimeField(null=True, blank=True)
+   
+    class Meta:
+        db_table = "purge_histo_rep_orphelins"
+
+class PurgeEligibleRepOrphTrv(models.Model):
+    user_id = models.IntegerField()
+    username = models.CharField(max_length=255, null=True, blank=True)
+    profile_type = models.CharField(max_length=255, null=True, blank=True)
+    date_joined = models.DateTimeField(null=True, blank=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=255, null=True, blank=True)
+    id_control_associe = models.CharField(max_length=255, null=True, blank=True)
+    date_extraction = models.DateTimeField(null=True, blank=True)
+   
+    class Meta:
+        db_table = "purge_eligible_rep_orph_trv"
+
 class Access(models.Model):
     REPONDANT = 'repondant'
     DEMANDEUR = 'demandeur'
