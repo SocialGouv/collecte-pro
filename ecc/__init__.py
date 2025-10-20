@@ -3,7 +3,9 @@ from django.utils.http import urlencode
 
 
 def provider_logout(request):
+    id_token = request.session.get('oidc_id_token', None)
     return settings.OIDC_OP_LOGOUT_ENDPOINT + '?' + urlencode({
-        'redirect_uri': request.build_absolute_uri(settings.LOGOUT_REDIRECT_URL),
-        'client_id': settings.OIDC_RP_CLIENT_ID
+        'post_logout_redirect_uri': request.build_absolute_uri(settings.LOGOUT_REDIRECT_URL),
+        'client_id': settings.OIDC_RP_CLIENT_ID,
+        'id_token_hint': id_token
     })

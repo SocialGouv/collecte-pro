@@ -96,6 +96,7 @@ if KEYCLOAK_ACTIVE:
     OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default='')
     OIDC_VERIFY_SSL = env('OIDC_VERIFY_SSL', default=True)
     OIDC_RP_SIGN_ALGO = env('OIDC_RP_SIGN_ALGO', default='RS256')
+    OIDC_STORE_ID_TOKEN = True
     AUTHENTICATION_BACKENDS = (
         'ecc.auth.EccOIDCAuthenticationBackend',
     )
