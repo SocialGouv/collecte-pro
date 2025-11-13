@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.3.9] - 2025-11-13
+### Modifications
+- CP-197 : Correction de Vulnérabilité python-jose : confusion d’algorithme avec les clés ECDSA OpenSSH
+- CP-198 : Problème Django : contournement de la validation lors de l’utilisation d’un champ pour uploader plusieurs fichiers
 ## [3.3.8] - 2025-10-20
 ### Modifications
 - CP-199 : Adapations sur la cinématique de déconnexion liées à la migration Keycloak 16.1 -> 26.4
