@@ -15,11 +15,11 @@ coreapi==2.3.3
 coreschema==0.0.4
 cryptography==39.0.1
 Deprecated==1.2.13
-Django==3.2.17
-django-activity-stream==1.4.2
+Django==4.2.16
+django-activity-stream==2.0.0
 django-admin==2.0.2
 django-annoying==0.10.6
-django-celery-beat==2.4.0
+django-celery-beat==2.6.0
 django-ckeditor==6.3.2
 django-cleanup==7.0.0
 django-csp==3.7
@@ -57,7 +57,7 @@ mozilla-django-oidc==3.0.0
 packaging==23.0
 prompt-toolkit==3.0.38
 psycopg2-binary==2.9.5
-pyasn1==0.4.8
+pyasn1==0.5.1
 pycparser==2.21
 pyOpenSSL==23.0.0
 pyparsing==3.0.9
@@ -65,7 +65,7 @@ python-crontab==2.7.1
 python-dateutil==2.8.2
 python-docx==0.8.11
 python-dotenv==0.21.1
-python-jose==3.3.0
+python-jose==3.5.0
 python-keycloak==1.8.1
 python-magic==0.4.27
 pytz==2022.7.1
