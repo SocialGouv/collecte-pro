@@ -4,8 +4,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 const colorClasses = [
   'bg-blue',
   'bg-red',
@@ -15,13 +13,19 @@ const colorClasses = [
   'bg-teal',
 ]
 
-export default Vue.extend({
-  props: ['id'],
+export default {
+  name: 'ColorBadge',
+  props: {
+    id: {
+      type: Number,
+      required: true,
+    },
+  },
   computed: {
-    colorClass: function () {
+    colorClass() {
       return colorClasses[this.id % colorClasses.length]
     },
   },
-})
-
+}
 </script>
+

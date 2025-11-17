@@ -1,47 +1,47 @@
 <template>
   <div class="page-main flex-row">
-    <div id="sidebar-vm" class="border-right">
-      <sidebar></sidebar>
-    </div>
+    <aside id="sidebar-vm" class="border-right">
+      <sidebar />
+    </aside>
+
     <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
-      <a name="contenu"> </a>
-      <div
-        v-if="this.loaderActive"
-        class="loader-container"
-      >
+      <a name="contenu"></a>
+
+      <div v-if="loaderActive" class="loader-container">
         <div class="loader-wrapper">
           <div class="loader"></div>
           <p>Téléchargement en cours</p>
         </div>
       </div>
-      <questionnaire-detail-page :control-id="controlId" :questionnaire-id="questionnaireId">
-      </questionnaire-detail-page>
+
+      <questionnaire-detail-page
+        :control-id="controlId"
+        :questionnaire-id="questionnaireId"
+      />
     </main>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import QuestionnaireDetailPage from './QuestionnaireDetailPage.vue'
+import Sidebar from '../utils/Sidebar.vue'
 import '../../css/questionnaires.css'
-import QuestionnaireDetailPage from './QuestionnaireDetailPage'
-import Sidebar from '../utils/Sidebar'
-import Vue from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'QuestionnaireDetail',
-  props: {
-    controlId: Number,
-    questionnaireId: Number,
-  },
-  data: function() {
-    return {
-      loaderActive: false,
-    }
-  },
   components: {
     QuestionnaireDetailPage,
     Sidebar,
   },
+  props: {
+    controlId: { type: Number, required: true },
+    questionnaireId: { type: Number, required: true },
+  },
+  setup() {
+    const loaderActive = ref(false)
+
+    return { loaderActive }
+  },
 })
 </script>
-
-

@@ -9,15 +9,15 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
-export default Vue.extend({
-  props: ['noclose'],
+export default {
+  name: 'InfoBar', // ou le nom de ton composant
+  props: {
+    noclose: Boolean,
+  },
   methods: {
-    dismissed: function () {
+    dismissed() {
       this.$emit('dismissed')
     },
   },
-})
-
+}
 </script>

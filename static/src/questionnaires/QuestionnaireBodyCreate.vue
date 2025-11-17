@@ -21,7 +21,8 @@
             </div>
 
             <div class="border-bottom">
-              <div class="text-muted pt-2 pl-7" :id="'theme' + (themeIndex + 1) + 'Help'">
+              <!-- Theme help (unique per theme) -->
+              <div class="text-muted pt-2 pl-7" :id="'theme' + (themeIndex + 1) + 'ThemeHelp'">
                 Ecrivez un thème ici. 255 caractères maximum.
               </div>
               <div class="card-header border-0 pb-0 pt-0">
@@ -37,11 +38,11 @@
                        v-model="themes[themeIndex].title"
                        oninvalid="this.setCustomValidity('Veuillez remplir ou supprimer les thèmes vides.')"
                        oninput="this.setCustomValidity('')"
-                       :aria-describedby="'theme' + (themeIndex + 1) + 'Help'"
+                       :aria-describedby="'theme' + (themeIndex + 1) + 'ThemeHelp'"
                        required>
                 <span>
                   <button v-if="themes[themeIndex].questions.length === 0"
-                          :id="'delete_theme_' + themeIndex"
+                          :id="'delete_theme_' + themeIndex + '_empty'"
                           @click.prevent="deleteTheme(themeIndex)"
                           role="button"
                           type="button"
@@ -52,7 +53,7 @@
                     <span class="sr-only">Supprimer le thème</span>
                   </button>
                   <button v-else
-                          :id="'delete_theme_' + themeIndex"
+                          :id="'delete_theme_' + themeIndex + '_nonempty'"
                           class="btn btn-link"
                           role="button"
                           type="button"
@@ -65,6 +66,8 @@
                   </button>
                 </span>
               </div>
+
+              <!-- Confirm modals (ids unique per theme) -->
               <confirm-modal v-if="themes.length > 1"
                             :id="'deleteThemeConfirmModal' + themeIndex"
                              title="Confirmer la suppression de ce thème"
@@ -82,8 +85,9 @@
                   </span>
                 </p>
               </confirm-modal>
+
               <confirm-modal v-else
-                            :id="'deleteThemeConfirmModal' + themeIndex"
+                            :id="'deleteThemeConfirmModal_' + themeIndex + '_disabled'"
                              title="Suppression impossible"
                              confirm-button="OK"
               >
@@ -99,8 +103,9 @@
               <div v-for="(question, qIndex) in themes[themeIndex].questions"
                   :id="'theme-' + themeIndex + '-question-' + qIndex"
                   class="card border-0 m-0 pt-2"
-                  :key="'question-' + question.id"> <!-- Card for each question -->
-                <div class="text-muted pt-2 pl-9" :id="'theme' + (themeIndex + 1) + 'Help'">
+                  :key="'question-' + (question.id !== undefined ? question.id : qIndex)"> <!-- Card for each question -->
+                <!-- Question help (unique per question) -->
+                <div class="text-muted pt-2 pl-9" :id="'theme' + (themeIndex + 1) + 'QuestionHelp'">
                   Ecrivez une question ici.
                 </div>
                 <div class="card-header border-0">
@@ -134,6 +139,8 @@
                       <span class="sr-only">Déplacer la question vers le bas</span>
                     </button>
                   </div>
+
+                  <!-- Question textarea (no inner whitespace) and aria-describedby unique -->
                   <textarea class="form-control"
                             title="Ecrivez une question ici"
                             placeholder="Règlement intérieur (au cours des 3 dernières années)"
@@ -142,12 +149,12 @@
                             v-model="themes[themeIndex].questions[qIndex].description"
                             oninvalid="this.setCustomValidity('Veuillez remplir ou supprimer les questions vides.')"
                             oninput="this.setCustomValidity('')"
-                            required>
-                  </textarea>
+                            :aria-describedby="'theme' + (themeIndex + 1) + 'QuestionHelp'"
+                            required></textarea>
 
                   <span>
                     <button v-if="themes[themeIndex].questions.length > 1"
-                            :id="'delete_question_' + qIndex"
+                            :id="'delete_question_' + themeIndex + '_' + qIndex"
                             @click.prevent="deleteQuestion(themeIndex, qIndex)"
                             class="btn btn-link"
                             role="button"
@@ -158,7 +165,7 @@
                       <span class="sr-only">Supprimer la question</span>
                     </button>
                     <button v-else
-                            :id="'delete_question_' + qIndex"
+                            :id="'delete_question_' + themeIndex + '_' + qIndex + '_modal'"
                             class="btn btn-link"
                             role="button"
                             type="button"
@@ -169,6 +176,7 @@
                       <span class="fe fe-trash-2" aria-hidden="true"></span>
                       <span class="sr-only">Supprimer la question</span>
                     </button>
+
                     <confirm-modal
                             :id="'cannot-delete-question' + themeIndex + '-' + qIndex"
                              title="Suppression impossible"
@@ -181,6 +189,7 @@
                       </p>
                     </confirm-modal>
                   </span>
+
                   <question-file-upload :question="question"></question-file-upload>
                 </div>
                 <div class="card-body">
@@ -192,7 +201,7 @@
 
             <div class="card-footer">
               <button @click.prevent="addQuestion(themeIndex)"
-                      id="add_question"
+                      :id="'add_question_' + themeIndex"
                       class="btn btn-primary"
                       role="button"
                       type="button"
@@ -217,7 +226,8 @@
             </div>
           </div>
         </form>
-          <a class="wizard-step-graphics">
+
+        <a class="wizard-step-graphics">
           <span class="sr-only">Étape validée</span>
         </a>
 
@@ -232,27 +242,17 @@
 
 <script>
 import '../../css/questionnaires.css'
-import Vue from 'vue'
+import { reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import ConfirmModal from '../utils/ConfirmModal'
 import InfoBar from '../utils/InfoBar'
-import { mapFields } from 'vuex-map-fields'
 import MoveThemesModal from '../themes/MoveThemesModal'
 import QuestionFileList from '../questions/QuestionFileList'
 import QuestionFileUpload from '../questions/QuestionFileUpload'
 import reportValidity from 'report-validity'
 import SwapMixin from '../utils/SwapMixin'
 
-export default Vue.extend({
-  data() {
-    return {
-      errors: [],
-    }
-  },
-  computed: {
-    ...mapFields([
-      'currentQuestionnaire.themes',
-    ]),
-  },
+export default {
   components: {
     ConfirmModal,
     InfoBar,
@@ -260,60 +260,87 @@ export default Vue.extend({
     QuestionFileList,
     QuestionFileUpload,
   },
-  mixins: [
-    SwapMixin,
-  ],
-  methods: {
-    addQuestion: function(themeIndex) {
-      this.themes[themeIndex].questions.push({
+  mixins: [SwapMixin],
+  setup() {
+    const store = useStore()
+    const state = reactive({
+      errors: [],
+    })
+
+    // Remplace mapFields('currentQuestionnaire.themes')
+    const themes = computed({
+      get() {
+        return store.state.currentQuestionnaire.themes
+      },
+      set(value) {
+        store.commit('updateCurrentQuestionnaireThemes', value) // Assure-toi de créer ce mutation dans le store
+      },
+    })
+
+    const addQuestion = (themeIndex) => {
+      themes.value[themeIndex].questions.push({
         description: '',
-        order: this.themes[themeIndex].questions.length,
+        order: themes.value[themeIndex].questions.length,
       })
-    },
-    addTheme: function() {
+    }
+
+    const addTheme = () => {
       console.debug('addTheme')
-      this.themes.push({ title: '', questions: [{ description: '' }] })
-    },
-    deleteQuestion: function(themeIndex, qIndex) {
-      this.themes[themeIndex].questions.splice(qIndex, 1);
-      this.swapMixin_updateOrderFields(this.themes[themeIndex].questions);
-      if (this.themes[themeIndex].questions.length <= 1) {
-        $("#add_question").focus();
-      } else if (qIndex >= this.themes[themeIndex].questions.length) {
-        $("#delete_question_"+(qIndex-1)).focus();
+      themes.value.push({ title: '', questions: [{ description: '' }] })
+    }
+
+    const deleteQuestion = (themeIndex, qIndex) => {
+      themes.value[themeIndex].questions.splice(qIndex, 1)
+      SwapMixin.methods.swapMixin_updateOrderFields(themes.value[themeIndex].questions)
+      if (themes.value[themeIndex].questions.length <= 1) {
+        $("#add_question_" + themeIndex).focus()
+      } else if (qIndex >= themes.value[themeIndex].questions.length) {
+        $("#delete_question_"+themeIndex+"_"+(qIndex-1)).focus()
       } else {
-        $("#delete_question_"+(qIndex+1)).focus();
+        $("#delete_question_"+themeIndex+"_"+(qIndex+1)).focus()
       }
-    },
-    deleteTheme: function(themeIndex) {
-      this.themes.splice(themeIndex, 1);
-      this.swapMixin_updateOrderFields(this.themes);
-      if (this.themes.length <= 1) {
-        window.setTimeout(function() {$("#add_theme").focus();}, 300);
-      } else if (themeIndex >= this.themes.length) {
-        window.setTimeout(function() {$("#delete_theme_"+(themeIndex-1)).focus();}, 300);
+    }
+
+    const deleteTheme = (themeIndex) => {
+      themes.value.splice(themeIndex, 1)
+      SwapMixin.methods.swapMixin_updateOrderFields(themes.value)
+      if (themes.value.length <= 1) {
+        setTimeout(() => { $("#add_theme").focus() }, 300)
+      } else if (themeIndex >= themes.value.length) {
+        setTimeout(() => { $("#delete_theme_"+(themeIndex-1)).focus() }, 300)
       } else {
-        window.setTimeout(function() {$("#delete_theme_"+(themeIndex)).focus();}, 300);
+        setTimeout(() => { $("#delete_theme_"+themeIndex).focus() }, 300)
       }
-    },
-    // Used in QuestionnaireCreate.
-    validateForm: function() {
-      const form = this.$refs.form
+    }
+
+    const validateForm = () => {
+      const form = document.querySelector('form') // Remplace this.$refs.form
       return reportValidity(form)
-    },
-    moveQuestionUp(themeIndex, qIndex) {
-      const array = this.themes[themeIndex].questions
+    }
+
+    const moveQuestionUp = (themeIndex, qIndex) => {
+      const array = themes.value[themeIndex].questions
       const selectedJqueryElement = $('#theme-' + themeIndex + '-question-' + qIndex)
-      this.swapMixin_moveItemUp(array, qIndex, selectedJqueryElement)
-    },
-    moveQuestionDown(themeIndex, qIndex) {
-      const array = this.themes[themeIndex].questions
+      SwapMixin.methods.swapMixin_moveItemUp(array, qIndex, selectedJqueryElement)
+    }
+
+    const moveQuestionDown = (themeIndex, qIndex) => {
+      const array = themes.value[themeIndex].questions
       const selectedJqueryElement = $('#theme-' + themeIndex + '-question-' + qIndex)
-      this.swapMixin_moveItemDown(array, qIndex, selectedJqueryElement)
-    },
+      SwapMixin.methods.swapMixin_moveItemDown(array, qIndex, selectedJqueryElement)
+    }
+
+    return {
+      ...state,
+      themes,
+      addQuestion,
+      addTheme,
+      deleteQuestion,
+      deleteTheme,
+      validateForm,
+      moveQuestionUp,
+      moveQuestionDown,
+    }
   },
-})
+}
 </script>
-
-
-

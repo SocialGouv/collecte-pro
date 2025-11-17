@@ -1,57 +1,49 @@
-import '@babel/polyfill'
+import { createApp } from 'vue'
+import { createStore } from 'vuex'
+import ControlDetail from './controls/ControlDetail.vue'
 
-import Vuex, { mapActions } from 'vuex'
-import Vue from 'vue/dist/vue.js'
-
-import ControlDetail from './controls/ControlDetail'
-import { loadStatuses, store } from './store'
-
-Vue.use(Vuex)
-
-/*
-XSS-safe way to get JSON data from server : write it to html (django template does html encoding)
-and then fetch it into JS using safe DOM manipulation functions.
-Source :
-https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#html-entity-encoding
-
-A simpler safe way to get unsafe server data into Vue would be to get it through an AJAX request,
-instead of passing it through server templates.
-It does adds a delay for the user, since they will wait for the ajax-requested data.
-*/
+// Récupération des données du DOM (Django template)
 const controlsDataEl = document.getElementById('controls-data')
 const userDataEl = document.getElementById('user-data')
-// decode and parse the content of the div
+
 const controls = JSON.parse(controlsDataEl.textContent)
 const user = JSON.parse(userDataEl.textContent)
 
-new Vue({ // eslint-disable-line no-new
-  store,
-  el: '#control-detail-vm',
-  components: {
-    ControlDetail,
+// Store minimal pour ControlDetail
+const store = createStore({
+  state: {
+    controls: [],
+    sessionUser: null,
+    loadStatus: {}
   },
-  methods: {
-    ...mapActions(['fetchConfig']),
-    updateControls() {
-      this.$store.commit('updateControls', controls)
-      this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+  mutations: {
+    updateControls(state, controlsData) {
+      state.controls = controlsData
     },
-    onQuestionCreated(data) {
-      this.updateControls()
+    updateSessionUser(state, userData) {
+      state.sessionUser = userData
+    },
+    updateControlsLoadStatus(state, status) {
+      state.loadStatus.controls = status
+    },
+    updateSessionUserLoadStatus(state, status) {
+      state.loadStatus.user = status
     }
   },
-  created() {
-    // Ask the store to fetch the config from server and store it.
-    this.fetchConfig()
-    this.updateControls()
-
-    // Store the current user in the Vuex store, for use for other components (e.g. Sidebar)
-    this.$store.commit('updateSessionUser', user)
-    this.$store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
-
-    this.$root.$on('questionnaire-created', this.onQuestionCreated);
-  },
-  destroyed() {
-    this.$root.$off('questionnaire-created', this.onQuestionCreated);
+  actions: {
+    async fetchConfig() {
+      // Implémenter si besoin, sinon peut rester vide
+      return
+    }
   }
 })
+
+// Création de l'app Vue
+const app = createApp(ControlDetail, {
+  control: controls[0] || null, // Passe le premier control si besoin
+  user: user,
+  accessType: 'demandeur' // ou dynamique selon contexte
+})
+
+app.use(store)
+app.mount('#control-detail-vm')

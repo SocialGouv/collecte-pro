@@ -32,98 +32,20 @@
   </div>
 </template>
 
-<script>
-import Vue from 'vue'
-
-import AddUserModal from '../users/AddUserModal'
-import ControlCard from './ControlCard'
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
-import NoControls from './NoControls'
-import RemoveUserModal from '../users/RemoveUserModal'
-import UpdateUserModal from '../users/UpdateUserModal'
-
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 
-export default Vue.extend({
+import AddUserModal from '../users/AddUserModal.vue'
+import ControlCard from './ControlCard.vue'
+import NoControls from './NoControls.vue'
+import RemoveUserModal from '../users/RemoveUserModal.vue'
+import UpdateUserModal from '../users/UpdateUserModal.vue'
+
+export default defineComponent({
   name: 'ControlPage',
-  data: function() {
-    return {
-      hash: '',
-      accessType: '',
-    }
-  },
-  computed: {
-    displayedControl() {
-      return this.controls.find(control => {
-        return this.hash === '#control-' + control.id
-      })
-    },
-    ...mapState({
-      // Note : we don't map sessionUserLoadStatus and controlsLoadStatus, because the only use of
-      // ControlPage is within a page which pre-fetches the data from server, so we know it is
-      // already there.
-      user: 'sessionUser',
-      controls: 'controls',
-    }),
-  },
-  mounted() {
-    const isValidHash = (hash) => {
-      const reg = /^#control-[0-9]+$/
-      return reg.test(hash)
-    }
-
-    const hashPointsToExistingControl = (hash) => {
-      if (!isValidHash(hash)) {
-        return false
-      }
-      const controlId = parseInt(hash.replace('#control-', ''), 10)
-      if (isNaN(controlId)) {
-        return false
-      }
-      if (this.controls.map(control => control.id).includes(controlId)) {
-        return true;
-      } else {
-        // Le contrôle souhaité n'est pas accessible, on le signale
-        this.$parent.noAccess = true;
-        return false;
-      }
-    }
-
-    const updateHash = () => {
-      console.debug('hashchange', window.location.hash)
-      if (!hashPointsToExistingControl(window.location.hash) && this.controls.length > 0) {
-        // Change the hash to select the first control in the list, which will trigger the
-        // hashchange event again.
-        window.location.hash = '#control-' + this.controls[0].id
-        return
-      }
-      this.hash = window.location.hash
-    }
-
-    window.addEventListener(
-      'hashchange',
-      updateHash,
-      false)
-
-    updateHash()
-
-    this.getAccessType(this.displayedControl.id)
-  },
-  methods: {
-    async getAccessType(displayedControlId) {
-      try {
-        const resp = await axios.get(backendUrls.getAccessToControl(displayedControlId))
-        this.accessType = (
-          resp.data &&
-          resp.data[0] &&
-          resp.data[0].access_type
-        ) ? resp.data[0].access_type : ''
-      } catch (error) {
-        console.error("Erreur sur l'access type : ", error)
-      }
-    },
-  },
   components: {
     AddUserModal,
     ControlCard,
@@ -131,13 +53,68 @@ export default Vue.extend({
     RemoveUserModal,
     UpdateUserModal,
   },
+  data() {
+    return {
+      hash: '',
+      accessType: '',
+    }
+  },
+  computed: {
+    ...mapState({
+      user: 'sessionUser',
+      controls: 'controls',
+    }),
+    displayedControl() {
+      return this.controls.find(control => this.hash === '#control-' + control.id)
+    },
+  },
+  mounted() {
+    const isValidHash = (hash: string) => /^#control-[0-9]+$/.test(hash)
+
+    const hashPointsToExistingControl = (hash: string) => {
+      if (!isValidHash(hash)) return false
+      const controlId = parseInt(hash.replace('#control-', ''), 10)
+      if (isNaN(controlId)) return false
+      if (this.controls.map(c => c.id).includes(controlId)) return true
+      // Contrôle non accessible
+      if (this.$parent) (this.$parent as any).noAccess = true
+      return false
+    }
+
+    const updateHash = () => {
+      console.debug('hashchange', window.location.hash)
+      if (!hashPointsToExistingControl(window.location.hash) && this.controls.length > 0) {
+        window.location.hash = '#control-' + this.controls[0].id
+        return
+      }
+      this.hash = window.location.hash
+    }
+
+    window.addEventListener('hashchange', updateHash, false)
+    updateHash()
+
+    if (this.displayedControl) {
+      this.getAccessType(this.displayedControl.id)
+    }
+  },
   watch: {
     displayedControl: {
       handler(newVal) {
-        this.getAccessType(newVal.id)
+        if (newVal) this.getAccessType(newVal.id)
       },
       deep: true,
       immediate: true,
+    },
+  },
+  methods: {
+    async getAccessType(displayedControlId: number) {
+      try {
+        const resp = await axios.get(backendUrls.getAccessToControl(displayedControlId))
+        this.accessType =
+          resp.data?.[0]?.access_type ?? ''
+      } catch (error) {
+        console.error("Erreur sur l'access type : ", error)
+      }
     },
   },
 })

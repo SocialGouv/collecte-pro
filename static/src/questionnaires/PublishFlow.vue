@@ -70,14 +70,14 @@
       <div>
         Si l'erreur persiste, vous pouvez contacter
         <a :href="'mailto:' + config.support_team_email +
-                  '?subject=Erreur lors de la publication : ' +
-                  $refs.modalFlow.error.message"
-            class="text-nowrap"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-          {{ config.support_team_email }}
+          '?subject=Erreur lors de la publication : ' +
+          $refs.modalFlow.error.message"
+        class="text-nowrap"
+        target="_blank"
+        rel="noopener noreferrer">
+        {{ config.support_team_email }}
         </a>
+
         , et indiquer l'erreur suivante :
       </div>
       <div>
@@ -109,15 +109,16 @@
             Revenir à l'accueil
           </button>
           <a class="btn btn-primary ml-2"
-              :href="'mailto:' + emailHeader.audited +
-                    '?cc=' + emailHeader.inspectors +
-                    '&subject=' + emailSubject +
-                    '&body=' + emailBody"
-              target="_blank"
-              rel="noopener noreferrer"
-          >
-            Créer un mail pour l'informer
-          </a>
+            :href="'mailto:' + emailHeader.audited +
+                '?cc=' + emailHeader.inspectors +
+                '&subject=' + emailSubject +
+                '&body=' + emailBody"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+        Créer un mail pour l'informer
+        </a>
+
         </div>
       </div>
     </template>
@@ -128,88 +129,90 @@
 <script>
 import axios from 'axios'
 import backend from '../utils/backend'
-import { mapFields } from 'vuex-map-fields'
-import { mapState } from 'vuex'
+import { computed, reactive, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import ModalFlow from '../utils/ModalFlow'
-import Vue from 'vue'
 
-export default Vue.extend({
+export default {
   components: {
     ModalFlow,
-  },
-  data() {
-    return {
-      users: [],
-    }
   },
   props: {
     questionnaire: Object,
     controlId: Number,
     publishFunction: Function,
-    // Pass window dependency for testing
-    window: {
-      default: () => window,
-    },
+    window: { default: () => window },
   },
-  computed: {
-    ...mapFields([
-      'config',
-    ]),
-    ...mapState({
-      controls: 'controls',
-      config: 'config',
-    }),
-    emailSubject: function() {
-      if (this.config.env_name != '' && !this.config.env_name.toLowerCase().startsWith("production")) {
-        return this.config.env_name + ' - Questionnaire publié';
-      }
-      return 'Questionnaire publié';
-    },
-    emailHeader: function() {
-      const uniq = (arrArg) => arrArg.filter((elem, pos, arr) => arr.indexOf(elem) === pos)
-      const currentControl = this.controls.find(control => control.id === this.questionnaire.control)
+  setup(props) {
+    const store = useStore()
+    const state = reactive({
+      users: [],
+    })
 
-      if (currentControl) {
-        const inspectors = this.users.filter(u => u.profile_type === 'inspector').map(u => u.email).join(';')
-        const audited = this.users.filter(u => u.profile_type === 'audited').map(u => u.email).join(';')
-        return { inspectors, audited }
-      }
+    const controls = computed(() => store.state.controls)
+    const config = computed(() => store.state.config)
 
-      return {}
-    },
-    emailBody: function() {
+    const emailSubject = computed(() => {
+      if (config.value.env_name && !config.value.env_name.toLowerCase().startsWith("production")) {
+        return `${config.value.env_name} - Questionnaire publié`
+      }
+      return 'Questionnaire publié'
+    })
+
+    const emailHeader = computed(() => {
+      const currentControl = controls.value.find(c => c.id === props.questionnaire.control)
+      if (!currentControl) return {}
+      
+      const inspectors = state.users.filter(u => u.profile_type === 'inspector').map(u => u.email).join(';')
+      const audited = state.users.filter(u => u.profile_type === 'audited').map(u => u.email).join(';')
+      return { inspectors, audited }
+    })
+
+    const emailBody = computed(() => {
       const newline = '%0d%0a'
-      const currentControl = this.controls.find(control => control.id === this.questionnaire.control)
-      const expiryDateString = this.questionnaire.end_date === null ? '' : `${newline}${newline}La date limite de réponse est le ${this.questionnaire.end_date}.`
+      const currentControl = controls.value.find(c => c.id === props.questionnaire.control)
+      if (!currentControl) return ''
+      
+      const expiryDateString = props.questionnaire.end_date
+        ? `${newline}${newline}La date limite de réponse est le ${props.questionnaire.end_date}.`
+        : ''
 
-      if (currentControl) {
-        return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${this.questionnaire.numbering} : ${this.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à collecte-pro pour le consulter et apporter vos réponses : ${this.config.site_url}${newline}${newline}Cordialement,`
-      }
+      return `Bonjour,${newline}${newline}Un nouveau questionnaire vient d'être ajouté à la procédure « ${currentControl.title} ». Il s'agit du questionnaire numéro ${props.questionnaire.numbering} : ${props.questionnaire.title}.${expiryDateString}${newline}${newline}Nous vous invitons à vous connecter à collecte-pro pour le consulter et apporter vos réponses : ${config.value.site_url}${newline}${newline}Cordialement,`
+    })
 
-      return ''
-    },
-  },
-  methods: {
-    getUsers() {
-      axios.get(backend.getUsersInControl(this.controlId))
-        .then((response) => {
-          this.users = response.data
+    const getUsers = () => {
+      axios.get(backend.getUsersInControl(props.controlId))
+        .then(resp => {
+          state.users = resp.data
         })
-    },
-    start() {
+    }
+
+    const start = (modalRef) => {
       console.debug('outer start!')
-      this.$refs.modalFlow.start()
-    },
-    goHome() {
+      modalRef.start()
+    }
+
+    const goHome = () => {
       setTimeout(() => {
-        this.window.location.href = backend["control-detail"](
-          this.questionnaire.control
-        );
-      }, 500);
-    },
+        props.window.location.href = backend["control-detail"](props.questionnaire.control)
+      }, 500)
+    }
+
+    onMounted(() => {
+      getUsers()
+    })
+
+    return {
+      ...state,
+      controls,
+      config,
+      emailSubject,
+      emailHeader,
+      emailBody,
+      getUsers,
+      start,
+      goHome,
+    }
   },
-  mounted() {
-    this.getUsers()
-  },
-})
+}
 </script>

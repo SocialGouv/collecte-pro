@@ -1,38 +1,41 @@
-import '@babel/polyfill'
+// Remplacement de @babel/polyfill
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
+
 import './utils/polyfills.js'
 
+import { createApp } from 'vue'
 import { loadStatuses, store } from './store'
 import QuestionnaireCreate from './questionnaires/QuestionnaireCreate.vue'
 import Sidebar from './utils/Sidebar.vue'
-import Vue from 'vue/dist/vue.js'
-import Vuex, { mapActions } from 'vuex'
-
-Vue.use(Vuex)
 
 const controlsDataEl = document.getElementById('controls-data')
 const controls = JSON.parse(controlsDataEl.textContent)
 
-// Note : the parcel builds (build-questionnaire-create and watch-questionnaire-create) use
-// --no-source-maps, because vuejs-datepicker breaks parcel without it.
-
-// eslint-disable-next-line no-new
-new Vue({
-  store,
-  el: '#questionnaire-create-vm',
+const app = createApp({
   components: {
     QuestionnaireCreate,
     Sidebar,
   },
-  methods: {
-    ...mapActions(['fetchConfig', 'fetchControls', 'fetchSessionUser']),
-
-  },
-  created() {
+  mounted() {
     this.fetchConfig()
     this.fetchControls()
     this.$store.commit('updateControls', controls)
     this.$store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
     this.fetchSessionUser()
-
+  },
+  methods: {
+    fetchConfig() {
+      this.$store.dispatch('fetchConfig')
+    },
+    fetchControls() {
+      this.$store.dispatch('fetchControls')
+    },
+    fetchSessionUser() {
+      this.$store.dispatch('fetchSessionUser')
+    },
   },
 })
+
+app.use(store)
+app.mount('#questionnaire-create-vm')

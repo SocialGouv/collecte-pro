@@ -70,70 +70,81 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue'
 import EmptyModal from './EmptyModal'
 import ErrorBar from './ErrorBar'
-import Vue from 'vue'
 
 const SPINNER_DURATION_MILLIS = 2000
 
-export default Vue.extend({
-  props: {
-    // The function to run once the user has confirmed they really want to take the action.
-    actionFunction: Function,
-  },
-  data() {
-    return {
-      error: undefined,
-    }
-  },
-  computed: {
-    hasCustomError() {
-      return !!this.$scopedSlots['error-message']
-    },
-  },
+export default {
+  name: 'ConfirmModalWithWait',
   components: {
     EmptyModal,
     ErrorBar,
   },
-  methods: {
-    // Called by parent to start the flow.
-    start() {
-      console.debug('start!')
-      $(this.$refs.confirmModal.$el).on('hidden.bs.modal', () => {
-        this.error = undefined
-      })
-
-      $(this.$refs.confirmModal.$el).modal('show')
+  props: {
+    // The function to run once the user has confirmed they really want to take the action.
+    actionFunction: {
+      type: Function,
+      required: true,
     },
-    wait(timeMillis) {
-      return new Promise((resolve) => {
+  },
+  setup(props) {
+    const error = ref(undefined)
+    const confirmModal = ref(null)
+    const waitingModal = ref(null)
+    const successModal = ref(null)
+
+    const hasCustomError = computed(() => {
+      // In Vue 3, use slots directly instead of $scopedSlots
+      return !!props.$slots?.['error-message']
+    })
+
+    function start() {
+      console.debug('start!')
+      $(confirmModal.value).on('hidden.bs.modal', () => {
+        error.value = undefined
+      })
+      $(confirmModal.value).modal('show')
+    }
+
+    function wait(timeMillis) {
+      return new Promise(resolve => {
         const id = setTimeout(() => {
           clearTimeout(id)
           resolve()
         }, timeMillis)
       })
-    },
-    confirmed() {
+    }
+
+    async function confirmed() {
       console.debug('confirmed!')
-      $(this.$refs.confirmModal.$el).modal('hide')
-      $(this.$refs.waitingModal.$el).modal('show')
+      $(confirmModal.value).modal('hide')
+      $(waitingModal.value).modal('show')
+      error.value = undefined
 
-      this.error = undefined
+      try {
+        await Promise.all([wait(SPINNER_DURATION_MILLIS), props.actionFunction()])
+        console.debug('Done action.')
+        $(waitingModal.value).modal('hide')
+        $(successModal.value).modal('show')
+      } catch (err) {
+        console.error('Error while doing the action:', err)
+        error.value = err
+        $(waitingModal.value).modal('hide')
+        $(confirmModal.value).modal('show')
+      }
+    }
 
-      return Promise.all([this.wait(SPINNER_DURATION_MILLIS), this.actionFunction()])
-        .then(() => {
-          console.debug('Done action.')
-          $(this.$refs.waitingModal.$el).modal('hide')
-          $(this.$refs.successModal.$el).modal('show')
-        })
-        .catch(error => {
-          console.error('Error while doing the action : ', error)
-          // Go back to the first modal, with an error message.
-          this.error = error
-          $(this.$refs.waitingModal.$el).modal('hide')
-          $(this.$refs.confirmModal.$el).modal('show')
-        })
-    },
+    return {
+      error,
+      confirmModal,
+      waitingModal,
+      successModal,
+      hasCustomError,
+      start,
+      confirmed,
+    }
   },
-})
+}
 </script>

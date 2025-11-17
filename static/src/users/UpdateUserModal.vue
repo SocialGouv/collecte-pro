@@ -4,22 +4,22 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title" id="labelForModalAddUser">{{ editingControl.title }}</div>
+        <div class="modal-title" id="labelForModalAddUser">{{ localEditingControl.title }}</div>
       </div>
       <div class="modal-body">
         <div v-if="hasErrors" class="alert alert-danger" role="alert">
           La modification d'utilisateur n'a pas fonctionné.
         </div>
 
-            <div class="form-group">
-              <p class="form-label">Email : {{ editingUser.email}}</p>
-              <p class="small text-muted">
-                Pour modifier un email, vous devez supprimer l'utilisateur et en créer un nouveau.
-              </p>
-              <button class="btn btn-secondary btn-sm" @click="showRemoveModal">
-                Supprimer l'utilisateur
-              </button>
-            </div>
+          <div class="form-group">
+            <p class="form-label">Email : {{ localEditingUser.email}}</p>
+            <p class="small text-muted">
+              Pour modifier un email, vous devez supprimer l'utilisateur et en créer un nouveau.
+            </p>
+            <button class="btn btn-secondary btn-sm" @click="showRemoveModal">
+              Supprimer l'utilisateur
+            </button>
+          </div>
         <form @submit.prevent="updateUser" @keydown.esc="resetFormData">
           <div class="form-fieldset">
             <div class="form-group">
@@ -28,11 +28,11 @@
                 <span class="form-required"></span>
               </label>
               <input type="text"
-                     class="form-control"
-                     v-bind:class="{ 'state-invalid': errors.first_name }"
-                     v-model="editingUser.first_name"
-                     required
-                     aria-labelledby="first-name-label">
+                    class="form-control"
+                    v-bind:class="{ 'state-invalid': errors.first_name }"
+                    v-model="localFirstName"
+                    required
+                    aria-labelledby="first-name-label">
               <p class="text-muted pl-2" v-if="errors.first_name">
                 <span class="fa fa-warning" aria-hidden="true"></span>
                 {{ errors.first_name.join(' / ')}}
@@ -44,11 +44,11 @@
                 <span class="form-required"></span>
               </label>
               <input type="text"
-                     class="form-control"
-                     v-bind:class="{ 'state-invalid': errors.last_name }"
-                     v-model="editingUser.last_name"
-                     required
-                     aria-labelledby="last-name-label">
+                    class="form-control"
+                    v-bind:class="{ 'state-invalid': errors.last_name }"
+                    v-model="localLastName"
+                    required
+                    aria-labelledby="last-name-label">
               <p class="text-muted pl-2" v-if="errors.last_name">
                 <span class="fa fa-warning" aria-hidden="true"></span>
                 {{ errors.last_name.join(' / ')}}
@@ -67,22 +67,21 @@
 </template>
 
 <script lang="ts">
-import { mapFields } from 'vuex-map-fields'
+// Suppression de: import { mapFields } from 'vuex-map-fields'
+import { mapState } from 'vuex' // mapState pour l'accès en lecture si nécessaire
 import axios from 'axios'
 import backend from '../utils/backend'
-import Vue from 'vue'
-import Vuex from 'vuex'
+// Suppression de l'initialisation Vue 2: import Vue from 'vue', import Vuex from 'vuex', Vue.use(Vuex)
 
-import { store } from '../store'
+// Suppression de: import { store } from '../store'
 import EventBus from '../events'
-
-Vue.use(Vuex)
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default Vue.extend({
-  store,
+export default { // Remplacement de Vue.extend
+  // store, // Retiré
+
   data: function() {
     return {
       postResult: [],
@@ -91,14 +90,39 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapFields([
-      'editingUser',
-      'editingControl',
-    ]),
+    // 1. Remplacement de `editingControl` (lecture seule dans ce contexte)
+    localEditingControl: mapState(['editingControl']),
+
+    // 2. Remplacement de `editingUser` (lecture, mais nous le remplaçons par les champs individuels)
+    localEditingUser: mapState(['editingUser']),
+    
+    // 3. Remplacement de v-model="editingUser.first_name"
+    localFirstName: {
+      get() {
+        return this.$store.state.editingUser.first_name
+      },
+      set(value) {
+        // Nouvelle mutation pour mettre à jour un champ spécifique de l'utilisateur
+        this.$store.commit('setEditingUserField', { field: 'first_name', value })
+      }
+    },
+
+    // 4. Remplacement de v-model="editingUser.last_name"
+    localLastName: {
+      get() {
+        return this.$store.state.editingUser.last_name
+      },
+      set(value) {
+        // Nouvelle mutation pour mettre à jour un champ spécifique de l'utilisateur
+        this.$store.commit('setEditingUserField', { field: 'last_name', value })
+      }
+    },
   },
   methods: {
     showRemoveModal() {
       this.hideThisModal()
+      // Assurez-vous que jQuery/Bootstrap est bien chargé dans Vue 3.
+      // Le mode compatibilité gère souvent cela, sinon il faudra utiliser une référence Vue 3.
       $('#removeUserModal').modal('show')
     },
     hideThisModal() {
@@ -110,10 +134,15 @@ export default Vue.extend({
       this.errors = []
     },
     updateUser() {
-      axios.post(backend.user(), this.editingUser)
+      // NOTE: L'objet this.editingUser n'existe plus directement. 
+      // Nous utilisons l'état actuel du store (this.$store.state.editingUser)
+      const userToUpdate = this.$store.state.editingUser;
+
+      axios.post(backend.user(), userToUpdate)
         .then(response => {
           this.postResult = response.data
-          EventBus.$emit('users-changed', this.postResult)
+          // Utilisation de l'EventBus déprécié, mais conservé pour l'instant.
+          EventBus.$emit('users-changed', this.postResult) 
           this.hideThisModal()
         })
         .catch((error) => {
@@ -122,5 +151,5 @@ export default Vue.extend({
         })
     },
   },
-})
+}
 </script>

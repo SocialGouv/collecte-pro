@@ -1,44 +1,42 @@
 <template>
-  <div v-bind:id="'question' + themeNumbering + '-' + questionNumbering"
+  <div :id="'question' + themeNumbering + '-' + questionNumbering"
        class="card m-0 p-0 pb-0">
     <div class="card-header border-0"
-         :data-toggle="collapseValue"
-         :data-target="'#question-body-' + question.id">
-      <question :theme-numbering="themeNumbering"
+         :data-bs-toggle="collapseValue"
+         :data-bs-target="'#question-body-' + question.id">
+      <Question :theme-numbering="themeNumbering"
                 :question-numbering="questionNumbering"
-                :question="question">
-      </question>
+                :question="question" />
     </div>
     <div :class="collapseValue" :id="'question-body-' + question.id">
       <slot></slot>
     </div>
-
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, computed } from 'vue'
 import Question from './Question'
-import Vue from 'vue'
 
-export default Vue.extend({
+interface QuestionType {
+  id: number
+  description: string
+  question_files?: any[]
+  response_files?: any[]
+}
+
+export default defineComponent({
+  name: 'QuestionBoxWrapper',
+  components: { Question },
   props: {
-    question: Object,
-    questionNumbering: Number,
-    themeNumbering: Number,
-    // Note : tabler.io's card-collapse doesn't work within a v-for. So we use bootstrap collapse.
-    withCollapse: {
-      type: Boolean,
-      default: false,
-    },
+    question: { type: Object as () => QuestionType, required: true },
+    questionNumbering: { type: Number, required: true },
+    themeNumbering: { type: Number, required: true },
+    withCollapse: { type: Boolean, default: false },
   },
-  computed: {
-    collapseValue: function() {
-      if (this.withCollapse) return 'collapse'
-      return ''
-    },
-  },
-  components: {
-    Question,
+  setup(props) {
+    const collapseValue = computed(() => (props.withCollapse ? 'collapse' : ''))
+    return { collapseValue }
   },
 })
 </script>

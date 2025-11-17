@@ -11,31 +11,33 @@
 
 </template>
 
-<script>
-  import Vue from 'vue'
-  import ControlCreate from './ControlCreate'
-  import ControlTitle from './ControlTitle'
-  import QuestionnaireList from '../questionnaires/QuestionnaireList'
-  import UserSection from '../users/UserSection'
-  import ErrorBar from '../utils/ErrorBar'
+<script lang="ts">
+import { defineComponent } from 'vue'
+import ControlCreate from './ControlCreate.vue'
+import ControlTitle from './ControlTitle.vue'
+import QuestionnaireList from '../questionnaires/QuestionnaireList.vue'
+import UserSection from '../users/UserSection.vue'
+import ErrorBar from '../utils/ErrorBar.vue'
 
-  export default Vue.extend({
-    props: [
-      'control',
-      'user',
-      'accessType',
-    ],
-    computed: {
-      noAccess() {
-        return this.$parent.$parent.noAccess;
-      },
+export default defineComponent({
+  name: 'ControlCard',
+  props: {
+    control: { type: Object, required: true },
+    user: { type: Object, required: true },
+    accessType: { type: String, default: '' },
+  },
+  components: {
+    ControlCreate,
+    ControlTitle,
+    QuestionnaireList,
+    UserSection,
+    ErrorBar,
+  },
+  computed: {
+    noAccess(): boolean {
+      // En Vue 3, $parent existe toujours mais le typage TS nécessite un cast
+      return (this.$parent?.$parent as any)?.noAccess ?? false
     },
-    components: {
-      ControlCreate,
-      ControlTitle,
-      QuestionnaireList,
-      UserSection,
-      ErrorBar,
-    },
-  })
+  },
+})
 </script>

@@ -79,15 +79,15 @@
 
 
 <script>
-import Vue from 'vue'
-import Datepicker from 'vuejs-datepicker'
-import { mapFields } from 'vuex-map-fields'
+import { defineComponent, computed, ref } from 'vue'
+import { useStore } from 'vuex'
+import Datepicker from 'vue3-datepicker'
 import fr from '../utils/vuejs-datepicker-locale-fr'
 import reportValidity from 'report-validity'
 import QuestionnaireFileUpload from './QuestionnaireFileUpload'
 import QuestionnaireFileList from './QuestionnaireFileList'
 
-// eslint-disable-next-line no-multi-str
+// Texte par défaut
 const DESCRIPTION_DEFAULT = 'À l’occasion de cette procédure, \
 nous vous demandons de nous transmettre des renseignements et des justifications \
 sur les points énumérés dans ce questionnaire.\nVous voudrez bien nous faire \
@@ -95,32 +95,52 @@ parvenir au fur et à mesure votre réponse. \
 \nNous restons à votre disposition ainsi qu’à celle de vos \
 services pour toute information complémentaire qu’appellerait ce questionnaire.'
 
-const QuestionnaireMetadataCreate = Vue.extend({
+export default defineComponent({
+  name: 'QuestionnaireMetadataCreate',
   props: {
     questionnaireNumbering: Number,
     questionnaire: Object,
   },
-  data() {
-    return {
-      errors: [],
-      fr: fr, // locale for datepicker
-      format: "yyyy-MM-dd", // format for datepicker
-      placeholder: "yyyy-mm-dd", // Placeholder for datepicker
+  setup(props) {
+    const store = useStore()
+    const formRef = ref(null)
+
+    // Accès direct aux champs du store
+    const description = computed({
+      get: () => store.state.currentQuestionnaire.description,
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'description', value })
+    })
+
+    const end_date = computed({
+      get: () => store.state.currentQuestionnaire.end_date,
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'end_date', value })
+    })
+
+    const title = computed({
+      get: () => store.state.currentQuestionnaire.title,
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'title', value })
+    })
+
+    const errors = ref([])
+    const frLocale = fr
+    const format = 'yyyy-MM-dd'
+    const placeholder = 'yyyy-mm-dd'
+
+    const validateForm = () => {
+      return formRef.value ? reportValidity(formRef.value) : true
     }
-  },
-  computed: {
-    ...mapFields([
-      'currentQuestionnaire.description',
-      'currentQuestionnaire.end_date',
-      'currentQuestionnaire.title',
-    ]),
-  },
-  methods: {
-    // Used in QuestionnaireCreate.
-    validateForm: function() {
-      const form = this.$refs.form
-      return reportValidity(form)
-    },
+
+    return {
+      description,
+      end_date,
+      title,
+      errors,
+      frLocale,
+      format,
+      placeholder,
+      formRef,
+      validateForm,
+    }
   },
   components: {
     Datepicker,
@@ -130,6 +150,4 @@ const QuestionnaireMetadataCreate = Vue.extend({
 })
 
 QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT = DESCRIPTION_DEFAULT
-export default QuestionnaireMetadataCreate
-
 </script>

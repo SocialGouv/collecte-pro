@@ -50,65 +50,77 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import EventBus from '../events'
-import { mapFields } from 'vuex-map-fields'
-import { store } from '../store'
-import UserList from './UserList'
-import Vue from 'vue'
+import UserList from './UserList.vue'
 
-export default Vue.extend({
-  store,
+export default defineComponent({
+  name: 'ControlUsers',
+  components: { UserList },
   props: {
     control: { type: Object, default: () => ({}) },
     accessType: { type: String, default: '' },
   },
-  data() {
-    return {
-      auditedUsers: [],
-      inspectorUsers: [],
-    }
-  },
-  computed: {
-    ...mapFields([
-      'editingControl',
-      'editingProfileType',
-      'sessionUser',
-    ]),
-  },
-  methods: {
-    getAuditedUsers() {
-      axios.get(backendUrls.getAuditedUsersInControl(this.control.id))
-        .then((response) => {
-          this.auditedUsers = response.data
-        })
-    },
-    getInspectorUsers() {
-      axios.get(backendUrls.getInspectorUsersInControl(this.control.id))
-        .then((response) => {
-          this.inspectorUsers = response.data
-        })
-    },
-    updateEditingState(profileType) {
-      this.editingControl = this.control
-      this.editingProfileType = profileType
-    },
-  },
-  mounted() {
-    this.getAuditedUsers()
-    this.getInspectorUsers()
-    EventBus.$on('users-changed', () => {
-      this.getAuditedUsers()
-      this.getInspectorUsers()
+  setup(props) {
+    const store = useStore()
+    const auditedUsers = ref<any[]>([])
+    const inspectorUsers = ref<any[]>([])
+
+    // Computed avec getters et setters pour le store
+    const editingControl = computed({
+      get: () => store.state.editingControl,
+      set: (value) => store.commit('setEditingControl', value),
     })
-  },
-  components: {
-    UserList,
+
+    const editingProfileType = computed({
+      get: () => store.state.editingProfileType,
+      set: (value) => store.commit('setEditingProfileType', value),
+    })
+
+    const sessionUser = computed(() => store.state.sessionUser)
+
+    // Méthodes
+    const getAuditedUsers = async () => {
+      const response = await axios.get(backendUrls.getAuditedUsersInControl(props.control.id))
+      auditedUsers.value = response.data
+    }
+
+    const getInspectorUsers = async () => {
+      const response = await axios.get(backendUrls.getInspectorUsersInControl(props.control.id))
+      inspectorUsers.value = response.data
+    }
+
+    const updateEditingState = (profileType: string) => {
+      editingControl.value = props.control
+      editingProfileType.value = profileType
+    }
+
+    // Lifecycle
+    onMounted(() => {
+      getAuditedUsers()
+      getInspectorUsers()
+      EventBus.$on('users-changed', () => {
+        getAuditedUsers()
+        getInspectorUsers()
+      })
+    })
+
+    return {
+      auditedUsers,
+      inspectorUsers,
+      editingControl,
+      editingProfileType,
+      sessionUser,
+      getAuditedUsers,
+      getInspectorUsers,
+      updateEditingState,
+    }
   },
 })
 </script>

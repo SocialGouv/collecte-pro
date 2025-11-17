@@ -15,23 +15,24 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import WizardStep from './WizardStep'
+import WizardStep from './WizardStep.vue'
 
-// We use the name "step-number" for the user-facing numbering : 1, 2, ..., n
-// We use the name "i" for the internal numbering : 0, 1, ..., n-1
-export default Vue.extend({
-  props: ['active-step-number', 'step-titles'],
+export default {
+  name: 'Wizard',
+  props: {
+    activeStepNumber: Number,
+    stepTitles: Array
+  },
   components: {
     WizardStep,
   },
   computed: {
-    activeI: function() {
+    activeI() {
       return this.activeStepNumber - 1
     },
   },
   methods: {
-    clicked: function(clickedStepNumber) {
+    clicked(clickedStepNumber) {
       if (clickedStepNumber === (this.activeStepNumber + 1)) {
         this.$emit('next', clickedStepNumber)
         return
@@ -42,6 +43,5 @@ export default Vue.extend({
       }
     },
   },
-})
-
+}
 </script>

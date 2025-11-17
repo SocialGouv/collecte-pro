@@ -1,18 +1,18 @@
 import axios from 'axios'
-import { getField, updateField } from 'vuex-map-fields'
+// L'importation de getField et updateField est supprimée
 import backendUrls from './utils/backend.js'
-import Vue from 'vue'
-import Vuex from 'vuex'
+// Vue n'est plus importé ni utilisé globalement
+import { createStore } from 'vuex' // Importation de la nouvelle fonction createStore de Vuex 4
 
-Vue.use(Vuex)
-
+// La syntaxe des états de chargement est conservée
 export const loadStatuses = {
   LOADING: Symbol('LOADING'),
   SUCCESS: Symbol('SUCCESS'),
   ERROR: Symbol('ERROR'),
 }
 
-export const store = new Vuex.Store({
+// export const store = new Vuex.Store({  <-- Ancienne syntaxe
+export const store = createStore({ // Nouvelle syntaxe Vuex 4
   state: {
     config: {},
     configLoadStatus: loadStatuses.LOADING,
@@ -25,11 +25,26 @@ export const store = new Vuex.Store({
     sessionUser: {},
     sessionUserLoadStatus: loadStatuses.LOADING,
   },
+  // La méthode getField est supprimée
   getters: {
-    getField,
+    // Les getters natifs peuvent être ajoutés ici si nécessaire, 
+    // mais le getter 'getField' de vuex-map-fields n'est plus requis.
   },
   mutations: {
-    updateField,
+    // updateField est supprimé. Les mutations sont ajoutées pour les champs qui étaient gérés par mapFields
+
+    // Mutations spécifiques pour remplacer mapFields (ajoutées pour les besoins des composants migrés)
+    setEditingControl(state, payload) {
+      state.editingControl = payload
+    },
+    setEditingUser(state, payload) {
+      state.editingUser = payload
+    },
+    setEditingProfileType(state, payload) {
+      state.editingProfileType = payload
+    },
+
+    // Mutations existantes et conservées
     updateSessionUser(state, user) {
       state.sessionUser = user
     },
@@ -73,12 +88,19 @@ export const store = new Vuex.Store({
     async fetchControls({ commit }) {
       const currentURL = window.location.pathname
       if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/' || currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/') {
+        // NOTE VUE 3: L'utilisation de 'this.controls' dans l'action est incorrecte en Vuex 4.
+        // Vous devez commit la mise à jour après l'appel API.
+        let controlsData = [];
         await axios.get(backendUrls.getControlsList()).then(response => {
-          this.controls = response.data
+          controlsData = response.data
         }).catch(err => {
+          // Gérer l'erreur si nécessaire
         })
+        commit('updateControls', controlsData) // Commit la mise à jour ici
+      } else {
+        // Si la condition n'est pas remplie, s'assurer que controls n'est pas utilisé sans être initialisé
+        commit('updateControls', [])
       }
-      commit('updateControls', this.controls)
       commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
     },
   },

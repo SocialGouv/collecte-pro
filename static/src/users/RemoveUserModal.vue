@@ -36,16 +36,16 @@
 
 <script lang="ts">
 import axios from 'axios'
-import { mapFields } from 'vuex-map-fields'
+// Suppression de: import { mapFields } from 'vuex-map-fields'
+import { mapState } from 'vuex' // Import de mapState de Vuex 4
 import backend from '../utils/backend'
-import Vue from 'vue'
+// Suppression de l'import de Vue 2 et du store injecté localement
 
-import { store } from '../store'
 import ErrorBar from '../utils/ErrorBar'
 import EventBus from '../events'
 
-export default Vue.extend({
-  store,
+export default { // Remplacement de Vue.extend
+  // store, // Retiré
   data: function() {
     return {
       postResult: {},
@@ -57,7 +57,8 @@ export default Vue.extend({
     ErrorBar,
   },
   computed: {
-    ...mapFields([
+    // Remplacement de mapFields par mapState (Lecture seule)
+    ...mapState([
       'editingUser',
       'editingControl',
     ]),
@@ -72,10 +73,13 @@ export default Vue.extend({
       this.error = undefined
 
       var postData = { control: this.editingControl.id }
+      // NOTE: Le code utilise les champs du store (editingUser.id, editingControl.id)
       axios.post(backend.removeUserFromControl(this.editingUser.id), postData)
         .then(response => {
           this.postResult = response.data
-          EventBus.$emit('users-changed', this.postResult)
+          // Utilisation de l'EventBus global (conservé pour l'instant)
+          EventBus.$emit('users-changed', this.postResult) 
+          // Assurez-vous que jQuery/Bootstrap est disponible
           $('#removeUserModal').modal('hide')
         })
         .catch(error => {
@@ -84,5 +88,5 @@ export default Vue.extend({
         })
     },
   },
-})
+}
 </script>

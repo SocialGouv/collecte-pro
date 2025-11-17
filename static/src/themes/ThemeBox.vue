@@ -11,13 +11,14 @@
   </div>
 </template>
 
-<script>
-  import Vue from 'vue'
+<script lang="ts">
+import { defineComponent } from 'vue'
 
-  export default Vue.extend({
-    props: [
-      'theme',
-      'themeNumbering',
-    ],
-  })
+export default defineComponent({
+  name: 'ThemeComponent',
+  props: {
+    theme: null,
+    themeNumbering: null,
+  },
+})
 </script>

@@ -9,6 +9,7 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  export default Vue.extend({})
+export default {
+  name: 'MyComponent', // optionnel mais recommandé
+}
 </script>

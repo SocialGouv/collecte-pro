@@ -91,26 +91,22 @@ import ErrorBar from '../utils/ErrorBar'
 import { mapState } from 'vuex'
 import { loadStatuses } from '../store'
 import { SidebarMenu } from 'vue-sidebar-menu'
-import Vue from 'vue'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
-
 import axios from 'axios'
 
 const ERROR_EMAIL_BODY = 'Bonjour,%0D%0A%0D%0A' +
-    'Je voudrais vous signaler une erreur lors du chargement des espaces de dépôt dans le menu.' +
-    ' Les détails sont ci-dessous.%0D%0A%0D%0ACordialement,%0D%0A%0D%0A%0D%0A-----------%0D%0A'
+  'Je voudrais vous signaler une erreur lors du chargement des espaces de dépôt dans le menu.' +
+  ' Les détails sont ci-dessous.%0D%0A%0D%0ACordialement,%0D%0A%0D%0A%0D%0A-----------%0D%0A'
 const ERROR_EMAIL_SUBJECT = 'Erreur de chargement des espaces de dépôt'
 
-export default Vue.extend({
+export default {
+  name: 'Sidebar',
   components: {
     ControlCreate,
     ErrorBar,
     SidebarMenu,
   },
   props: {
-    // Pass window object as prop, so that we can pass a mock for testing.
-    // Do not use "window" or "document" directly in this file, instead use "this.window" and
-    // "this.window.document"
     window: {
       default: () => window,
     },
@@ -137,7 +133,7 @@ export default Vue.extend({
     }),
     isLoaded() {
       return this.controlsLoadStatus === loadStatuses.SUCCESS &&
-          this.userLoadStatus === loadStatuses.SUCCESS
+        this.userLoadStatus === loadStatuses.SUCCESS
     },
     errorEmailLink() {
       if (typeof this.config.support_team_email !== 'undefined') {
@@ -148,196 +144,123 @@ export default Vue.extend({
     },
   },
   watch: {
-    controlsLoadStatus(newValue, oldValue) {
+    controlsLoadStatus(newValue) {
       if (this.showSidebar && newValue === loadStatuses.ERROR) {
         this.displayError('Erreur lors du chargement des espaces. Essayez de recharger la page.')
-        return
       }
     },
-    userLoadStatus(newValue, oldValue) {
+    userLoadStatus(newValue) {
       if (this.showSidebar && newValue === loadStatuses.ERROR) {
         this.displayError('Erreur lors du chargement des espaces. Essayez de recharger la page.')
-        return
       }
     },
-    isLoaded(newValue, oldValue) {
-      if (this.showSidebar) {
-        if (newValue === false) {
-          return
-        }
+    isLoaded(newValue) {
+      if (this.showSidebar && newValue) {
         this.buildMenu()
       }
     },
   },
-  mounted: function() {
+  mounted() {
     console.debug('this.window.location.pathname', this.window.location.pathname)
     if (this.window.location.pathname === backend.welcome()) {
       this.showSidebar = false
       return
     }
-    // If the data is already there (because it was prefetched from server), build menu now.
-    // Else the watcher on isLoaded will trigger buildMenu when the data is loaded.
     if (this.isLoaded) {
       this.buildMenu()
     }
   },
   methods: {
-
-    onItemClick(event, item, node) {
-      const targetElement = event.target;
+    async onItemClick(event, item) {
+      const targetElement = event.target
       if (targetElement.matches('span.vsm--badge.fas.fa-thumbtack')) {
-
-        targetElement.classList.toggle('unpinned');
-        const isPinned = !targetElement.classList.contains('unpinned');
-        this.markAsPinned(item.ctrl_id, isPinned);
-      } 
+        targetElement.classList.toggle('unpinned')
+        const isPinned = !targetElement.classList.contains('unpinned')
+        await this.markAsPinned(item.ctrl_id, isPinned)
+      }
     },
-    
-    markAsPinned(ctrl_id, isPinned){
-      const payload = {
-        is_pinned: isPinned
-      };
-
-      axios.patch(backend.control(ctrl_id), payload)
-        .then(response => {
-          this.is_pinned = response.data.is_pinned;
-        })
-        .catch((error) => {
-          console.error(error)
-          this.errors = error.response.data
-          this.hasErrors = true
-        });
+    async markAsPinned(ctrl_id, isPinned) {
+      try {
+        const payload = { is_pinned: isPinned }
+        const response = await axios.patch(backend.control(ctrl_id), payload)
+        this.is_pinned = response.data.is_pinned
+      } catch (error) {
+        console.error(error)
+        this.errors = error.response?.data
+        this.hasErrors = true
+      }
     },
     displayError(err) {
       this.hasError = true
       this.errorMessage = err.message ? err.message : err
       this.error = err
     },
-    buildMenu() {
-      console.debug('build menu')
-      const makeControlTitle = control => {
-        let title = control.reference_code + '\n'
-        if (control.depositing_organization) {
-          title += control.depositing_organization
-        } else {
-          title += control.title
-        }
-        return title
-      }
-
-      const makeQuestionnaireLink = questionnaire => {
-        if (!questionnaire.is_draft) {
-          return backend['questionnaire-detail'](questionnaire.id)
-        }
-        if (questionnaire.editor && questionnaire.editor.id === this.user.id) {
-          return backend['questionnaire-edit'](questionnaire.id)
-        }
-        return backend['questionnaire-detail'](questionnaire.id)
-      }
-
-      // If we are on a create-questionnaire page, find the control for which the questionnaire is
-      // being created.
-      const controlCreatingQuestionnaire =
-          backend.getIdFromViewUrl(this.window.location.pathname, 'questionnaire-create')
-
-      // If we are on a trash page, find the control for which the trash folder is.
-      const questionnaireForTrash = backend.getIdFromViewUrl(this.window.location.pathname, 'trash')
-
+    async buildMenu() {
       const menu = []
-      this.controls.forEach(async control => {
+      for (const control of this.controls) {
         await this.getAccessTypeLibelle(control.id)
         const controlMenu = {
           icon: this.accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
-          title: makeControlTitle(control),
+          title: control.reference_code + '\n' + (control.depositing_organization || control.title),
           ctrl_id: control.id,
-           attributes: {
-            title: this.accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : ''
-          }
+          attributes: { title: this.accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
         }
 
         if (control.is_model && this.accessType === 'demandeur') {
           controlMenu.badge = {
             icon: 'fas fa-thumbtack',
             class: `fas fa-thumbtack ${control.is_pinned ? '' : 'unpinned'}`,
-            attributes: {
-              role: 'img',
-              'aria-label': 'épinglé',
-              'title': control.is_pinned ? 'épinglé' : 'épingler cet espace'
-            },
-            
-          };
-        }
-
-      const currentURL = this.window.location.pathname
-      if (currentURL !== '/faq/' && currentURL !== '/declaration-conformite/' && currentURL !== '/cgu/') {
-
-        const resp = await axios.get(backend.getAccessToControl(control.id))
-        const accessType = resp.data[0].access_type
-        const children = control.questionnaires.map(questionnaire => {
-          if (accessType === 'demandeur' || !questionnaire.is_draft) {
-            const questionnaireItem = {
-              href: makeQuestionnaireLink(questionnaire),
-              title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title,
-            }
-            if (questionnaireForTrash === questionnaire.id) {
-              questionnaireItem.child = [{
-                href: backend.trash(questionnaire.id),
-                title: 'Corbeille',
-              }]
-            }
-            return questionnaireItem
+            attributes: { role: 'img', 'aria-label': 'épinglé', 'title': control.is_pinned ? 'épinglé' : 'épingler cet espace' },
           }
-        }).filter(item => !!item)
-        if (children.length > 0) {
-          controlMenu.child = children
         }
 
-        // Add menu item for the questionnaire being created, if there is one.
-        if (controlCreatingQuestionnaire === (control.id)) {
-          if (!controlMenu.child) {
-            controlMenu.child = []
+        const currentURL = this.window.location.pathname
+        if (!['/faq/', '/declaration-conformite/', '/cgu/'].includes(currentURL)) {
+          const resp = await axios.get(backend.getAccessToControl(control.id))
+          const accessType = resp.data[0].access_type
+          const children = control.questionnaires
+            .filter(q => accessType === 'demandeur' || !q.is_draft)
+            .map(questionnaire => {
+              const item = { href: backend['questionnaire-detail'](questionnaire.id), title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title }
+              if (backend.getIdFromViewUrl(currentURL, 'trash') === questionnaire.id) {
+                item.child = [{ href: backend.trash(questionnaire.id), title: 'Corbeille' }]
+              }
+              return item
+            })
+          if (children.length) controlMenu.child = children
+
+          const controlCreatingQuestionnaire = backend.getIdFromViewUrl(currentURL, 'questionnaire-create')
+          if (controlCreatingQuestionnaire === control.id) {
+            controlMenu.child = controlMenu.child || []
+            controlMenu.child.push({ href: backend['questionnaire-create'](control.id), title: 'Q' + (controlMenu.child.length + 1) })
           }
-          controlMenu.child.push({
-            href: backend['questionnaire-create'](control.id),
-            title: 'Q' + (controlMenu.child.length + 1),
-          })
         }
-      }
         menu.push(controlMenu)
         menu.sort((a, b) => {
-            const aPinned = a.badge && !a.badge.class.includes('unpinned'); 
-            const bPinned = b.badge && !b.badge.class.includes('unpinned');
-
-            if (aPinned && !bPinned) return -1; 
-            if (!aPinned && bPinned) return 1; 
-            
-            return b.ctrl_id - a.ctrl_id;
-          }
-        );
-
-      })
+          const aPinned = a.badge && !a.badge.class.includes('unpinned')
+          const bPinned = b.badge && !b.badge.class.includes('unpinned')
+          if (aPinned && !bPinned) return -1
+          if (!aPinned && bPinned) return 1
+          return b.ctrl_id - a.ctrl_id
+        })
+      }
       this.isMenuBuilt = true
       this.menu = menu
     },
     toggleCollapse() {
-      this.collapsed = !this.collapsed;
-      window.setTimeout(function() {
-        $("#sidebar").toggleClass("hidden");
-      },
-      300);
+      this.collapsed = !this.collapsed
+      setTimeout(() => { $("#sidebar").toggleClass("hidden") }, 300)
     },
     async getAccessTypeLibelle(ctlId) {
       const resp = await axios.get(backend.getAccessToControl(ctlId))
       this.accessType = resp.data[0].access_type
-      if (this.accessType === 'demandeur') {
-        return 'Demandeur'
-      }
-      return 'Répondant'
+      return this.accessType === 'demandeur' ? 'Demandeur' : 'Répondant'
     },
   },
-})
+}
 </script>
+
 
 <style scoped>
 </style>

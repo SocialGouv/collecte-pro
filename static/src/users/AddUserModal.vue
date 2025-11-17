@@ -1,5 +1,4 @@
 <template>
-
 <div class="modal fade add-user-modal" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="modal_title" aria-hidden="true" aria-modal="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -11,10 +10,10 @@
           L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
-            <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
+          <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
         </div>
         <div v-if="editingProfileType==='audited'" class="text-center">
-            <h4><span class="fa fa-building mr-2" aria-hidden="true"></span><strong>Organisme interrogé</strong></h4>
+          <h4><span class="fa fa-building mr-2" aria-hidden="true"></span><strong>Organisme interrogé</strong></h4>
         </div>
 
         <info-bar>
@@ -75,7 +74,7 @@
 
         <form @submit.prevent="findUser" v-if="stepShown === 1.5" @keydown.esc="resetFormData">
           <div class="alert alert-warning alert-icon my-8" role="alert">
-            <span class="fa fa-exclamation-circle mr-2" aria-hidden="true" aria-hidden="true"></span>
+            <span class="fa fa-exclamation-circle mr-2" aria-hidden="true" ></span>
             <div class="mb-4">
               Vous allez ajouter
               <strong>{{ formData.email }}</strong>
@@ -84,13 +83,13 @@
               .
             </div>
             <div> Cet email ne finit pas par
-              <template v-for="(ending, index) in expectedEndingsArray">
-                <strong :key="index">{{ ending }}</strong>
-                <span v-if="index < expectedEndingsArray.length - 2" :key="index">,</span>
-                <span v-if="index === expectedEndingsArray.length - 2" class="mr-1" :key="index">ou</span>
-              </template>
-              .
-            </div>
+            <template v-for="(ending, index) in expectedEndingsArray" :key="index">
+              <strong>{{ ending }}</strong>
+              <span v-if="index < expectedEndingsArray.length - 2">,</span>
+              <span v-if="index === expectedEndingsArray.length - 2" class="mr-1">ou</span>
+            </template>
+            .
+          </div>
           </div>
           <div class="flex-row justify-content-between">
             <button type="button" class="btn btn-secondary" @click="cancel">
@@ -166,11 +165,11 @@
               Je l'ai informé.e
             </button>
             <a class="btn btn-primary ml-2"
-                :href="'mailto:' + postResult.email +
+               :href="'mailto:' + postResult.email +
                       '?subject=' + emailSubject +
                       '&body=' + emailBody"
-                target="_blank"
-                rel="noopener noreferrer"
+               target="_blank"
+               rel="noopener noreferrer"
             >
               Créer un mail pour l'informer
             </a>
@@ -183,21 +182,18 @@
 </template>
 
 <script lang="ts">
-import { mapFields } from 'vuex-map-fields'
+// Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex'
 import axios from 'axios'
 import backend from '../utils/backend'
-import Vue from 'vue'
-import InfoBar from '../utils/InfoBar'
-
-import { store } from '../store'
+// Suppression des imports/initialisations Vue 2: import Vue from 'vue', import { store } from '../store'
+import InfoBar from '../utils/InfoBar.vue'
 import EventBus from '../events'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default Vue.extend({
-  store,
+export default { // Remplacement de Vue.extend
   data() {
     return {
       formData: {
@@ -218,16 +214,26 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapFields([
+    // Remplacement de mapFields par mapState pour les champs de lecture seule (y compris ceux de la configuration)
+    ...mapState([
       'editingControl',
       'editingProfileType',
-      'config.expected_inspector_email_endings',
-      'config.site_url',
-      'config',
+      // Nous récupérons l'objet config complet pour accéder aux sous-champs
+      'config', 
     ]),
-    ...mapState({
-      config: 'config',
-    }),
+    
+    // Remplacement des champs imbriqués de mapFields par des getters locaux sur l'objet 'config'
+    expected_inspector_email_endings: function() {
+      // Accès direct à la sous-propriété de l'état 'config'
+      return this.config?.expected_inspector_email_endings || '';
+    },
+    site_url: function() {
+      // Accès direct à la sous-propriété de l'état 'config'
+      return this.config?.site_url || '';
+    },
+    // Le champ 'config' natif est déjà présent via mapState
+
+    // Les computed methods pour l'emailSubject et emailBody sont conservées
     emailSubject: function() {
       if (this.config.env_name != '' && !this.config.env_name.toLowerCase().startsWith("production")) {
         return this.config.env_name + ' - Bienvenue sur collecte-pro';
@@ -252,7 +258,7 @@ export default Vue.extend({
         newline + newline +
         'Pour vous connecter, rendez-vous sur le site de collecte-pro :' +
         newline + newline +
-        this.site_url +
+        this.site_url + // Utilise le getter local migré
         newline + newline +
         'Cordialement,'
 
@@ -300,20 +306,25 @@ export default Vue.extend({
       let expectedEndingsArray = [];
       const isInspectorEmail = email => {
           // At least one ending should match.
+          // Utilise le getter local migré `this.expected_inspector_email_endings`
+          const endingsString = this.expected_inspector_email_endings;
+
+          // Si pas de fins d'emails attendues, on considère que c'est bon
+          if (!endingsString) return true; 
+
+          expectedEndingsArray = endingsString.split(',');
+          this.expectedEndingsArray = expectedEndingsArray; // Met à jour data() pour l'affichage (étape 1.5)
+
           return expectedEndingsArray.some(ending => {
             return email.endsWith(ending)
           })
-        }
-      // If no ending defined, skip this test
-      if (typeof this.expected_inspector_email_endings !== 'undefined') {
-        expectedEndingsArray = this.expected_inspector_email_endings.split(',')
       }
 
       if (this.formData.email !== this.formData.email_confirm) {
         this.hasErrors = true;
         this.errors.email = ['Les deux champs e-mail doivent correspondre.'];
       } else if (this.editingProfileType === 'inspector' && !isInspectorEmail(this.formData.email)) {
-        this.expectedEndingsArray = expectedEndingsArray;
+        // expectedEndingsArray est déjà mis à jour dans isInspectorEmail
         this.stepShown = 1.5;
       } else {
         this.hasErrors = false;
@@ -324,6 +335,9 @@ export default Vue.extend({
       this.formData.control = this.editingControl.id
       this.formData.profile_type = this.editingProfileType
       this.formData.email = this.formData.email.toLowerCase()
+      
+      // Ici, on envoie le contenu de `formData` (qui est local au composant), 
+      // donc aucune mutation n'est nécessaire pour cette étape.
       axios.post(backend.user(), this.formData)
         .then(response => {
           this.postResult = response.data
@@ -346,11 +360,12 @@ export default Vue.extend({
           this.searchResult = response.data
           if (response.data.length) {
             this.foundUser = true
+            // Mise à jour de formData local
             Object.assign(this.formData, response.data[0])
           }
           this.stepShown = 2
         })
     },
   },
-})
+}
 </script>
