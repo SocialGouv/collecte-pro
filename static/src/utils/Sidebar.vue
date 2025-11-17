@@ -14,8 +14,9 @@
     <span v-show="!collapsed" class="hidden">Replier le panneau latéral</span>
   </button>
 
-  <div 
+  <div
     id="sidebar"
+    ref="sidebar"
     v-show="!collapsed"
     :aria-hidden="collapsed ? 'true' : 'false'"
   >
@@ -27,7 +28,7 @@
       theme="white-theme"
       @item-click="onItemClick"
     >
-        <template v-slot:header>
+        <template #header>
           <div id="sidebar-title" class="card-header flex-row justify-content-center">
             <h2 class="card-title text-nowrap text-center">Mes espaces de dépôt</h2>
           </div>
@@ -56,7 +57,7 @@
             En attente de la liste d'espaces...
           </div>
 
-          <error-bar id="sidebar-error-bar" v-if="hasError" noclose=true>
+          <error-bar id="sidebar-error-bar" v-if="hasError" :noclose="true">
             <div>
               <p>Nous n'avons pas pu obtenir vos espaces de dépôt.</p>
             </div>
@@ -250,7 +251,11 @@ export default {
     },
     toggleCollapse() {
       this.collapsed = !this.collapsed
-      setTimeout(() => { $("#sidebar").toggleClass("hidden") }, 300)
+      setTimeout(() => {
+        if (this.$refs.sidebar) {
+          this.$refs.sidebar.classList.toggle('hidden')
+        }
+      }, 300)
     },
     async getAccessTypeLibelle(ctlId) {
       const resp = await axios.get(backend.getAccessToControl(ctlId))
@@ -260,10 +265,6 @@ export default {
   },
 }
 </script>
-
-
-<style scoped>
-</style>
 
 <style>
   #sidebar-vm {
@@ -352,11 +353,11 @@ export default {
     background-color: #3473cb;
   }
  .vsm--badge.fas.fa-thumbtack {
-  color: gray; 
+  color: gray;
   }
 
 .vsm--badge.fas.fa-thumbtack:not(.unpinned) {
-  color: inherit; 
+  color: inherit;
   }
 
 </style>
