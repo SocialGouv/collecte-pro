@@ -40,7 +40,7 @@
     "store": "^2.0.12",
     "sweetalert2": "^11.26.3",
     "vue": "^3.5.24",
-    "vue-sidebar-menu": "^6.0.0",
+    "vue3-sidebar-menu": "^23.0.0",
     "vue3-datepicker": "^0.4.0",
     "vuex": "^4.1.0"
   },

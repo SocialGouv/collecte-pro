@@ -94,13 +94,14 @@ import { loadStatuses } from '../store'
 import { SidebarMenu } from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 import axios from 'axios'
+import { defineComponent } from 'vue'
 
 const ERROR_EMAIL_BODY = 'Bonjour,%0D%0A%0D%0A' +
   'Je voudrais vous signaler une erreur lors du chargement des espaces de dépôt dans le menu.' +
   ' Les détails sont ci-dessous.%0D%0A%0D%0ACordialement,%0D%0A%0D%0A%0D%0A-----------%0D%0A'
 const ERROR_EMAIL_SUBJECT = 'Erreur de chargement des espaces de dépôt'
 
-export default {
+export default defineComponent({
   name: 'Sidebar',
   components: {
     ControlCreate,
@@ -199,16 +200,16 @@ export default {
     async buildMenu() {
       const menu = []
       for (const control of this.controls) {
-        await this.getAccessTypeLibelle(control.id)
+        const accessType = await this.getAccessTypeLibelle(control.id)
         const controlMenu = {
-          icon: this.accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
+          icon: accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
           title: control.reference_code + '\n' + (control.depositing_organization || control.title),
           ctrl_id: control.id,
-          attributes: { title: this.accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
+          attributes: { title: accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
         }
 
-        if (control.is_model && this.accessType === 'demandeur') {
+        if (control.is_model && accessType === 'demandeur') {
           controlMenu.badge = {
             icon: 'fas fa-thumbtack',
             class: `fas fa-thumbtack ${control.is_pinned ? '' : 'unpinned'}`,
@@ -259,11 +260,11 @@ export default {
     },
     async getAccessTypeLibelle(ctlId) {
       const resp = await axios.get(backend.getAccessToControl(ctlId))
-      this.accessType = resp.data[0].access_type
-      return this.accessType === 'demandeur' ? 'Demandeur' : 'Répondant'
+      const accessType = resp.data[0].access_type
+      return accessType === 'demandeur' ? 'Demandeur' : 'Répondant'
     },
   },
-}
+})
 </script>
 
 <style>

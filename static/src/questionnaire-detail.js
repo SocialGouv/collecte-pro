@@ -7,14 +7,40 @@ import { createApp, h } from 'vue'
 import QuestionnaireDetail from './questionnaires/QuestionnaireDetail.vue'
 import { loadStatuses, store } from './store'
 
-const controlsDataEl = document.getElementById('controls-data')
-const controls = JSON.parse(controlsDataEl.textContent)
+const controlsDataEl = typeof document !== 'undefined' ? document.getElementById('controls-data') : null
+let controls = []
+if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.trim() !== '') {
+  try {
+    controls = JSON.parse(controlsDataEl.textContent)
+  } catch (e) {
+    console.error('questionnaire-detail: failed to parse controls-data', e)
+    controls = []
+  }
+} else {
+  controls = []
+}
 
-const questionnaireIdDataEl = document.getElementById('questionnaire-id-data')
-const questionnaireId = Number(questionnaireIdDataEl.textContent.trim())
+const questionnaireIdDataEl = typeof document !== 'undefined' ? document.getElementById('questionnaire-id-data') : null
+let questionnaireId = NaN
+if (questionnaireIdDataEl && questionnaireIdDataEl.textContent) {
+  try {
+    questionnaireId = Number(questionnaireIdDataEl.textContent.trim())
+  } catch (e) {
+    console.error('questionnaire-detail: failed to read questionnaire-id-data', e)
+    questionnaireId = NaN
+  }
+}
 
-const controlIdDataEl = document.getElementById('control-id-data')
-const controlId = Number(controlIdDataEl.textContent.trim())
+const controlIdDataEl = typeof document !== 'undefined' ? document.getElementById('control-id-data') : null
+let controlId = NaN
+if (controlIdDataEl && controlIdDataEl.textContent) {
+  try {
+    controlId = Number(controlIdDataEl.textContent.trim())
+  } catch (e) {
+    console.error('questionnaire-detail: failed to read control-id-data', e)
+    controlId = NaN
+  }
+}
 
 const app = createApp({
   render: () => h(QuestionnaireDetail, {

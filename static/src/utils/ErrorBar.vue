@@ -9,7 +9,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'Dismissable',
   props: {
     noclose: Boolean,
@@ -20,6 +22,6 @@ export default {
       this.$emit('dismissed')
     },
   },
-}
+})
 </script>
 

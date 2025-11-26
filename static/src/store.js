@@ -1,18 +1,44 @@
 import axios from 'axios'
-// L'importation de getField et updateField est supprimée
-import backendUrls from './utils/backend.js'
-// Vue n'est plus importé ni utilisé globalement
-import { createStore } from 'vuex' // Importation de la nouvelle fonction createStore de Vuex 4
+// Lightweight compatible replacements for vuex-map-fields getters/mutations.
+// We avoid relying on the external package which can be incompatible in this
+// environment and provide the minimal behaviour used across the codebase:
+// - getter `getField` returns a function that reads a nested path from state
+// - mutation `updateField` applies { path, value } to nested state
 
-// La syntaxe des états de chargement est conservée
+const getField = (state) => (path) => {
+  if (!path) return undefined
+  return String(path).split(/[.[\]]+/).filter(Boolean).reduce((acc, key) => {
+    return acc === undefined || acc === null ? undefined : acc[key]
+  }, state)
+}
+
+function updateField(state, { path, value }) {
+  if (!path) return
+  const keys = String(path).split(/[.[\]]+/).filter(Boolean)
+  let obj = state
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i]
+    if (obj[k] === undefined || obj[k] === null) {
+      // create intermediate object
+      // if next key looks like an array index, create array
+      const nextKey = keys[i + 1]
+      obj[k] = /^[0-9]+$/.test(nextKey) ? [] : {}
+    }
+    obj = obj[k]
+  }
+  const lastKey = keys[keys.length - 1]
+  obj[lastKey] = value
+}
+import backendUrls from './utils/backend.js'
+import { createStore } from 'vuex'
+
 export const loadStatuses = {
   LOADING: Symbol('LOADING'),
   SUCCESS: Symbol('SUCCESS'),
   ERROR: Symbol('ERROR'),
 }
 
-// export const store = new Vuex.Store({  <-- Ancienne syntaxe
-export const store = createStore({ // Nouvelle syntaxe Vuex 4
+export const store = createStore({
   state: {
     config: {},
     configLoadStatus: loadStatuses.LOADING,
@@ -25,26 +51,13 @@ export const store = createStore({ // Nouvelle syntaxe Vuex 4
     sessionUser: {},
     sessionUserLoadStatus: loadStatuses.LOADING,
   },
-  // La méthode getField est supprimée
+
   getters: {
-    // Les getters natifs peuvent être ajoutés ici si nécessaire, 
-    // mais le getter 'getField' de vuex-map-fields n'est plus requis.
+    getField,
   },
+
   mutations: {
-    // updateField est supprimé. Les mutations sont ajoutées pour les champs qui étaient gérés par mapFields
-
-    // Mutations spécifiques pour remplacer mapFields (ajoutées pour les besoins des composants migrés)
-    setEditingControl(state, payload) {
-      state.editingControl = payload
-    },
-    setEditingUser(state, payload) {
-      state.editingUser = payload
-    },
-    setEditingProfileType(state, payload) {
-      state.editingProfileType = payload
-    },
-
-    // Mutations existantes et conservées
+    updateField,
     updateSessionUser(state, user) {
       state.sessionUser = user
     },
@@ -63,45 +76,115 @@ export const store = createStore({ // Nouvelle syntaxe Vuex 4
     updateControlsLoadStatus(state, newStatus) {
       state.controlsLoadStatus = newStatus
     },
+    // Added helpers used by migrated Vue 3 components
+    setCurrentQuestionnaire(state, questionnaire) {
+      state.currentQuestionnaire = questionnaire
+    },
+    setCurrentQuestionnaireThemes(state, themes) {
+      if (!state.currentQuestionnaire) state.currentQuestionnaire = {}
+      state.currentQuestionnaire.themes = themes
+    },
+    setEditingUserField(state, { field, value }) {
+      if (!state.editingUser) state.editingUser = {}
+      state.editingUser[field] = value
+    },
+    setEditingUser(state, user) {
+      state.editingUser = user
+    },
+    setEditingControl(state, control) {
+      state.editingControl = control
+    },
+    // Convenience mutation used by migrated components to update a single field
+    // on the currentQuestionnaire object.
+    updateCurrentQuestionnaireField(state, { field, value }) {
+      if (!state.currentQuestionnaire) state.currentQuestionnaire = {}
+      state.currentQuestionnaire[field] = value
+    },
   },
+
   actions: {
-    fetchConfig({ commit }) {
-      axios.get(backendUrls.config()).then((response) => {
-        console.debug('Store got config', response.data)
+    async fetchConfig({ commit }) {
+      try {
+        const response = await axios.get(backendUrls.config())
         commit('updateConfig', response.data)
         commit('updateConfigLoadStatus', loadStatuses.SUCCESS)
-      }).catch(err => {
-        console.error('Store got error fetching config', err)
+      } catch (err) {
         commit('updateConfigLoadStatus', loadStatuses.ERROR)
-      })
+      }
     },
-    fetchSessionUser({ commit }) {
-      axios.get(backendUrls.currentUser()).then((response) => {
-        console.debug('Store got current user', response.data)
+
+    async fetchSessionUser({ commit }) {
+      try {
+        const response = await axios.get(backendUrls.currentUser())
         commit('updateSessionUser', response.data)
         commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
-      }).catch(err => {
-        console.error('Store got error fetching current user', err)
+      } catch (err) {
         commit('updateSessionUserLoadStatus', loadStatuses.ERROR)
-      })
-    },
-    async fetchControls({ commit }) {
-      const currentURL = window.location.pathname
-      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/' || currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/') {
-        // NOTE VUE 3: L'utilisation de 'this.controls' dans l'action est incorrecte en Vuex 4.
-        // Vous devez commit la mise à jour après l'appel API.
-        let controlsData = [];
-        await axios.get(backendUrls.getControlsList()).then(response => {
-          controlsData = response.data
-        }).catch(err => {
-          // Gérer l'erreur si nécessaire
-        })
-        commit('updateControls', controlsData) // Commit la mise à jour ici
-      } else {
-        // Si la condition n'est pas remplie, s'assurer que controls n'est pas utilisé sans être initialisé
-        commit('updateControls', [])
       }
-      commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+    },
+
+    async fetchControls({ commit }) {
+      try {
+        // Prefer server-injected controls if present in the DOM (injected by Django templates)
+        if (typeof document !== 'undefined') {
+          const controlsDataEl = document.getElementById('controls-data')
+          if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.trim() !== '') {
+            try {
+              const controls = JSON.parse(controlsDataEl.textContent)
+              console.debug('store.fetchControls: found server-injected controls, count=', Array.isArray(controls) ? controls.length : 'not-array')
+              commit('updateControls', controls)
+              commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+              return
+            } catch (e) {
+              console.error('store.fetchControls: failed to parse controls-data', e)
+              // fall through to API logic
+            }
+          }
+        }
+
+        const currentURL = window.location.pathname
+        console.debug('store.fetchControls currentURL=', currentURL)
+
+        if (
+          currentURL === '/faq/' ||
+          currentURL === '/declaration-conformite/' ||
+          currentURL === '/cgu/' ||
+          currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/'
+        ) {
+          const response = await axios.get(backendUrls.getControlsList())
+          console.debug('store.fetchControls got controls count=', Array.isArray(response.data) ? response.data.length : 0)
+          commit('updateControls', response.data)
+        } else {
+          // If the page isn't one of the known static pages, try to fetch the controls
+          // from the API rather than silently setting an empty array. This ensures
+          // pages like /questionnaire/controle-<id>/creer receive the controls
+          // when the server didn't inject them into the DOM.
+          try {
+            console.debug('store.fetchControls: not a special page, fetching controls from API')
+            const response = await axios.get(backendUrls.getControlsList())
+            console.debug('store.fetchControls: fetched controls, status=', response.status, 'count=', Array.isArray(response.data) ? response.data.length : 0)
+            if (response.status === 200) {
+              commit('updateControls', response.data)
+            } else {
+              console.error('store.fetchControls: unexpected status from controls API', response.status)
+              commit('updateControls', [])
+              commit('updateControlsLoadStatus', loadStatuses.ERROR)
+              return
+            }
+          } catch (err) {
+            console.error('store.fetchControls: failed to fetch controls from API', err)
+            // Fallback to empty array to avoid leaving controls undefined
+            commit('updateControls', [])
+            commit('updateControlsLoadStatus', loadStatuses.ERROR)
+            return
+          }
+        }
+
+        commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+      } catch (err) {
+        console.error('store.fetchControls error', err)
+        commit('updateControlsLoadStatus', loadStatuses.ERROR)
+      }
     },
   },
 })

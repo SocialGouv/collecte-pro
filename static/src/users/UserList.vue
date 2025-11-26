@@ -40,11 +40,12 @@
 <script lang="ts">
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex' // Import de mapState de Vuex 4
+import { defineComponent } from 'vue'
 // Suppression de l'initialisation Vue 2: import Vue from 'vue', import Vuex from 'vuex', Vue.use(Vuex)
 
 // Suppression de l'import du store: import { store } from '../store'
 
-export default { // Remplacement de Vue.extend
+export default defineComponent({ // Remplacement de Vue.extend
   // store, // Retiré car injecté globalement par createApp
 
   props: {
@@ -92,6 +93,6 @@ export default { // Remplacement de Vue.extend
       const userCopy = Object.assign({}, user);
       this.editingUser = userCopy;
     },
-  },
-}
+  }
+})
 </script>

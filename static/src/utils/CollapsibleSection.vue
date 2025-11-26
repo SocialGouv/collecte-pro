@@ -22,7 +22,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'CollapsibleButton',
   props: {
     buttontext: {
@@ -42,5 +44,5 @@ export default {
   mounted() {
     this.id = 'collapsible-' + Math.floor(Math.random() * 1000000)
   },
-}
+})
 </script>

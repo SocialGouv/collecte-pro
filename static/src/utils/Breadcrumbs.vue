@@ -21,7 +21,9 @@
 <script>
 import backendUrls from './backend'
 
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'ControlBreadcrumb',
   props: {
     control: {
@@ -34,6 +36,6 @@ export default {
       return backendUrls['control-detail'](this.control.id)
     },
   },
-}
+})
 </script>
 

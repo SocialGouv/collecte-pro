@@ -74,7 +74,7 @@
 
 <script>
 import '../../css/editors.css'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import backendUrls from '../utils/backend.js'
@@ -82,7 +82,7 @@ import ContactSupport from '../utils/ContactSupport'
 import EditorList from './EditorList'
 import ErrorBar from '../utils/ErrorBar'
 
-export default {
+export default defineComponent({
   props: {
     controlId: Number,
     questionnaireId: Number,
@@ -142,6 +142,6 @@ export default {
     EditorList,
     ErrorBar,
   },
-}
+})
 </script>
 

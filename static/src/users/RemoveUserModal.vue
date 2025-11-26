@@ -38,13 +38,14 @@
 import axios from 'axios'
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex' // Import de mapState de Vuex 4
+import { defineComponent } from 'vue'
 import backend from '../utils/backend'
 // Suppression de l'import de Vue 2 et du store injecté localement
 
 import ErrorBar from '../utils/ErrorBar'
 import EventBus from '../events'
 
-export default { // Remplacement de Vue.extend
+export default defineComponent({ // Remplacement de Vue.extend
   // store, // Retiré
   data: function() {
     return {
@@ -87,6 +88,6 @@ export default { // Remplacement de Vue.extend
           this.error = error
         })
     },
-  },
-}
+  }
+})
 </script>

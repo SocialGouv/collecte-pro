@@ -69,6 +69,7 @@
 <script lang="ts">
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex' // mapState pour l'accès en lecture si nécessaire
+import { defineComponent } from 'vue'
 import axios from 'axios'
 import backend from '../utils/backend'
 // Suppression de l'initialisation Vue 2: import Vue from 'vue', import Vuex from 'vuex', Vue.use(Vuex)
@@ -79,7 +80,7 @@ import EventBus from '../events'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default { // Remplacement de Vue.extend
+export default defineComponent({ // Remplacement de Vue.extend
   // store, // Retiré
 
   data: function() {
@@ -90,30 +91,23 @@ export default { // Remplacement de Vue.extend
     }
   },
   computed: {
-    // 1. Remplacement de `editingControl` (lecture seule dans ce contexte)
-    localEditingControl: mapState(['editingControl']),
+    // expose editingControl and editingUser from store
+    ...mapState(['editingControl', 'editingUser']),
 
-    // 2. Remplacement de `editingUser` (lecture, mais nous le remplaçons par les champs individuels)
-    localEditingUser: mapState(['editingUser']),
-    
-    // 3. Remplacement de v-model="editingUser.first_name"
+    // v-model replacements for editingUser fields
     localFirstName: {
       get() {
-        return this.$store.state.editingUser.first_name
+        return this.$store.state.editingUser?.first_name
       },
       set(value) {
-        // Nouvelle mutation pour mettre à jour un champ spécifique de l'utilisateur
         this.$store.commit('setEditingUserField', { field: 'first_name', value })
       }
     },
-
-    // 4. Remplacement de v-model="editingUser.last_name"
     localLastName: {
       get() {
-        return this.$store.state.editingUser.last_name
+        return this.$store.state.editingUser?.last_name
       },
       set(value) {
-        // Nouvelle mutation pour mettre à jour un champ spécifique de l'utilisateur
         this.$store.commit('setEditingUserField', { field: 'last_name', value })
       }
     },
@@ -150,6 +144,6 @@ export default { // Remplacement de Vue.extend
           this.errors = error.response.data
         })
     },
-  },
-}
+  }
+})
 </script>

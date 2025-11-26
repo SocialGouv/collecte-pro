@@ -121,23 +121,17 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, nextTick } from 'vue'
+<script>
+import { defineComponent } from 'vue'
 import axios from 'axios'
-
 import backendUrls from '../utils/backend'
-import ConfirmModalWithWait from '../utils/ConfirmModalWithWait.vue'
-import InfoBar from '../utils/InfoBar.vue'
+import ConfirmModalWithWait from '../utils/ConfirmModalWithWait'
+import InfoBar from '../utils/InfoBar'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
 export default defineComponent({
-  name: 'ControlCreateModal',
-  components: {
-    ConfirmModalWithWait,
-    InfoBar,
-  },
   data() {
     return {
       title: '',
@@ -152,109 +146,111 @@ export default defineComponent({
     }
   },
   created() {
-    this.loadModels()
+    this.loadModels();
   },
   computed: {
-    reference_code_prefix(): string {
+    reference_code_prefix() {
       return this.year + '_'
     },
   },
+  components: {
+    ConfirmModalWithWait,
+    InfoBar,
+  },
   methods: {
     showModal() {
-      this.isModalOpen = true
-      this.$refs.addControlButton.setAttribute('aria-expanded', 'true')
-      $(this.$refs.modal.$el).modal('show')
-      $(this.$refs.modal.$el).on('hidden.bs.modal', this.closeModal)
-      nextTick(() => {
-        this.$refs['nom_controle'].focus()
-      })
+      this.isModalOpen = true;
+      this.$refs.addControlButton.setAttribute('aria-expanded', 'true');
+      $(this.$refs.modal.$el).modal('show');
+      $(this.$refs.modal.$el).on('hidden.bs.modal', this.closeModal);
+      this.$nextTick(() => {
+        this.$refs['nom_controle'].focus();
+      });
     },
     closeModal() {
-      this.isModalOpen = false
-      this.$refs.addControlButton.setAttribute('aria-expanded', 'false')
-      $(this.$refs.modal.$el).modal('hide')
-      nextTick(() => {
-        this.$refs.addControlButton.focus()
-      })
+      this.isModalOpen = false;
+      this.$refs.addControlButton.setAttribute('aria-expanded', 'false');
+      $(this.$refs.modal.$el).modal('hide');
+      this.$nextTick(() => {
+        this.$refs.addControlButton.focus();
+      });
     },
-    async loadModels() {
-      try {
-        const response = await axios.get(backendUrls.getControlsList())
-        this.models = response.data.filter((control: any) => control.is_model === true)
-      } catch (error) {
-        console.error('Erreur lors du chargement des modèles :', error)
-      }
+    loadModels() {
+      axios
+        .get(backendUrls.getControlsList())
+        .then((response) => {
+          this.models = response.data.filter((control) => control.is_model === true);
+        })
+        .catch((error) => {
+          console.error('Erreur lors du chargement des modèles :', error);
+        });
     },
-    createControl(processingDoneCallback: Function) {
+    createControl(processingDoneCallback) {
       if (this.selectedModel) {
-        console.log('createControlWithModel')
-        this.createControlWithModel(processingDoneCallback, this.selectedModel)
+        console.log('createControlWithModel ')
+        this.createControlWithModel(processingDoneCallback, this.selectedModel);
       } else {
-        console.log('createControlWithoutModel')
+        console.log('createControlWithoutModel ')
         const payload = {
           title: this.title,
           depositing_organization: this.organization,
           reference_code: this.reference_code_prefix + this.reference_code_suffix,
         }
-        axios
-          .post(backendUrls.control(), payload)
-          .then((response) => {
-            processingDoneCallback(null, response, backendUrls.home())
+        axios.post(backendUrls.control(), payload)
+          .then(response => {
+            console.debug(response);
+            processingDoneCallback(null, response, backendUrls.home());
           })
           .catch((error) => {
             console.error('Error creating control', error)
-            processingDoneCallback(this.makeErrorMessage(error))
+            const errorMessage = this.makeErrorMessage(error)
+            processingDoneCallback(errorMessage)
           })
       }
     },
-    async createControlWithModel(processingDoneCallback: Function, modelControlId: string) {
+    async createControlWithModel(processingDoneCallback, modelControlId) {
       try {
         const payload = {
           title: this.title,
           depositing_organization: this.organization,
           reference_code: this.reference_code_prefix + this.reference_code_suffix,
-        }
-
-        const controlResponse = await axios.post(backendUrls.control(), payload)
-        this.controlId = controlResponse.data.id
-
+        };
+        const controlResponse = await axios.post(backendUrls.control(), payload);
+        this.controlId = controlResponse.data.id;
         try {
-          await this.createQuestionnaire(modelControlId, this.controlId)
+          await this.createQuestionnaire(modelControlId, this.controlId);
         } catch (questionnaireError) {
-          console.error('Error creating questionnaire', questionnaireError)
-          return processingDoneCallback('Erreur lors de la création du questionnaire.')
+          console.error('Error creating questionnaire', questionnaireError);
+          return processingDoneCallback('Erreur lors de la création du questionnaire.');
         }
-
-        processingDoneCallback(null, controlResponse, backendUrls.home())
+        processingDoneCallback(null, controlResponse, backendUrls.home());
       } catch (error) {
-        console.error('Error creating control', error)
-        processingDoneCallback(this.makeErrorMessage(error))
+        console.error('Error creating control', error);
+        const errorMessage = this.makeErrorMessage(error);
+        processingDoneCallback(errorMessage);
       }
     },
-    async createQuestionnaire(modelControlId: string, controlId: number) {
+    async createQuestionnaire(modelControlId, controlId) {
       try {
-        const response = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(modelControlId))
-        const data = response.data
-
+        const response = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(modelControlId));
+        const data = response.data;
         if (!data || !Array.isArray(data)) {
-          console.error('Erreur :', data)
-          return
+          console.error('Erreur :', data);
+          return;
         }
-
         for (const control of data) {
           for (const questionnaire of control.questionnaires) {
-            const themes = questionnaire.themes.map((theme: any) => {
-              const questions = theme.questions.map((question: any) => ({
+            const themes = questionnaire.themes.map((theme) => {
+              const questions = theme.questions.map((question) => ({
                 description: question.description,
                 question_files: question.question_files,
-              }))
+              }));
               return {
                 title: theme.title,
                 order: theme.order,
                 questions,
-              }
-            })
-
+              };
+            });
             const newQuestionnaire = {
               ...questionnaire,
               control: controlId,
@@ -264,73 +260,67 @@ export default defineComponent({
               is_finalized: false,
               id: null,
               themes,
-            }
-
-            const createMethod = () => axios.post(backendUrls.questionnaire(), newQuestionnaire)
-            const updateMethod = (qId: number) => axios.put(backendUrls.questionnaire(qId), newQuestionnaire)
-
+            };
+            const createMethod = () => axios.post(backendUrls.questionnaire(), newQuestionnaire);
+            const updateMethod = (qId) => axios.put(backendUrls.questionnaire(qId), newQuestionnaire);
             try {
-              const res = await createMethod()
-              const qId = res.data.id
-
+              const res = await createMethod();
+              const qId = res.data.id;
               for (const qf of newQuestionnaire.questionnaire_files) {
-                const fileResponse = await axios.get(qf.url, { responseType: 'blob' })
-                const formData = new FormData()
-                formData.append('file', fileResponse.data, qf.basename)
-                formData.append('questionnaire', qId)
-
+                const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
+                const formData = new FormData();
+                formData.append('file', fileResponse.data, qf.basename);
+                formData.append('questionnaire', qId);
                 await axios.post(backendUrls.piecejointe(), formData, {
                   headers: { 'Content-Type': 'multipart/form-data' },
-                })
+                });
               }
-
-              const updateResponse = await updateMethod(qId)
-              const updatedThemes = updateResponse.data.themes
-
+              const updatedQuestionnaire = { ...newQuestionnaire, id: qId };
+              const updateResponse = await updateMethod(qId);
+              const updatedThemes = updateResponse.data.themes;
               for (const updatedTheme of updatedThemes) {
-                const originalTheme = themes.find((t: any) => t.order === updatedTheme.order)
+                const originalTheme = themes.find((t) => t.order === updatedTheme.order);
                 for (const originalQuestion of originalTheme.questions) {
-                  const updatedQuestion = updatedTheme.questions.find((uq: any) => uq.order === originalQuestion.order)
+                  const updatedQuestion = updatedTheme.questions.find(
+                    (uq) => uq.order === originalQuestion.order
+                  );
                   for (const qf of originalQuestion.question_files) {
-                    const fileResponse = await axios.get(qf.url, { responseType: 'blob' })
-                    const formData = new FormData()
-                    formData.append('file', fileResponse.data, qf.basename)
-                    formData.append('question', updatedQuestion.id)
+                    const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
+                    const formData = new FormData();
+                    formData.append('file', fileResponse.data, qf.basename);
+                    formData.append('question', updatedQuestion.id);
                     await axios.post(backendUrls.annexe(), formData, {
                       headers: { 'Content-Type': 'multipart/form-data' },
-                    })
+                    });
                   }
                 }
               }
             } catch (err) {
-              console.error('Erreur lors de la création du questionnaire :', err)
+              console.error('Erreur lors de la création du questionnaire :', err);
             }
           }
         }
       } catch (error) {
-        console.error('Erreur lors de la création des questionnaires :', error)
+        console.error('Erreur lors de la création des questionnaires :', error);
       }
     },
-    makeErrorMessage(error: any) {
+    makeErrorMessage(error) {
       if (error.response && error.response.data && error.response.data.reference_code) {
         const requestedCode = JSON.parse(error.response.config.data).reference_code
         if (error.response.data.reference_code[0] === 'UNIQUE') {
-          return `Le nom abrégé "${requestedCode}" existe déjà pour un autre espace. Veuillez en choisir un autre.`
+          return 'Le nom abrégé "' + requestedCode + '" existe déjà pour un autre espace. Veuillez en choisir un autre.'
         }
         if (error.response.data.reference_code[0] === 'INVALID') {
-          return `Le nom abrégé "${requestedCode}" ne doit pas contenir de caractères spéciaux. Veuillez en choisir un autre.`
+          return 'Le nom abrégé "' + requestedCode + '" ne doit pas contenir de caractères spéciaux (! , @ # $ / \\ " \' + etc). Veuillez en choisir un autre.'
         }
       }
-
       if (error.message && error.message === 'Network Error') {
-        return 'L\'espace de dépôt n\'a pas pu être créé. Erreur : problème de réseau'
+        return "L'espace de dépôt n'a pas pu être créé. Erreur : problème de réseau"
       }
-
       if (error.message) {
-        return 'L\'espace de dépôt n\'a pas pu être créé. Erreur : ' + error.message
+        return "L'espace de dépôt n'a pas pu être créé. Erreur : " + error.message
       }
-
-      return 'L\'espace de dépôt n\'a pas pu être créé.'
+      return "L'espace de dépôt n'a pas pu être créé."
     },
   },
 })

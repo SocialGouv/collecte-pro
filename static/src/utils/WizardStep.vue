@@ -28,7 +28,9 @@
 <script>
 import '../../css/utils.css'
 
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: ['number', 'clickable'],
-}
+})
 </script>

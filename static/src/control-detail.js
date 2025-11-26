@@ -1,42 +1,41 @@
 import { createApp } from 'vue'
-import { createStore } from 'vuex'
+import { store, loadStatuses } from './store'
 import ControlDetail from './controls/ControlDetail.vue'
 
-// Récupération des données du DOM (Django template)
-const controlsDataEl = document.getElementById('controls-data')
-const userDataEl = document.getElementById('user-data')
+// Récupération des données du DOM (Django template) — guarded parsing to avoid crashes
+const controlsDataEl = typeof document !== 'undefined' ? document.getElementById('controls-data') : null
+const userDataEl = typeof document !== 'undefined' ? document.getElementById('user-data') : null
 
-const controls = JSON.parse(controlsDataEl.textContent)
-const user = JSON.parse(userDataEl.textContent)
-
-// Store minimal pour ControlDetail
-const store = createStore({
-  state: {
-    controls: [],
-    sessionUser: null,
-    loadStatus: {}
-  },
-  mutations: {
-    updateControls(state, controlsData) {
-      state.controls = controlsData
-    },
-    updateSessionUser(state, userData) {
-      state.sessionUser = userData
-    },
-    updateControlsLoadStatus(state, status) {
-      state.loadStatus.controls = status
-    },
-    updateSessionUserLoadStatus(state, status) {
-      state.loadStatus.user = status
-    }
-  },
-  actions: {
-    async fetchConfig() {
-      // Implémenter si besoin, sinon peut rester vide
-      return
-    }
+let controls = []
+let user = {}
+if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.trim() !== '') {
+  try {
+    controls = JSON.parse(controlsDataEl.textContent)
+  } catch (e) {
+    console.error('control-detail: failed to parse controls-data', e)
+    controls = []
   }
-})
+} else {
+  controls = []
+}
+
+if (userDataEl && userDataEl.textContent && userDataEl.textContent.trim() !== '') {
+  try {
+    user = JSON.parse(userDataEl.textContent)
+  } catch (e) {
+    console.error('control-detail: failed to parse user-data', e)
+    user = {}
+  }
+} else {
+  user = {}
+}
+
+// Use the shared store so the sidebar and other entries read the same state.
+// Commit the server-provided data into the shared store.
+store.commit('updateControls', controls)
+store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+store.commit('updateSessionUser', user)
+store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
 
 // Création de l'app Vue
 const app = createApp(ControlDetail, {

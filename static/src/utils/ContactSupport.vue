@@ -18,14 +18,15 @@
 
 <script>
 // Utilisation de mapState de Vuex 4 pour lire l'état
-import { mapState } from 'vuex' 
+import { defineComponent } from 'vue'
+import { mapState } from 'vuex'
 
-export default { // Export standard Options API Vue 3
+export default defineComponent({ // Export standard Options API Vue 3 via defineComponent
   computed: {
     // Remplacement de ...mapFields(['config']) par mapState
     ...mapState({
       config: state => state.config // Accès direct au state.config
     }),
   },
-}
+})
 </script>

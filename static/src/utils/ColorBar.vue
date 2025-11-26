@@ -13,7 +13,9 @@ const colorClasses = [
   'bg-teal',
 ]
 
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'ColorBadge',
   props: {
     id: {
@@ -26,6 +28,6 @@ export default {
       return colorClasses[this.id % colorClasses.length]
     },
   },
-}
+})
 </script>
 

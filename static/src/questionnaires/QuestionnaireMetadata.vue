@@ -87,9 +87,26 @@ export default defineComponent({
     accessType: { type: String, default: '' },
   },
   setup(props) {
-    const exportUrl = computed(() => backendUrls['questionnaire-export'](props.questionnaire.id))
-    const exportResponseFilesXlsxUrl = computed(() => backendUrls['responses-export'](props.questionnaire.id))
-    const trashUrl = computed(() => backendUrls.trash(props.questionnaire.id))
+    const exportUrl = computed(() => {
+      if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
+        return '#'
+      }
+  return (backendUrls as any)['questionnaire-export'](props.questionnaire.id)
+    })
+
+    const exportResponseFilesXlsxUrl = computed(() => {
+      if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
+        return '#'
+      }
+  return (backendUrls as any)['responses-export'](props.questionnaire.id)
+    })
+
+    const trashUrl = computed(() => {
+      if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
+        return '#'
+      }
+  return (backendUrls as any).trash(props.questionnaire.id)
+    })
 
     const formatDate = (date: string) => {
       const d = new Date(date)

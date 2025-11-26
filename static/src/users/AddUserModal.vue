@@ -184,6 +184,7 @@
 <script lang="ts">
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex'
+import { defineComponent } from 'vue'
 import axios from 'axios'
 import backend from '../utils/backend'
 // Suppression des imports/initialisations Vue 2: import Vue from 'vue', import { store } from '../store'
@@ -193,7 +194,7 @@ import EventBus from '../events'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default { // Remplacement de Vue.extend
+export default defineComponent({ // Remplacement de Vue.extend
   data() {
     return {
       formData: {
@@ -366,6 +367,6 @@ export default { // Remplacement de Vue.extend
           this.stepShown = 2
         })
     },
-  },
-}
+  }
+})
 </script>

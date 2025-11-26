@@ -52,10 +52,10 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import ModalFlow from '../utils/ModalFlow'
 
-export default Vue.extend({
+export default defineComponent({
   name: 'DeleteQuestionnaireModal',
   props: {
     questionnaire: { type: Object, required: true },

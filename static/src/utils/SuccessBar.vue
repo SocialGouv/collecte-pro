@@ -9,7 +9,9 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   name: 'InfoBar', // ou le nom de ton composant
   props: {
     noclose: Boolean,
@@ -19,5 +21,5 @@ export default {
       this.$emit('dismissed')
     },
   },
-}
+})
 </script>

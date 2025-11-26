@@ -55,12 +55,12 @@ import axios from 'axios'
 import backendUrls from '../utils/backend'
 import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
+import { defineComponent } from 'vue'
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState, mapMutations } from 'vuex' // mapMutations peut être utile
-// Suppression de: import Vue from 'vue'
 // Suppression de: import SwapMixin from '../utils/SwapMixin'
 
-export default { // Remplacement de Vue.extend
+export default defineComponent({
   components: {
     ConfirmModal,
     ErrorBar,
@@ -159,6 +159,6 @@ export default { // Remplacement de Vue.extend
       this.saveThemeOrder(); // Sauvegarde finale (si nécessaire)
       // Fermer la modale (doit être géré par le composant parent ou la modale elle-même)
     }
-  },
-}
+  }
+})
 </script>

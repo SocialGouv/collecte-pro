@@ -26,11 +26,12 @@
 
 <script>
 import '../../css/utils.css'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'MyComponent', // nom du composant facultatif mais conseillé
   props: {
     videoVersions: Array,
   },
-}
+})
 </script>

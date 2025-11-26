@@ -16,18 +16,19 @@
 // Suppression de: import Vue from 'vue'
 // Suppression de: import { mapFields } from 'vuex-map-fields'
 import { mapState } from 'vuex' // Import de mapState de Vuex 4
+import { defineComponent } from 'vue'
 
 import QuestionnaireDetailForPreview from './QuestionnaireDetailForPreview'
 
-export default { // Remplacement de Vue.extend
-  computed: {
-    // Remplacement de mapFields par mapState (Lecture seule)
-    ...mapState([
-      'currentQuestionnaire',
-    ]),
-  },
-  components: {
-    QuestionnaireDetailForPreview,
-  },
-}
+export default defineComponent({ // Remplacement de Vue.extend
+	computed: {
+		// Remplacement de mapFields par mapState (Lecture seule)
+		...mapState([
+			'currentQuestionnaire',
+		]),
+	},
+	components: {
+		QuestionnaireDetailForPreview,
+	},
+})
 </script>

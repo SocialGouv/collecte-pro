@@ -95,7 +95,7 @@ parvenir au fur et à mesure votre réponse. \
 \nNous restons à votre disposition ainsi qu’à celle de vos \
 services pour toute information complémentaire qu’appellerait ce questionnaire.'
 
-export default defineComponent({
+const QuestionnaireMetadataCreate = defineComponent({
   name: 'QuestionnaireMetadataCreate',
   props: {
     questionnaireNumbering: Number,
@@ -148,6 +148,8 @@ export default defineComponent({
     QuestionnaireFileList,
   },
 })
+
+export default QuestionnaireMetadataCreate
 
 QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT = DESCRIPTION_DEFAULT
 </script>

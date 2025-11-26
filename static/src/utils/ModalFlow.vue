@@ -70,13 +70,13 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, defineComponent } from 'vue'
 import EmptyModal from './EmptyModal'
 import ErrorBar from './ErrorBar'
 
 const SPINNER_DURATION_MILLIS = 2000
 
-export default {
+export default defineComponent({
   name: 'ConfirmModalWithWait',
   components: {
     EmptyModal,
@@ -146,5 +146,5 @@ export default {
       confirmed,
     }
   },
-}
+})
 </script>

@@ -45,7 +45,7 @@
           <!-- NPM dependencies linked from node_modules, see STATICFILES_DIRS in settings.py -->
           <script src="{% static 'jquery.slim.js' %}"></script>
           <script src="{% static 'bootstrap.bundle.js' %}"></script>
-          <script src="core.js"></script>
+          <script src="{% static 'tabler/core.js' %}"></script>
         {% endblock js_in_script_tags %}
         {% block js_bundle %}{% endblock js_bundle %}
         {% block session_management %}{% endblock session_management %}

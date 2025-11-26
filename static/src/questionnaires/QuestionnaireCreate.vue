@@ -63,7 +63,8 @@
     </div>
   </div>
 
-
+  <!-- Note : use v-show and not v-if for the bottom-bar, because the element needs to be in the DOM
+  from the start for the IE sticky-bottom to work. -->
   <div id="bottom-bar"
        v-show="state !== STATES.LOADING"
        class="flex-column bg-white sticky-bottom border-top p-4">
@@ -148,18 +149,18 @@ import axios from 'axios'
 import backend from '../utils/backend'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
 import Breadcrumbs from '../utils/Breadcrumbs'
-import { loadStatuses } from '../store'
+import { loadStatuses, useStore } from '../store'
 import PublishFlow from './PublishFlow'
 import QuestionnaireBodyCreate from './QuestionnaireBodyCreate'
 import QuestionnaireMetadataCreate from './QuestionnaireMetadataCreate'
 import QuestionnairePreview from './QuestionnairePreview'
 import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
-import { computed, reactive, ref, onMounted } from 'vue'
-import { useStore } from 'vuex'
+import { defineComponent, computed } from 'vue'
 import Wizard from '../utils/Wizard'
 import backendUrls from '../utils/backend'
 
+// State machine
 const STATES = {
   LOADING: 0,
   START: 1,
@@ -171,23 +172,23 @@ const SAVING_MESSAGE_MIN_DISPLAY_TIME_MILLIS = 2000
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default {
+export default defineComponent({
   props: {
     controlId: Number,
     controlHasMultipleInspectors: Boolean,
     questionnaireId: Number,
     questionnaireNumbering: Number,
-    window: { default: () => window },
+    // Pass window dependency for testing
+    window: {
+      default: () => window,
+    },
   },
-  setup(props, { emit }) {
-    const store = useStore()
-
-    // Reactive state
-    const state = reactive({
+  data() {
+    return {
       errorMessage: '',
       errors: [],
       hasErrors: false,
-      userId: '',
+      userId:'',
       STATES: STATES,
       state: STATES.LOADING,
       saveMessage: {
@@ -196,134 +197,81 @@ export default {
         isSaveHappening: false,
       },
       questionnaire: '',
-      control: null,
-    })
-
-    // Remplacement de mapFields
-    const controls = computed({
-      get: () => store.state.controls,
-      set: (val) => store.commit('updateControls', val),
-    })
-    const controlsLoadStatus = computed({
-      get: () => store.state.controlsLoadStatus,
-      set: (val) => store.commit('updateControlsLoadStatus', val),
-    })
-    const currentQuestionnaire = computed({
-      get: () => store.state.currentQuestionnaire,
-      set: (val) => store.commit('updateCurrentQuestionnaire', val),
-    })
-
-    const currentControl = computed(() => {
-      if (!currentQuestionnaire.value || !currentQuestionnaire.value.control) return null
-      return controls.value.find(c => c.id === currentQuestionnaire.value.control)
-    })
-
-    // --------- Methods ---------
-    const emitQuestionnaireUpdated = () => emit('questionnaire-updated', currentQuestionnaire.value)
-
-    const displayErrors = (msg, errs) => {
-      state.hasErrors = true
-      state.errors = errs || []
-      state.errorMessage = errs ? `${msg} Erreurs : ${JSON.stringify(errs)}` : msg
-      console.error(state.errorMessage)
     }
-
-    const clearErrors = () => {
-      state.hasErrors = false
-      state.errors = []
-      state.errorMessage = ''
-    }
-
-    const moveToState = (newState) => {
-      clearErrors()
-      state.state = newState
-    }
-
-    const findCurrentQuestionnaire = (controlsList, questionnaireId) => {
-      for (const control of controlsList) {
-        const found = control.questionnaires.find(q => q.id === questionnaireId)
-        if (found) {
-          state.questionnaire = found
-          return found
+  },
+  computed: {
+    controls() {
+      // Replace with Vuex store access or prop as needed
+      return this.$store.state.controls
+    },
+    controlsLoadStatus() {
+      return this.$store.state.controlsLoadStatus
+    },
+    currentQuestionnaire: {
+      get() {
+        return this.$store.state.currentQuestionnaire
+      },
+      set(val) {
+        this.$store.commit('setCurrentQuestionnaire', val)
+      }
+    },
+    currentControl() {
+      if (!this.currentQuestionnaire || !this.currentQuestionnaire.control) {
+        return null
+      }
+      return this.controls.find(control => control.id === this.currentQuestionnaire.control)
+    },
+  },
+  watch: {
+    // Watch change of loadStatus coming from the store, to know when the data is ready.
+    controlsLoadStatus(newValue, oldValue) {
+      const loadNewQuestionnaire = () => {
+        const newQuestionnaire = {
+          control: this.controlId,
+          description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
+          title: '',
+          themes: [],
         }
+        this.currentQuestionnaire = newQuestionnaire
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
+        return
       }
-    }
 
-    const loadNewQuestionnaire = () => {
-      const newQ = {
-        control: props.controlId,
-        description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
-        title: '',
-        themes: [],
+      const loadExistingQuestionnaire = () => {
+        const currentQuestionnaire =
+          this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
+        if (!currentQuestionnaire) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
+          this.displayErrors(errorMessage)
+          throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
+        }
+        if (!currentQuestionnaire.is_draft) {
+          const errorMessage = 'Le questionnaire ' + this.questionnaireId +
+                ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
+          this.displayErrors(errorMessage)
+          throw new Error(
+            'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
+        }
+        this.currentQuestionnaire = currentQuestionnaire
+        this.emitQuestionnaireUpdated()
+        this.moveToState(STATES.START)
       }
-      currentQuestionnaire.value = newQ
-      emitQuestionnaireUpdated()
-      moveToState(STATES.START)
-    }
 
-    const loadExistingQuestionnaire = async () => {
-      const curQ = findCurrentQuestionnaire(controls.value, props.questionnaireId)
-      if (!curQ) {
-        displayErrors(`Le questionnaire ${props.questionnaireId} n'a pas été trouvé.`)
-        throw new Error('Questionnaire not found')
+      if (newValue === loadStatuses.ERROR) {
+        const errorMessage =
+          'Erreur lors du chargement des données. Le questionnaire ne peut être affiché.'
+        this.displayErrors(errorMessage)
+        throw new Error('Store status is ERROR. Not loading questionnaire.')
       }
-      if (!curQ.is_draft) {
-        displayErrors(`Le questionnaire ${props.questionnaireId} n'est pas un brouillon.`)
-        throw new Error('Questionnaire is not a draft')
+      if (newValue === loadStatuses.SUCCESS) {
+        if (typeof this.questionnaireId === 'undefined') {
+          loadNewQuestionnaire()
+          return
+        }
+        loadExistingQuestionnaire()
       }
-      currentQuestionnaire.value = curQ
-      currentQuestionnaire.value.control = props.controlId
-
-      const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(props.controlId))
-      state.control = resp.data.find(obj => obj.id === props.controlId)
-      const curQFull = state.control.questionnaires.find(q => q.id === props.questionnaireId)
-      const themes = curQFull.themes.map(t => {
-        const questions = t.questions.map(q => ({
-          ...q,
-          question_files: q.question_files.map(ff => ({
-            id: ff.id, url: ff.url, basename: ff.basename, file: ff.file, question: ff.question
-          }))
-        }))
-        return { ...t, questions }
-      })
-      currentQuestionnaire.value.themes = themes
-      currentQuestionnaire.value.description = curQFull.description
-      currentQuestionnaire.value.questionnaire_files = curQFull.questionnaire_files
-
-      emitQuestionnaireUpdated()
-      moveToState(STATES.START)
-    }
-
-    const validateCurrentForm = () => {
-      if (state.state === STATES.PREVIEW) return true
-      if (state.state === STATES.START) return refs.questionnaireMetadataCreate.validateForm()
-      if (state.state === STATES.CREATING_BODY) return refs.questionnaireBodyCreate.validateForm()
-    }
-
-    // --------- Lifecycle ---------
-    onMounted(() => {
-      if (!props.questionnaireId) loadNewQuestionnaire()
-      else loadExistingQuestionnaire()
-      if (!props.controlId && !props.questionnaireId) {
-        throw new Error('QuestionnaireCreate needs a controlId or a questionnaireId')
-      }
-    })
-
-    return {
-      state,
-      controls,
-      controlsLoadStatus,
-      currentQuestionnaire,
-      currentControl,
-      emitQuestionnaireUpdated,
-      displayErrors,
-      clearErrors,
-      moveToState,
-      loadNewQuestionnaire,
-      loadExistingQuestionnaire,
-      findCurrentQuestionnaire,
-      validateCurrentForm,
-    }
+    },
   },
   components: {
     Breadcrumbs,
@@ -334,7 +282,262 @@ export default {
     SwapEditorButton,
     Wizard,
   },
-  mixins: [StickyBottomMixin],
-}
+  mixins: [
+    StickyBottomMixin,
+  ],
+  mounted() {
+    if (typeof this.questionnaireId === 'undefined') {
+      this.loadNewQuestionnaire()
+    } else {
+      this.loadExistingQuestionnaire()
+    }
+    this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
+    if (this.controlId === undefined && this.questionnaireId === undefined) {
+      throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
+    }
+  },
+  methods: {
+    loadNewQuestionnaire() {
+      const newQuestionnaire = {
+        control: this.controlId,
+        description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
+        title: '',
+        themes: [],
+      }
+      this.currentQuestionnaire = newQuestionnaire
+      this.emitQuestionnaireUpdated()
+      this.moveToState(STATES.START)
+    },
+    async loadExistingQuestionnaire() {
+      const currentQuestionnaire = this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
+      if (!currentQuestionnaire) {
+        const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
+        this.displayErrors(errorMessage)
+        throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
+      }
+      if (!currentQuestionnaire.is_draft) {
+        const errorMessage = 'Le questionnaire ' + this.questionnaireId +
+          ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
+        this.displayErrors(errorMessage)
+        throw new Error(
+          'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
+      }
+      this.currentQuestionnaire = currentQuestionnaire
+      this.currentQuestionnaire.control = this.controlId
+      const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.controlId))
+      this.control = resp.data.filter(obj => obj.id === this.controlId)[0]
+      const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
+      const themes = curQ.themes.map(t => {
+        const qq = t.questions.map(q => {
+          const qf = q.question_files.map(ff => {
+            return { id: ff.id, url: ff.url, basename: ff.basename, file: ff.file, question: ff.question }
+          })
+          return { description: q.description, id: q.id, order: q.order, question_files: qf }
+        })
+        return { id: t.id, order: t.order, questionnaire: t.questionnaire, questions: qq, title: t.title }
+      })
+      this.currentQuestionnaire.questionnaire_files = curQ.questionnaire_files
+      this.currentQuestionnaire.description = curQ.description
+      this.currentQuestionnaire.themes = themes
+      this.emitQuestionnaireUpdated()
+      this.moveToState(STATES.START)
+    },
+    findCurrentQuestionnaire(controls, questionnaireId) {
+      for (let i = 0; i < controls.length; i++) {
+        const control = controls[i]
+        const foundQuestionnaires = control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
+        if (foundQuestionnaires.length > 0) {
+          this.questionnaire = foundQuestionnaires[0]
+          return foundQuestionnaires[0]
+        }
+      }
+    },
+    emitQuestionnaireUpdated() {
+      this.$emit('questionnaire-updated', this.currentQuestionnaire)
+    },
+    moveToState(newState) {
+      this.clearErrors()
+      this.state = newState
+    },
+    next() {
+      console.debug('Navigation "next" from', this.state)
+      if (this.state === STATES.START) {
+        if (!this.$refs.questionnaireMetadataCreate.validateForm()) {
+          return
+        }
+        this.saveDraft().then(() => {
+          if (this.currentQuestionnaire.themes.length === 0) {
+            this.currentQuestionnaire.themes.push({ questions: [{}] })
+          }
+          this.moveToState(STATES.CREATING_BODY)
+        })
+        return
+      }
+      if (this.state === STATES.CREATING_BODY) {
+        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+          return
+        }
+        this.saveDraft()
+        this.moveToState(STATES.PREVIEW)
+        return
+      }
+      console.error('Trying to go to "next", from state', this.state)
+    },
+    back(clickedStep) {
+      console.debug('Navigation "back" from', this.state, 'going to step', clickedStep)
+      if (this.state === STATES.CREATING_BODY) {
+        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+          return
+        }
+        this.saveDraft()
+        this.moveToState(STATES.START)
+        return
+      }
+      if (this.state === STATES.PREVIEW) {
+        if (clickedStep === 1) {
+          this.moveToState(STATES.START)
+          return
+        }
+        if (clickedStep === 2) {
+          this.moveToState(STATES.CREATING_BODY)
+          return
+        }
+        this.moveToState(STATES.CREATING_BODY)
+        return
+      }
+      console.error('Trying to go back from state', this.state, 'with clickedStep', clickedStep)
+    },
+    displayErrors(errorMessage, errors) {
+      this.hasErrors = true
+      this.errors = errors
+      if (errors) {
+        this.errorMessage = errorMessage + ' Erreurs : ' + JSON.stringify(errors)
+      } else {
+        this.errorMessage = errorMessage
+      }
+      console.error(errorMessage)
+    },
+    clearErrors() {
+      this.hasErrors = false
+      this.errors = []
+      this.errorMessage = ''
+    },
+    _doSave() {
+      const cleanPreSave = () => {
+        if (this.currentQuestionnaire.end_date) {
+          this.currentQuestionnaire.end_date = toBackendFormat(this.currentQuestionnaire.end_date)
+        } else {
+          delete this.currentQuestionnaire.end_date
+        }
+      }
+      const getCreateMethod = () => axios.post.bind(this, backend.questionnaire())
+      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
+      this.clearErrors()
+      cleanPreSave()
+      let saveMethod
+      if (this.currentQuestionnaire.id !== undefined) {
+        saveMethod = getUpdateMethod(this.currentQuestionnaire.id)
+      } else {
+        saveMethod = getCreateMethod()
+      }
+      return saveMethod(this.currentQuestionnaire)
+    },
+    validateCurrentForm() {
+      if (this.state === STATES.PREVIEW) {
+        return true
+      }
+      if (this.state === STATES.START) {
+        return this.$refs.questionnaireMetadataCreate.validateForm()
+      }
+      if (this.state === STATES.CREATING_BODY) {
+        return this.$refs.questionnaireBodyCreate.validateForm()
+      }
+    },
+    saveDraftAndSwapEditor() {
+      console.debug('save draft before editor swap')
+      if (!this.validateCurrentForm()) {
+        return
+      }
+      this.saveDraft()
+        .then(savedQuestionnaire => {
+          this.$emit('show-swap-editor-modal', savedQuestionnaire.id)
+        })
+    },
+    validateFormAndSaveDraft() {
+      if (!this.validateCurrentForm()) {
+        return
+      }
+      this.saveDraft()
+    },
+    displaySaveInProgress() {
+      this.saveMessage.isWaitingForMinDisplayTime = true
+      setTimeout(() => { this.saveMessage.isWaitingForMinDisplayTime = false }, SAVING_MESSAGE_MIN_DISPLAY_TIME_MILLIS)
+      this.saveMessage.isSaveHappening = true
+    },
+    displaySavingDone(dateDone) {
+      this.saveMessage.text = 'Enregistrement fait à ' + dateDone + '.'
+      this.saveMessage.isSaveHappening = false
+    },
+    displaySavingDoneWithError() {
+      this.saveMessage.text = 'Erreur lors de la sauvegarde : les modifications ne sont pas enregistrées.'
+      this.saveMessage.isWaitingForMinDisplayTime = false
+      this.saveMessage.isSaveHappening = false
+    },
+    saveDraft() {
+      this.currentQuestionnaire.is_draft = true
+      this.displaySaveInProgress()
+      return this._doSave()
+        .then((response) => {
+          console.debug('Successful draft save.')
+          this.currentQuestionnaire = response.data
+          console.log('self.currentQuestionnaire : ', this.currentQuestionnaire)
+          this.emitQuestionnaireUpdated()
+          this.displaySavingDone(nowTimeString())
+          return response.data
+        })
+        .catch((error) => {
+          console.error('Error in draft save :', error)
+          const errorToDisplay = (error.response && error.response.data) ? error.response.data : error
+          this.displayErrors('Erreur lors de la sauvegarde du brouillon.', errorToDisplay)
+          this.displaySavingDoneWithError()
+        })
+    },
+    startPublishFlow() {
+      this.$refs.publishFlow.start()
+    },
+    publish() {
+      this.currentQuestionnaire.is_draft = false
+      this.currentQuestionnaire.sent_date = toBackendFormat(new Date())
+      return this._doSave()
+    },
+    saveDraftAndGoHome(event) {
+      if (!this.validateCurrentForm()) {
+        return
+      }
+      // Display a "loading" spinner on clicked button, while the user is redirected, so that they
+      // know their click has been registered.
+      $(event.target).addClass('btn-loading')
+      this.saveDraft()
+        .then(() => {
+          this.goHome()
+        })
+    },
+    goHome() {
+      this.window.location.href = backend['control-detail'](this.currentQuestionnaire.control)
+    },
+    saveAndShowMoveThemesModal() {
+      if (!this.validateCurrentForm()) {
+        return
+      }
+      $('#move-themes-button').addClass('btn-loading')
+      this.saveDraft()
+        .then(() => {
+          $('#move-themes-button').removeClass('btn-loading')
+          if (this.state === STATES.CREATING_BODY) {
+            $(this.$refs.questionnaireBodyCreate.$refs.moveThemesModal.$el).modal('show')
+          }
+        })
+    },
+  },
+})
 </script>
-

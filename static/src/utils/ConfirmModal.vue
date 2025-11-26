@@ -41,8 +41,9 @@
 
 <script>
 import EmptyModal from './EmptyModal'
+import { defineComponent } from 'vue'
 
-export default {
+export default defineComponent({
   name: 'ConfirmModal',
   components: {
     EmptyModal,
@@ -66,6 +67,6 @@ export default {
       this.$emit('close')
     },
   },
-}
+})
 </script>
 
