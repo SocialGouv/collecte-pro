@@ -4,12 +4,13 @@ import 'regenerator-runtime/runtime'
 
 import './utils/polyfills.js'
 
-import { createApp } from 'vue'
 import { loadStatuses, store } from './store'
 import QuestionnaireCreate from './questionnaires/QuestionnaireCreate.vue'
 import Sidebar from './utils/Sidebar.vue'
+import { createApp } from 'vue'
 
-const controlsDataEl = typeof document !== 'undefined' ? document.getElementById('controls-data') : null
+// Récupération des controls injectés par le serveur
+const controlsDataEl = document.getElementById('controls-data')
 let controls = []
 if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.trim() !== '') {
   try {
@@ -18,13 +19,13 @@ if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.t
     console.error('questionnaire-create: failed to parse controls-data', e)
     controls = []
   }
-} else {
-  controls = []
 }
 
-// Helper to read bound attributes produced by Django templates. It handles
-// variants like `:control-id="123"` or `control-id="123"` and converts to
-// Number/Boolean when appropriate.
+// Commit server-injected controls dans le store
+store.commit('updateControls', controls)
+store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+
+// Helper pour lire les props bindées par Django
 function readPropAttr(el, name) {
   if (!el) return undefined
   const candidates = [name, ':' + name, 'v-bind:' + name]
@@ -36,46 +37,33 @@ function readPropAttr(el, name) {
   return undefined
 }
 
-// Commit server-injected controls early so that the QuestionnaireCreate
-// component (mounted below) finds the data synchronously.
-store.commit('updateControls', controls)
-store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
-
-// Mount QuestionnaireCreate as a standalone app (runtime-only builds can't
-// compile in-DOM templates like Vue 2 did), passing props read from the
-// <questionnaire-create> element rendered by Django.
-const questionnaireEl = typeof document !== 'undefined' ? document.querySelector('questionnaire-create') : null
-let questionnaireProps = {}
+// Montage du questionnaire
+const questionnaireEl = document.querySelector('questionnaire-create')
 if (questionnaireEl) {
+  let props = {}
+
   const controlIdRaw = readPropAttr(questionnaireEl, 'control-id')
   const questionnaireIdRaw = readPropAttr(questionnaireEl, 'questionnaire-id')
   const controlHasMultipleInspectorsRaw = readPropAttr(questionnaireEl, 'control-has-multiple-inspectors')
   const questionnaireNumberingRaw = readPropAttr(questionnaireEl, 'questionnaire-numbering')
 
-  if (controlIdRaw !== undefined) {
-    questionnaireProps.controlId = Number(controlIdRaw.replace(/"/g, ''))
-  }
-  if (questionnaireIdRaw !== undefined) {
-    questionnaireProps.questionnaireId = Number(questionnaireIdRaw.replace(/"/g, ''))
-  }
+  if (controlIdRaw !== undefined) props.controlId = Number(controlIdRaw.replace(/"/g, ''))
+  if (questionnaireIdRaw !== undefined) props.questionnaireId = Number(questionnaireIdRaw.replace(/"/g, ''))
   if (controlHasMultipleInspectorsRaw !== undefined) {
     const val = controlHasMultipleInspectorsRaw.replace(/"/g, '')
-    questionnaireProps.controlHasMultipleInspectors = (val === 'true' || val === 'True')
+    props.controlHasMultipleInspectors = val === 'true' || val === 'True'
   }
-  if (questionnaireNumberingRaw !== undefined) {
-    questionnaireProps.questionnaireNumbering = Number(questionnaireNumberingRaw.replace(/"/g, ''))
-  }
+  if (questionnaireNumberingRaw !== undefined) props.questionnaireNumbering = Number(questionnaireNumberingRaw.replace(/"/g, ''))
+
+  const questionnaireApp = createApp(QuestionnaireCreate, props)
+  questionnaireApp.use(store)
+  questionnaireApp.mount(questionnaireEl)
 }
 
-// Mount the main questionnaire app
-const questionnaireApp = createApp(QuestionnaireCreate, questionnaireProps)
-questionnaireApp.use(store)
-questionnaireApp.mount('#questionnaire-create-vm')
-
-// Mount the sidebar separately (it will reuse the same store)
-const sidebarEl = typeof document !== 'undefined' ? document.getElementById('sidebar-vm') : null
+// Montage de la sidebar
+const sidebarEl = document.getElementById('sidebar-vm')
 if (sidebarEl) {
-  const sidebarApp = createApp({ components: { Sidebar } })
+  const sidebarApp = createApp(Sidebar)
   sidebarApp.use(store)
-  sidebarApp.mount('#sidebar-vm')
+  sidebarApp.mount(sidebarEl)
 }
