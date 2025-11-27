@@ -1,18 +1,17 @@
 // Remplacement de @babel/polyfill
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-
 import './utils/polyfills.js'
 
-import { loadStatuses, store } from './store'
+import { createApp } from 'vue'
+import { store, loadStatuses } from './store'
 import QuestionnaireCreate from './questionnaires/QuestionnaireCreate.vue'
 import Sidebar from './utils/Sidebar.vue'
-import { createApp } from 'vue'
 
-// Récupération des controls injectés par le serveur
+// --- Récupération des données injectées côté serveur ---
 const controlsDataEl = document.getElementById('controls-data')
 let controls = []
-if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.trim() !== '') {
+if (controlsDataEl && controlsDataEl.textContent.trim() !== '') {
   try {
     controls = JSON.parse(controlsDataEl.textContent)
   } catch (e) {
@@ -20,28 +19,37 @@ if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.t
     controls = []
   }
 }
-
-// Commit server-injected controls dans le store
 store.commit('updateControls', controls)
 store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 
-// Helper pour lire les props bindées par Django
+const userDataEl = document.getElementById('user-data')
+if (userDataEl && userDataEl.textContent.trim() !== '') {
+  try {
+    const user = JSON.parse(userDataEl.textContent)
+    store.commit('updateSessionUser', user)
+    store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
+  } catch (e) {
+    console.error('questionnaire-create: failed to parse user-data', e)
+    store.dispatch('fetchSessionUser')
+  }
+} else {
+  store.dispatch('fetchSessionUser')
+}
+
+// --- Helper pour lire les props bindées par Django ---
 function readPropAttr(el, name) {
   if (!el) return undefined
   const candidates = [name, ':' + name, 'v-bind:' + name]
   for (const attr of candidates) {
-    if (el.hasAttribute(attr)) {
-      return el.getAttribute(attr)
-    }
+    if (el.hasAttribute(attr)) return el.getAttribute(attr)
   }
   return undefined
 }
 
-// Montage du questionnaire
+// --- Montage du questionnaire ---
 const questionnaireEl = document.querySelector('questionnaire-create')
 if (questionnaireEl) {
-  let props = {}
-
+  const props = {}
   const controlIdRaw = readPropAttr(questionnaireEl, 'control-id')
   const questionnaireIdRaw = readPropAttr(questionnaireEl, 'questionnaire-id')
   const controlHasMultipleInspectorsRaw = readPropAttr(questionnaireEl, 'control-has-multiple-inspectors')
@@ -49,10 +57,8 @@ if (questionnaireEl) {
 
   if (controlIdRaw !== undefined) props.controlId = Number(controlIdRaw.replace(/"/g, ''))
   if (questionnaireIdRaw !== undefined) props.questionnaireId = Number(questionnaireIdRaw.replace(/"/g, ''))
-  if (controlHasMultipleInspectorsRaw !== undefined) {
-    const val = controlHasMultipleInspectorsRaw.replace(/"/g, '')
-    props.controlHasMultipleInspectors = val === 'true' || val === 'True'
-  }
+  if (controlHasMultipleInspectorsRaw !== undefined) props.controlHasMultipleInspectors =
+    controlHasMultipleInspectorsRaw.replace(/"/g, '') === 'true'
   if (questionnaireNumberingRaw !== undefined) props.questionnaireNumbering = Number(questionnaireNumberingRaw.replace(/"/g, ''))
 
   const questionnaireApp = createApp(QuestionnaireCreate, props)
@@ -60,10 +66,27 @@ if (questionnaireEl) {
   questionnaireApp.mount(questionnaireEl)
 }
 
-// Montage de la sidebar
+// --- Montage de la sidebar ---
 const sidebarEl = document.getElementById('sidebar-vm')
 if (sidebarEl) {
-  const sidebarApp = createApp(Sidebar)
-  sidebarApp.use(store)
-  sidebarApp.mount(sidebarEl)
+  const mountSidebar = () => {
+    const sidebarApp = createApp(Sidebar)
+    sidebarApp.use(store)
+    sidebarApp.mount(sidebarEl)
+  }
+
+  // Si le sessionUser n’est pas encore chargé, attendre
+  if (store.state.sessionUserLoadStatus === loadStatuses.LOADING) {
+    const unwatch = store.watch(
+      state => state.sessionUserLoadStatus,
+      status => {
+        if (status === loadStatuses.SUCCESS || status === loadStatuses.ERROR) {
+          mountSidebar()
+          unwatch()
+        }
+      }
+    )
+  } else {
+    mountSidebar()
+  }
 }
