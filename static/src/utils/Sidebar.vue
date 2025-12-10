@@ -201,6 +201,7 @@ export default defineComponent({
       const menu = []
       for (const control of this.controls) {
         const accessType = await this.getAccessTypeLibelle(control.id)
+        console.log("accessType", accessType)
         const controlMenu = {
           icon: accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
@@ -266,7 +267,8 @@ export default defineComponent({
   },
 })
 </script>
-
+<style scoped>
+</style>
 <style>
   #sidebar-vm {
     background-color: white;
@@ -354,11 +356,11 @@ export default defineComponent({
     background-color: #3473cb;
   }
  .vsm--badge.fas.fa-thumbtack {
-  color: gray;
+  color: gray; 
   }
 
 .vsm--badge.fas.fa-thumbtack:not(.unpinned) {
-  color: inherit;
+  color: inherit; 
   }
 
 </style>
