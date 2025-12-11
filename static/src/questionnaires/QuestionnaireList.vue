@@ -326,7 +326,7 @@ import DateFormat from '../utils/DateFormat.js'
 import HelpTooltip from '../utils/HelpTooltip'
 import InfoBar from '../utils/InfoBar'
 import ConfirmModal from '../utils/ConfirmModal'
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 import { mapState } from 'vuex'
 import QuestionnaireTreeView from '../questionnaires/QuestionnaireTreeView'
 
@@ -353,6 +353,7 @@ export default defineComponent({
       currentQuestionnaireThemes: [],
       hasAnyAnswerValue: false,
       localControl: null,
+      loaderActive: inject('loaderActive', { value: false }),
     }
   },
 
@@ -566,7 +567,7 @@ export default defineComponent({
     },
 
     exportControl(questionnaireId) {
-      this.$parent.$children[0].loaderActive = true
+      this.loaderActive.value = true
 
       const formatFilename = (file) => {
         const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
@@ -653,7 +654,7 @@ export default defineComponent({
       let cnt = 0
 
       if (files.length == 0) {
-        this.$parent.$children[0].loaderActive = false
+        this.loaderActive.value = false
       }
 
       files.map((file) => {
@@ -668,7 +669,7 @@ export default defineComponent({
           cnt++
           if (cnt === files.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => {
-              this.$parent.$children[0].loaderActive = false
+              this.loaderActive.value = false
               saveAs(content, zipFilename)
             })
           }

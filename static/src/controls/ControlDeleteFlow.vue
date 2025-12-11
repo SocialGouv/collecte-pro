@@ -33,7 +33,7 @@
       </div>
 
       <div class="modal-footer border-top-0">
-        <button type="button" class="btn btn-secondary" @click="cancelAction">Annuler</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
         <button type="submit" class="btn btn-primary btn-red" :disabled="!allChecked">
           <span class="fe fe-trash-2 mr-1" aria-hidden="true"></span>
           Supprimer
@@ -76,7 +76,7 @@
         <p class="text-center text-danger">{{ errorMessage }}</p>
       </div>
       <div class="modal-footer border-top-0 d-flex justify-content-center">
-        <button type="button" class="btn btn-secondary" @click="cancelAction">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
           Fermer
         </button>
       </div>
@@ -109,10 +109,6 @@ const allChecked = computed(() => checkbox1.value && checkbox2.value && checkbox
 // Méthodes
 const goHome = () => {
   window.location.assign('/accueil')
-}
-
-const cancelAction = () => {
-  modalFlow.value?.reset()
 }
 
 // Appel API pour supprimer le contrôle

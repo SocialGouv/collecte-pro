@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, provide } from 'vue'
 import QuestionnaireDetailPage from './QuestionnaireDetailPage.vue'
 import Sidebar from '../utils/Sidebar.vue'
 import '../../css/questionnaires.css'
@@ -40,6 +40,7 @@ export default defineComponent({
   },
   setup() {
     const loaderActive = ref(false)
+    provide('loaderActive', loaderActive)
 
     return { loaderActive }
   },
