@@ -22,7 +22,7 @@
                         class="form-control date-input"
                         aria-labelledby="filtre_start_date"
                         v-model="date_filter_start"
-                        :language="fr"
+                        :locale="fr"
                         :typeable="true"
                         :placeholder="placeholder"
                         :format="format"
@@ -33,7 +33,7 @@
                         class="form-control date-input"
                         aria-labelledby="filtre_end_date"
                         v-model="date_filter_end"
-                        :language="fr"
+                        :locale="fr"
                         :typeable="true"
                         :placeholder="placeholder"
                         :format="format"
@@ -157,7 +157,8 @@ import { saveAs } from 'file-saver'
 
 import backendUrls from '../utils/backend'
 import InfoBar from '../utils/InfoBar.vue'
-import fr from '../utils/vuejs-datepicker-locale-fr'
+import { fr } from 'date-fns/locale'
+import Datepicker from 'vue3-datepicker'
 
 export default defineComponent({
   name: 'QuestionnaireFiles',

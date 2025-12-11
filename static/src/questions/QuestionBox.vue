@@ -2,8 +2,8 @@
   <div :id="'question' + themeNumbering + '-' + questionNumbering"
        class="card m-0 p-0 pb-0">
     <div class="card-header border-0"
-         :data-bs-toggle="collapseValue"
-         :data-bs-target="'#question-body-' + question.id">
+         :data-toggle="collapseValue"
+         :data-target="'#question-body-' + question.id">
       <Question :theme-numbering="themeNumbering"
                 :question-numbering="questionNumbering"
                 :question="question" />

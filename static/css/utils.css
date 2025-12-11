@@ -88,3 +88,11 @@
  .hidden {
      display: none;
  }
+/* Fix for vue3-datepicker calendar z-index */
+.vdp-datepicker {
+    z-index: 10000;
+}
+
+.vdp-datepicker__calendar {
+    z-index: 10001 !important;
+}

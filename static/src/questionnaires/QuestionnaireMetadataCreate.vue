@@ -55,7 +55,7 @@
                         class="blue"
                         aria-labelledby="questionnaireEndDate"
                         v-model="end_date"
-                        :language="fr"
+                        :locale="fr"
                         :typeable="true"
                         :use-utc="true"
                         :placeholder="placeholder"
@@ -82,7 +82,7 @@
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import Datepicker from 'vue3-datepicker'
-import fr from '../utils/vuejs-datepicker-locale-fr'
+import { fr } from 'date-fns/locale'
 import reportValidity from 'report-validity'
 import QuestionnaireFileUpload from './QuestionnaireFileUpload'
 import QuestionnaireFileList from './QuestionnaireFileList'
@@ -132,7 +132,6 @@ const QuestionnaireMetadataCreate = defineComponent({
     })
 
     const errors = ref([])
-    const frLocale = fr
     const format = 'yyyy-MM-dd'
     const placeholder = 'yyyy-mm-dd'
 
@@ -145,7 +144,7 @@ const QuestionnaireMetadataCreate = defineComponent({
       end_date,
       title,
       errors,
-      frLocale,
+      fr,
       format,
       placeholder,
       formRef,
@@ -163,3 +162,6 @@ export default QuestionnaireMetadataCreate
 
 QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT = DESCRIPTION_DEFAULT
 </script>
+
+<style>
+</style>

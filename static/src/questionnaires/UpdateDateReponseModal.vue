@@ -1,51 +1,57 @@
 <template>
-  <div class="modal fade update-date-reponse-modal" id="updateDateReponseModal" tabindex="-1"
-       role="dialog" aria-labelledby="labelForModalDateReponse" aria-hidden="true" aria-modal="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <div class="modal-title" id="labelForModalDateReponse">
-            {{ questionnaire.title_display }}
-          </div>
-        </div>
-        <div class="modal-body">
-          <div v-if="hasErrors" class="alert alert-danger" role="alert">
-            La modification de la date de réponse n'a pas fonctionné.
-          </div>
-          <form @submit.prevent="updateDateReponse" @keydown.esc="resetFormData">
-            <div class="form-group">
-              <label class="form-label" id="questionnaireEndDate" for="questionnaire_enddate">
-                Vous pouvez modifier la date limite de réponse :
-              </label>
-              <Datepicker id="questionnaire_enddate"
-                          class="blue"
-                          aria-labelledby="questionnaireEndDate"
-                          :language="fr"
-                          :typeable="true"
-                          :use-utc="true"
-                          :placeholder="placeholder"
-                          v-model="endDate"
-                          :format="format"
-                          :monday-first="true" />
+    <div class="modal fade update-date-reponse-modal" id="updateDateReponseModal" tabindex="-1"
+        role="dialog" aria-labelledby="labelForModalDateReponse" aria-hidden="true"
+        aria-modal="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title" id="labelForModalDateReponse">
+                {{questionnaire.title_display}}
             </div>
-            <div class="text-right">
-              <button type="button" class="btn btn-secondary" @click="hideThisModal">Annuler</button>
-              <button type="submit" class="btn btn-primary">Modifier</button>
+          </div>
+          <div class="modal-body">
+            <div v-if="hasErrors" class="alert alert-danger" role="alert">
+              La modification de la date de réponse n'a pas fonctionné.
             </div>
-          </form>
+            <form @submit.prevent="updateDateReponse" @keydown.esc="resetFormData">
+                <div class="form-group">
+                    <label class="form-label" id="questionnaireEndDate" for="questionnaire_enddate">
+                    Vous pouvez modifier la date limite de réponse :
+                    </label>
+                    <datepicker id="questionnaire_enddate"
+                                class="blue"
+                                aria-labelledby="questionnaireEndDate"
+                                :locale="fr"
+                                :typeable="true"
+                                :use-utc="true"
+                                :placeholder="placeholder"
+                                :model-value="endDate"
+                                @update:model-value="endDate = $event"
+                                :format="format"
+                                :monday-first="true">
+                    </datepicker>
+                </div>
+                <div class="text-right">
+                    <button type="button" class="btn btn-secondary" @click="hideThisModal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Modifier</button>
+                </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, onMounted } from 'vue'
+import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 import Datepicker from 'vue3-datepicker'
-import fr from '../utils/vuejs-datepicker-locale-fr'
+import { fr } from 'date-fns/locale'
 import backend from '../utils/backend'
 import { toBackendFormat } from '../utils/DateFormat'
+
+
+declare const $: any
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
@@ -53,37 +59,33 @@ axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 export default defineComponent({
   name: 'UpdateDateReponseModal',
   props: {
-    questionnaireId: { type: Number, required: true },
-    questionnaire: { type: Object, required: true },
+    questionnaireId: Number,
+    questionnaire: Object as any,
   },
-  emits: ['questionnaire-updated'],
-  components: { Datepicker },
+  components: {
+    Datepicker,
+  },
   setup(props, { emit }) {
-    const endDate = ref(props.questionnaire.end_date || '')
+    const endDate = ref<Date | null>(null)
+    const postResult = ref([])
+    const errors = ref<any[]>([])
     const hasErrors = ref(false)
-    const errors = ref<string[]>([])
-    const frLocale = fr
     const format = 'yyyy-MM-dd'
     const placeholder = 'yyyy-mm-dd'
 
-    // Watch prop for changes
-    watch(() => props.questionnaire.end_date, (newVal) => {
-      endDate.value = newVal
-    })
-
-    const resetFormData = () => {
-      hasErrors.value = false
-      errors.value = []
+    // Initialize endDate from questionnaire (same as created() hook in Vue 2)
+    if (props.questionnaire?.end_date) {
+      endDate.value = new Date(props.questionnaire.end_date as string)
     }
 
     const hideThisModal = () => {
       resetFormData()
-      const modalEl = document.getElementById('updateDateReponseModal')
-      if (modalEl) {
-        // Bootstrap 5
-        const modalInstance = bootstrap.Modal.getInstance(modalEl)
-        modalInstance?.hide()
-      }
+      $('#updateDateReponseModal').modal('hide')
+    }
+
+    const resetFormData = () => {
+      hasErrors.value = false
+      errors.value = []
     }
 
     const emitQuestionnaireUpdated = () => {
@@ -91,23 +93,29 @@ export default defineComponent({
     }
 
     const _doSave = async () => {
-      const url = backend.questionnaire(props.questionnaire.id)
-      props.questionnaire.end_date = toBackendFormat(endDate.value)
-      return axios.put(url, props.questionnaire)
+      // Create a copy to avoid mutating the prop
+      const questionnaireCopy = { ...props.questionnaire }
+      questionnaireCopy.end_date = toBackendFormat(endDate.value)
+      const url = backend.questionnaire(questionnaireCopy.id)
+      return axios.put(url, questionnaireCopy)
     }
 
     const updateDateReponse = async () => {
       try {
         const response = await _doSave()
         console.debug('Successful response date save.')
+        postResult.value = response.data
         emitQuestionnaireUpdated()
         hideThisModal()
         return response.data
       } catch (error: any) {
         console.error('Error in response date save:', error)
         hasErrors.value = true
-        if (error.response && error.response.data) {
-          errors.value = Array.isArray(error.response.data) ? error.response.data : [error.response.data]
+        const errorToDisplay = (error.response && error.response.data) ? error.response.data : error
+        if (Array.isArray(errorToDisplay)) {
+          errors.value = errorToDisplay
+        } else if (typeof errorToDisplay === 'string') {
+          errors.value = [errorToDisplay]
         } else {
           errors.value = [error.message || 'Erreur inconnue']
         }
@@ -116,7 +124,7 @@ export default defineComponent({
 
     return {
       endDate,
-      fr: frLocale,
+      fr,
       format,
       placeholder,
       hasErrors,
