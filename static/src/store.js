@@ -68,6 +68,9 @@ export const store = createStore({
       }
       state.editingUser[field] = value
     },
+    setEditingProfileType(state, profileType) {
+      state.editingProfileType = profileType
+    },
   },
 
   actions: {

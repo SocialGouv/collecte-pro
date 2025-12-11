@@ -3,7 +3,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <div id="modal_title" class="modal-title">{{ editingControl.title }}</div>
+        <div id="modal_title" class="modal-title">{{ controlTitle }}</div>
       </div>
       <div class="modal-body">
         <div v-if="hasErrors" class="alert alert-danger" role="alert">
@@ -153,7 +153,7 @@
           </div>
 
           <div class="mt-5">
-            Vous avez ajouté {{ this.postResult.first_name }} {{ this.postResult.last_name }}.
+            Vous avez ajouté {{ postResultName }}.
           </div>
 
           <div class="mt-5">
@@ -165,7 +165,7 @@
               Je l'ai informé.e
             </button>
             <a class="btn btn-primary ml-2"
-               :href="'mailto:' + postResult.email +
+               :href="'mailto:' + postResultEmail +
                       '?subject=' + emailSubject +
                       '&body=' + emailBody"
                target="_blank"
@@ -205,13 +205,13 @@ export default defineComponent({ // Remplacement de Vue.extend
         control: '',
         profile_type: '',
       },
-      postResult: [],
-      errors: [],
+      postResult: null as any,
+      errors: {} as any,
       hasErrors: false,
       searchResult: {},
       foundUser: false,
       stepShown: 1,
-      expectedEndingsArray: [],
+      expectedEndingsArray: [] as string[],
     }
   },
   computed: {
@@ -224,34 +224,37 @@ export default defineComponent({ // Remplacement de Vue.extend
     ]),
     
     // Remplacement des champs imbriqués de mapFields par des getters locaux sur l'objet 'config'
-    expected_inspector_email_endings: function() {
+    expected_inspector_email_endings(): string {
       // Accès direct à la sous-propriété de l'état 'config'
-      return this.config?.expected_inspector_email_endings || '';
+      return (this.config as any)?.expected_inspector_email_endings || '';
     },
-    site_url: function() {
+    site_url(): string {
       // Accès direct à la sous-propriété de l'état 'config'
-      return this.config?.site_url || '';
+      return (this.config as any)?.site_url || '';
     },
     // Le champ 'config' natif est déjà présent via mapState
 
     // Les computed methods pour l'emailSubject et emailBody sont conservées
-    emailSubject: function() {
-      if (this.config.env_name != '' && !this.config.env_name.toLowerCase().startsWith("production")) {
-        return this.config.env_name + ' - Bienvenue sur collecte-pro';
+    emailSubject(): string {
+      const config = this.config as any;
+      if (config.env_name && config.env_name != '' && !config.env_name.toLowerCase().startsWith("production")) {
+        return config.env_name + ' - Bienvenue sur collecte-pro';
       }
       return 'Bienvenue sur collecte-pro';
     },
-    emailBody: function() {
+    emailBody(): string {
       if (this.stepShown !== 3) {
         return ''
       }
 
       const newline = '%0d%0a'
-      const body = 'Bonjour ' + this.postResult.first_name + ' ' + this.postResult.last_name + ',' +
+      const result = this.postResult as any;
+      const control = this.editingControl as any;
+      const body = 'Bonjour ' + result.first_name + ' ' + result.last_name + ',' +
         newline + newline + 'Je viens de vous ajouter à la procédure "' +
-        this.editingControl.title +
+        control.title +
         '" pour l\'organisme "' +
-        this.editingControl.depositing_organization +
+        control.depositing_organization +
         '", en tant que membre de ' +
         (this.editingProfileType === 'inspector'
           ? 'l\'équipe d\'instruction.'
@@ -265,6 +268,17 @@ export default defineComponent({ // Remplacement de Vue.extend
 
       return body
     },
+    // Computed pour accès sécurisé dans le template
+    controlTitle(): string {
+      return (this.editingControl as any)?.title || '';
+    },
+    postResultName(): string {
+      const result = this.postResult as any;
+      return result ? `${result.first_name || ''} ${result.last_name || ''}` : '';
+    },
+    postResultEmail(): string {
+      return (this.postResult as any)?.email || '';
+    },
   },
   components: {
     InfoBar,
@@ -272,7 +286,7 @@ export default defineComponent({ // Remplacement de Vue.extend
   methods: {
     cancel() {
       this.resetFormData()
-      $('#addUserModal').modal('hide')
+      ;(window as any).$('#addUserModal').modal('hide')
     },
     resetFormData() {
       this.formData = {
@@ -304,8 +318,8 @@ export default defineComponent({ // Remplacement de Vue.extend
       }
     },
     validateEmail() {
-      let expectedEndingsArray = [];
-      const isInspectorEmail = email => {
+      let expectedEndingsArray: string[] = [];
+      const isInspectorEmail = (email: string) => {
           // At least one ending should match.
           // Utilise le getter local migré `this.expected_inspector_email_endings`
           const endingsString = this.expected_inspector_email_endings;
@@ -313,10 +327,10 @@ export default defineComponent({ // Remplacement de Vue.extend
           // Si pas de fins d'emails attendues, on considère que c'est bon
           if (!endingsString) return true; 
 
-          expectedEndingsArray = endingsString.split(',');
+          expectedEndingsArray = (endingsString as string).split(',');
           this.expectedEndingsArray = expectedEndingsArray; // Met à jour data() pour l'affichage (étape 1.5)
 
-          return expectedEndingsArray.some(ending => {
+          return expectedEndingsArray.some((ending: string) => {
             return email.endsWith(ending)
           })
       }
@@ -333,13 +347,14 @@ export default defineComponent({ // Remplacement de Vue.extend
       }
     },
     addUser() {
-      this.formData.control = this.editingControl.id
-      this.formData.profile_type = this.editingProfileType
+      const control = this.editingControl as any;
+      this.formData.control = control.id
+      this.formData.profile_type = this.editingProfileType as string
       this.formData.email = this.formData.email.toLowerCase()
       
       // Ici, on envoie le contenu de `formData` (qui est local au composant), 
       // donc aucune mutation n'est nécessaire pour cette étape.
-      axios.post(backend.user(), this.formData)
+      axios.post((backend as any).user(), this.formData)
         .then(response => {
           this.postResult = response.data
           EventBus.$emit('users-changed', this.postResult)
@@ -352,7 +367,7 @@ export default defineComponent({ // Remplacement de Vue.extend
     },
     findUser() {
       this.formData.email = this.formData.email.toLowerCase()
-      axios.get(backend.user(), {
+      axios.get((backend as any).user(), {
         params: {
           search: this.formData.email,
         },

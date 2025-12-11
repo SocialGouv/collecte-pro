@@ -91,8 +91,8 @@ import ControlCreate from '../controls/ControlCreate'
 import ErrorBar from '../utils/ErrorBar'
 import { mapState } from 'vuex'
 import { loadStatuses } from '../store'
-import { SidebarMenu } from 'vue-sidebar-menu'
-import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
+import { SidebarMenu } from 'vue3-sidebar-menu'
+import 'vue3-sidebar-menu/dist/vue-sidebar-menu.css'
 import './sidebar-styles.css'
 import axios from 'axios'
 import { defineComponent } from 'vue'
@@ -216,6 +216,7 @@ export default defineComponent({
           href: backend['control-detail'](control.id),
           title: title,
           ctrl_id: control.id,
+          is_model: control.is_model,
           attributes: { title: this.currentAccessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
         }
 
@@ -252,6 +253,10 @@ export default defineComponent({
 
       // Trier après avoir ajouté tous les éléments
       menu.sort((a, b) => {
+        // Les modèles (is_model) en haut
+        if (a.is_model && !b.is_model) return -1
+        if (!a.is_model && b.is_model) return 1
+        // Ensuite les épinglés
         const aPinned = a.badge && !a.badge.class.includes('unpinned')
         const bPinned = b.badge && !b.badge.class.includes('unpinned')
         if (aPinned && !bPinned) return -1

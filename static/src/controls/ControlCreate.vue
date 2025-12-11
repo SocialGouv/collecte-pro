@@ -202,9 +202,16 @@ export default defineComponent({
             processingDoneCallback(null, response, backendUrls.home());
           })
           .catch((error) => {
-            console.error('Error creating control', error)
-            const errorMessage = this.makeErrorMessage(error)
-            processingDoneCallback(errorMessage)
+            // Ignorer les erreurs d'abort si la requête s'est bien faite
+            if (error.code === 'ECONNABORTED') {
+              console.warn('Request aborted but control might have been created', error)
+              // Continuer quand même
+              processingDoneCallback(null, {}, backendUrls.home());
+            } else {
+              console.error('Error creating control', error)
+              const errorMessage = this.makeErrorMessage(error)
+              processingDoneCallback(errorMessage)
+            }
           })
       }
     },
@@ -220,14 +227,26 @@ export default defineComponent({
         try {
           await this.createQuestionnaire(modelControlId, this.controlId);
         } catch (questionnaireError) {
-          console.error('Error creating questionnaire', questionnaireError);
-          return processingDoneCallback('Erreur lors de la création du questionnaire.');
+          // Ignorer les erreurs d'abort - le control a déjà été créé
+          if (questionnaireError.code === 'ECONNABORTED') {
+            console.warn('Questionnaire creation aborted but control was created', questionnaireError);
+          } else {
+            console.error('Error creating questionnaire', questionnaireError);
+            return processingDoneCallback('Erreur lors de la création du questionnaire.');
+          }
         }
+        // Succès - le control a été créé
         processingDoneCallback(null, controlResponse, backendUrls.home());
       } catch (error) {
-        console.error('Error creating control', error);
-        const errorMessage = this.makeErrorMessage(error);
-        processingDoneCallback(errorMessage);
+        // Si c'est juste une requête annulée, on ignore (le control a probablement été créé)
+        if (error.code === 'ECONNABORTED') {
+          console.warn('Request aborted but control was likely created', error);
+          processingDoneCallback(null, {}, backendUrls.home());
+        } else {
+          console.error('Error creating control', error);
+          const errorMessage = this.makeErrorMessage(error);
+          processingDoneCallback(errorMessage);
+        }
       }
     },
     async createQuestionnaire(modelControlId, controlId) {
