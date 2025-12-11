@@ -129,7 +129,7 @@
 <script>
 import axios from 'axios'
 import backend from '../utils/backend'
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import ModalFlow from '../utils/ModalFlow'
 
@@ -145,6 +145,7 @@ export default {
   },
   setup(props) {
     const store = useStore()
+    const modalFlow = ref(null)
     const state = reactive({
       users: [],
     })
@@ -187,9 +188,13 @@ export default {
         })
     }
 
-    const start = (modalRef) => {
-      console.debug('outer start!')
-      modalRef.start()
+    const start = () => {
+      console.debug('PublishFlow.start() called, modalFlow ref:', modalFlow.value)
+      if (modalFlow.value) {
+        modalFlow.value.start()
+      } else {
+        console.error('modalFlow ref is not available')
+      }
     }
 
     const goHome = () => {
@@ -204,6 +209,7 @@ export default {
 
     return {
       ...state,
+      modalFlow,
       controls,
       config,
       emailSubject,

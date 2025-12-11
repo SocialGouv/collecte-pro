@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from 'vue'
+import { defineComponent, computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import backendUrls from '../utils/backend'

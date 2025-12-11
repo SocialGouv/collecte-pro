@@ -275,6 +275,7 @@ export default defineComponent({
       checkedQuestionnaires: [],
       users: [],
       loaderActive: false,
+      localControl: null,
     }
   },
   computed: {
@@ -283,7 +284,8 @@ export default defineComponent({
       sessionUser: 'sessionUser',
     }),
     accessibleQuestionnaires() {
-      return this.control.questionnaires.filter(q => !q.is_draft)
+      const ctrl = this.localControl || this.control
+      return ctrl?.questionnaires ? ctrl.questionnaires.filter(q => !q.is_draft) : []
     },
   },
   components: {
@@ -373,13 +375,12 @@ export default defineComponent({
           })*/
         
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
-        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
+        this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0]
 
-        this.accessibleQuestionnaires = this.control.questionnaires
+        const filteredQuestionnaires = this.localControl.questionnaires
           .filter(aq => this.checkedQuestionnaires.includes(aq.id))
 
-          const promises = this.accessibleQuestionnaires
-            .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+          const promises = filteredQuestionnaires
             .map(q => {
               const themes = q.themes.map(t => {
                 const qq = t.questions.map(q => { return { description: q.description } })
@@ -514,8 +515,8 @@ export default defineComponent({
 
   try {
     const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
-    this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
-    const filteredQuestionnaires = this.control.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
+    this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0];
+    const filteredQuestionnaires = this.localControl.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
     let files = [];
 
     for (const fq of filteredQuestionnaires) {
@@ -571,18 +572,25 @@ export default defineComponent({
       }
     }
 
-    const zipFilename = this.control.reference_code + '.zip';
+    const zipFilename = (this.localControl || this.control).reference_code + '.zip';
     const zip = new JSZip();
     let cnt = 0;
 
     if (files.length === 0) {
       this.loaderActive = false;
+      this.hideExportModal();
+      return;
     }
 
     files.forEach(file => {
       const url = window.location.origin + file.url;
       JSZipUtils.getBinaryContent(url, (err, data) => {
-        if (err) throw err;
+        if (err) {
+          console.error('Error loading file:', err);
+          this.loaderActive = false;
+          this.hideExportModal();
+          return;
+        }
         const formatted = formatFilename(file);
         zip.folder(formatted.questionnaireId)
           .folder(formatted.themeId)
@@ -592,13 +600,13 @@ export default defineComponent({
         if (cnt === files.length) {
           zip.generateAsync({ type: 'blob' }).then((content) => {
             this.loaderActive = false;
+            this.hideExportModal();
             saveAs(content, zipFilename);
           });
         }
       });
     });
 
-    this.hideExportModal();
   } catch (error) {
     console.error('Error exporting control:', error);
     this.loaderActive = false;

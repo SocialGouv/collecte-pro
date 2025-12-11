@@ -94,6 +94,13 @@ export default defineComponent({ // Remplacement de Vue.extend
     // expose editingControl and editingUser from store
     ...mapState(['editingControl', 'editingUser']),
 
+    localEditingControl() {
+      return this.$store.state.editingControl || {}
+    },
+    localEditingUser() {
+      return this.$store.state.editingUser || {}
+    },
+
     // v-model replacements for editingUser fields
     localFirstName: {
       get() {

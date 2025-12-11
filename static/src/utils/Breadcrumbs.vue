@@ -1,5 +1,5 @@
 <template>
-  <h1 class="flex-row mb-5 text-muted breadcrumbs">
+  <h1 v-if="control" class="flex-row mb-5 text-muted breadcrumbs">
     <div class="mx-2">
       <span class="fa fa-archive" aria-hidden="true"></span>
       <span class="sr-only">Corbeille</span>
@@ -33,7 +33,7 @@ export default defineComponent({
   },
   computed: {
     controlLink() {
-      return backendUrls['control-detail'](this.control.id)
+      return this.control?.id ? backendUrls['control-detail'](this.control.id) : '#'
     },
   },
 })

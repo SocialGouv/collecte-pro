@@ -41,6 +41,33 @@ export const store = createStore({
     updateConfigLoadStatus(state, status) {
       state.configLoadStatus = status
     },
+    setCurrentQuestionnaire(state, questionnaire) {
+      state.currentQuestionnaire = questionnaire
+    },
+    updateCurrentQuestionnaireField(state, { field, value }) {
+      if (!state.currentQuestionnaire) {
+        state.currentQuestionnaire = {}
+      }
+      state.currentQuestionnaire[field] = value
+    },
+    setCurrentQuestionnaireThemes(state, themes) {
+      if (!state.currentQuestionnaire) {
+        state.currentQuestionnaire = {}
+      }
+      state.currentQuestionnaire.themes = themes
+    },
+    setEditingControl(state, control) {
+      state.editingControl = control
+    },
+    setEditingUser(state, user) {
+      state.editingUser = user
+    },
+    setEditingUserField(state, { field, value }) {
+      if (!state.editingUser) {
+        state.editingUser = {}
+      }
+      state.editingUser[field] = value
+    },
   },
 
   actions: {

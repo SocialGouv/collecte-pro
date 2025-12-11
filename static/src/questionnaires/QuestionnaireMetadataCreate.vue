@@ -112,8 +112,18 @@ const QuestionnaireMetadataCreate = defineComponent({
     })
 
     const end_date = computed({
-      get: () => store.state.currentQuestionnaire.end_date,
-      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'end_date', value })
+      get: () => {
+        const dateValue = store.state.currentQuestionnaire.end_date
+        if (!dateValue) return null
+        // Si c'est déjà un objet Date, le retourner
+        if (dateValue instanceof Date) return dateValue
+        // Sinon convertir la chaîne en Date
+        return new Date(dateValue)
+      },
+      set: (value) => {
+        // Le datepicker envoie un objet Date, le stocker tel quel
+        store.commit('updateCurrentQuestionnaireField', { field: 'end_date', value })
+      }
     })
 
     const title = computed({

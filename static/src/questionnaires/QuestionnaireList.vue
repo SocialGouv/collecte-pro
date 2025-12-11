@@ -352,6 +352,7 @@ export default defineComponent({
       isList: true,
       currentQuestionnaireThemes: [],
       hasAnyAnswerValue: false,
+      localControl: null,
     }
   },
 
@@ -364,15 +365,19 @@ export default defineComponent({
       return this.controls
     },
 
+    effectiveControl() {
+      return this.localControl || this.control
+    },
+
     accessibleQuestionnaires() {
       if (this.accessType === 'demandeur') {
-        return this.control.questionnaires
+        return this.effectiveControl.questionnaires
       }
-      return this.control.questionnaires.filter((questionnaire) => !questionnaire.is_draft)
+      return this.effectiveControl.questionnaires.filter((questionnaire) => !questionnaire.is_draft)
     },
 
     questionnaireCreateUrl() {
-      return backendUrls['questionnaire-create'](this.control.id)
+      return backendUrls['questionnaire-create'](this.effectiveControl.id)
     },
   },
 
@@ -395,8 +400,8 @@ export default defineComponent({
 
     async checkAnyAnswer() {
       try {
-        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
-        this.control = resp.data.filter((obj) => obj.id === this.control.id)[0]
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.effectiveControl.id))
+        this.localControl = resp.data.filter((obj) => obj.id === this.effectiveControl.id)[0]
         let questionnaires = this.accessibleQuestionnaires.filter((aq) => aq.has_replies)
         this.hasAnyAnswerValue = questionnaires.length > 0
       } catch (error) {
@@ -415,11 +420,11 @@ export default defineComponent({
 
     startQuestionnaireDeleteFlow(questionnaireId) {
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
-      const curQ = this.control.questionnaires.find((q) => q.id === questionnaireId)
+      const curQ = this.effectiveControl.questionnaires.find((q) => q.id === questionnaireId)
       const newQ = { ...curQ, control: null }
 
       getUpdateMethod(questionnaireId)(newQ).then(() => {
-        this.$root.$emit('questionnaire-created')
+        window.location.reload()
       })
     },
 
@@ -435,7 +440,7 @@ export default defineComponent({
 
     markQuestionnaireAsReplied(qId) {
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
-      const curQ = this.control.questionnaires.find((q) => q.id === qId)
+      const curQ = this.effectiveControl.questionnaires.find((q) => q.id === qId)
       const newQ = { ...curQ, is_replied: true }
       getUpdateMethod(qId)(newQ).then(() => {
         window.location.reload()
@@ -444,7 +449,7 @@ export default defineComponent({
 
     markQuestionnaireAsFinalized(qId) {
       const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
-      const curQ = this.control.questionnaires.find((q) => q.id === qId)
+      const curQ = this.effectiveControl.questionnaires.find((q) => q.id === qId)
       const newQ = { ...curQ, is_finalized: true }
       getUpdateMethod(qId)(newQ).then(() => {
         window.location.reload()
@@ -466,18 +471,21 @@ export default defineComponent({
 
       if (this.checkedCtrls.length) {
         const payload = {
-          title: this.control.title,
-          depositing_organization: this.control.organization,
+          title: this.effectiveControl.title,
+          depositing_organization: this.effectiveControl.organization,
           is_model: true,
         }
 
         axios
-          .put(backendUrls.control(this.control.id), payload)
+          .put(backendUrls.control(this.effectiveControl.id), payload)
           .then((response) => {
             console.debug(response)
-            this.control.title = response.data.title
-            this.control.organization = response.data.depositing_organization
-            this.control.isModel = response.data.is_model
+            if (!this.localControl) {
+              this.localControl = { ...this.control }
+            }
+            this.localControl.title = response.data.title
+            this.localControl.organization = response.data.depositing_organization
+            this.localControl.isModel = response.data.is_model
           })
           .catch((error) => {
             console.error(error)
@@ -485,9 +493,9 @@ export default defineComponent({
             this.hasErrors = true
           })
 
-        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
-        this.control = resp.data.filter((obj) => obj.id === this.control.id)[0]
-        const curQ = this.control.questionnaires.find((q) => q.id === this.questionnaireId)
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.effectiveControl.id))
+        this.localControl = resp.data.filter((obj) => obj.id === this.effectiveControl.id)[0]
+        const curQ = this.effectiveControl.questionnaires.find((q) => q.id === this.questionnaireId)
         const destCtrls = this.controls.filter((ctrl) => this.checkedCtrls.includes(ctrl.id))
 
         destCtrls.forEach((ctrl) => {
@@ -640,7 +648,7 @@ export default defineComponent({
           }),
       )
 
-      const zipFilename = this.control.reference_code + '.zip'
+      const zipFilename = this.effectiveControl.reference_code + '.zip'
       const zip = new JSZip()
       let cnt = 0
 

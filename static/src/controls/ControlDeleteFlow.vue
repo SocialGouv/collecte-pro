@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineExpose } from 'vue'
 import axios from 'axios'
 import backendUrls from '../utils/backend.js'
 import ModalFlow from '../utils/ModalFlow'
@@ -131,4 +131,9 @@ const callDeleteControlAPI = async () => {
 const start = () => {
   modalFlow.value?.start()
 }
+
+// Expose la fonction start pour que le parent puisse l'appeler
+defineExpose({
+  start
+})
 </script>

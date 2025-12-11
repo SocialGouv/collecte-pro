@@ -156,7 +156,7 @@ import QuestionnaireMetadataCreate from './QuestionnaireMetadataCreate'
 import QuestionnairePreview from './QuestionnairePreview'
 import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
-import { defineComponent, computed } from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 import Wizard from '../utils/Wizard'
 import backendUrls from '../utils/backend'
 
@@ -362,7 +362,7 @@ export default defineComponent({
     next() {
       console.debug('Navigation "next" from', this.state)
       if (this.state === STATES.START) {
-        if (!this.$refs.questionnaireMetadataCreate.validateForm()) {
+        if (!this.$refs.questionnaireMetadataCreate?.validateForm()) {
           return
         }
         this.saveDraft().then(() => {
@@ -374,7 +374,7 @@ export default defineComponent({
         return
       }
       if (this.state === STATES.CREATING_BODY) {
-        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+        if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
         this.saveDraft()
@@ -386,7 +386,7 @@ export default defineComponent({
     back(clickedStep) {
       console.debug('Navigation "back" from', this.state, 'going to step', clickedStep)
       if (this.state === STATES.CREATING_BODY) {
-        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+        if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
         this.saveDraft()
@@ -447,10 +447,10 @@ export default defineComponent({
         return true
       }
       if (this.state === STATES.START) {
-        return this.$refs.questionnaireMetadataCreate.validateForm()
+        return this.$refs.questionnaireMetadataCreate?.validateForm() || false
       }
       if (this.state === STATES.CREATING_BODY) {
-        return this.$refs.questionnaireBodyCreate.validateForm()
+        return this.$refs.questionnaireBodyCreate?.validateForm() || false
       }
     },
     saveDraftAndSwapEditor() {
@@ -503,7 +503,12 @@ export default defineComponent({
         })
     },
     startPublishFlow() {
-      this.$refs.publishFlow.start()
+      console.log('outer start!')
+      if (this.$refs.publishFlow) {
+        this.$refs.publishFlow.start()
+      } else {
+        console.error('publishFlow ref is not available')
+      }
     },
     publish() {
       this.currentQuestionnaire.is_draft = false
@@ -522,9 +527,6 @@ export default defineComponent({
           this.goHome()
         })
     },
-    goHome() {
-      this.window.location.href = backend['control-detail'](this.currentQuestionnaire.control)
-    },
     saveAndShowMoveThemesModal() {
       if (!this.validateCurrentForm()) {
         return
@@ -533,7 +535,7 @@ export default defineComponent({
       this.saveDraft()
         .then(() => {
           $('#move-themes-button').removeClass('btn-loading')
-          if (this.state === STATES.CREATING_BODY) {
+          if (this.state === STATES.CREATING_BODY && this.$refs.questionnaireBodyCreate?.$refs?.moveThemesModal?.$el) {
             $(this.$refs.questionnaireBodyCreate.$refs.moveThemesModal.$el).modal('show')
           }
         })

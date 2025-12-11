@@ -102,10 +102,10 @@ export default defineComponent({
 
     function start() {
       console.debug('start!')
-      $(confirmModal.value).on('hidden.bs.modal', () => {
+      $(confirmModal.value.$el).on('hidden.bs.modal', () => {
         error.value = undefined
       })
-      $(confirmModal.value).modal('show')
+      $(confirmModal.value.$el).modal('show')
     }
 
     function wait(timeMillis) {
@@ -119,20 +119,20 @@ export default defineComponent({
 
     async function confirmed() {
       console.debug('confirmed!')
-      $(confirmModal.value).modal('hide')
-      $(waitingModal.value).modal('show')
+      $(confirmModal.value.$el).modal('hide')
+      $(waitingModal.value.$el).modal('show')
       error.value = undefined
 
       try {
         await Promise.all([wait(SPINNER_DURATION_MILLIS), props.actionFunction()])
         console.debug('Done action.')
-        $(waitingModal.value).modal('hide')
-        $(successModal.value).modal('show')
+        $(waitingModal.value.$el).modal('hide')
+        $(successModal.value.$el).modal('show')
       } catch (err) {
         console.error('Error while doing the action:', err)
         error.value = err
-        $(waitingModal.value).modal('hide')
-        $(confirmModal.value).modal('show')
+        $(waitingModal.value.$el).modal('hide')
+        $(confirmModal.value.$el).modal('show')
       }
     }
 

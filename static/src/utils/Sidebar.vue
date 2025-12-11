@@ -123,6 +123,7 @@ export default defineComponent({
       isMenuBuilt: false,
       menu: [],
       showSidebar: true,
+      currentAccessType: '',
     }
   },
   computed: {
@@ -198,19 +199,31 @@ export default defineComponent({
       this.error = err
     },
     async buildMenu() {
+      const makeControlTitle = (control) => {
+        let title = control.reference_code + '\n'
+        if (control.depositing_organization) {
+          title += control.depositing_organization
+        } else {
+          title += control.title
+        }
+        return title
+      }
+
       const menu = []
       for (const control of this.controls) {
-        const accessType = await this.getAccessTypeLibelle(control.id)
-        console.log("accessType", accessType)
+        // Récupérer le type d'accès et assigner à this.currentAccessType
+        await this.getAccessTypeLibelle(control.id)
+        console.log("accessType", this.currentAccessType, "control.is_model", control.is_model)
+        
         const controlMenu = {
-          icon: accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
+          icon: this.currentAccessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
-          title: control.reference_code + '\n' + (control.depositing_organization || control.title),
+          title: makeControlTitle(control),
           ctrl_id: control.id,
-          attributes: { title: accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
+          attributes: { title: this.currentAccessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
         }
 
-        if (control.is_model && accessType === 'demandeur') {
+        if (control.is_model && this.currentAccessType === 'demandeur') {
           controlMenu.badge = {
             icon: 'fas fa-thumbtack',
             class: `fas fa-thumbtack ${control.is_pinned ? '' : 'unpinned'}`,
@@ -262,7 +275,8 @@ export default defineComponent({
     async getAccessTypeLibelle(ctlId) {
       const resp = await axios.get(backend.getAccessToControl(ctlId))
       const accessType = resp.data[0].access_type
-      return accessType === 'demandeur' ? 'Demandeur' : 'Répondant'
+      this.currentAccessType = accessType === 'demandeur' ? 'demandeur' : 'repondant'
+      return this.currentAccessType
     },
   },
 })
