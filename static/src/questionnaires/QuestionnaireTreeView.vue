@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import JSZip from 'jszip'
@@ -206,7 +206,7 @@ export default defineComponent({
     }
 
     const getTreeViewElements = (accessibleQuestionnaires: any[]) => {
-      return (accessibleQuestionnaires || []).map((element: any) => {
+      let tree = (accessibleQuestionnaires || []).map((element: any) => {
         const objQuestionnaire = getTreeViewLevel(element)
         if (element.themes && element.themes.length) {
           objQuestionnaire._children = element.themes.map((theme: any) => {
@@ -267,6 +267,66 @@ export default defineComponent({
 
         return objQuestionnaire
       })
+      
+      // Appliquer le filtre par répondant
+      return applyRespondentFilter(tree)
+    }
+
+    const applyRespondentFilter = (tree: any[]): any[] => {
+      if (!filter.value) return tree
+      
+      return tree.map((questionnaire: any) => {
+        const filtered = { ...questionnaire, _children: [] }
+        
+        if (questionnaire._children && questionnaire._children.length) {
+          filtered._children = questionnaire._children
+            .map((section: any) => {
+              // Exclure les sections "Annexes" et "Pièces jointes" quand on filtre par répondant
+              if (section._id === 'annexes' || section._id === 'piecesjointes') {
+                return null
+              }
+              
+              const filteredSection = { ...section, _children: [] }
+              
+              if (section._children && section._children.length) {
+                filteredSection._children = section._children
+                  .map((item: any) => {
+                    // Si c'est un thème, filtrer ses questions
+                    if (item._id === 'theme') {
+                      const filteredTheme = { ...item, _children: [] }
+                      if (item._children && item._children.length) {
+                        filteredTheme._children = item._children
+                          .map((question: any) => {
+                            if (question._id === 'question') {
+                              const filteredQuestion = { ...question, _children: [] }
+                              if (question._children && question._children.length) {
+                                filteredQuestion._children = question._children.filter((file: any) => 
+                                  file.repondant && file.repondant === filter.value
+                                )
+                              }
+                              return filteredQuestion._children.length > 0 ? filteredQuestion : null
+                            }
+                            return question
+                          })
+                          .filter(Boolean)
+                      }
+                      return filteredTheme._children.length > 0 ? filteredTheme : null
+                    }
+                    // Si c'est un fichier de la corbeille
+                    if (item._id === 'fileCorbeille') {
+                      return (item.repondant && item.repondant === filter.value) ? item : null
+                    }
+                    return item
+                  })
+                  .filter(Boolean)
+              }
+              return filteredSection._children.length > 0 ? filteredSection : null
+            })
+            .filter(Boolean)
+        }
+        
+        return filtered._children.length > 0 ? filtered : null
+      }).filter(Boolean)
     }
 
     const filterByDate = (responseFile: any) => {
@@ -379,11 +439,33 @@ export default defineComponent({
 
     onMounted(() => { getUsers(); refreshFiles() })
 
+    // Watchers pour rafraîchir quand les filtres changent
+    watch(filter, () => {
+      selected.value = []
+      refreshFiles()
+    })
+
+    watch(date_filter_start, () => {
+      if (date_filter_start.value) {
+        date_filter_start.value.setHours(0, 0, 0, 0)
+      }
+      selected.value = []
+      refreshFiles()
+    })
+
+    watch(date_filter_end, () => {
+      if (date_filter_end.value) {
+        date_filter_end.value.setHours(0, 0, 0, 0)
+      }
+      selected.value = []
+      refreshFiles()
+    })
+
     return {
       filter, date_filter_start, date_filter_end, selected, repondantsListe, treeViewElements, frLocale, placeholder, format,
       accessibleControls,
       getUsers, refreshFiles, getTreeViewElements, filterByDate, pickFilesFiltered, pickFiles, zipFiles,
-      exportSelected, exportFiltered, exportAll, toggleNode, selectNode, optionKey,
+      exportSelected, exportFiltered, exportAll, toggleNode, selectNode, optionKey, applyRespondentFilter,
     }
   }
 })
