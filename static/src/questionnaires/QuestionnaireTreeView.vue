@@ -259,20 +259,22 @@ export default defineComponent({
                 .flatMap((rf: any) => rf ? getTreeViewLevel(rf, element.id, null, null, { isFichierCorbeille: true }) : []))))
 
         if (!objCorbeille._children.length) objCorbeille._showChildren = false
-        else objQuestionnaire._children.unshift(objCorbeille)
+        objQuestionnaire._children.unshift(objCorbeille)
         if (!objAnnexes._children.length) objAnnexes._showChildren = false
-        else objQuestionnaire._children.unshift(objAnnexes)
+        objQuestionnaire._children.unshift(objAnnexes)
         if (!objPiecesJointes._children.length) objPiecesJointes._showChildren = false
-        else objQuestionnaire._children.unshift(objPiecesJointes)
+        objQuestionnaire._children.unshift(objPiecesJointes)
 
         return objQuestionnaire
       })
     }
 
     const filterByDate = (responseFile: any) => {
+      // Si pas de date de filtre, accepter tous les fichiers (annexes/pièces jointes peuvent ne pas avoir created)
+      if (!date_filter_start.value && !date_filter_end.value) return true
+      // Si le fichier n'a pas de date created, on ne peut pas le filtrer
       if (!responseFile.created) return false
       const creation_date = new Date(responseFile.created)
-      if (!date_filter_start.value && !date_filter_end.value) return true
       if (date_filter_start.value && date_filter_end.value) return date_filter_start.value <= creation_date && creation_date <= date_filter_end.value
       if (date_filter_start.value) return date_filter_start.value <= creation_date
       if (date_filter_end.value) return creation_date <= date_filter_end.value
