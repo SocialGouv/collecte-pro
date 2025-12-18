@@ -301,28 +301,122 @@ export default defineComponent({
   .sidebar .v-sidebar-menu {
     z-index: unset;
     width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* Ensure header elements take full width */
+  #sidebar-title {
+    width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  #sidebar .card-header {
+    width: 100%;
+  }
+
+  /* Header title should not be constrained by text-nowrap */
+  #sidebar-title .card-title,
+  #sidebar-title .text-nowrap {
+    width: 100%;
+    white-space: normal !important;
   }
 
   /* Ensure all menu elements take full width */
   .v-sidebar-menu .vsm--menu {
-    width: 100%;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .v-sidebar-menu .vsm--list {
-    width: 100%;
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   .v-sidebar-menu .vsm--item {
-    width: 100%;
+    width: 100% !important;
+    min-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
   .v-sidebar-menu .vsm--link {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    box-sizing: border-box !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Ensure level-1 links cannot be constrained by a max-width */
+  .v-sidebar-menu .vsm--link_level-1 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Make the title area fill remaining space next to the icon */
+  .v-sidebar-menu .vsm--title {
+    flex: 1 1 auto;
+  }
+
+  /* Ensure the header wrapper provided by the library spans full width */
+  .v-sidebar-menu .vsm--header {
     width: 100%;
   }
 
   .v-sidebar-menu .vsm--link_level-1,
   .v-sidebar-menu .vsm--link_level-2 {
     width: 100%;
+    min-width: 100%;
+  }
+
+  .v-sidebar-menu .vsm--mobile-item {
+    width: 100%;
+  }
+
+  /* Ensure dropdown and child items take full width */
+  .v-sidebar-menu .vsm--dropdown {
+    width: 100%;
+  }
+
+  .v-sidebar-menu .vsm--child {
+    width: 100%;
+  }
+
+  /* Stronger, targeted overrides to eliminate residual 290px widths */
+  #sidebar .v-sidebar-menu.vsm_white-theme,
+  #sidebar .v-sidebar-menu.vsm_expanded {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Anchor-based link selector used by the library */
+  #sidebar .v-sidebar-menu .vsm--item > a.vsm--link {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure top-level links are not constrained */
+  #sidebar .vsm--link_level-1 {
+    width: 100% !important;
+    max-width: none !important;
   }
 
   /*
