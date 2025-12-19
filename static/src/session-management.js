@@ -1,12 +1,12 @@
-import "@babel/polyfill"
+// Remplacement de @babel/polyfill
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 import './utils/polyfills.js'
+import { createApp } from 'vue'
+import SessionTimeout from './session/SessionTimeout.vue'
 
-import Vue from 'vue/dist/vue.js'
-import SessionTimeout from './session/SessionTimeout'
+const app = createApp({
+  components: { SessionTimeout },
+})
 
-new Vue({
-  el: '#session-management-vm',
-  components: {
-    SessionTimeout,
-  }
-});
+app.mount('#session-management-vm')

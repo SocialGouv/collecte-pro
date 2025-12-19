@@ -5,13 +5,10 @@
         <div class="modal-header border-bottom-0" aria-labelledby="modal_title">
           <span class="fa fa-exchange-alt mr-2 mt-3" aria-hidden="true"></span>
           <div id="modal_title" class="modal-title">
-            <div class="modal-title">Obtenir les droits de rédaction du questionnaire</div>
+            Obtenir les droits de rédaction du questionnaire
           </div>
-          <button type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Fermer">
-                  <span class="sr-only">Fermer</span>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Fermer">
+            <span class="sr-only">Fermer</span>
           </button>
         </div>
 
@@ -20,9 +17,13 @@
             <div class="col">
               <div class="card">
                 <div class="card-body" v-if="questionnaire.editor">
-                  <h4 class="mb-0">Contactez votre collègue {{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</h4>
+                  <h4 class="mb-0">
+                    Contactez votre collègue {{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}
+                  </h4>
                   (<a :href="'mailto:' + questionnaire.editor.email">{{ questionnaire.editor.email }}</a>)
-                  <p class="mt-4">Pour modifier ce questionnaire, votre collègue doit vous transférer les droits.</p>
+                  <p class="mt-4">
+                    Pour modifier ce questionnaire, votre collègue doit vous transférer les droits.
+                  </p>
                 </div>
                 <img :src="'/static/img/call-for-help.png'" alt="appel à l'aide">
               </div>
@@ -38,13 +39,12 @@
                   </div>
                   <div class="mb-4" v-if="questionnaire.modified_date">
                     Dernier enregistrement de ce questionnaire :
-                    <br />{{ questionnaire.modified_date }} à
-                    {{  questionnaire.modified_time }}
+                    <br />{{ questionnaire.modified_date }} à {{ questionnaire.modified_time }}
                   </div>
                   <button type="submit"
                     class="btn btn-primary"
                     title="Forcer le transfert des droits..."
-                    @click="requestEditor()">
+                    @click="requestEditor">
                     <span class="fa fa-exchange-alt mr-1" aria-hidden="true"></span>
                     Forcer le transfert des droits...
                   </button>
@@ -53,27 +53,31 @@
             </div>
           </div>
 
-          <contact-support></contact-support>
+          <contact-support />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import '../../css/editors.css'
+<script lang="ts">
+import { defineComponent } from 'vue'
 import ContactSupport from '../utils/ContactSupport'
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-Vue.use(Vuex)
+export default defineComponent({
+  name: 'SwapEditorModal',
+  props: {
+    questionnaire: { type: Object as () => any, required: true },
+  },
+  emits: ['request-editor'],
+  setup(_, { emit }) {
+    const requestEditor = () => {
+      emit('request-editor')
+    }
 
-export default Vue.extend({
-  props: ['questionnaire'],
-  methods: {
-    requestEditor() {
-      this.$emit('request-editor')
-    },
+    return {
+      requestEditor,
+    }
   },
   components: {
     ContactSupport,
@@ -81,5 +85,6 @@ export default Vue.extend({
 })
 </script>
 
-
-
+<style scoped>
+/* Tu peux conserver ton CSS editors.css */
+</style>

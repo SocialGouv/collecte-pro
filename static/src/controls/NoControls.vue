@@ -47,17 +47,16 @@
     </div>
   </div>
 </template>
-
-<script>
+<script lang="ts">
 import '../../css/controls.css'
-import ControlCreate from './ControlCreate'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
+import ControlCreate from './ControlCreate.vue'
 
-export default Vue.extend({
+export default defineComponent({
+  name: 'ControlSection',
   components: {
     ControlCreate,
   },
 })
 </script>
-
 

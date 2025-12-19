@@ -21,11 +21,12 @@
                     <datepicker id="questionnaire_enddate"
                                 class="blue"
                                 aria-labelledby="questionnaireEndDate"
-                                :language="fr"
+                                :locale="fr"
                                 :typeable="true"
                                 :use-utc="true"
                                 :placeholder="placeholder"
-                                v-model="end_date"
+                                :model-value="endDate"
+                                @update:model-value="endDate = $event"
                                 :format="format"
                                 :monday-first="true">
                     </datepicker>
@@ -41,76 +42,97 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
 import axios from 'axios'
-import Vue from 'vue'
-import { store } from '../store'
-import Datepicker from 'vuejs-datepicker'
-import fr from '../utils/vuejs-datepicker-locale-fr'
+import Datepicker from 'vue3-datepicker'
+import { fr } from 'date-fns/locale'
 import backend from '../utils/backend'
 import { toBackendFormat } from '../utils/DateFormat'
+
+
+declare const $: any
+
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
-export default Vue.extend({
-  store,
+
+export default defineComponent({
+  name: 'UpdateDateReponseModal',
   props: {
     questionnaireId: Number,
-    questionnaire: Object,
+    questionnaire: Object as any,
   },
   components: {
     Datepicker,
   },
-  data() {
-    return {
-      fr: fr, // locale for datepicker
-      format: "yyyy-MM-dd", // format for datepicker
-      placeholder: "yyyy-mm-dd", // Placeholder for datepicker
-      end_date: "",
-      postResult: [],
-      errors: [],
-      hasErrors: false,
+  setup(props, { emit }) {
+    const endDate = ref<Date | null>(null)
+    const postResult = ref([])
+    const errors = ref<any[]>([])
+    const hasErrors = ref(false)
+    const format = 'yyyy-MM-dd'
+    const placeholder = 'yyyy-mm-dd'
+
+    // Initialize endDate from questionnaire (same as created() hook in Vue 2)
+    if (props.questionnaire?.end_date) {
+      endDate.value = new Date(props.questionnaire.end_date as string)
     }
-  },
-  created() {
-    this.end_date = this.questionnaire.end_date;
-  },
-  methods: {
-    hideThisModal() {
-      this.resetFormData()
+
+    const hideThisModal = () => {
+      resetFormData()
       $('#updateDateReponseModal').modal('hide')
-    },
-    resetFormData() {
-      this.hasErrors = false
-      this.errors = []
-    },
-    emitQuestionnaireUpdated: function() {
-      this.$emit('questionnaire-updated', this.questionnaire)
-    },
-    _doSave() {
-      const getUpdateMethod =
-          (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
-      this.questionnaire.end_date = toBackendFormat(this.end_date)
-      const saveMethod = getUpdateMethod(this.questionnaire.id)
-      return saveMethod(this.questionnaire)
-    },
-    updateDateReponse() {
-      const self = this
-      return self._doSave()
-        .then((response) => {
-          console.debug('Successful response date save.')
-          self.postResult = response.data
-          self.emitQuestionnaireUpdated();
-          self.hideThisModal();
-          return response.data
-        })
-        .catch((error) => {
-          console.error('Error in response date save :', error)
-          const errorToDisplay =
-            (error.response && error.response.data) ? error.response.data : error
-          self.displayErrors('Erreur lors de la sauvegarde de la date reponse.', errorToDisplay)
-          self.displaySavingDoneWithError()
-        })
-    },
+    }
+
+    const resetFormData = () => {
+      hasErrors.value = false
+      errors.value = []
+    }
+
+    const emitQuestionnaireUpdated = () => {
+      emit('questionnaire-updated', props.questionnaire)
+    }
+
+    const _doSave = async () => {
+      // Create a copy to avoid mutating the prop
+      const questionnaireCopy = { ...props.questionnaire }
+      questionnaireCopy.end_date = toBackendFormat(endDate.value)
+      const url = backend.questionnaire(questionnaireCopy.id)
+      return axios.put(url, questionnaireCopy)
+    }
+
+    const updateDateReponse = async () => {
+      try {
+        const response = await _doSave()
+        console.debug('Successful response date save.')
+        postResult.value = response.data
+        emitQuestionnaireUpdated()
+        hideThisModal()
+        return response.data
+      } catch (error: any) {
+        console.error('Error in response date save:', error)
+        hasErrors.value = true
+        const errorToDisplay = (error.response && error.response.data) ? error.response.data : error
+        if (Array.isArray(errorToDisplay)) {
+          errors.value = errorToDisplay
+        } else if (typeof errorToDisplay === 'string') {
+          errors.value = [errorToDisplay]
+        } else {
+          errors.value = [error.message || 'Erreur inconnue']
+        }
+      }
+    }
+
+    return {
+      endDate,
+      fr,
+      format,
+      placeholder,
+      hasErrors,
+      errors,
+      resetFormData,
+      hideThisModal,
+      updateDateReponse,
+    }
   },
 })
 </script>

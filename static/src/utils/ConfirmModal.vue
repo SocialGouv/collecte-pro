@@ -41,31 +41,32 @@
 
 <script>
 import EmptyModal from './EmptyModal'
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
-  props: [
-    'cancel-button',
-    'confirm-button',
-    'confirm-button-prevent',
-    'icon-class',
-    'no-close',
-    'title',
-  ],
+export default defineComponent({
+  name: 'ConfirmModal',
   components: {
     EmptyModal,
   },
+  props: {
+    cancelButton: String,
+    confirmButton: String,
+    confirmButtonPrevent: Boolean,
+    iconClass: String,
+    noClose: Boolean,
+    title: String,
+  },
   methods: {
-    confirmClicked () {
+    confirmClicked() {
       this.$emit('confirm')
     },
-    cancelClicked () {
+    cancelClicked() {
       this.$emit('cancel')
     },
-    closeModal () {
+    closeModal() {
       this.$emit('close')
     },
   },
 })
-
 </script>
+

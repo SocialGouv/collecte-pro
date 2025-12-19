@@ -1,5 +1,5 @@
 <template>
-  <h1 class="flex-row mb-5 text-muted breadcrumbs">
+  <h1 v-if="control" class="flex-row mb-5 text-muted breadcrumbs">
     <div class="mx-2">
       <span class="fa fa-archive" aria-hidden="true"></span>
       <span class="sr-only">Corbeille</span>
@@ -19,23 +19,23 @@
 </template>
 
 <script>
-/*
-  Note : there are also breadcrumbs in trash.html, that don't use this component (because it's not a
-  Vue page). If you change this component, maybe you will want to make the same changes to
-  trash.html.
-*/
-
 import backendUrls from './backend'
-import Vue from 'vue'
 
-export default Vue.extend({
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: 'ControlBreadcrumb',
   props: {
-    control: Object,
+    control: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     controlLink() {
-      return backendUrls['control-detail'](this.control.id)
+      return this.control?.id ? backendUrls['control-detail'](this.control.id) : '#'
     },
   },
 })
 </script>
+

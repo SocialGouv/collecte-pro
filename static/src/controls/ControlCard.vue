@@ -12,30 +12,31 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  import ControlCreate from './ControlCreate'
-  import ControlTitle from './ControlTitle'
-  import QuestionnaireList from '../questionnaires/QuestionnaireList'
-  import UserSection from '../users/UserSection'
-  import ErrorBar from '../utils/ErrorBar'
+import { defineComponent } from 'vue'
+import ControlCreate from './ControlCreate'
+import ControlTitle from './ControlTitle'
+import QuestionnaireList from '../questionnaires/QuestionnaireList'
+import UserSection from '../users/UserSection'
+import ErrorBar from '../utils/ErrorBar'
 
-  export default Vue.extend({
-    props: [
-      'control',
-      'user',
-      'accessType',
-    ],
-    computed: {
-      noAccess() {
-        return this.$parent.$parent.noAccess;
-      },
+export default defineComponent({
+  props: {
+    control: { type: Object, required: true },
+    user: { type: Object, required: true },
+    accessType: { type: String, default: '' },
+  },
+  computed: {
+    noAccess() {
+      // Vue 3: $parent chain is fragile, prefer prop or provide/inject, but keep for compatibility
+      return this.$parent?.$parent?.noAccess ?? false
     },
-    components: {
-      ControlCreate,
-      ControlTitle,
-      QuestionnaireList,
-      UserSection,
-      ErrorBar,
-    },
-  })
+  },
+  components: {
+    ControlCreate,
+    ControlTitle,
+    QuestionnaireList,
+    UserSection,
+    ErrorBar,
+  },
+})
 </script>

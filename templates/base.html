@@ -109,8 +109,8 @@
         <div id="sidebar-vm" class="border-right">
           <sidebar></sidebar>
         </div>
-        <link href="{% static 'dist/sidebar-bundle.css' %}" rel="stylesheet" />
-        <script src="{% static 'dist/sidebar-bundle.js' %}"></script>
+        <link href="{% static 'dist/sidebar.css' %}" rel="stylesheet" />
+        <script src="{% static 'dist/sidebar.js' %}"></script>
 
         <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
           {% block page_main_container %}
@@ -132,7 +132,7 @@
       <session-timeout :logout-url="{% url 'logout' %}" :expire-seconds="{{ settings.SESSION_EXPIRE_SECONDS }}"></session-timeout>
     {% endif %}
   </div>
-  <script src="{% static 'dist/session-management-bundle.js' %}"></script>
+  <script type="module" src="{% static 'dist/session-management.js' %}"></script>
 {% endblock session_management %}
 
 {% block analytics %}

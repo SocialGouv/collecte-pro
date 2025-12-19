@@ -22,16 +22,26 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
-  props: ['buttontext', 'buttonicon'],
-  data: function () {
+export default defineComponent({
+  name: 'CollapsibleButton',
+  props: {
+    buttontext: {
+      type: String,
+      required: true,
+    },
+    buttonicon: {
+      type: String,
+      default: '',
+    },
+  },
+  data() {
     return {
       id: '',
     }
   },
-  mounted: function() {
+  mounted() {
     this.id = 'collapsible-' + Math.floor(Math.random() * 1000000)
   },
 })

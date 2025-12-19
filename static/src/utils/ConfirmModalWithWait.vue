@@ -36,78 +36,92 @@
   </empty-modal>
 </template>
 
-<script>
-import EmptyModal from "./EmptyModal";
-import ErrorBar from "./ErrorBar";
-import reportValidity from "report-validity";
-import Vue from "vue";
+<script lang="ts">
+import { defineComponent, ref, onMounted } from 'vue'
+import EmptyModal from './EmptyModal.vue'
+import ErrorBar from './ErrorBar.vue'
+import reportValidity from 'report-validity'
 
-export default Vue.extend({
-  props: [
-    "cancel-button",
-    "confirm-button",
-    "no-close",
-    "title",
-    "submitCallback",
-    "errorCallback",
-    "successCallback",
-  ],
-  data: function() {
+export default defineComponent({
+  name: 'ConfirmModalWithWait',
+  props: {
+    cancelButton: String,
+    confirmButton: String,
+    noClose: Boolean,
+    title: String,
+  },
+  emits: ['confirm', 'cancel', 'close'],
+  setup(props, { emit }) {
+    const errorMessage = ref('')
+    const processing = ref(false)
+    const modalEl = ref<HTMLElement | null>(null)
+
+    const validateForm = () => {
+      if (!modalEl.value) return true
+      const forms = modalEl.value.getElementsByTagName('form')
+      if (forms.length > 0) {
+        return reportValidity(forms[0])
+      }
+      return true
+    }
+
+    const confirmClicked = () => {
+      if (!modalEl.value) return
+
+      // Désactivation du submit par défaut (Firefox)
+      const form = modalEl.value.querySelector('form')
+      if (form) {
+        form.addEventListener('submit', (event) => event.preventDefault())
+      }
+
+      errorMessage.value = ''
+      if (!validateForm()) return
+
+      const processingDoneCallback = (errMsg?: string, successMsg?: string, refreshUrl?: string) => {
+        if (errMsg) {
+          console.log('error!', errMsg)
+          errorMessage.value = errMsg
+          processing.value = false
+          return
+        }
+        console.debug('ConfirmModalWithWait : processing done', successMsg)
+        if (refreshUrl) {
+          window.location.href = refreshUrl
+        }
+      }
+
+      processing.value = true
+      emit('confirm', processingDoneCallback)
+    }
+
+    const cancelClicked = () => {
+      processing.value = false
+      errorMessage.value = ''
+      emit('cancel')
+    }
+
+    const closeModal = () => {
+      processing.value = false
+      errorMessage.value = ''
+      emit('close')
+    }
+
+    onMounted(() => {
+      modalEl.value = document.getElementById('modalform')
+    })
+
     return {
-      errorMessage: "",
-      processing: false,
-    };
+      errorMessage,
+      processing,
+      confirmClicked,
+      cancelClicked,
+      closeModal,
+      modalEl,
+    }
   },
   components: {
     EmptyModal,
     ErrorBar,
   },
-  methods: {
-    confirmClicked () {
-      // Disabling submit behaviour for Firefox
-      document.getElementById("modalform").addEventListener(
-        "submit",
-        function(event){event.preventDefault();}
-      );
-
-      this.errorMessage = "";
-      if (!this.validateForm()) {
-        return;
-      }
-
-      const processingDoneCallback = (errorMessage, successMessage, refreshUrl) => {
-        if (errorMessage) {
-          console.log("error!", errorMessage);
-          this.errorMessage = errorMessage;
-          this.processing = false;
-          return;
-        }
-        console.debug("ConfirmModalWithWait : processing done", successMessage);
-        if (refreshUrl) {
-          window.location.href = refreshUrl;
-        }
-      };
-
-      this.processing = true;
-      this.$emit("confirm", processingDoneCallback);
-    },
-    cancelClicked () {
-      this.processing = false;
-      this.errorMessage = "";
-      this.$emit("cancel");
-    },
-    closeModal () {
-      this.processing = false;
-      this.errorMessage = "";
-      this.$emit("close");
-    },
-    validateForm () {
-      const forms = this.$el.getElementsByTagName("form");
-      if (forms.length > 0) {
-        return reportValidity(forms[0]);
-      }
-      return true;
-    },
-  },
-});
+})
 </script>

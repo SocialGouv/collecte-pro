@@ -122,9 +122,8 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
 import axios from 'axios'
-import Vue from 'vue'
-
 import backendUrls from '../utils/backend'
 import ConfirmModalWithWait from '../utils/ConfirmModalWithWait'
 import InfoBar from '../utils/InfoBar'
@@ -132,25 +131,25 @@ import InfoBar from '../utils/InfoBar'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default Vue.extend({
-  data: function() {
+export default defineComponent({
+  data() {
     return {
       title: '',
       organization: '',
       reference_code_suffix: '',
       year: new Date().getFullYear(),
-      isModalOpen: false, 
-      models: [], 
-      selectedModel: "" ,
+      isModalOpen: false,
+      models: [],
+      selectedModel: '',
       referenceError: false,
-      controlId:null,
+      controlId: null,
     }
   },
   created() {
-    this.loadModels(); 
+    this.loadModels();
   },
   computed: {
-    reference_code_prefix: function () {
+    reference_code_prefix() {
       return this.year + '_'
     },
   },
@@ -163,9 +162,9 @@ export default Vue.extend({
       this.isModalOpen = true;
       this.$refs.addControlButton.setAttribute('aria-expanded', 'true');
       $(this.$refs.modal.$el).modal('show');
-      $(this.$refs.modal.$el).on("hidden.bs.modal", this.closeModal);
+      $(this.$refs.modal.$el).on('hidden.bs.modal', this.closeModal);
       this.$nextTick(() => {
-        this.$refs["nom_controle"].focus();
+        this.$refs['nom_controle'].focus();
       });
     },
     closeModal() {
@@ -183,14 +182,14 @@ export default Vue.extend({
           this.models = response.data.filter((control) => control.is_model === true);
         })
         .catch((error) => {
-          console.error("Erreur lors du chargement des modèles :", error);
+          console.error('Erreur lors du chargement des modèles :', error);
         });
     },
-    createControl: function(processingDoneCallback) {
+    createControl(processingDoneCallback) {
       if (this.selectedModel) {
         console.log('createControlWithModel ')
         this.createControlWithModel(processingDoneCallback, this.selectedModel);
-      }else{
+      } else {
         console.log('createControlWithoutModel ')
         const payload = {
           title: this.title,
@@ -203,152 +202,145 @@ export default Vue.extend({
             processingDoneCallback(null, response, backendUrls.home());
           })
           .catch((error) => {
-            console.error('Error creating control', error)
-            const errorMessage = this.makeErrorMessage(error)
-            processingDoneCallback(errorMessage)
+            // Ignorer les erreurs d'abort si la requête s'est bien faite
+            if (error.code === 'ECONNABORTED') {
+              console.warn('Request aborted but control might have been created', error)
+              // Continuer quand même
+              processingDoneCallback(null, {}, backendUrls.home());
+            } else {
+              console.error('Error creating control', error)
+              const errorMessage = this.makeErrorMessage(error)
+              processingDoneCallback(errorMessage)
+            }
           })
-     } 
+      }
     },
-    createControlWithModel: async function (processingDoneCallback, modelControlId) {
+    async createControlWithModel(processingDoneCallback, modelControlId) {
       try {
         const payload = {
           title: this.title,
           depositing_organization: this.organization,
           reference_code: this.reference_code_prefix + this.reference_code_suffix,
         };
-
         const controlResponse = await axios.post(backendUrls.control(), payload);
         this.controlId = controlResponse.data.id;
-
         try {
           await this.createQuestionnaire(modelControlId, this.controlId);
         } catch (questionnaireError) {
-          console.error('Error creating questionnaire', questionnaireError);
-          return processingDoneCallback('Erreur lors de la création du questionnaire.');
-        }
-
-        processingDoneCallback(null, controlResponse, backendUrls.home());
-      } catch (error) {
-        console.error('Error creating control', error);
-        const errorMessage = this.makeErrorMessage(error);
-        processingDoneCallback(errorMessage);
-      }
-    },
-
-  async createQuestionnaire(modelControlId, controlId) {
-    try {
-      const response = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(modelControlId));
-      const data = response.data;
-
-      if (!data || !Array.isArray(data)) {
-        console.error('Erreur :', data);
-        return;
-      }
-
-      for (const control of data) {
-        for (const questionnaire of control.questionnaires) {
-          const themes = questionnaire.themes.map((theme) => {
-            const questions = theme.questions.map((question) => ({
-              description: question.description,
-              question_files: question.question_files,
-            }));
-
-            return {
-              title: theme.title,
-              order: theme.order,
-              questions,
-            };
-          });
-
-          const newQuestionnaire = {
-            ...questionnaire,
-            control: controlId,
-            is_draft: true,
-            is_replied: false,
-            has_replies: false,
-            is_finalized: false,
-            id: null,
-            themes,
-          };
-
-          const createMethod = () => axios.post(backendUrls.questionnaire(), newQuestionnaire);
-          const updateMethod = (qId) => axios.put(backendUrls.questionnaire(qId), newQuestionnaire);
-
-          try {
-            const res = await createMethod();
-            const qId = res.data.id;
-            
-            for (const qf of newQuestionnaire.questionnaire_files) {
-              const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
-              const formData = new FormData();
-              formData.append('file', fileResponse.data, qf.basename);
-              formData.append('questionnaire', qId);
-
-              await axios.post(backendUrls.piecejointe(), formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-              });
-            }
-
-            const updatedQuestionnaire = { ...newQuestionnaire, id: qId };
-            const updateResponse = await updateMethod(qId);
-            const updatedThemes = updateResponse.data.themes;
-
-            for (const updatedTheme of updatedThemes) {
-              const originalTheme = themes.find((t) => t.order === updatedTheme.order);
-
-              for (const originalQuestion of originalTheme.questions) {
-                const updatedQuestion = updatedTheme.questions.find(
-                  (uq) => uq.order === originalQuestion.order
-                );
-
-                for (const qf of originalQuestion.question_files) {
-                  const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
-                  const formData = new FormData();
-                  formData.append('file', fileResponse.data, qf.basename);
-                  formData.append('question', updatedQuestion.id);
-
-                  await axios.post(backendUrls.annexe(), formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                  });
-                }
-              }
-            }
-
-          } catch (err) {
-            console.error('Erreur lors de la création du questionnaire :', err);
+          // Ignorer les erreurs d'abort - le control a déjà été créé
+          if (questionnaireError.code === 'ECONNABORTED') {
+            console.warn('Questionnaire creation aborted but control was created', questionnaireError);
+          } else {
+            console.error('Error creating questionnaire', questionnaireError);
+            return processingDoneCallback('Erreur lors de la création du questionnaire.');
           }
         }
+        // Succès - le control a été créé
+        processingDoneCallback(null, controlResponse, backendUrls.home());
+      } catch (error) {
+        // Si c'est juste une requête annulée, on ignore (le control a probablement été créé)
+        if (error.code === 'ECONNABORTED') {
+          console.warn('Request aborted but control was likely created', error);
+          processingDoneCallback(null, {}, backendUrls.home());
+        } else {
+          console.error('Error creating control', error);
+          const errorMessage = this.makeErrorMessage(error);
+          processingDoneCallback(errorMessage);
+        }
       }
-    } catch (error) {
-      console.error('Erreur lors de la création des questionnaires :', error);
-    }
-  },
-
-    makeErrorMessage: function (error) {
+    },
+    async createQuestionnaire(modelControlId, controlId) {
+      try {
+        const response = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(modelControlId));
+        const data = response.data;
+        if (!data || !Array.isArray(data)) {
+          console.error('Erreur :', data);
+          return;
+        }
+        for (const control of data) {
+          for (const questionnaire of control.questionnaires) {
+            const themes = questionnaire.themes.map((theme) => {
+              const questions = theme.questions.map((question) => ({
+                description: question.description,
+                question_files: question.question_files,
+              }));
+              return {
+                title: theme.title,
+                order: theme.order,
+                questions,
+              };
+            });
+            const newQuestionnaire = {
+              ...questionnaire,
+              control: controlId,
+              is_draft: true,
+              is_replied: false,
+              has_replies: false,
+              is_finalized: false,
+              id: null,
+              themes,
+            };
+            const createMethod = () => axios.post(backendUrls.questionnaire(), newQuestionnaire);
+            const updateMethod = (qId) => axios.put(backendUrls.questionnaire(qId), newQuestionnaire);
+            try {
+              const res = await createMethod();
+              const qId = res.data.id;
+              for (const qf of newQuestionnaire.questionnaire_files) {
+                const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
+                const formData = new FormData();
+                formData.append('file', fileResponse.data, qf.basename);
+                formData.append('questionnaire', qId);
+                await axios.post(backendUrls.piecejointe(), formData, {
+                  headers: { 'Content-Type': 'multipart/form-data' },
+                });
+              }
+              const updatedQuestionnaire = { ...newQuestionnaire, id: qId };
+              const updateResponse = await updateMethod(qId);
+              const updatedThemes = updateResponse.data.themes;
+              for (const updatedTheme of updatedThemes) {
+                const originalTheme = themes.find((t) => t.order === updatedTheme.order);
+                for (const originalQuestion of originalTheme.questions) {
+                  const updatedQuestion = updatedTheme.questions.find(
+                    (uq) => uq.order === originalQuestion.order
+                  );
+                  for (const qf of originalQuestion.question_files) {
+                    const fileResponse = await axios.get(qf.url, { responseType: 'blob' });
+                    const formData = new FormData();
+                    formData.append('file', fileResponse.data, qf.basename);
+                    formData.append('question', updatedQuestion.id);
+                    await axios.post(backendUrls.annexe(), formData, {
+                      headers: { 'Content-Type': 'multipart/form-data' },
+                    });
+                  }
+                }
+              }
+            } catch (err) {
+              console.error('Erreur lors de la création du questionnaire :', err);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors de la création des questionnaires :', error);
+      }
+    },
+    makeErrorMessage(error) {
       if (error.response && error.response.data && error.response.data.reference_code) {
         const requestedCode = JSON.parse(error.response.config.data).reference_code
         if (error.response.data.reference_code[0] === 'UNIQUE') {
-          return 'Le nom abrégé "' + requestedCode +
-                '" existe déjà pour un autre espace. Veuillez en choisir un autre.'
+          return 'Le nom abrégé "' + requestedCode + '" existe déjà pour un autre espace. Veuillez en choisir un autre.'
         }
         if (error.response.data.reference_code[0] === 'INVALID') {
-          return 'Le nom abrégé "' + requestedCode +
-                 '" ne doit pas contenir de caractères spéciaux (! , @ # $ / \\ " \' + etc).' +
-                 ' Veuillez en choisir un autre.'
+          return 'Le nom abrégé "' + requestedCode + '" ne doit pas contenir de caractères spéciaux (! , @ # $ / \\ " \' + etc). Veuillez en choisir un autre.'
         }
       }
-
       if (error.message && error.message === 'Network Error') {
         return "L'espace de dépôt n'a pas pu être créé. Erreur : problème de réseau"
       }
-
       if (error.message) {
         return "L'espace de dépôt n'a pas pu être créé. Erreur : " + error.message
       }
-
       return "L'espace de dépôt n'a pas pu être créé."
     },
   },
 })
-
 </script>

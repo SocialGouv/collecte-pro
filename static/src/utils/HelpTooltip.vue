@@ -6,9 +6,9 @@
 
 <script>
 import '../../css/utils.css'
-import Vue from 'vue'
 
-export default Vue.extend({
+export default {
+  name: 'HelpTooltip',
   props: {
     text: String,
     iconClass: {
@@ -16,10 +16,10 @@ export default Vue.extend({
       default: 'fe fe-help-circle',
     },
   },
-  mounted: function() {
+  mounted() {
     // Initialize tooltips
     $('[data-toggle="tooltip"]').tooltip()
   },
-})
-
+}
 </script>
+

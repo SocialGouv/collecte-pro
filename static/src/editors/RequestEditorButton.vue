@@ -2,109 +2,130 @@
   <div>
     <div class="alert alert-secondary" role="alert">
       <div class="flex-row justify-content-between align-items-center">
+
         <div>
           <span class="fe fe-users mr-1" aria-hidden="true"></span>
-          <span v-if="questionnaire.editor">
-            <p><strong>{{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</strong>
-            est actuellement la seule personne qui peut modifier ce questionnaire.</p>
-          </span>
-          <span v-else>
+
+          <div v-if="questionnaire.editor">
+            <p>
+              <strong>{{ questionnaire.editor.first_name }} {{ questionnaire.editor.last_name }}</strong>
+              est actuellement la seule personne qui peut modifier ce questionnaire.
+            </p>
+          </div>
+
+          <div v-else>
             <p>Personne n'est actuellement affecté à la rédaction de ce questionnaire.</p>
-          </span>
+          </div>
         </div>
+
         <div class="text-right">
-          <button v-if="questionnaire.editor"
+          <button
+            v-if="questionnaire.editor"
             type="submit"
             class="btn btn-gray obtain-rights-button"
             title="Obtenir les droits de rédaction..."
             data-toggle="modal"
-            data-target="#requestEditorModal">
+            data-target="#requestEditorModal"
+          >
             <span class="fa fa-exchange-alt mr-1" aria-hidden="true"></span>
             <span>Obtenir les droits de rédaction...</span>
           </button>
-          <button v-else
+
+          <button
+            v-else
             type="submit"
             class="btn btn-gray obtain-rights-button"
             title="Obtenir les droits de rédaction..."
             @click="takeEditorRights"
-            >
+          >
             <span class="fa fa-exchange-alt mr-1" aria-hidden="true"></span>
             <span>Obtenir les droits de rédaction...</span>
           </button>
         </div>
+
       </div>
+
       <error-bar v-if="errorMessage.length > 0" class="mt-4">
         <p>{{ errorMessage }}</p>
       </error-bar>
     </div>
 
-    <request-editor-modal id="requestEditorModal"
-                          :questionnaire="questionnaire"
-                          @request-editor="requestEditor">
-    </request-editor-modal>
+    <request-editor-modal
+      id="requestEditorModal"
+      :questionnaire="questionnaire"
+      @request-editor="requestEditor"
+    ></request-editor-modal>
 
-    <request-editor-confirm-modal id="requestEditorConfirmModal"
-                                  @confirm="takeEditorRights">
-    </request-editor-confirm-modal>
+    <request-editor-confirm-modal
+      id="requestEditorConfirmModal"
+      @confirm="takeEditorRights"
+    ></request-editor-confirm-modal>
 
   </div>
 </template>
 
 <script>
+import { reactive, computed } from 'vue'
+import { useStore } from 'vuex'
 import axios from 'axios'
 import backendUrls from '../utils/backend.js'
 import RequestEditorConfirmModal from '../editors/RequestEditorConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
-import { mapFields } from 'vuex-map-fields'
 import RequestEditorModal from '../editors/RequestEditorModal'
-import Vue from 'vue'
 
-export default Vue.extend({
+export default {
   props: {
-    questionnaire: {},
-    // Pass window object as prop, so that we can pass a mock for testing.
-    // Do not use "window" or "document" directly in this file, instead use "this.window" and
-    // "this.window.document"
+    questionnaire: Object,
     window: {
       default: () => window,
     },
-  },
-  data: function() {
-    return {
-      errorMessage: '',
-    }
   },
   components: {
     ErrorBar,
     RequestEditorConfirmModal,
     RequestEditorModal,
   },
-  computed: {
-    ...mapFields(['sessionUser']),
-  },
-  methods: {
-    callSwapEditorApi(editorUser, questionnaireId) {
+  setup(props) {
+    const store = useStore()
+    const state = reactive({
+      errorMessage: '',
+    })
+
+    // Remplace mapFields('sessionUser')
+    const sessionUser = computed(() => store.state.sessionUser)
+
+    const callSwapEditorApi = (editorUser, questionnaireId) => {
       const url = backendUrls.swapEditor(questionnaireId)
-      return axios.put(url, {
-        editor: editorUser,
-      })
-    },
-    takeEditorRights: function() {
-      this.errorMessage = ''
-      this.callSwapEditorApi(this.sessionUser.id, this.questionnaire.id)
+      return axios.put(url, { editor: editorUser })
+    }
+
+    const takeEditorRights = () => {
+      state.errorMessage = ''
+      callSwapEditorApi(sessionUser.value.id, props.questionnaire.id)
         .then((response) => {
           console.debug('got editing rights', response)
-          this.window.location.assign(backendUrls['questionnaire-edit'](this.questionnaire.id))
+          props.window.location.assign(
+            backendUrls['questionnaire-edit'](props.questionnaire.id)
+          )
         })
-        .catch(error => {
-          console.error(error)
-          this.errorMessage = 'Erreur lors de l\'obtention des droits. Vous pouvez réessayer.'
+        .catch(() => {
+          state.errorMessage =
+            "Erreur lors de l'obtention des droits. Vous pouvez réessayer."
         })
-    },
-    requestEditor: function() {
+    }
+
+    const requestEditor = () => {
       $('#requestEditorModal').modal('hide')
       $('#requestEditorConfirmModal').modal('show')
-    },
+    }
+
+    return {
+      ...state,
+      sessionUser,
+      callSwapEditorApi,
+      takeEditorRights,
+      requestEditor,
+    }
   },
-})
+}
 </script>

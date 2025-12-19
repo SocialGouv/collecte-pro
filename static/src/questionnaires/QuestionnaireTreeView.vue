@@ -1,781 +1,526 @@
 <template>
-    <div id="app" class="card">
-        <div class="p-4 font-italic text-muted">
-            Pour sélectionner les éléments à exporter, cliquer sur les lignes concernées à l’aide de la touche MAJ ou Ctrl enfoncée.
-        </div>
-        <div class="card">
-          <span class="form-inline">
-            <span class="form-group col-sm-4">
-              <span class="form-label mr-2">Filtrer par répondant</span>
-              <select v-model="filter" class="form-control">
-                <option></option>
-                <option v-for="option in repondantsListe" :key="option">
-                  {{ option.first_name + ' ' + option.last_name }}
-                </option>
-              </select>
-            </span>
-            <span class="form-group col-sm-5">
-              <label class="form-label mr-2" id="filtre_start_date" for="filtre_startdate">
-                Filtrer par date de dépôt de
-              </label>
-              <datepicker id="filtre_startdate"
-                class="form-control date-input"
-                aria-labelledby="filtre_start_date"
-                v-model="date_filter_start"
-                :language="fr"
-                :typeable="true"
-                :placeholder="placeholder"
-                :format="format"
-                :monday-first="true">
-              </datepicker>
-              <label class="form-label ml-2 mr-2" id="filtre_end_date" for="filtre_enddate">à</label>
-              <datepicker id="filtre_enddate"
-                class="form-control date-input"
-                aria-labelledby="filtre_end_date"
-                v-model="date_filter_end"
-                :language="fr"
-                :typeable="true"
-                :placeholder="placeholder"
-                :format="format"
-                :monday-first="true">
-              </datepicker>
-            </span>
-            <span class="form-group col-sm-3" v-if="filter!=='' || !(!this.date_filter_start && !this.date_filter_end)">
-              <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
-                Exporter les documents filtrés
-              </button>
-            </span>
-            <span class="form-group col-sm-3" v-else-if="this.selected.length">
-              <button @click="exportSelected" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
-                Exporter les documents sélectionnés
-              </button>
-            </span>
-            <span class="form-group col-sm-3" v-else>
-              <button @click="exportAll" type="button" class="btn btn-secondary" :disabled="this.repondantsListe.length==0">
-                <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
-                Exporter tous les documents
-              </button>
-            </span>
-          </span>
-        </div>
-        <div class="card">
-        <vue-ads-table
-            :columns="columns"
-            :classes="classes"
-            :rows="treeViewElements"
-            :selectable=true
-            :filter="filter"
-            @selection-change="selectionChange"
-        >
-            <template v-slot:item.data-table-select="{ item, isSelected }">
-                <v-checkbox
-                    :value="isSelected"
-                     hide-details
-                     class="mt-0"
-                     @change="onItemSelect({ item, value: !isSelected })"
-                 >
-                </v-checkbox>
-            </template>
-            <template slot="name" slot-scope="props">{{ props.row.name }}</template>
-            <template slot="name_file" slot-scope="props">
-              <a :href="props.row.url" target="_blank"
-                rel="noopener noreferrer"
-                class="btn tag tag-azure pull-left btn-file"
-                :title="props.row.name">
-                {{ props.row.short_name }}
-                <span class="tag-addon pb-1">
-                  <span class="fe fe-file" aria-hidden="true"></span>
-                </span>
-              </a>
-            </template>
-            <template slot="name_fileAnnexe" slot-scope="props">
-              <a :href="props.row.url" target="_blank"
-                rel="noopener noreferrer"
-                class="btn tag tag-orange pull-left btn-file"
-                :title="props.row.name">
-                {{ props.row.short_name }}
-                <span class="tag-addon pb-1">
-                  <span class="fe fe-paperclip" aria-hidden="true"></span>
-                </span>
-              </a>
-            </template>
-            <template slot="name_filePieceJointe" slot-scope="props">
-              <a :href="props.row.url" target="_blank"
-                rel="noopener noreferrer"
-                class="btn tag tag-orange pull-left btn-file"
-                :title="props.row.name">
-                {{ props.row.short_name }}
-                <span class="tag-addon pb-1">
-                  <span class="fe fe-paperclip" aria-hidden="true"></span>
-                </span>
-              </a>
-            </template>
-            <template slot="name_filePieceJointe" slot-scope="props">
-              <a :href="props.row.url" target="_blank"
-                rel="noopener noreferrer"
-                class="btn tag tag-orange pull-left btn-file"
-                :title="props.row.name">
-                {{ props.row.short_name }}
-                <span class="tag-addon pb-1">
-                  <span class="fe fe-paperclip" aria-hidden="true"></span>
-                </span>
-              </a>
-            </template>
-            <template slot="name_fileCorbeille" slot-scope="props">
-              <a :href="props.row.url" target="_blank"
-                rel="noopener noreferrer"
-                class="btn tag tag-azure pull-left btn-file"
-                :title="props.row.name">
-                {{ props.row.short_name }}
-                <span class="tag-addon pb-1">
-                  <span class="fe fe-trash-2" aria-hidden="true"></span>
-                </span>
-              </a>
-            </template>
-            <template slot="dateDepot" slot-scope="props">{{ props.row.dateDepot }}</template>
-            <template slot="repondant" slot-scope="props">{{ props.row.repondant }}</template>
-            <template slot="no-rows">Pas de résultat</template>
-            <template slot="toggle-children-icon" slot-scope="props">
-              <span class="fe fe-folder-minus" v-if="props.expanded" aria-hidden="true"></span>
-              <span class="fe fe-folder-plus" v-else aria-hidden="true"></span>
-              &nbsp;
-            </template>
-        </vue-ads-table>
-        </div>
+  <div id="app" class="card">
+    <div class="p-4 font-italic text-muted">
+      Pour sélectionner les éléments à exporter, cliquer sur les lignes concernées à l'aide de la touche MAJ ou Ctrl enfoncée.
     </div>
+    <div class="card">
+      <span class="form-inline">
+        <span class="form-group col-sm-4">
+          <span class="form-label mr-2">Filtrer par répondant</span>
+          <select v-model="filter" class="form-control">
+            <option></option>
+            <option v-for="option in repondantsListe" :key="optionKey(option)" :value="option.first_name + ' ' + option.last_name">
+              {{ option.first_name + ' ' + option.last_name }}
+            </option>
+          </select>
+        </span>
+        <span class="form-group col-sm-5">
+          <label class="form-label mr-2" id="filtre_start_date" for="filtre_startdate">Filtrer par date de dépôt de</label>
+          <Datepicker id="filtre_startdate" class="form-control date-input" aria-labelledby="filtre_start_date" v-model="date_filter_start" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
+          <label class="form-label ml-2 mr-2" id="filtre_end_date" for="filtre_enddate">à</label>
+          <Datepicker id="filtre_enddate" class="form-control date-input" aria-labelledby="filtre_end_date" v-model="date_filter_end" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
+        </span>
+        <span class="form-group col-sm-3" v-if="filter!=='' || !(!date_filter_start && !date_filter_end)">
+          <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="repondantsListe.length==0">
+            <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
+            Exporter les documents filtrés
+          </button>
+        </span>
+        <span class="form-group col-sm-3" v-else-if="selected.length">
+          <button @click="exportSelected" type="button" class="btn btn-secondary" :disabled="repondantsListe.length==0">
+            <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
+            Exporter les documents sélectionnés
+          </button>
+        </span>
+        <span class="form-group col-sm-3" v-else>
+          <button @click="exportAll" type="button" class="btn btn-secondary" :disabled="repondantsListe.length==0">
+            <span class="fa-file-export fas mr-2" aria-hidden="true"></span>
+            Exporter tous les documents
+          </button>
+        </span>
+      </span>
+    </div>
+
+    <div class="card">
+      <table class="tree-table">
+        <thead>
+          <tr>
+            <th class="col-expand"></th>
+            <th class="col-checkbox"></th>
+            <th class="col-document">Document</th>
+            <th class="col-date">Date de dépôt</th>
+            <th class="col-repondant">Répondant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <TreeNode 
+            v-for="row in treeViewElements" 
+            :key="row.id" 
+            :node="row"
+            :selected="selected"
+            @toggle="toggleNode"
+            @select="selectNode"
+          />
+          <tr v-if="treeViewElements.length === 0">
+            <td colspan="5" class="text-muted p-4">Pas de résultat</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
-<script>
-import '../../css/questionnaires.css'
-import axios from 'axios';
-import backendUrls from '../utils/backend';
-
-import '../../../node_modules/@fortawesome/fontawesome-free/css/all.min.css';
-import '../../../node_modules/vue-ads-table-tree/dist/vue-ads-table-tree.css';
-
-import InfoBar from '../utils/InfoBar'
-
-import Vue from 'vue';
-import { mapState } from 'vuex'
-import { VueAdsTable } from 'vue-ads-table-tree';
-
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import { useStore } from 'vuex'
+import axios from 'axios'
 import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
 
-import Datepicker from 'vuejs-datepicker';
-import fr from '../utils/vuejs-datepicker-locale-fr';
+import backendUrls from '../utils/backend'
+import InfoBar from '../utils/InfoBar.vue'
+import DateFormat from '../utils/DateFormat.js'
+import { fr } from 'date-fns/locale'
+import Datepicker from 'vue3-datepicker'
+import TreeNode from './TreeNode.vue'
 
-export default Vue.extend({
-    props: {
-        control: {type: Object, default: () => ({})}
-    },
-    components: {
-        InfoBar,
-        VueAdsTable,
-        Datepicker,
-    },
+const formatDateTime = (date: Date | string): string => {
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const year = d.getFullYear()
+  const hours = String(d.getHours()).padStart(2, '0')
+  const minutes = String(d.getMinutes()).padStart(2, '0')
+  return `${day}/${month}/${year} ${hours}:${minutes}`
+}
 
-    data () {
-        let columns = [
-            {
-                property: 'name',
-                title: 'Document',
-            },
-            {
-                property: 'dateDepot',
-                title: 'Date de dépôt',
-                filterable: true,
-            },
-            {
-                property: 'repondant',
-                title: 'Répondant',
-                filterable: true,
-            },
-        ];
+export default defineComponent({
+  name: 'QuestionnaireFiles',
+  props: {
+    control: { type: Object, default: () => ({}) }
+  },
+  components: {
+    InfoBar,
+    Datepicker,
+    TreeNode,
+  },
+  setup(props) {
+    const store = useStore()
 
-        let classes = {
-            selected: {
-              'selected_row': true,
-            },
-            group: {
-              'vue-ads-font-bold': true,
-              'vue-ads-border-b': true,
-              'vue-ads-italic': true,
-            },
-            'all/': {
-              'vue-ads-border-b': true,
-              'vue-ads-border-l': true,
-              'vue-ads-text-left': true,
-            },
-            'even/': {
-              'vue-ads-bg-white': true,
-              'selectable_row': true,
-            },
-            'odd/': {
-              'vue-ads-bg-gray-100': true,
-              'selectable_row': true,
-            },
-            '0/': {
-              'vue-ads-border-t': true,
-            },
-            '/0_': {
-              'vue-ads-border-r': true,
-              'vue-ads-text-sm': true,
-              'vue-ads-py-2': true,
-              'vue-ads-px-4': true,
-            },
-        };
+    const filter = ref('')
+    const date_filter_start = ref<Date | ''>('')
+    const date_filter_end = ref<Date | ''>('')
+    const selected = ref<any[]>([])
+    const repondantsListe = ref<any[]>([])
+    const treeViewElements = ref<any[]>([])
+    const localControl = ref<any | null>(null)
 
-        return {
-            columns,
-            classes,
-            filter: '',
-            date_filter_start: '',
-            date_filter_end: '',
-            fr: fr, // locale for datepicker
-            format: "yyyy-MM-dd", // format for datepicker
-            placeholder: "yyyy-mm-dd", // Placeholder for datepicker
-            selected: [],
-            checkedCtrls: [],
-            checkedElements: [],
-            repondantsListe: [],
-            treeViewElements: []
-        };
-    },
+    const frLocale = fr
+    const placeholder = 'jj/mm/aaaa'
+    const format = 'dd/MM/yyyy'
 
-    computed: {
-        ...mapState({
-          controls: 'controls',
-        }),
-        accessibleControls() {
-          return this.controls
-        },
-        accessibleQuestionnaires() {
-          return this.control.questionnaires.filter(q => !q.is_draft)
-        },
-    },
+    const accessibleControls = computed(() => store.state.controls)
 
-    watch: {
-        'filter': function(val, oldVal) {
-            this.selected = [];
-            this.refreshFiles();
-        },
-        'date_filter_start': function(val, oldVal) {
-          if (this.date_filter_start) {
-            this.date_filter_start.setHours(0,0,0,0);
-            this.selected = [];
-            this.refreshFiles();
-          }else{
-            this.selected = [];
-            this.refreshFiles();
-          }
-        },
-        'date_filter_end': function(val, oldVal) {
-          if (this.date_filter_end) {
-            this.date_filter_end.setHours(0,0,0,0);
-            this.selected = [];
-            this.refreshFiles();
-          }else{
-            this.selected = [];
-            this.refreshFiles();
-          }
+    const getUsers = async () => {
+      try {
+        const resp = await axios.get(backendUrls.getDepositorsInControl(props.control.id))
+        repondantsListe.value = Array.isArray(resp.data) ? resp.data : []
+        console.log('repondantsListe après API:', repondantsListe.value)
+        if (!repondantsListe.value.length) {
+          repondantsListe.value = deriveRespondentsFromLocal()
+          console.log('repondantsListe après deriveRespondentsFromLocal:', repondantsListe.value)
         }
-    },
-    methods: {
-        selectionChange(rows) {
-          this.selected = rows;
-        },
-        exportFiltered(event) {
-          if (this.selected.length > 0) {
-            this.exportSelected();
-          } else {
-            this.exportAll();
-          }
-        },
-        exportSelected(event) {
-          function onlyUnique(value, index, self) {
-            for (let i=0;i<self.length;i++) {
-              if (self[i].id == value.id) {
-                return i === index;
-              }
-            }
-          }
-          let files = [];
-          for (let i=0; i< this.selected.length; i++) {
-            files.push.apply(files, this.pickFiles(this.selected[i].id))
-          }
-          this.zipFiles(files.filter(onlyUnique));
-        },
-        exportAll(event) {
-          this.zipFiles(this.pickFiles());
-        },
-        pickFiles(selected_id='') {
-          let filter = '' + this.filter;
-          let files = this.treeViewElements.flatMap(questionnaire => {
-            if (questionnaire._children) {
-              return questionnaire._children.flatMap(theme => {
-                if (theme._id == 'theme' && theme._children) {
-                  return theme._children.flatMap(question => {
-                    if (question._children) {
-                      return question._children.flatMap(file => {
-                        if (file) {
-                          if (!filter || file.repondant == filter) {
-                            return {
-                              questionnaireNb: questionnaire.order,
-                              themeId: theme.order,
-                              questionId: question.order,
-                              category: 'response_file',
-                              id: file.id,
-                              basename: file.name,
-                              url: file.url,
-                              is_deleted: file.is_deleted,
-                            }
-                          }
-                        }
-                      })
-                    }
-                  })
-                } else if (theme._id == 'corbeille' && theme._children) {
-                  return theme._children.flatMap(file => {
-                    if (file) {
-                      if (!filter || file.repondant == filter) {
-                        return {
-                          questionnaireNb: questionnaire.order,
-                          themeId: 0,
-                          questionId: 0,
-                          category: 'response_file',
-                          id: file.id,
-                          basename: file.name,
-                          url: file.url,
-                          is_deleted: file.is_deleted,
-                        }
-                      }
-                    }
-                  })
-                } else if (theme._id == 'annexes' && theme._children) {
-                  return theme._children.flatMap(file => {
-                    if (file) {
-                      if (!filter) {
-                        return {
-                          questionnaireNb: questionnaire.order,
-                          themeId: 0,
-                          questionId: 0,
-                          category: 'question_file',
-                          id: file.id,
-                          basename: file.name,
-                          url: file.url,
-                          is_deleted: file.is_deleted,
-                        }
-                      }
-                    }
-                  })
+      } catch (err) {
+        repondantsListe.value = deriveRespondentsFromLocal()
+        console.log('repondantsListe après erreur:', repondantsListe.value)
+      }
+    }
+
+    const refreshFiles = async () => {
+      try {
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(props.control.id))
+        console.log('refreshFiles API response:', resp.data)
+        localControl.value = resp.data.find((obj: any) => obj.id === props.control.id) || props.control
+        console.log('localControl après API:', localControl.value)
+      } catch (e) {
+        console.log('refreshFiles erreur:', e)
+        localControl.value = props.control
+        console.log('localControl après erreur:', localControl.value)
+      }
+      const controlQuestionnaires = (localControl.value?.questionnaires || []).filter((q: any) => !q.is_draft)
+      treeViewElements.value = getTreeViewElements(controlQuestionnaires)
+      if (!repondantsListe.value.length) {
+        repondantsListe.value = deriveRespondentsFromLocal()
+        console.log('repondantsListe dans refreshFiles:', repondantsListe.value)
+      }
+    }
+
+    const getTreeViewLevel = (
+      item: any,
+      questionnaireId: number | null = null,
+      themeId: number | null = null,
+      questionId: number | null = null,
+      flags: {
+        isAnnexe?: boolean
+        isCorbeille?: boolean
+        isPieceJointe?: boolean
+        isFichierAnnexe?: boolean
+        isFichierCorbeille?: boolean
+        isFichierPieceJointe?: boolean
+      } = {}
+    ) => {
+      const {
+        isAnnexe = false,
+        isCorbeille = false,
+        isPieceJointe = false,
+        isFichierAnnexe = false,
+        isFichierCorbeille = false,
+        isFichierPieceJointe = false,
+      } = flags
+      const maxLength = 100
+      const obj: any = { name: '', short_name: '', dateDepot: '', repondant: '', _showChildren: true, _children: [], _id: '', id: '', url: '', order: 0, is_deleted: false }
+
+      if (isAnnexe) {
+        obj.name = 'Annexes'; obj._children = []; obj._id = 'annexes'; obj.id = `${questionnaireId}-annexes`
+      } else if (isPieceJointe) {
+        obj.name = 'Pièces jointes'; obj._children = []; obj._id = 'piecesjointes'; obj.id = `${questionnaireId}-piecesjointes`
+      } else if (isCorbeille) {
+        obj.name = 'Corbeille'; obj._children = []; obj._id = 'corbeille'; obj.id = `${questionnaireId}-corbeille`
+      } else if (isFichierAnnexe) {
+        obj.name = item.basename; obj.short_name = item.basename.length > maxLength ? item.basename.slice(0, maxLength) + '...' : item.basename; obj.url = item.url; obj._showChildren = false; obj._id = 'fileAnnexe'; obj.id = `${questionnaireId}-annexes-${item.id}`
+      } else if (isFichierPieceJointe) {
+        obj.name = item.basename; obj.short_name = item.basename.length > maxLength ? item.basename.slice(0, maxLength) + '...' : item.basename; obj.url = item.url; obj._showChildren = false; obj._id = 'filePieceJointe'; obj.id = `${questionnaireId}-piecesjointes-${item.id}`
+      } else if (isFichierCorbeille) {
+        obj.name = item.basename; obj.short_name = item.basename.length > maxLength ? item.basename.slice(0, maxLength) + '...' : item.basename; obj.dateDepot = formatDateTime(item.created); obj.repondant = `${item.author?.first_name ?? ''} ${item.author?.last_name ?? ''}`.trim(); obj.url = item.url; obj._showChildren = false; obj._id = 'fileCorbeille'; obj.id = `${questionnaireId}-corbeille-${item.id}`; obj.is_deleted = !!item.is_deleted
+      } else if (questionId != null) {
+        obj.name = item.basename; obj.short_name = item.basename.length > maxLength ? item.basename.slice(0, maxLength) + '...' : item.basename; obj.dateDepot = formatDateTime(item.created); obj.repondant = `${item.author?.first_name ?? ''} ${item.author?.last_name ?? ''}`.trim(); obj._id = 'file'; obj.id = `${questionnaireId}-${themeId}-${questionId}-${item.id}`; obj.url = item.url; obj.is_deleted = !!item.is_deleted
+      } else if (themeId != null && questionId == null) {
+        obj.name = `Question ${(item.order ?? 0) + 1} - ${item.title || item.description || ''}`; obj._children = []; obj._id = 'question'; obj.id = `${questionnaireId}-${themeId}-${item.id}`; obj.order = item.order ?? 0
+      } else if (questionnaireId !== null && themeId === null) {
+        obj.name = `Thème ${(item.order ?? 0) + 1} - ${item.title || item.description || ''}`; obj._children = []; obj._id = 'theme'; obj.id = `${questionnaireId}-${item.id}`; obj.order = item.order ?? 0
+      } else {
+        obj.name = `Questionnaire ${item.numbering ?? ''} - ${item.title || item.description || ''}`; obj._children = []; obj._id = 'questionnaire'; obj.id = item.id; obj.order = item.numbering ?? 0
+      }
+      return obj
+    }
+
+    const getTreeViewElements = (accessibleQuestionnaires: any[]) => {
+      let tree = (accessibleQuestionnaires || []).map((element: any) => {
+        const objQuestionnaire = getTreeViewLevel(element)
+        if (element.themes && element.themes.length) {
+          objQuestionnaire._children = element.themes.map((theme: any) => {
+            const objTheme = getTreeViewLevel(theme, element.id)
+            if (theme.questions && theme.questions.length) {
+              objTheme._children = theme.questions.map((question: any) => {
+                const objQuestion = getTreeViewLevel(question, element.id, theme.id)
+                if (question.response_files && question.response_files.length) {
+                  objQuestion._children = question.response_files
+                    .filter((rf: any) => rf.is_deleted === false)
+                    .filter(filterByDate)
+                    .map((rf: any) => getTreeViewLevel(rf, element.id, theme.id, question.id))
+                  objQuestion._showChildren = true
+                  ;(objQuestion as any)._selectable = true
+                } else {
+                  objQuestion._showChildren = false
                 }
+                return objQuestion
               })
             }
-          });
-          return files.filter(
-            file => typeof(file)!=="undefined"
-          ).filter(
-            file => file.id.startsWith(selected_id)
-          );
-        },
-        zipFiles(files) {
-          this.$parent.$parent.$children[0].loaderActive = true;
-          const formatFilename = (file) => {
-            const questionnaireNb = String(file.questionnaireNb).padStart(2, '0');
-            const questionnaireId = `Q${questionnaireNb}`;
-            let themeId = '';
-            let filename = ''
-            if (file.category == 'question_file') {
-              themeId = 'ANNEXES-AUX-QUESTIONS';
-              filename = `Q${questionnaireNb}-${file.basename}`;
-            } else if (file.is_deleted) {
-              themeId = 'CORBEILLE';
-              filename = `Q${questionnaireNb}-${file.basename}`;
-            } else {
-              themeId = 'T'+String(file.themeId + 1).padStart(2, '0');
-              const questionId = String(file.questionId + 1).padStart(2, '0');
-              filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
-            }
-            return { questionnaireId, themeId, filename };
-          }
-          const zipFilename = this.control.reference_code + '.zip'
-          const zip = new JSZip()
-          let cnt = 0
+            return objTheme
+          })
+        }
 
-          files.map(file => {
-            const url = window.location.origin + file.url;
-            JSZipUtils.getBinaryContent(url, (err, data) => {
-              if (err) throw err;
-              const formatted = formatFilename(file);
-              zip.folder(formatted.questionnaireId)
-                .folder(formatted.themeId)
-                .file(formatted.filename, data, { binary: true });
+        const objAnnexes = getTreeViewLevel(null, element.id, null, null, { isAnnexe: true })
+        const objCorbeille = getTreeViewLevel(null, element.id, null, null, { isCorbeille: true })
+        const objPiecesJointes = getTreeViewLevel(null, element.id, null, null, { isPieceJointe: true })
 
-              cnt++;
-              if (cnt === files.length) {
-                zip.generateAsync({ type: 'blob' }).then((content) => {
-                  this.$parent.$parent.$children[0].loaderActive = false;
-                  saveAs(content, zipFilename)
-                })
+        objPiecesJointes._children = (accessibleQuestionnaires || [])
+          .filter((aq: any) => aq.id === element.id)
+          .flatMap((fq: any) => (fq.questionnaire_files || [])
+            .filter(filterByDate)
+            .flatMap((qf: any) => qf ? getTreeViewLevel(qf, element.id, null, null, { isFichierPieceJointe: true }) : []))
+
+        objAnnexes._children = (accessibleQuestionnaires || [])
+          .filter((aq: any) => aq.id === element.id)
+          .flatMap((fq: any) => (fq.themes || [])
+            .flatMap((t: any) => (t.questions || [])
+              .flatMap((q: any) => (q.question_files || [])
+                .filter(filterByDate)
+                .flatMap((qf: any) => qf ? getTreeViewLevel(qf, element.id, null, null, { isFichierAnnexe: true }) : []))))
+
+        objCorbeille._children = (accessibleQuestionnaires || [])
+          .filter((aq: any) => aq.id === element.id)
+          .flatMap((fq: any) => (fq.themes || [])
+            .flatMap((t: any) => (t.questions || [])
+              .flatMap((q: any) => (q.response_files || [])
+                .filter((rf: any) => rf.is_deleted === true)
+                .filter(filterByDate)
+                .flatMap((rf: any) => rf ? getTreeViewLevel(rf, element.id, null, null, { isFichierCorbeille: true }) : []))))
+
+        if (!objCorbeille._children.length) objCorbeille._showChildren = false
+        objQuestionnaire._children.unshift(objCorbeille)
+        if (!objAnnexes._children.length) objAnnexes._showChildren = false
+        objQuestionnaire._children.unshift(objAnnexes)
+        if (!objPiecesJointes._children.length) objPiecesJointes._showChildren = false
+        objQuestionnaire._children.unshift(objPiecesJointes)
+
+        return objQuestionnaire
+      })
+      
+      // Appliquer le filtre par répondant
+      return applyRespondentFilter(tree)
+    }
+
+    const applyRespondentFilter = (tree: any[]): any[] => {
+      if (!filter.value) return tree
+      
+      return tree.map((questionnaire: any) => {
+        const filtered = { ...questionnaire, _children: [] }
+        
+        if (questionnaire._children && questionnaire._children.length) {
+          filtered._children = questionnaire._children
+            .map((section: any) => {
+              // Exclure les sections "Annexes" et "Pièces jointes" quand on filtre par répondant
+              if (section._id === 'annexes' || section._id === 'piecesjointes') {
+                return null
               }
+              
+              const filteredSection = { ...section, _children: [] }
+              
+              if (section._children && section._children.length) {
+                filteredSection._children = section._children
+                  .map((item: any) => {
+                    // Si c'est un thème, filtrer ses questions
+                    if (item._id === 'theme') {
+                      const filteredTheme = { ...item, _children: [] }
+                      if (item._children && item._children.length) {
+                        filteredTheme._children = item._children
+                          .map((question: any) => {
+                            if (question._id === 'question') {
+                              const filteredQuestion = { ...question, _children: [] }
+                              if (question._children && question._children.length) {
+                                filteredQuestion._children = question._children.filter((file: any) => 
+                                  file.repondant && file.repondant === filter.value
+                                )
+                              }
+                              return filteredQuestion._children.length > 0 ? filteredQuestion : null
+                            }
+                            return question
+                          })
+                          .filter(Boolean)
+                      }
+                      return filteredTheme._children.length > 0 ? filteredTheme : null
+                    }
+                    // Si c'est un fichier de la corbeille
+                    if (item._id === 'fileCorbeille') {
+                      return (item.repondant && item.repondant === filter.value) ? item : null
+                    }
+                    return item
+                  })
+                  .filter(Boolean)
+              }
+              return filteredSection._children.length > 0 ? filteredSection : null
+            })
+            .filter(Boolean)
+        }
+        
+        return filtered._children.length > 0 ? filtered : null
+      }).filter(Boolean)
+    }
+
+    const filterByDate = (responseFile: any) => {
+      // Si pas de date de filtre, accepter tous les fichiers (annexes/pièces jointes peuvent ne pas avoir created)
+      if (!date_filter_start.value && !date_filter_end.value) return true
+      // Si le fichier n'a pas de date created, on ne peut pas le filtrer
+      if (!responseFile.created) return false
+      const creation_date = new Date(responseFile.created)
+      if (date_filter_start.value && date_filter_end.value) return date_filter_start.value <= creation_date && creation_date <= date_filter_end.value
+      if (date_filter_start.value) return date_filter_start.value <= creation_date
+      if (date_filter_end.value) return creation_date <= date_filter_end.value
+      return true
+    }
+
+    const pickFiles = (selected_id = '') => {
+      const collectFilesRecursive = (node: any): any[] => {
+        if (!node) return []
+        if (node._id && node._id.startsWith('file')) return [node]
+        const children = Array.isArray(node._children) ? node._children : []
+        return children.flatMap(collectFilesRecursive)
+      }
+      
+      const filterVal = filter.value
+      return treeViewElements.value
+        .flatMap(collectFilesRecursive)
+        .filter((file: any) => !filterVal || file.repondant === filterVal)
+        .filter((file: any) => !selected_id || file.id.startsWith(selected_id))
+    }
+
+    const pickFilesFiltered = () => pickFiles().filter((file: any) => filterByDate(file))
+
+    const zipFiles = (files: any[]) => {
+      const zip = new JSZip()
+      let cnt = 0
+      const zipFilename = props.control.reference_code + '.zip'
+      files.forEach((file) => {
+        const url = window.location.origin + file.url
+        JSZipUtils.getBinaryContent(url, (err: any, data: any) => {
+          if (err) throw err
+          zip.file(file.basename, data, { binary: true })
+          cnt++
+          if (cnt === files.length) {
+            zip.generateAsync({ type: 'blob' }).then((content) => saveAs(content, zipFilename))
+          }
+        })
+      })
+    }
+
+    const exportSelected = () => zipFiles(pickFiles())
+    const exportAll = () => zipFiles(pickFiles())
+    const exportFiltered = () => zipFiles(pickFilesFiltered())
+
+    const deriveRespondentsFromLocal = (): any[] => {
+      const acc = new Map<string, any>()
+      const lc: any = localControl.value
+      const questionnaires: any[] = (lc?.questionnaires || [])
+      questionnaires.forEach((q: any) => {
+        (q.themes || []).forEach((t: any) => {
+          (t.questions || []).forEach((qq: any) => {
+            (qq.response_files || []).forEach((rf: any) => {
+              const a = rf?.author; if (!a) return
+              const key = String(a.id ?? `${a.first_name}-${a.last_name}`)
+              if (!acc.has(key)) acc.set(key, { id: a.id, first_name: a.first_name || '', last_name: a.last_name || '' })
             })
           })
-        },
-        refreshFiles() {
-          const controlQuestionnaires = this.control.questionnaires.filter(q => !q.is_draft);
-          this.treeViewElements = this.getTreeViewElements(controlQuestionnaires);
-          $("table tbody tr").attr("tabindex", 0);
-          $("table tbody tr").off("keyup");
-          $("table tbody tr").keyup(function(event){
-            if (event.which != 13) {
-              return;
-            }
-            event.target.click();
-          });
-          window.setTimeout(() => {
-            $("table tbody tr td span:contains('Questionnaire ')").parent().parent().attr("title", "Sélectionner tous les documents du questionnaire");
-            $("table tbody tr td span:contains('Thème ')").parent().parent().attr("title", "Sélectionner tous les documents du thème");
-            $("table tbody tr td span:contains('Question ')").parent().parent().attr("title", "Sélectionner tous les documents de la question");
-          }, 200);
-        },
-        filterByDate(responseFile) {
-          let creation_date = new Date(responseFile.created);
-          if (!this.date_filter_start && !this.date_filter_end) {
-            return true;
-          }
-          if (!responseFile.created) {
-            return false;
-          }
-          try {
-            if (this.date_filter_start && this.date_filter_end) {
-              if (this.date_filter_start <= creation_date && creation_date <= this.date_filter_end) {
-                return true;
-              }
-              return false;
-            } else if (this.date_filter_start) {
-              if (this.date_filter_start <= creation_date) {
-                return true;
-              }
-              return false;
-            } else if (this.date_filter_end) {
-                if (creation_date <= this.date_filter_end) {
-                  return true;
-                }
-                return false;
-            }
-          } catch(error) {
-            return true;
-          }
-          return true;
-        },
-        getUsers() {
-          axios.get(backendUrls.getDepositorsInControl(this.control.id))
-            .then((response) => {
-              this.repondantsListe = response.data;
+        })
+        ;(q.themes || []).forEach((t: any) => {
+          ;(t.questions || []).forEach((qq: any) => {
+            ;(qq.response_files || []).filter((rf: any) => rf?.is_deleted).forEach((rf: any) => {
+              const a = rf?.author; if (!a) return
+              const key = String(a.id ?? `${a.first_name}-${a.last_name}`)
+              if (!acc.has(key)) acc.set(key, { id: a.id, first_name: a.first_name || '', last_name: a.last_name || '' })
             })
-        },
-        /**
-         * get formatted item for treeview plugin
-         */
-        getTreeViewLevel(item, questionnaireId = null, themeId = null,
-          questionId = null, isAnnexe = false, isCorbeille = false,
-          isFichierAnnexe = false, isFichierCorbeille = false, isPieceJointe = false, isFichierPieceJointe = false) {
-            const maxLength = 100;
-            const objectTreeView = {
-                name: '',
-                short_name: '',
-                dateDepot: '',
-                repondant: '',
-                _showChildren: true,
-                _children: [],
-                _id: '',
-                id: '',
-                url: '',
-                order: 0,
-                is_deleted: ''
-            };
+          })
+        })
+      })
+      return Array.from(acc.values())
+    }
 
-            if (isAnnexe) { // Annexes
-                objectTreeView.name = 'Annexes';
-                objectTreeView._children = [];
-                objectTreeView._id = 'annexes';
-                objectTreeView.id = questionnaireId + '-' + 'annexes';
-            } else if (isPieceJointe) { // Questionnaire pièces jointes
-                objectTreeView.name = 'Pièces jointes';
-                objectTreeView._children = [];
-                objectTreeView._id = 'piecesjointes';
-                objectTreeView.id = questionnaireId + '-' + 'piecesjointes';
-            } else if (isCorbeille) { // Corbeille
-                objectTreeView.name = 'Corbeille';
-                objectTreeView._children = [];
-                objectTreeView._id = 'corbeille';
-                objectTreeView.id = questionnaireId + '-' + 'corbeille';
-            } else if (isFichierAnnexe) { // Fichier annexe
-                objectTreeView.name = item.basename;
-                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.url = item.url;
-                objectTreeView._showChildren = false;
-                objectTreeView._id = 'fileAnnexe';
-                objectTreeView.id = questionnaireId + '-' + 'annexes' + '-' + item.id;
-            } else if (isFichierPieceJointe) { // Fichier pièce jointe
-                objectTreeView.name = item.basename;
-                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.url = item.url;
-                objectTreeView._showChildren = false;
-                objectTreeView._id = 'filePieceJointe';
-                objectTreeView.id = questionnaireId + '-' + 'piecesjointes' + '-' + item.id;
-            } else if (isFichierCorbeille) { // Fichier corbeille
-                objectTreeView.name = item.basename;
-                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.dateDepot = this.formatDate(new Date(item.created));
-                objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
-                objectTreeView.url = item.url;
-                objectTreeView._showChildren = false;
-                objectTreeView._id = 'fileCorbeille';
-                objectTreeView.id = questionnaireId + '-' + 'corbeille' + '-' + item.id;
-                objectTreeView.is_deleted = item.is_deleted;
-            } else if (questionId != null) { // Response_file
-                objectTreeView.name = item.basename;
-                objectTreeView.short_name = (item.basename.length > maxLength) ? item.basename.slice(0, maxLength) + '...' : item.basename;
-                objectTreeView.dateDepot = this.formatDate(new Date(item.created));
-                objectTreeView.repondant = item.author.first_name + ' ' + item.author.last_name;
-                objectTreeView._id = 'file';
-                objectTreeView.id = questionnaireId + '-' + themeId + '-' + questionId + '-' + item.id;
-                objectTreeView.url = item.url;
-                objectTreeView.is_deleted = item.is_deleted;
-            } else if (themeId != null && questionId == null) { // Question
-                objectTreeView.name = 'Question ' + (item.order+1) + ' - ' + (item.title || item.description);
-                objectTreeView._children = [];
-                objectTreeView._id = 'question';
-                objectTreeView.id = questionnaireId + '-' + themeId + '-' + item.id;
-                objectTreeView.order = item.order;
-            } else if (questionnaireId !== null && themeId === null) { // Theme
-                objectTreeView.name = 'Thème ' + (item.order+1) + ' - ' + (item.title || item.description);
-                objectTreeView._children = [];
-                objectTreeView._id = 'theme';
-                objectTreeView.id = questionnaireId + '-' + item.id;
-                objectTreeView.order = item.order;
-            } else { // Questionnaire
-                objectTreeView.name = 'Questionnaire ' + item.numbering + ' - ' + (item.title || item.description);
-                objectTreeView._children = [];
-                objectTreeView._id = 'questionnaire';
-                objectTreeView.id = item.id;
-                objectTreeView.order = item.numbering;
-            }
+    const optionKey = (opt: any) => String(opt?.id ?? `${opt?.first_name}-${opt?.last_name}`)
 
-            return objectTreeView;
-        },
-
-        questionnaireDetailUrl(questionnaireId) {
-            return backendUrls['questionnaire-detail'](questionnaireId)
-        },
-
-        cloneQuestionnaire() {
-          let self = this;
-          const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
-          const getUpdateMethod = (qId) => axios.put.bind(this, backendUrls.questionnaire(qId))
-
-          if (this.checkedCtrls.length) {
-            const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
-            const destCtrls = this.controls.filter(ctrl => this.checkedCtrls.includes(ctrl.id))
-
-            destCtrls.forEach(ctrl => {
-              const themes = curQ.themes.map(t => {
-                const qq = t.questions.map(q => {
-                  return { description: q.description }
-                })
-                return { title: t.title, questions: qq }
-              })
-
-              let newQ = { ...curQ, control: ctrl.id, is_draft: true, id: null, themes: [] }
-              getCreateMethod()(newQ).then(response => {
-                const qId = response.data.id
-                newQ = { ...newQ, themes: themes }
-
-                getUpdateMethod(qId)(newQ).then(response => {
-                  const updatedQ = response.data
-
-                  // Update questionnaires list render when duplicated
-                  self.$root.$emit('questionnaire-created')
-                  curQ.themes.forEach(t => {
-                    t.questions.forEach(q => {
-                      const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
-                        .questions.find(updatedQ => updatedQ.order === q.order).id
-
-                      q.question_files.forEach(qf => {
-                        axios.get(qf.url, { responseType: 'blob' }).then(response => {
-                          const formData = new FormData()
-                          formData.append('file', response.data, qf.basename)
-                          formData.append('question', qId)
-
-                          axios.post(backendUrls.annexe(), formData, {
-                            headers: {
-                              'Content-Type': 'multipart/form-data',
-                            },
-                          })
-                        })
-                      })
-                    })
-                  })
-                })
-              })
-            });
-          }
-        },
-        getTreeViewElements(accessibleQuestionnaires) {
-            return accessibleQuestionnaires.map(element => {
-                const objQuestionnaire = this.getTreeViewLevel(element);
-
-                if (
-                    Object.prototype.hasOwnProperty.call(element, 'themes') &&
-                    element.themes.length
-                ) {
-
-                    objQuestionnaire._children = element.themes.map(theme => {
-                        const objTheme = this.getTreeViewLevel(theme, element.id);
-
-                        if (
-                            Object.prototype.hasOwnProperty.call(theme, 'questions') &&
-                            theme.questions.length
-                        ) {
-                            objTheme._children = theme.questions.map(question => {
-                                const objQuestion = this.getTreeViewLevel(question, element.id, theme.id);
-
-                                if (
-                                    Object.prototype.hasOwnProperty.call(question, 'response_files') &&
-                                    question.response_files.length
-                                ) {
-                                    objQuestion._children = question.response_files
-                                                                    .filter(responseFile => responseFile.is_deleted === false)
-                                                                    .filter(this.filterByDate)
-                                                                    .map(responseFile => this.getTreeViewLevel(responseFile, element.id, theme.id, question.id));
-                                    objQuestion._showChildren = true;
-                                    objQuestion._selectable = true;
-                                } else {
-                                    objQuestion._showChildren = false;
-                                }
-
-                                return objQuestion;
-                            });
-                        }
-
-                        return objTheme;
-                    });
-                }
-
-                const objAnnexes = this.getTreeViewLevel(null, element.id, null, null, true);
-                const objCorbeille = this.getTreeViewLevel(null, element.id, null, null, false, true);
-                const objPiecesJointes = this.getTreeViewLevel(null, element.id, null, null, false, false, false, false, true);
-
-                objPiecesJointes._children = accessibleQuestionnaires
-                  .filter(aq => aq.id === element.id)
-                  .flatMap(fq => {
-                    return fq.questionnaire_files
-                    .filter(this.filterByDate)
-                    .flatMap(qf => {
-                        if (qf) {
-                          return this.getTreeViewLevel(qf, element.id, null, null, false, false, false, false, false, true);
-                        }
-                    })
-                  })
-
-                objAnnexes._children = accessibleQuestionnaires
-                  .filter(aq => aq.id === element.id)
-                  .flatMap(fq => {
-                    if (fq.themes) {
-                      return fq.themes.flatMap(t => {
-                        if (t.questions) {
-                          return t.questions.flatMap(q => {
-                            return q.question_files
-                              .filter(this.filterByDate)
-                              .flatMap(qf => {
-                                if (qf) {
-                                  return this.getTreeViewLevel(qf, element.id, null, null, false, false, true);
-                                }
-                            })
-                          })
-                        }
-                      })
-                    }
-                  })
-
-                objCorbeille._children = accessibleQuestionnaires
-                  .filter(aq => aq.id === element.id)
-                  .flatMap(fq => {
-                    if (fq.themes) {
-                      return fq.themes.flatMap(t => {
-                        if (t.questions) {
-                          return t.questions.flatMap(q => {
-                            return q.response_files
-                              .filter(rf => rf.is_deleted === true)
-                              .filter(this.filterByDate)
-                              .flatMap(rf => {
-                              if (rf) {
-                                return this.getTreeViewLevel(rf, element.id, null, null, false, false, false, true);
-                              }
-                            })
-                          })
-                        }
-                      })
-                    }
-                  })
-
-                if (!objCorbeille._children.length) {
-                  objCorbeille._showChildren = false;
-                } else {
-                  objQuestionnaire._children.unshift(objCorbeille);
-                }
-
-                if (!objAnnexes._children.length) {
-                  objAnnexes._showChildren = false;
-                } else {
-                  objQuestionnaire._children.unshift(objAnnexes);
-                }
-
-                if (!objPiecesJointes._children.length) {
-                  objPiecesJointes._showChildren = false;
-                } else {
-                  objQuestionnaire._children.unshift(objPiecesJointes);
-                }
-
-                return objQuestionnaire;
-            });
-        },
-        formatDate(dateDepot) {
-            let finalDate = "";
-            if (dateDepot.getDate() < 10) {
-                finalDate += "0" + dateDepot.getDate() + "/";
-            } else {
-                finalDate += dateDepot.getDate() + "/";
-            }
-            if (dateDepot.getMonth() < 9) {
-                finalDate += "0" + (dateDepot.getMonth()+1) + "/";
-            } else {
-                finalDate += (dateDepot.getMonth()+1) + "/";
-            }
-            finalDate += (1900+dateDepot.getYear()) + " ";
-            if (dateDepot.getHours() < 10) {
-                finalDate += "0" + dateDepot.getHours() + ":";
-            } else {
-                finalDate += dateDepot.getHours() + ":";
-            }
-            if (dateDepot.getMinutes() < 10) {
-                finalDate += "0" + dateDepot.getMinutes();
-            } else {
-                finalDate += "" + dateDepot.getMinutes();
-            }
-
-            return finalDate;
+    const toggleNode = (nodeId: string) => {
+      const toggle = (node: any) => {
+        if (node.id === nodeId) {
+          node._showChildren = !node._showChildren
+          return true
         }
-    },
+        if (node._children) {
+          for (const child of node._children) {
+            if (toggle(child)) return true
+          }
+        }
+        return false
+      }
+      for (const node of treeViewElements.value) {
+        toggle(node)
+      }
+    }
 
-    mounted() {
-      this.getUsers();
-      this.refreshFiles();
-    },
-});
+    const selectNode = (node: any) => {
+      if (node._id && node._id.startsWith('file')) {
+        const idx = selected.value.findIndex((i) => i && i.id === node.id)
+        if (idx === -1) {
+          selected.value.push(node)
+        } else {
+          selected.value.splice(idx, 1)
+        }
+      }
+    }
+
+    onMounted(() => { getUsers(); refreshFiles() })
+
+    // Watchers pour rafraîchir quand les filtres changent
+    watch(filter, () => {
+      selected.value = []
+      refreshFiles()
+    })
+
+    watch(date_filter_start, () => {
+      if (date_filter_start.value) {
+        date_filter_start.value.setHours(0, 0, 0, 0)
+      }
+      selected.value = []
+      refreshFiles()
+    })
+
+    watch(date_filter_end, () => {
+      if (date_filter_end.value) {
+        date_filter_end.value.setHours(0, 0, 0, 0)
+      }
+      selected.value = []
+      refreshFiles()
+    })
+
+    return {
+      filter, date_filter_start, date_filter_end, selected, repondantsListe, treeViewElements, frLocale, placeholder, format,
+      accessibleControls,
+      getUsers, refreshFiles, getTreeViewElements, filterByDate, pickFilesFiltered, pickFiles, zipFiles,
+      exportSelected, exportFiltered, exportAll, toggleNode, selectNode, optionKey, applyRespondentFilter,
+    }
+  }
+})
 </script>
+
+<style scoped>
+.tree-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tree-table thead {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: bold;
+}
+
+.tree-table thead th {
+  padding: 8px;
+  text-align: left;
+  border: none;
+}
+
+.tree-table tbody tr {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tree-table tbody tr.selected {
+  background-color: #f8f9fa;
+}
+
+.col-expand {
+  width: 30px;
+  padding: 0 8px !important;
+}
+
+.col-checkbox {
+  width: 32px;
+  padding: 0 8px !important;
+}
+
+.col-document {
+  width: 550px;
+  border-right: 1px solid #dee2e6;
+  padding: 0 8px !important;
+}
+
+.col-date {
+  width: 160px;
+  border-right: 1px solid #dee2e6;
+  padding: 0 8px !important;
+}
+
+.col-repondant {
+  width: 150px;
+  padding: 0 8px !important;
+}
+</style>

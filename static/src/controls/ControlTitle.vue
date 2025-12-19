@@ -39,7 +39,7 @@
         <div class="form-group mb-6">
           <label class="custom-control custom-checkbox">
             <input type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
-            <span class="custom-control-label font-weight-bold">Sélectionner Tout
+            <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
           <label v-for="q in accessibleQuestionnaires"
                 :for="q.id"
@@ -65,7 +65,7 @@
         <div class="form-group mb-6">
           <label for="checkAll" class="custom-control custom-checkbox">
             <input id="checkAll" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
-            <span class="custom-control-label font-weight-bold">Sélectionner Tout
+            <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
           <label v-for="q in accessibleQuestionnaires"
                 :for="q.id"
@@ -78,7 +78,7 @@
       </form>
     </confirm-modal>
     <div
-      v-if="this.loaderActive"
+      v-if="loaderActive"
       class="loader-container"
     >
       <div class="loader-wrapper">
@@ -192,8 +192,8 @@
               <span class="sr-only">Menu d'actions</span>
             </button>
             <div class="dropdown-menu dropdown-menu-right">
-              <button
-                      v-if="this.accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
+        <button
+          v-if="accessibleQuestionnaires.length > 0 && sessionUser.is_inspector"
                       class="dropdown-item"
                       type="button"
                       @click="showCloneModal"
@@ -238,11 +238,10 @@
 
 <script>
 import '../../css/controls.css'
+import { defineComponent } from 'vue'
 import { mapState } from 'vuex'
-import { mapFields } from 'vuex-map-fields'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
-import Vue from 'vue'
 import ControlDeleteFlow from './ControlDeleteFlow'
 
 import ConfirmModal from '../utils/ConfirmModal'
@@ -256,7 +255,7 @@ import { saveAs } from 'file-saver'
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     control: { type: Object, default: () => ({}) },
     accessType: { type: String, default: '' },
@@ -276,17 +275,17 @@ export default Vue.extend({
       checkedQuestionnaires: [],
       users: [],
       loaderActive: false,
+      localControl: null,
     }
   },
   computed: {
     ...mapState({
       controls: 'controls',
+      sessionUser: 'sessionUser',
     }),
-    ...mapFields([
-      'sessionUser',
-    ]),
     accessibleQuestionnaires() {
-      return this.control.questionnaires.filter(q => !q.is_draft)
+      const ctrl = this.localControl || this.control
+      return ctrl?.questionnaires ? ctrl.questionnaires.filter(q => !q.is_draft) : []
     },
   },
   components: {
@@ -376,13 +375,12 @@ export default Vue.extend({
           })*/
         
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
-        this.control = resp.data.filter(obj => obj.id === this.control.id)[0]
+        this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0]
 
-        this.accessibleQuestionnaires = this.control.questionnaires
+        const filteredQuestionnaires = this.localControl.questionnaires
           .filter(aq => this.checkedQuestionnaires.includes(aq.id))
 
-          const promises = this.accessibleQuestionnaires
-            .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+          const promises = filteredQuestionnaires
             .map(q => {
               const themes = q.themes.map(t => {
                 const qq = t.questions.map(q => { return { description: q.description } })
@@ -517,8 +515,8 @@ export default Vue.extend({
 
   try {
     const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
-    this.control = resp.data.filter(obj => obj.id === this.control.id)[0];
-    const filteredQuestionnaires = this.control.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
+    this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0];
+    const filteredQuestionnaires = this.localControl.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
     let files = [];
 
     for (const fq of filteredQuestionnaires) {
@@ -574,18 +572,25 @@ export default Vue.extend({
       }
     }
 
-    const zipFilename = this.control.reference_code + '.zip';
+    const zipFilename = (this.localControl || this.control).reference_code + '.zip';
     const zip = new JSZip();
     let cnt = 0;
 
     if (files.length === 0) {
       this.loaderActive = false;
+      this.hideExportModal();
+      return;
     }
 
     files.forEach(file => {
       const url = window.location.origin + file.url;
       JSZipUtils.getBinaryContent(url, (err, data) => {
-        if (err) throw err;
+        if (err) {
+          console.error('Error loading file:', err);
+          this.loaderActive = false;
+          this.hideExportModal();
+          return;
+        }
         const formatted = formatFilename(file);
         zip.folder(formatted.questionnaireId)
           .folder(formatted.themeId)
@@ -595,13 +600,13 @@ export default Vue.extend({
         if (cnt === files.length) {
           zip.generateAsync({ type: 'blob' }).then((content) => {
             this.loaderActive = false;
+            this.hideExportModal();
             saveAs(content, zipFilename);
           });
         }
       });
     });
 
-    this.hideExportModal();
   } catch (error) {
     console.error('Error exporting control:', error);
     this.loaderActive = false;

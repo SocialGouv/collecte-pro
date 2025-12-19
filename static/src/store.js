@@ -1,10 +1,6 @@
 import axios from 'axios'
-import { getField, updateField } from 'vuex-map-fields'
 import backendUrls from './utils/backend.js'
-import Vue from 'vue'
-import Vuex from 'vuex'
-
-Vue.use(Vuex)
+import { createStore } from 'vuex'
 
 export const loadStatuses = {
   LOADING: Symbol('LOADING'),
@@ -12,7 +8,7 @@ export const loadStatuses = {
   ERROR: Symbol('ERROR'),
 }
 
-export const store = new Vuex.Store({
+export const store = createStore({
   state: {
     config: {},
     configLoadStatus: loadStatuses.LOADING,
@@ -25,61 +21,113 @@ export const store = new Vuex.Store({
     sessionUser: {},
     sessionUserLoadStatus: loadStatuses.LOADING,
   },
-  getters: {
-    getField,
-  },
+
   mutations: {
-    updateField,
+    updateControls(state, controls) {
+      state.controls = controls
+    },
+    updateControlsLoadStatus(state, status) {
+      state.controlsLoadStatus = status
+    },
     updateSessionUser(state, user) {
       state.sessionUser = user
     },
-    updateSessionUserLoadStatus(state, newStatus) {
-      state.sessionUserLoadStatus = newStatus
+    updateSessionUserLoadStatus(state, status) {
+      state.sessionUserLoadStatus = status
     },
     updateConfig(state, config) {
       state.config = config
     },
-    updateConfigLoadStatus(state, newStatus) {
-      state.configLoadStatus = newStatus
+    updateConfigLoadStatus(state, status) {
+      state.configLoadStatus = status
     },
-    updateControls(state, controls) {
-      state.controls = controls
+    setCurrentQuestionnaire(state, questionnaire) {
+      state.currentQuestionnaire = questionnaire
     },
-    updateControlsLoadStatus(state, newStatus) {
-      state.controlsLoadStatus = newStatus
+    updateCurrentQuestionnaireField(state, { field, value }) {
+      if (!state.currentQuestionnaire) {
+        state.currentQuestionnaire = {}
+      }
+      state.currentQuestionnaire[field] = value
+    },
+    setCurrentQuestionnaireThemes(state, themes) {
+      if (!state.currentQuestionnaire) {
+        state.currentQuestionnaire = {}
+      }
+      state.currentQuestionnaire.themes = themes
+    },
+    setEditingControl(state, control) {
+      state.editingControl = control
+    },
+    setEditingUser(state, user) {
+      state.editingUser = user
+    },
+    setEditingUserField(state, { field, value }) {
+      if (!state.editingUser) {
+        state.editingUser = {}
+      }
+      state.editingUser[field] = value
+    },
+    setEditingProfileType(state, profileType) {
+      state.editingProfileType = profileType
     },
   },
+
   actions: {
-    fetchConfig({ commit }) {
-      axios.get(backendUrls.config()).then((response) => {
-        console.debug('Store got config', response.data)
-        commit('updateConfig', response.data)
-        commit('updateConfigLoadStatus', loadStatuses.SUCCESS)
-      }).catch(err => {
-        console.error('Store got error fetching config', err)
-        commit('updateConfigLoadStatus', loadStatuses.ERROR)
-      })
+    async fetchControls({ state, commit }) {
+      // Skip fetch si les controls sont déjà présents
+      if (state.controls.length > 0 && state.controlsLoadStatus === loadStatuses.SUCCESS) {
+        console.debug('store.fetchControls: controls already loaded, skipping fetch')
+        return
+      }
+
+      // Prefer server-injected controls si présents
+      if (typeof document !== 'undefined') {
+        const controlsDataEl = document.getElementById('controls-data')
+        if (controlsDataEl && controlsDataEl.textContent.trim() !== '') {
+          try {
+            const controls = JSON.parse(controlsDataEl.textContent)
+            console.debug('store.fetchControls: loaded server-injected controls, count=', controls.length)
+            commit('updateControls', controls)
+            commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+            return
+          } catch (e) {
+            console.error('store.fetchControls: failed to parse controls-data', e)
+          }
+        }
+      }
+
+      // Fallback API
+      try {
+        commit('updateControlsLoadStatus', loadStatuses.LOADING)
+        const response = await axios.get(backendUrls.getControlsList())
+        commit('updateControls', response.data)
+        commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+      } catch (err) {
+        console.error('store.fetchControls: failed to fetch controls', err)
+        commit('updateControls', [])
+        commit('updateControlsLoadStatus', loadStatuses.ERROR)
+      }
     },
-    fetchSessionUser({ commit }) {
-      axios.get(backendUrls.currentUser()).then((response) => {
-        console.debug('Store got current user', response.data)
+
+    async fetchSessionUser({ commit }) {
+      try {
+        const response = await axios.get(backendUrls.currentUser())
         commit('updateSessionUser', response.data)
         commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
-      }).catch(err => {
-        console.error('Store got error fetching current user', err)
+      } catch (err) {
         commit('updateSessionUserLoadStatus', loadStatuses.ERROR)
-      })
-    },
-    async fetchControls({ commit }) {
-      const currentURL = window.location.pathname
-      if (currentURL === '/faq/' || currentURL === '/declaration-conformite/' || currentURL === '/cgu/' || currentURL.replace(/\d+\/$/, '') === '/questionnaire/corbeille/') {
-        await axios.get(backendUrls.getControlsList()).then(response => {
-          this.controls = response.data
-        }).catch(err => {
-        })
       }
-      commit('updateControls', this.controls)
-      commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+    },
+
+    async fetchConfig({ commit }) {
+      try {
+        const response = await axios.get(backendUrls.config())
+        commit('updateConfig', response.data)
+        commit('updateConfigLoadStatus', loadStatuses.SUCCESS)
+      } catch (err) {
+        commit('updateConfigLoadStatus', loadStatuses.ERROR)
+      }
     },
   },
 })

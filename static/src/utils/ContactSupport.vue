@@ -17,16 +17,16 @@
 </template>
 
 <script>
-import { mapFields } from 'vuex-map-fields'
-import Vue from 'vue'
-import Vuex from 'vuex'
+// Utilisation de mapState de Vuex 4 pour lire l'état
+import { defineComponent } from 'vue'
+import { mapState } from 'vuex'
 
-Vue.use(Vuex)
-
-export default Vue.extend({
+export default defineComponent({ // Export standard Options API Vue 3 via defineComponent
   computed: {
-    ...mapFields(['config']),
+    // Remplacement de ...mapFields(['config']) par mapState
+    ...mapState({
+      config: state => state.config // Accès direct au state.config
+    }),
   },
 })
-
 </script>

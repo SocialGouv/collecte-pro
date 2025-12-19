@@ -18,7 +18,8 @@ const apiUrls = {
   questionnaire: '/api/questionnaire/',
   theme: '/api/theme/',
   user: '/api/user/',
-  config: '/api/config',
+  // Ensure trailing slash to avoid 301 redirects from Django (use '/api/config/')
+  config: '/api/config/',
 }
 
 // From ecc/urls.py.

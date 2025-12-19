@@ -1,19 +1,21 @@
 <template>
   <div>
-    <success-bar v-if="hasSucessMessage" @dismissed="clearSuccessMessage">
-      <p>Le fichier "{{ successFilename }}" a bien été envoyé à la corbeille.
-      <a :href="trashUrl">Cliquez ici</a>
-      pour le voir dans la corbeille.</p>
+    <success-bar v-if="notification.type === 'success'" @dismissed="clearNotification">
+      <p>
+        Le fichier "{{ notification.filename }}" a bien été envoyé à la corbeille.
+        <a :href="trashUrl">Cliquez ici</a> pour le voir dans la corbeille.
+      </p>
     </success-bar>
-    <error-bar v-if="errorMessage" @dismissed="clearErrorMessage">
-      <p>{{ errorMessage }}</p>
+
+    <error-bar v-if="notification.type === 'error'" @dismissed="clearNotification">
+      <p>{{ notification.message }}</p>
     </error-bar>
-    <div class="table-responsive question-box-child" v-if="files && files.length">
+
+    <div class="table-responsive question-box-child" v-if="filesList.length">
       <div class="form-label">
         Fichier{{ answer_count===1 ? '': 's' }} déposé{{ answer_count===1 ? '': 's' }}:
       </div>
-      <table class="response-file-list table table-hover table-outline table-vcenter text-nowrap
-                    card-table">
+      <table class="response-file-list table table-hover table-outline table-vcenter text-nowrap card-table">
         <thead>
           <tr>
             <th class="date-column">Date de dépôt</th>
@@ -23,21 +25,15 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="file in files" :key="file.id">
+          <tr v-for="file in filesList" :key="file.id">
             <td>
               <div>{{ file.creation_date }}</div>
               <div class="small text-muted">{{ file.creation_time }}</div>
             </td>
             <td>
-              <div>
-                <a target="_blank" rel="noopener noreferrer" :href="file.url">
-                  {{ file.basename }}
-                </a>
-              </div>
+              <a target="_blank" rel="noopener noreferrer" :href="file.url">{{ file.basename }}</a>
             </td>
-            <td>
-              <div>{{ file.author.first_name }} {{ file.author.last_name }}</div>
-            </td>
+            <td>{{ file.author.first_name }} {{ file.author.last_name }}</td>
             <td v-if="isAudited">
               <button
                 data-toggle="modal"
@@ -47,133 +43,110 @@
                 <i class="fe fe-trash-2" aria-hidden="true"></i>
                 <span class="sr-only">Mettre à la corbeille</span>
               </button>
-          </td>
+            </td>
           </tr>
         </tbody>
       </table>
-      <confirm-modal v-for="file in files" :key="file.id"
-                     :id="'trash-confirm-modal-' + file.id"
-                     title="Corbeille"
-                     confirm-button="Oui, envoyer à la corbeille"
-                     cancel-button="Non, annuler"
-                     @confirm="sendToTrash(file.id)"
+
+      <confirm-modal
+        v-for="file in filesList"
+        :key="file.id"
+        :id="'trash-confirm-modal-' + file.id"
+        title="Corbeille"
+        confirm-button="Oui, envoyer à la corbeille"
+        cancel-button="Non, annuler"
+        @confirm="sendToTrash(file)"
       >
-        <p>
-          Vous allez envoyer “{{ file.basename }}” à la corbeille.
-        </p>
+        <p>Vous allez envoyer “{{ file.basename }}” à la corbeille.</p>
       </confirm-modal>
     </div>
   </div>
 </template>
 
-<script>
-
-import Vue from 'vue'
-
+<script lang="ts">
+import { defineComponent } from 'vue'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
-import DateFormat from '../utils/DateFormat.js'
 import { clearCache } from '../utils/utils'
 import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
-import EventBus from '../events'
 import SuccessBar from '../utils/SuccessBar'
+import EventBus from '../events'
+import DateFormat from '../utils/DateFormat.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
 const EVENT_NAME = 'response-files-updated-'
 
-export default Vue.extend({
+export default defineComponent({
+  name: 'ResponseFileList',
   props: {
-    question: Object,
-    questionnaireId: Number,
-    isAudited: Boolean,
+    question: { type: Object, required: true },
+    questionnaireId: { type: Number, required: true },
+    isAudited: { type: Boolean, required: true },
   },
-  filters: {
-    DateFormat,
-  },
+  components: { ConfirmModal, ErrorBar, SuccessBar },
   data() {
     return {
-      files: {},
-      errorMessage: '',
-      hasSucessMessage: false,
-      successFilename: '',
+      notification: {
+        type: '', // 'success' | 'error'
+        filename: '',
+        message: '',
+      },
     }
-  },
-  mounted() {
-    const makeDisplayFileList = files => {
-      return files.filter(file => !file.is_deleted)
-        .sort((file1, file2) => {
-          return (new Date(file1.created).getTime() - new Date(file2.created).getTime())
-        })
-    }
-
-    this.files = makeDisplayFileList(this.question.response_files)
-
-    // When we get a new list of files, replace the old one
-    EventBus.$on(EVENT_NAME + this.question.id, files => {
-      this.files = makeDisplayFileList(files)
-    })
   },
   computed: {
-    answer_count: function () {
-      return this.files ? this.files.length : 0
+    filesList(): Array<any> {
+      return (this.question.response_files || [])
+        .filter(f => !f.is_deleted)
+        .sort((a, b) => new Date(a.created).getTime() - new Date(b.created).getTime())
     },
-    trashUrl() {
+    answer_count(): number {
+      return this.filesList.length
+    },
+    trashUrl(): string {
       return backendUrls.trash(this.questionnaireId)
     },
   },
-  methods: {
-    sendUpdateEvent: function() {
-      EventBus.$emit(EVENT_NAME + this.question.id, this.files)
-    },
-    removeFileFromList: function(fileId) {
-      const index = this.files.findIndex(file => file.id === fileId)
-      const file = this.files[index]
-      this.files.splice(index, 1)
-      return file
-    },
-    sendToTrash: function(fileId) {
-      this.clearErrorMessage()
-      this.clearSuccessMessage()
-      const formData = new FormData()
-      formData.append('is_deleted', true)
-      axios.put(backendUrls.responseFileTrash(fileId),
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
-      ).then(response => {
-        console.debug('success deleting response file', response.data)
-        clearCache()
-        const removedFile = this.removeFileFromList(response.data.id)
-        this.sendUpdateEvent()
-        this.displaySucessMessage(removedFile.basename)
-      })
-        .catch(error => {
-          console.error('Error when posting response file', error)
-          this.errorMessage = `Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`
-        })
-    },
-    clearErrorMessage: function() {
-      this.errorMessage = ''
-    },
-    displaySucessMessage(successFilename) {
-      this.hasSucessMessage = true
-      this.successFilename = successFilename
-    },
-    clearSuccessMessage: function() {
-      this.hasSucessMessage = false
-      this.successFilename = ''
-    },
+  mounted() {
+    EventBus.$on(EVENT_NAME + this.question.id, (files) => {
+      this.question.response_files = files
+    })
   },
-  components: {
-    ConfirmModal,
-    ErrorBar,
-    SuccessBar,
+  methods: {
+    sendToTrash(file: any) {
+      this.clearNotification()
+      const formData = new FormData()
+      formData.append('is_deleted', 'true')
+
+      axios.put(backendUrls.responseFileTrash(file.id), formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then(() => {
+        clearCache()
+        file.is_deleted = true
+        EventBus.$emit(EVENT_NAME + this.question.id, this.question.response_files)
+        this.showSuccess(file.basename)
+      })
+      .catch((error) => {
+        console.error('Error sending file to trash', error)
+        this.showError(`Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`)
+      })
+    },
+    showSuccess(filename: string) {
+      this.notification.type = 'success'
+      this.notification.filename = filename
+    },
+    showError(message: string) {
+      this.notification.type = 'error'
+      this.notification.message = message
+    },
+    clearNotification() {
+      this.notification.type = ''
+      this.notification.filename = ''
+      this.notification.message = ''
+    },
   },
 })
 </script>

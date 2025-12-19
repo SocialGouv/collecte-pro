@@ -7,12 +7,8 @@
       <div v-if="files.length > 1" class="form-label">Fichiers annexes à la question :</div>
       <div v-else class="form-label">Fichier annexe à la question :</div>
       <ul>
-        <li v-for="(file, index) in files"
-            :key="index"
-            class="question-file">
-          <a :href="file.url">
-            {{ file.basename }}
-          </a>
+        <li v-for="(file, index) in files" :key="index" class="question-file">
+          <a :href="file.url">{{ file.basename }}</a>
           <span v-if="withDelete">
             <button @click.prevent="deleteFile(file.id)"
                     class="btn btn-link"
@@ -28,50 +24,56 @@
 </template>
 
 <script>
+import { defineComponent, ref } from 'vue'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
 import ErrorBar from '../utils/ErrorBar'
-import Vue from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
+  name: 'QuestionFileList',
   props: {
-    files: Array,
+    files: {
+      type: Array,
+      required: true
+    },
     withDelete: {
       type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      errorMessage: undefined,
+      default: false
     }
   },
-  components: {
-    ErrorBar,
-  },
-  methods: {
-    clearError() {
-      this.errorMessage = undefined
-    },
-    deleteFileFromVuex(fileId) {
-      for (let i = 0; i < this.files.length; i++) {
-        if (this.files[i].id === fileId) {
-          this.files.splice(i, 1)
-          console.debug('Deleted file', fileId, 'from vuex')
-        }
+  components: { ErrorBar },
+  setup(props) {
+    const errorMessage = ref(undefined)
+
+    const clearError = () => {
+      errorMessage.value = undefined
+    }
+
+    const deleteFileFromVuex = (fileId) => {
+      const index = props.files.findIndex(f => f.id === fileId)
+      if (index !== -1) {
+        props.files.splice(index, 1)
+        console.debug('Deleted file', fileId, 'from vuex')
       }
-    },
-    deleteFile(fileId) {
-      this.clearError()
+    }
+
+    const deleteFile = (fileId) => {
+      clearError()
       axios.delete(backendUrls.annexe(fileId))
         .then(() => {
-          this.deleteFileFromVuex(fileId)
+          deleteFileFromVuex(fileId)
         })
         .catch((error) => {
-          console.log('Error when deleting question file', error)
-          this.errorMessage = 'Le fichier n\'a pu être supprimé.'
+          console.error('Error when deleting question file', error)
+          errorMessage.value = 'Le fichier n\'a pu être supprimé.'
         })
-    },
-  },
+    }
+
+    return {
+      errorMessage,
+      clearError,
+      deleteFile
+    }
+  }
 })
 </script>

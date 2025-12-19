@@ -27,9 +27,10 @@
 
 <script>
 import '../../css/utils.css'
-import Vue from 'vue'
 
-export default Vue.extend({
+import { defineComponent } from 'vue'
+
+export default defineComponent({
   props: ['number', 'clickable'],
 })
 </script>

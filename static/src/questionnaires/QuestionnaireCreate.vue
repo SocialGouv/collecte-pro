@@ -149,15 +149,14 @@ import axios from 'axios'
 import backend from '../utils/backend'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
 import Breadcrumbs from '../utils/Breadcrumbs'
-import { loadStatuses } from '../store'
-import { mapFields } from 'vuex-map-fields'
+import { loadStatuses, useStore } from '../store'
 import PublishFlow from './PublishFlow'
 import QuestionnaireBodyCreate from './QuestionnaireBodyCreate'
 import QuestionnaireMetadataCreate from './QuestionnaireMetadataCreate'
 import QuestionnairePreview from './QuestionnairePreview'
 import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
-import Vue from 'vue'
+import { defineComponent, computed, ref } from 'vue'
 import Wizard from '../utils/Wizard'
 import backendUrls from '../utils/backend'
 
@@ -173,7 +172,7 @@ const SAVING_MESSAGE_MIN_DISPLAY_TIME_MILLIS = 2000
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     controlId: Number,
     controlHasMultipleInspectors: Boolean,
@@ -201,11 +200,21 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapFields([
-      'controls',
-      'controlsLoadStatus',
-      'currentQuestionnaire',
-    ]),
+    controls() {
+      // Replace with Vuex store access or prop as needed
+      return this.$store.state.controls
+    },
+    controlsLoadStatus() {
+      return this.$store.state.controlsLoadStatus
+    },
+    currentQuestionnaire: {
+      get() {
+        return this.$store.state.currentQuestionnaire
+      },
+      set(val) {
+        this.$store.commit('setCurrentQuestionnaire', val)
+      }
+    },
     currentControl() {
       if (!this.currentQuestionnaire || !this.currentQuestionnaire.control) {
         return null
@@ -279,7 +288,7 @@ export default Vue.extend({
   mounted() {
     if (typeof this.questionnaireId === 'undefined') {
       this.loadNewQuestionnaire()
-    }else{
+    } else {
       this.loadExistingQuestionnaire()
     }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
@@ -288,92 +297,84 @@ export default Vue.extend({
     }
   },
   methods: {
-      loadNewQuestionnaire: function(){
-        const newQuestionnaire = {
-          control: this.controlId,
-          description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
-          title: '',
-          themes: [],
-        }
-        this.currentQuestionnaire = newQuestionnaire
-        this.emitQuestionnaireUpdated()
-        this.moveToState(STATES.START)
-        return
-      },
-      loadExistingQuestionnaire: async function(){
-        const currentQuestionnaire =this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
-        if (!currentQuestionnaire) {
-          const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
-          this.displayErrors(errorMessage)
-          throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
-        }
-        if (!currentQuestionnaire.is_draft) {
-          const errorMessage = 'Le questionnaire ' + this.questionnaireId +
-                ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
-          this.displayErrors(errorMessage)
-          throw new Error(
-            'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
-        }
-      
+    loadNewQuestionnaire() {
+      const newQuestionnaire = {
+        control: this.controlId,
+        description: QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT,
+        title: '',
+        themes: [],
+      }
+      this.currentQuestionnaire = newQuestionnaire
+      this.emitQuestionnaireUpdated()
+      this.moveToState(STATES.START)
+    },
+    async loadExistingQuestionnaire() {
+      const currentQuestionnaire = this.findCurrentQuestionnaire(this.controls, this.questionnaireId)
+      if (!currentQuestionnaire) {
+        const errorMessage = 'Le questionnaire ' + this.questionnaireId + ' n\'a pas été trouvé.'
+        this.displayErrors(errorMessage)
+        throw new Error('Questionnaire ' + this.questionnaireId + ' not found')
+      }
+      if (!currentQuestionnaire.is_draft) {
+        const errorMessage = 'Le questionnaire ' + this.questionnaireId +
+          ' n\'est pas un brouillon. Vous ne pouvez pas le modifier.'
+        this.displayErrors(errorMessage)
+        throw new Error(
+          'Questionnaire ' + this.questionnaireId + ' is not a draft, you cannot edit it')
+      }
       this.currentQuestionnaire = currentQuestionnaire
       this.currentQuestionnaire.control = this.controlId
       const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.controlId))
       this.control = resp.data.filter(obj => obj.id === this.controlId)[0]
       const curQ = this.control.questionnaires.find(q => q.id === this.questionnaireId)
       const themes = curQ.themes.map(t => {
-            const qq = t.questions.map(q => {
-                const qf = q.question_files.map(ff=>{
-                   return { id : ff.id, url: ff.url, basename : ff.basename , file : ff.file, question : ff.question}
-                })
-              return { description: q.description,  id: q.id, order:q.order,  question_files : qf}
-            })
-            return { id : t.id, order: t.order, questionnaire:t.questionnaire, questions: qq, title: t.title }
+        const qq = t.questions.map(q => {
+          const qf = q.question_files.map(ff => {
+            return { id: ff.id, url: ff.url, basename: ff.basename, file: ff.file, question: ff.question }
           })
-        
-        this.currentQuestionnaire.questionnaire_files=curQ.questionnaire_files
-        this.currentQuestionnaire.description=curQ.description
-        this.currentQuestionnaire.themes = themes
-
-        this.emitQuestionnaireUpdated()
-        this.moveToState(STATES.START)
-      },
-    findCurrentQuestionnaire: function(controls, questionnaireId) {
+          return { description: q.description, id: q.id, order: q.order, question_files: qf }
+        })
+        return { id: t.id, order: t.order, questionnaire: t.questionnaire, questions: qq, title: t.title }
+      })
+      this.currentQuestionnaire.questionnaire_files = curQ.questionnaire_files
+      this.currentQuestionnaire.description = curQ.description
+      this.currentQuestionnaire.themes = themes
+      this.emitQuestionnaireUpdated()
+      this.moveToState(STATES.START)
+    },
+    findCurrentQuestionnaire(controls, questionnaireId) {
       for (let i = 0; i < controls.length; i++) {
         const control = controls[i]
-        const foundQuestionnaires =
-          control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
+        const foundQuestionnaires = control.questionnaires.filter(questionnaire => questionnaire.id === questionnaireId)
         if (foundQuestionnaires.length > 0) {
           this.questionnaire = foundQuestionnaires[0]
           return foundQuestionnaires[0]
         }
       }
     },
-    emitQuestionnaireUpdated: function() {
+    emitQuestionnaireUpdated() {
       this.$emit('questionnaire-updated', this.currentQuestionnaire)
     },
-    moveToState: function(newState) {
+    moveToState(newState) {
       this.clearErrors()
       this.state = newState
     },
-    next: function() {
+    next() {
       console.debug('Navigation "next" from', this.state)
       if (this.state === STATES.START) {
-        if (!this.$refs.questionnaireMetadataCreate.validateForm()) {
+        if (!this.$refs.questionnaireMetadataCreate?.validateForm()) {
           return
         }
         this.saveDraft().then(() => {
-          // If there are no themes, add an empty theme and question, to prompt the user to add
-          // more.
           if (this.currentQuestionnaire.themes.length === 0) {
             this.currentQuestionnaire.themes.push({ questions: [{}] })
           }
           this.moveToState(STATES.CREATING_BODY)
-          return
         })
         return
       }
       if (this.state === STATES.CREATING_BODY) {
-        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+        if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
         this.saveDraft()
@@ -382,10 +383,10 @@ export default Vue.extend({
       }
       console.error('Trying to go to "next", from state', this.state)
     },
-    back: function(clickedStep) {
+    back(clickedStep) {
       console.debug('Navigation "back" from', this.state, 'going to step', clickedStep)
       if (this.state === STATES.CREATING_BODY) {
-        if (!this.$refs.questionnaireBodyCreate.validateForm()) {
+        if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
         this.saveDraft()
@@ -401,13 +402,12 @@ export default Vue.extend({
           this.moveToState(STATES.CREATING_BODY)
           return
         }
-        // no step specified so, go to previous step by default
         this.moveToState(STATES.CREATING_BODY)
         return
       }
       console.error('Trying to go back from state', this.state, 'with clickedStep', clickedStep)
     },
-    displayErrors: function(errorMessage, errors) {
+    displayErrors(errorMessage, errors) {
       this.hasErrors = true
       this.errors = errors
       if (errors) {
@@ -427,17 +427,13 @@ export default Vue.extend({
         if (this.currentQuestionnaire.end_date) {
           this.currentQuestionnaire.end_date = toBackendFormat(this.currentQuestionnaire.end_date)
         } else {
-          // remove empty strings, it throws date format error.
           delete this.currentQuestionnaire.end_date
         }
       }
       const getCreateMethod = () => axios.post.bind(this, backend.questionnaire())
-      const getUpdateMethod =
-          (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
-
+      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
       this.clearErrors()
       cleanPreSave()
-
       let saveMethod
       if (this.currentQuestionnaire.id !== undefined) {
         saveMethod = getUpdateMethod(this.currentQuestionnaire.id)
@@ -451,10 +447,10 @@ export default Vue.extend({
         return true
       }
       if (this.state === STATES.START) {
-        return this.$refs.questionnaireMetadataCreate.validateForm()
+        return this.$refs.questionnaireMetadataCreate?.validateForm() || false
       }
       if (this.state === STATES.CREATING_BODY) {
-        return this.$refs.questionnaireBodyCreate.validateForm()
+        return this.$refs.questionnaireBodyCreate?.validateForm() || false
       }
     },
     saveDraftAndSwapEditor() {
@@ -475,10 +471,7 @@ export default Vue.extend({
     },
     displaySaveInProgress() {
       this.saveMessage.isWaitingForMinDisplayTime = true
-      setTimeout(
-        () => { this.saveMessage.isWaitingForMinDisplayTime = false },
-        SAVING_MESSAGE_MIN_DISPLAY_TIME_MILLIS)
-
+      setTimeout(() => { this.saveMessage.isWaitingForMinDisplayTime = false }, SAVING_MESSAGE_MIN_DISPLAY_TIME_MILLIS)
       this.saveMessage.isSaveHappening = true
     },
     displaySavingDone(dateDone) {
@@ -486,34 +479,36 @@ export default Vue.extend({
       this.saveMessage.isSaveHappening = false
     },
     displaySavingDoneWithError() {
-      this.saveMessage.text =
-        'Erreur lors de la sauvegarde : les modifications ne sont pas enregistrées.'
+      this.saveMessage.text = 'Erreur lors de la sauvegarde : les modifications ne sont pas enregistrées.'
       this.saveMessage.isWaitingForMinDisplayTime = false
       this.saveMessage.isSaveHappening = false
     },
     saveDraft() {
-      const self = this
-      self.currentQuestionnaire.is_draft = true
-      self.displaySaveInProgress()
-      return self._doSave()
+      this.currentQuestionnaire.is_draft = true
+      this.displaySaveInProgress()
+      return this._doSave()
         .then((response) => {
           console.debug('Successful draft save.')
-          self.currentQuestionnaire = response.data
-          console.log('self.currentQuestionnaire : ',self.currentQuestionnaire)
-          self.emitQuestionnaireUpdated()
-          self.displaySavingDone(nowTimeString())
+          this.currentQuestionnaire = response.data
+          console.log('self.currentQuestionnaire : ', this.currentQuestionnaire)
+          this.emitQuestionnaireUpdated()
+          this.displaySavingDone(nowTimeString())
           return response.data
         })
         .catch((error) => {
           console.error('Error in draft save :', error)
-          const errorToDisplay =
-            (error.response && error.response.data) ? error.response.data : error
-          self.displayErrors('Erreur lors de la sauvegarde du brouillon.', errorToDisplay)
-          self.displaySavingDoneWithError()
+          const errorToDisplay = (error.response && error.response.data) ? error.response.data : error
+          this.displayErrors('Erreur lors de la sauvegarde du brouillon.', errorToDisplay)
+          this.displaySavingDoneWithError()
         })
     },
     startPublishFlow() {
-      this.$refs.publishFlow.start()
+      console.log('outer start!')
+      if (this.$refs.publishFlow) {
+        this.$refs.publishFlow.start()
+      } else {
+        console.error('publishFlow ref is not available')
+      }
     },
     publish() {
       this.currentQuestionnaire.is_draft = false
@@ -529,12 +524,8 @@ export default Vue.extend({
       $(event.target).addClass('btn-loading')
       this.saveDraft()
         .then(() => {
-          // Whether or not save succeeds, navigate to home
           this.goHome()
         })
-    },
-    goHome() {
-      this.window.location.href = backend['control-detail'](this.currentQuestionnaire.control)
     },
     saveAndShowMoveThemesModal() {
       if (!this.validateCurrentForm()) {
@@ -544,8 +535,7 @@ export default Vue.extend({
       this.saveDraft()
         .then(() => {
           $('#move-themes-button').removeClass('btn-loading')
-          // Only display moveThemesModal if the user is still on the same page.
-          if (this.state === STATES.CREATING_BODY) {
+          if (this.state === STATES.CREATING_BODY && this.$refs.questionnaireBodyCreate?.$refs?.moveThemesModal?.$el) {
             $(this.$refs.questionnaireBodyCreate.$refs.moveThemesModal.$el).modal('show')
           }
         })

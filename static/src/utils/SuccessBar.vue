@@ -9,15 +9,17 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
-  props: ['noclose'],
+export default defineComponent({
+  name: 'InfoBar', // ou le nom de ton composant
+  props: {
+    noclose: Boolean,
+  },
   methods: {
-    dismissed: function () {
+    dismissed() {
       this.$emit('dismissed')
     },
   },
 })
-
 </script>

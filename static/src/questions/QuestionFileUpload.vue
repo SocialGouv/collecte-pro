@@ -28,61 +28,67 @@
 </div>
 </template>
 
-<script>
+<script lang="ts">
+import { ref, defineComponent } from 'vue'
 import axios from 'axios'
 import backendUrls from '../utils/backend'
-import ErrorBar from '../utils/ErrorBar'
-import Vue from 'vue'
+import ErrorBar from '../utils/ErrorBar.vue'
 
-export default Vue.extend({
+export default defineComponent({
+  name: 'QuestionFileUpload',
   props: {
-    question: Object,
-  },
-  data () {
-    return {
-      errorMessage: undefined,
-      file: '',
-    }
+    question: {
+      type: Object,
+      required: true,
+    },
   },
   components: {
     ErrorBar,
   },
-  methods: {
-    clearError() {
-      this.errorMessage = undefined
-    },
-    handleFileUpload() {
-      this.file = this.$refs.fileInput.files[0]
-      this.submitFile()
-    },
-    submitFile() {
-      this.clearError()
+  setup(props) {
+    const errorMessage = ref<string | undefined>(undefined)
+    const file = ref<File | null>(null)
+    const fileInput = ref<HTMLInputElement | null>(null)
+
+    const clearError = () => {
+      errorMessage.value = undefined
+    }
+
+    const handleFileUpload = () => {
+      if (!fileInput.value?.files) return
+      file.value = fileInput.value.files[0]
+      submitFile()
+    }
+
+    const submitFile = async () => {
+      if (!file.value) return
+      clearError()
       const formData = new FormData()
-      formData.append('file', this.file)
-      formData.append('question', this.question.id)
-      axios.post(
-        backendUrls.annexe(),
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
+      formData.append('file', file.value)
+      formData.append('question', String(props.question.id))
+      
+      try {
+        const response = await axios.post(backendUrls.annexe(), formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         })
-        .then(response => {
-          console.debug('QuestionFileUpload response', response)
-          const newFile = response.data
-          this.question.question_files.push(newFile)
-        })
-        .catch(error => {
-          console.log('Error when posting question file', error)
-           if (error.response && Array.isArray(error.response.data)) {
-            this.errorMessage = error.response.data[0] ;
-          } else {
-            this.errorMessage = 'L\'annexe n\'a pu être sauvée.'
-          }
-          
-        })
-    },
+        const newFile = response.data
+        props.question.question_files.push(newFile)
+      } catch (error: any) {
+        console.error('Error when posting question file', error)
+        if (error.response && Array.isArray(error.response.data)) {
+          errorMessage.value = error.response.data[0]
+        } else {
+          errorMessage.value = "L'annexe n'a pu être sauvée."
+        }
+      }
+    }
+
+    return {
+      errorMessage,
+      fileInput,
+      handleFileUpload,
+      clearError,
+    }
   },
 })
 </script>

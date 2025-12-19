@@ -9,16 +9,19 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
-  props: ['noclose'],
+export default defineComponent({
+  name: 'ErrorBar',
+  props: {
+    noclose: Boolean,
+  },
+  emits: ['dismissed'],
   methods: {
-    dismissed: function () {
+    dismissed() {
       this.$emit('dismissed')
     },
   },
-
 })
-
 </script>
+
