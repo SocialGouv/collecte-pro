@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.4.0] - 2025-12-19
+### Modifications
+- CP-202 : Reprendre la montée de version Vue JS 3 pour mettre la stack technique à niveau
 ## [3.3.9] - 2025-11-13
 ### Modifications
 - CP-197 : Correction de Vulnérabilité python-jose : confusion d’algorithme avec les clés ECDSA OpenSSH
