@@ -36,8 +36,8 @@
             <td>{{ file.author.first_name }} {{ file.author.last_name }}</td>
             <td v-if="isAudited">
               <button
-                data-bs-toggle="modal"
-                :data-bs-target="'#trash-confirm-modal-' + file.id"
+                data-toggle="modal"
+                :data-target="'#trash-confirm-modal-' + file.id"
                 class="btn btn-outline-primary"
               >
                 <i class="fe fe-trash-2" aria-hidden="true"></i>

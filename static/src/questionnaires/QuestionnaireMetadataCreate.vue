@@ -164,4 +164,18 @@ QuestionnaireMetadataCreate.DESCRIPTION_DEFAULT = DESCRIPTION_DEFAULT
 </script>
 
 <style>
+/* Assure que le calendrier du datepicker s'affiche au-dessus de la barre du bas */
+/* Supporte plusieurs implémentations/classes possibles */
+.vdp-datepicker,
+.v3dp__datepicker,
+.dp__main {
+  position: relative;
+  z-index: 10000;
+}
+
+.vdp-datepicker__calendar,
+.v3dp__calendar,
+.dp__menu {
+  z-index: 10001 !important;
+}
 </style>

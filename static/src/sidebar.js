@@ -3,13 +3,13 @@
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import './utils/polyfills.js'          // Polyfills éventuels pour le navigateur
-import { createApp } from 'vue'       // Vue 3
+import { createApp, h } from 'vue'       // Vue 3
 import { store, loadStatuses } from './store'       // Store Vuex
 import Sidebar from './utils/Sidebar.vue' // Composant Sidebar
 
 // Création de l'application Vue 3
 const app = createApp({
-  components: { Sidebar },
+  render: () => h(Sidebar),
   mounted() {
     // Si le template Django a injecté des données 'controls-data' dans le DOM,
     // les utiliser pour initialiser le store au lieu d'appeler l'API.
@@ -66,4 +66,13 @@ const app = createApp({
 app.use(store)
 
 // Montage sur l'élément HTML
-app.mount('#sidebar-vm')
+console.log('Sidebar: trying to mount on #sidebar-vm...')
+const sidebarEl = document.getElementById('sidebar-vm')
+console.log('Sidebar: #sidebar-vm element found?', sidebarEl)
+if (sidebarEl) {
+  app.mount('#sidebar-vm')
+  console.log('Sidebar: mounted successfully!')
+} else {
+  console.error('Sidebar: #sidebar-vm element not found in DOM!')
+}
+
