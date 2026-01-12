@@ -107,23 +107,125 @@
 {% endblock page_main_container %}
 {% block js_bundle %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{% static 'js/jquery-captcha.min.js' %}"></script>
-<!--<script src="../../node_modules/jquery-captcha/dist/jquery-captcha.min.js"></script>-->
 <script>
   $(document).ready(function () {
+    console.log("Initialize captcha API v2...");
 
-    console.log("Start read...");
-    var captcha = $('#botdetect-captcha').captcha({
-      captchaEndpoint: '{% url "presentation:simple-captcha-endpoint" %}',
+    // Configuration du captcha
+    const captchaEndpoint = '{% url "presentation:simple-captcha-endpoint" %}';
+    const validationEndpoint = '{% url "presentation:validationFormulaire" %}';
+    const captchaStyle = 'captchaFR';
+    let currentCaptchaId = null;
 
-    });
+    // Fonction pour charger une nouvelle image captcha
+    window.loadCaptcha = function () {
+      console.log('Loading captcha...');
 
+      $.ajax({
+        method: 'GET',
+        url: captchaEndpoint,
+        data: { get: 'image', c: captchaStyle },
+        dataType: 'json',
+        success: function (data) {
+          console.log('Captcha response:', data);
+
+          if (!data.uuid) {
+            console.error('Invalid captcha data');
+            return;
+          }
+
+          // Stocker l'UUID
+          currentCaptchaId = data.uuid;
+          console.log('UUID:', currentCaptchaId);
+
+          var container = document.getElementById('botdetect-captcha');
+          container.innerHTML = '';
+
+          // Créer img pointant vers l'endpoint binaire
+          var img = document.createElement('img');
+          img.alt = 'Code de sécurité CAPTCHA';
+          img.style.display = 'block';
+          img.style.width = '280px';
+          img.style.height = '70px';
+          img.style.border = '1px solid #ccc';
+          img.style.marginBottom = '10px';
+          img.style.backgroundColor = '#f5f5f5';
+
+          img.onload = function () {
+            console.log('✓ Captcha loaded');
+            $('#captchaFormulaireExtInput').val('');
+            $('#captchaError').hide();
+          };
+
+          img.onerror = function () {
+            console.error('✗ Captcha failed to load');
+            container.innerHTML = '<p style="color: red;">Erreur CAPTCHA</p>';
+          };
+
+          // URL vers l'endpoint binaire au lieu de data URI
+          img.src = '/presentation/captcha-image?uuid=' + data.uuid;
+          container.appendChild(img);
+
+          // Créer le conteneur des boutons
+          var buttonsDiv = document.createElement('div');
+          buttonsDiv.style.marginTop = '10px';
+
+          // Bouton Recharger
+          var reloadBtn = document.createElement('button');
+          reloadBtn.type = 'button';
+          reloadBtn.className = 'btn btn-sm btn-secondary';
+          reloadBtn.style.marginRight = '5px';
+          reloadBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Recharger';
+          reloadBtn.onclick = function () { window.loadCaptcha(); return false; };
+          buttonsDiv.appendChild(reloadBtn);
+
+          // Bouton Écouter
+          var audioBtn = document.createElement('button');
+          audioBtn.type = 'button';
+          audioBtn.className = 'btn btn-sm btn-info';
+          audioBtn.innerHTML = '<i class="fas fa-volume-up"></i> Écouter';
+          audioBtn.onclick = function () { window.playAudio(); return false; };
+          buttonsDiv.appendChild(audioBtn);
+
+          container.appendChild(buttonsDiv);
+        },
+        error: function (xhr, status, error) {
+          console.error('Error loading captcha:', error, xhr.responseText);
+          $('#botdetect-captcha').html('<p style="color: red;">Erreur de chargement du CAPTCHA</p>');
+        }
+      });
+    };
+
+    // Fonction pour jouer l'audio
+    window.playAudio = function () {
+      if (!currentCaptchaId) {
+        alert('Veuillez d\'abord charger un captcha');
+        return;
+      }
+
+      const audioUrl = captchaEndpoint + '?get=sound&c=' + captchaStyle + '&t=' + currentCaptchaId;
+      const audio = new Audio(audioUrl);
+      audio.play().catch(function (error) {
+        console.error('Audio playback failed:', error);
+        alert('Erreur lors de la lecture audio');
+      });
+    };
+
+    // Charger le captcha au démarrage
+    window.loadCaptcha();
+
+    // Soumission du formulaire
     $('#demo-form').submit(function (event) {
       event.preventDefault();
 
       var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-      var userEnteredCaptchaCode = captcha.getUserEnteredCaptchaCode();
-      var captchaId = captcha.getCaptchaId();
+      var userEnteredCaptchaCode = $('#captchaFormulaireExtInput').val().trim();
+      var captchaId = currentCaptchaId;
+
+      if (!captchaId) {
+        alert('Erreur: Le captcha n\'a pas pu être chargé');
+        return false;
+      }
 
       var postData = {
         csrfmiddlewaretoken: csrfToken,
@@ -140,28 +242,33 @@
       };
 
       $.ajax({
-
         method: 'POST',
-        url: '{% url "presentation:validationFormulaire" %}',
+        url: validationEndpoint,
         dataType: 'json',
-        //contentType: 'application/json; charset=utf-8',
         data: postData,
-        //data: $(this).serialize(),
         headers: {
           'X-CSRFToken': csrfToken
         },
         success: function (response) {
-          if (response) {
+          console.log('Validation response:', response);
+          if (response === true || response.valid === true) {
+          // Captcha valide, soumettre le formulaire
             $('#demo-form').off('submit').submit();
           } else {
-            captcha.reloadImage();
+            // Captcha invalide
+            window.loadCaptcha();
             $('#captchaError').show();
-            
           }
+        },
+        error: function (xhr, status, error) {
+          console.error('Validation error:', error);
+          window.loadCaptcha();
+          $('#captchaError').show();
         }
       });
+
+      return false;
     });
   });
-
 </script>
 {% endblock js_bundle %}
