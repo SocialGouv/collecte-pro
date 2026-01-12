@@ -92,6 +92,9 @@ def simple_captcha_endpoint(request):
                     
                     # Stocker la base64 dans la session pour récupération ultérieure
                     request.session[f'captcha_image_{captcha_uuid}'] = image_base64
+                    # Aussi stocker l'UUID du captcha pour la validation
+                    request.session[f'captcha_uuid_{captcha_uuid}'] = captcha_uuid
+                    request.session.save()
                     
                     # Retourner uniquement l'UUID
                     response_data = {'uuid': captcha_uuid}
@@ -156,6 +159,9 @@ def validationFormulaire(request):
         user_entered_captcha_code = post_data.get('userEnteredCaptchaCode')
         captcha_id = post_data.get('captchaId')
 
+        print(f"[VALIDATION] Captcha ID: {captcha_id}")
+        print(f"[VALIDATION] User entered code: {user_entered_captcha_code}")
+
         oauth_token = get_oauth_token()
         if not oauth_token:
             return JsonResponse({"error": "Failed to obtain OAuth token."}, status=500)
@@ -166,18 +172,36 @@ def validationFormulaire(request):
         }
 
         data = {
-            'id': captcha_id,
+            'uuid': captcha_id,
             'code': user_entered_captcha_code
         }
 
         try:
+            print(f"[VALIDATION] Sending to URL: {settings.VALIDER_CAPTCHA_URL}")
+            print(f"[VALIDATION] Data: {data}")
             response = requests.post(settings.VALIDER_CAPTCHA_URL, json=data, headers=headers)
-            response.raise_for_status()  
-            response_data = response.json()
-            return JsonResponse(response_data, safe=False)
+            print(f"[VALIDATION] Response Status: {response.status_code}")
+            print(f"[VALIDATION] Response Content: {response.text}")
+            
+            # Ne pas lever d'exception, gérer tous les status codes
+            if response.status_code == 200:
+                response_data = response.json()
+                print(f"[VALIDATION] Response Data: {response_data}")
+                return JsonResponse(response_data, safe=False)
+            else:
+                # L'API retourne une erreur (ex: 400, 404, etc.)
+                error_text = response.text
+                print(f"[VALIDATION ERROR] API returned error: {error_text}")
+                return JsonResponse({
+                    "success": False,
+                    "error": error_text if error_text else f"Erreur {response.status_code}"
+                }, status=200)  # Retourner 200 pour que le frontend puisse lire la réponse
+                
         except requests.RequestException as e:
-            error_message = {"error": "Error validating captcha"}
-            return JsonResponse(error_message, status=500)
+            print(f"[VALIDATION ERROR] Exception Type: {type(e).__name__}")
+            print(f"[VALIDATION ERROR] Exception Details: {str(e)}")
+            error_message = {"success": False, "error": "Erreur de connexion au service de validation"}
+            return JsonResponse(error_message, status=200)
      
 def get_oauth_token():
     
