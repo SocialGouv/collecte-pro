@@ -13,8 +13,9 @@
           <label for="checkModif" class="custom-control custom-checkbox">
             <input type="checkbox"
                    id="checkModif"
-                    class="custom-control-input"
-                    required>
+                   class="custom-control-input"
+                   required
+                   aria-labelledby="checkModif">
             <span class="custom-control-label">
               Le questionnaire ne pourra plus être modifié
             </span>
@@ -22,8 +23,9 @@
           <label for="checkVisible" class="custom-control custom-checkbox">
             <input type="checkbox"
                    id="checkVisible"
-                    class="custom-control-input"
-                    required>
+                   class="custom-control-input"
+                   required
+                   aria-labelledby="checkVisible">
             <span class="custom-control-label">
               Le questionnaire deviendra visible par l'organisme interrogé
             </span>
@@ -31,8 +33,9 @@
           <label for="checkInfo" class="custom-control custom-checkbox">
             <input type="checkbox"
                    id="checkInfo"
-                    class="custom-control-input"
-                    required>
+                   class="custom-control-input"
+                   required
+                   aria-labelledby="checkInfo">
             <span class="custom-control-label">
               Vous devrez informer l'organisme interrogé
             </span>

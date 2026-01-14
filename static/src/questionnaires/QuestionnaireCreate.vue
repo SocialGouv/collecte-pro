@@ -1,11 +1,12 @@
 <template>
 <div>
-  <a name="contenu"> </a>
+  <span id="contenu" class="sr-only">Début du contenu principal</span>
   <div class="mx-3">
     <breadcrumbs v-if="state !== STATES.LOADING" :control="currentControl"></breadcrumbs>
     <swap-editor-button v-if="state !== STATES.LOADING && controlHasMultipleInspectors"
                         :control-id="controlId"
-                        @save-draft="saveDraftAndSwapEditor">
+                        @save-draft="saveDraftAndSwapEditor"
+                        aria-label="Changer d'éditeur">
     </swap-editor-button>
     <div class="page-header">
       <div class="page-title flex-wrap">

@@ -22,21 +22,26 @@
                       class="btn btn-secondary btn-sm move-up-button"
                       role="button"
                       type="button"
+                      :aria-label="`Déplacer le thème '${theme.title}' vers le haut`"
                       title="Déplacer le thème vers le haut"
                       @click="moveThemeUp(themeIndex)">
                 <span class="fa fa-chevron-up" aria-hidden="true"></span>
+                <span class="sr-only">Vers le haut</span>
               </button>
-              <div>
-                {{ themeIndex + 1 }}
-              </div>
+              <div aria-live="polite" class="sr-only">{{ themeIndex + 1 }}</div>
               <button :disabled="themeIndex === (themes.length - 1)"
                       class="btn btn-secondary btn-sm move-down-button"
                       role="button"
                       type="button"
+                      :aria-label="`Déplacer le thème '${theme.title}' vers le bas`"
                       title="Déplacer le thème vers le bas"
                       @click="moveThemeDown(themeIndex)">
                 <span class="fa fa-chevron-down" aria-hidden="true"></span>
+                <span class="sr-only">Vers le bas</span>
               </button>
+              <div class="not-sr-only">
+                {{ themeIndex + 1 }}
+              </div>
             </div> 
           </td>
           <td class="flex-grow-1 flex-column justify-content-center">

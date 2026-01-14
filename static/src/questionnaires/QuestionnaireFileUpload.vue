@@ -5,10 +5,10 @@
     </error-bar>
 
     <div v-if="questionnaire.id">
-      <label class="btn btn-primary">
-        <span class="fe fe-upload mr-2"></span>
+      <label class="btn btn-primary" id="file-upload-label">
+        <span class="fe fe-upload mr-2" aria-hidden="true"></span>
         Ajouter une pièce jointe
-        <input type="file" ref="fileInput" @change="handleFileUpload" hidden/>
+        <input type="file" ref="fileInput" @change="handleFileUpload" hidden aria-labelledby="file-upload-label"/>
       </label>
     </div>
 

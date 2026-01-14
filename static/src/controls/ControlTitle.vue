@@ -26,10 +26,10 @@
                    type="text"
                    class="form-control"
                    v-model="reference_code"
-                   required aria-labelledby="reference-label"
+                   required
+                   aria-labelledby="reference-label"
                    maxlength="25"
-                   title="Ce champ ne doit pas contenir de caractères spéciaux
-                         ( ! , @ # $ / \ ' &quot; + etc)"
+                   title="Ce champ ne doit pas contenir de caractères spéciaux ( ! , @ # $ / \ ' &quot; + etc)"
                    @focus="referenceChanged">
           </div>
           <span class="text-danger" v-if="reference_code.length > 24">
@@ -37,16 +37,15 @@
           </span>
         </div>
         <div class="form-group mb-6">
-          <label class="custom-control custom-checkbox">
-            <input type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
+          <label class="custom-control custom-checkbox" id="checkbox-select-all-label">
+            <input id="checkAll-clone" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked" aria-labelledby="checkbox-select-all-label">
             <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
           <label v-for="q in accessibleQuestionnaires"
-                :for="q.id"
                 :key="q.id"
                 class="custom-control custom-checkbox">
-            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
-            <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
+            <input :id="'clone-' + q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires" :aria-labelledby="'clone-label-' + q.id">
+            <span class="custom-control-label" :id="'clone-label-' + q.id">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>
       </form>
@@ -63,16 +62,15 @@
       </info-bar>
       <form>
         <div class="form-group mb-6">
-          <label for="checkAll" class="custom-control custom-checkbox">
-            <input id="checkAll" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked">
+          <label for="checkAll-export" class="custom-control custom-checkbox" id="export-select-all-label">
+            <input id="checkAll-export" type="checkbox" class="custom-control-input" @click="checkAllQuestionnaires" v-model="allChecked" aria-labelledby="export-select-all-label">
             <span class="custom-control-label font-weight-bold">Sélectionner Tout</span>
           </label>
           <label v-for="q in accessibleQuestionnaires"
-                :for="q.id"
                 :key="q.id"
                 class="custom-control custom-checkbox">
-            <input :id="q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires">
-            <span class="custom-control-label">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
+            <input :id="'export-' + q.id" type="checkbox" class="custom-control-input" :value="q.id" v-model="checkedQuestionnaires" :aria-labelledby="'export-label-' + q.id">
+            <span class="custom-control-label" :id="'export-label-' + q.id">Questionnaire {{ q.numbering }} - {{ q.title }}</span>
           </label>
         </div>
       </form>
@@ -117,8 +115,8 @@
               </div>
             </div>
             <div class="form-group form-check">
-              <input id="is-model" type="checkbox" class="form-check-input" v-model="isModel">
-              <label class="form-check-label" for="is-model">
+              <label class="form-check-label" for="is-model" id="is-model-label">
+                <input id="is-model" type="checkbox" class="form-check-input" v-model="isModel" aria-labelledby="is-model-label">
                 Marquer comme modèle
               </label>
             </div>

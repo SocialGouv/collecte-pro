@@ -14,17 +14,17 @@
           <legend>Merci de cocher toutes les cases pour valider cette action</legend>
 
           <label for="checkbox_1" class="custom-control custom-checkbox">
-            <input type="checkbox" id="checkbox_1" v-model="checkbox1" class="custom-control-input" required>
+            <input type="checkbox" id="checkbox_1" v-model="checkbox1" class="custom-control-input" required aria-labelledby="checkbox_1">
             <span class="custom-control-label">Les données ne seront pas récupérables.</span>
           </label>
 
           <label for="checkbox_2" class="custom-control custom-checkbox">
-            <input type="checkbox" id="checkbox_2" v-model="checkbox2" class="custom-control-input" required>
+            <input type="checkbox" id="checkbox_2" v-model="checkbox2" class="custom-control-input" required aria-labelledby="checkbox_2">
             <span class="custom-control-label">Tous les utilisateurs de cet espace n'y auront plus accès.</span>
           </label>
 
           <label for="checkbox_3" class="custom-control custom-checkbox">
-            <input type="checkbox" id="checkbox_3" v-model="checkbox3" class="custom-control-input" required>
+            <input type="checkbox" id="checkbox_3" v-model="checkbox3" class="custom-control-input" required aria-labelledby="checkbox_3">
             <span class="custom-control-label">
               Je confirme que la suppression des données n'impacte pas la suite de la procédure.
             </span>
