@@ -14,16 +14,17 @@
         <div class="form-group mb-6">
           <label
             v-for="ctrl in controls"
-            :for="ctrl.id"
+            :for="'ctrl-' + ctrl.id"
             :key="ctrl.id"
             class="custom-control custom-checkbox"
           >
             <input
-              :id="ctrl.id"
+              :id="'ctrl-' + ctrl.id"
               type="checkbox"
               class="custom-control-input"
               :value="ctrl.id"
               v-model="checkedCtrls"
+              :aria-labelledby="'ctrl-' + ctrl.id"
             />
             <span class="custom-control-label">
               {{ ctrl.depositing_organization }} - {{ ctrl.title }} ({{ ctrl.reference_code }})

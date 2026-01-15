@@ -58,7 +58,7 @@
                           role="button"
                           type="button"
                           data-toggle="modal"
-                          :data-target="'#deleteThemeConfirmModal' + themeIndex"
+                          :data-target="themes.length > 1 ? '#deleteThemeConfirmModal' + themeIndex : '#deleteThemeConfirmModal_' + themeIndex + '_disabled'"
                           title="Supprimer le thème"
                   >
                     <span class="fe fe-trash-2" aria-hidden="true"></span>

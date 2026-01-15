@@ -13,13 +13,18 @@
             :id="'dropzone-area-' + questionId"
             ref="dropzoneArea"
             class="dropzone">
-        <input type="hidden" name="csrfmiddlewaretoken" :value="csrftoken">
+        
+        <input :id="'csrf-token-' + questionId" type="hidden" name="csrfmiddlewaretoken" :value="csrftoken" aria-label="CSRF Token" role="presentation">
         <div class="dz-message" data-dz-message>
-          <button type="button" class="btn">Cliquer ou glisser-déposer vos fichiers.</button>
+          <button type="button" class="btn" :aria-label="'Importer des fichiers pour la question ' + questionId">Cliquer ou glisser-déposer vos fichiers.</button>
         </div>
-        <input type="hidden" name="question_id" :value="questionId" />
+        
+        <input :id="'question-id-' + questionId" type="hidden" name="question_id" :value="questionId" aria-label="ID de la question" role="presentation"/>
         <div class="fallback">
-          <input name="file" type="file"/>
+          <label :id="'file-label-' + questionId" :for="'file-input-' + questionId">
+            Sélectionner un fichier
+          </label>
+          <input :id="'file-input-' + questionId" name="file" type="file" :aria-labelledby="'file-label-' + questionId"/>
         </div>
       </form>
 

@@ -10,6 +10,7 @@ urlpatterns = [
     path('presentation', views.Presentation.as_view(), name='presentation'),
     path('demo', views.demo, name='demo'),
     path('simple-captcha-endpoint', views.simple_captcha_endpoint, name='simple-captcha-endpoint'),
+    path('captcha-image', views.captcha_image_endpoint, name='captcha-image'),
     path('validationFormulaire', views.validationFormulaire, name='validationFormulaire'),
 
 

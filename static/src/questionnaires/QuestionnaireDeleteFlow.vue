@@ -14,7 +14,8 @@
           <input type="checkbox"
                  id="checkCompris"
                  class="custom-control-input"
-                 required>
+                 required
+                 aria-labelledby="checkCompris">
           <span class="custom-control-label">
             J'ai compris que ce questionnaire sera supprimé pour tous les utilisateurs de l'espace de dépôt.
           </span>

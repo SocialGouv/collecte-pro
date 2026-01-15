@@ -13,13 +13,19 @@
     </td>
     
     <td class="col-checkbox">
-      <input 
-        v-if="node._id && node._id.startsWith('file')"
-        type="checkbox" 
-        :checked="isSelected"
-        @change="$emit('select', node)"
-        class="node-checkbox"
-      />
+      <template v-if="node._id && node._id.startsWith('file')">
+        <label :for="'node-' + node._id" class="sr-only">
+          Sélectionner {{ node.name }}
+        </label>
+        <input 
+          :id="'node-' + node._id"
+          type="checkbox" 
+          :checked="isSelected"
+          @change="$emit('select', node)"
+          class="node-checkbox"
+          :aria-labelledby="'node-' + node._id"
+        />
+      </template>
     </td>
 
     <td class="col-document" :class="'node-' + node._id">

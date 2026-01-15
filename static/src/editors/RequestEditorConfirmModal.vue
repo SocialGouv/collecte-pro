@@ -9,28 +9,28 @@
         </div>
       </div>
 
-      <div class="flex-row">
-        <input class="mt-2"
+      <label for="become-editor-checkbox-1" class="flex-row align-items-center mt-2" id="checkbox-1-label">
+        <input class="mt-0"
                type="checkbox"
                id="become-editor-checkbox-1"
                required
-               aria-required="true">
-        <label class="ml-2" for="become-editor-checkbox-1">
+               aria-labelledby="checkbox-1-label">
+        <span class="ml-2">
           Les modifications non enregistrées de votre collègue seront perdues.
-        </label>
-      </div>
+        </span>
+      </label>
 
-      <div class="flex-row">
-        <input class="mt-2"
+      <label for="become-editor-checkbox-2" class="flex-row align-items-center mt-2" id="checkbox-2-label">
+        <input class="mt-0"
                type="checkbox"
                id="become-editor-checkbox-2"
                required
-               aria-required="true">
-        <label class="ml-2" for="become-editor-checkbox-2">
+               aria-labelledby="checkbox-2-label">
+        <span class="ml-2">
           Pour que d'autres puissent modifier ce questionnaire,
           vous devrez libérer ou transférer les droits de rédaction.
-        </label>
-      </div>
+        </span>
+      </label>
 
       <div class="modal-footer border-top-0">
         <button type="button"

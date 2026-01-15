@@ -5,7 +5,7 @@
     </aside>
 
     <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child" role="main">
-      <a name="contenu"></a>
+      <span id="contenu" class="sr-only">Début du contenu principal</span>
 
       <div v-if="loaderActive" class="loader-container">
         <div class="loader-wrapper">
