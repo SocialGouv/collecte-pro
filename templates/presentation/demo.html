@@ -154,7 +154,6 @@
           img.onload = function () {
             console.log('✓ Captcha loaded');
             $('#captchaFormulaireExtInput').val('');
-            $('#captchaError').hide();
           };
 
           img.onerror = function () {
@@ -213,6 +212,11 @@
 
     // Charger le captcha au démarrage
     window.loadCaptcha();
+
+    // Cacher le message d'erreur quand l'utilisateur commence à retaper
+    $('#captchaFormulaireExtInput').on('input', function () {
+      $('#captchaError').hide();
+    });
 
     // Soumission du formulaire
     $('#demo-form').submit(function (event) {
