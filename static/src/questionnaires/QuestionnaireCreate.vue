@@ -363,6 +363,13 @@ export default defineComponent({
     next() {
       console.debug('Navigation "next" from', this.state)
       if (this.state === STATES.START) {
+        // Valider le formulaire HTML5 d'abord
+        const visibleForm = document.querySelector('#questionnaire-metadata-create form')
+        if (visibleForm && !visibleForm.checkValidity()) {
+          visibleForm.reportValidity()
+          return
+        }
+        // Puis valider les règles Vue
         if (!this.$refs.questionnaireMetadataCreate?.validateForm()) {
           return
         }
@@ -375,6 +382,13 @@ export default defineComponent({
         return
       }
       if (this.state === STATES.CREATING_BODY) {
+        // Valider le formulaire HTML5 d'abord
+        const visibleForm = document.querySelector('#questionnaire-body-create form')
+        if (visibleForm && !visibleForm.checkValidity()) {
+          visibleForm.reportValidity()
+          return
+        }
+        // Puis valider les règles Vue
         if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
@@ -387,6 +401,13 @@ export default defineComponent({
     back(clickedStep) {
       console.debug('Navigation "back" from', this.state, 'going to step', clickedStep)
       if (this.state === STATES.CREATING_BODY) {
+        // Valider le formulaire HTML5 d'abord
+        const visibleForm = document.querySelector('#questionnaire-body-create form')
+        if (visibleForm && !visibleForm.checkValidity()) {
+          visibleForm.reportValidity()
+          return
+        }
+        // Puis valider les règles Vue
         if (!this.$refs.questionnaireBodyCreate?.validateForm()) {
           return
         }
@@ -465,9 +486,28 @@ export default defineComponent({
         })
     },
     validateFormAndSaveDraft() {
+      // Déclencher la validation HTML5 native du navigateur
+      // Uniquement sur les formulaires visibles de l'étape active
+      let visibleForm = null
+      
+      if (this.state === STATES.START) {
+        visibleForm = document.querySelector('#questionnaire-metadata-create form')
+      } else if (this.state === STATES.CREATING_BODY) {
+        visibleForm = document.querySelector('#questionnaire-body-create form')
+      }
+      
+      // Valider le formulaire visible si présent
+      if (visibleForm && !visibleForm.checkValidity()) {
+        // Déclencher l'affichage des messages de validation HTML5
+        visibleForm.reportValidity()
+        return
+      }
+      
+      // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return
       }
+      
       this.saveDraft()
     },
     displaySaveInProgress() {
@@ -529,6 +569,21 @@ export default defineComponent({
         })
     },
     saveAndShowMoveThemesModal() {
+      // Valider le formulaire HTML5 d'abord
+      let visibleForm = null
+      
+      if (this.state === STATES.CREATING_BODY) {
+        visibleForm = document.querySelector('#questionnaire-body-create form')
+      }
+      
+      // Valider le formulaire visible si présent
+      if (visibleForm && !visibleForm.checkValidity()) {
+        // Déclencher l'affichage des messages de validation HTML5
+        visibleForm.reportValidity()
+        return
+      }
+      
+      // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return
       }
