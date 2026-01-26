@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.4.2] - 2026-01-26
+### Modifications
+- CP-209 :  Montée de Django de 4.2.26 à 4.2.27
 ## [3.4.1] - 2026-01-15
 ### Modifications
 - CP-204 :  RGAA :  Passer un scan de contrôle
