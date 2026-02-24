@@ -109,8 +109,8 @@ export default defineComponent({
     const store = useStore()
 
     const filter = ref('')
-    const date_filter_start = ref<Date | ''>('')
-    const date_filter_end = ref<Date | ''>('')
+    const date_filter_start = ref<Date | null>(null)
+    const date_filter_end = ref<Date | null>(null)
     const selected = ref<any[]>([])
     const repondantsListe = ref<any[]>([])
     const treeViewElements = ref<any[]>([])
@@ -342,17 +342,82 @@ export default defineComponent({
     }
 
     const pickFiles = (selected_id = '') => {
-      const collectFilesRecursive = (node: any): any[] => {
-        if (!node) return []
-        if (node._id && node._id.startsWith('file')) return [node]
+      const files: any[] = []
+      const filterVal = filter.value
+      
+      const collectFilesRecursive = (node: any, questionnaireOrder: number | null = null, themeOrder: number | null = null, questionOrder: number | null = null): void => {
+        if (!node) return
+        
+        // Si c'est un fichier
+        if (node._id && node._id.startsWith('file')) {
+          let category = 'response_file'
+          if (node._id === 'fileAnnexe') category = 'question_file'
+          if (node._id === 'filePieceJointe') category = 'questionnaire_file'
+          
+          if (!filterVal || node.repondant === filterVal) {
+            files.push({
+              questionnaireNb: questionnaireOrder,
+              themeId: themeOrder,
+              questionId: questionOrder,
+              category: category,
+              id: node.id,
+              basename: node.name,
+              url: node.url,
+              is_deleted: node.is_deleted,
+            })
+          }
+          return
+        }
+        
+        // Si c'est un questionnaire
+        if (node._id === 'questionnaire') {
+          const children = Array.isArray(node._children) ? node._children : []
+          children.forEach((child: any) => {
+            collectFilesRecursive(child, node.order, null, null)
+          })
+          return
+        }
+        
+        // Si c'est un thème
+        if (node._id === 'theme') {
+          const children = Array.isArray(node._children) ? node._children : []
+          children.forEach((child: any) => {
+            collectFilesRecursive(child, questionnaireOrder, node.order, null)
+          })
+          return
+        }
+        
+        // Si c'est une question
+        if (node._id === 'question') {
+          const children = Array.isArray(node._children) ? node._children : []
+          children.forEach((child: any) => {
+            collectFilesRecursive(child, questionnaireOrder, themeOrder, node.order)
+          })
+          return
+        }
+        
+        // Sections spéciales: annexes, piecesjointes, corbeille
+        if (node._id === 'annexes' || node._id === 'piecesjointes' || node._id === 'corbeille') {
+          const children = Array.isArray(node._children) ? node._children : []
+          children.forEach((child: any) => {
+            collectFilesRecursive(child, questionnaireOrder, null, null)
+          })
+          return
+        }
+        
+        // Pour les autres nœuds, continuer la récursion
         const children = Array.isArray(node._children) ? node._children : []
-        return children.flatMap(collectFilesRecursive)
+        children.forEach((child: any) => {
+          collectFilesRecursive(child, questionnaireOrder, themeOrder, questionOrder)
+        })
       }
       
-      const filterVal = filter.value
-      return treeViewElements.value
-        .flatMap(collectFilesRecursive)
-        .filter((file: any) => !filterVal || file.repondant === filterVal)
+      treeViewElements.value.forEach((node: any) => {
+        collectFilesRecursive(node)
+      })
+      
+      return files
+        .filter((file: any) => typeof file !== 'undefined')
         .filter((file: any) => !selected_id || file.id.startsWith(selected_id))
     }
 
@@ -362,11 +427,35 @@ export default defineComponent({
       const zip = new JSZip()
       let cnt = 0
       const zipFilename = props.control.reference_code + '.zip'
+      
+      const formatFilename = (file: any) => {
+        const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
+        const questionnaireId = `Q${questionnaireNb}`
+        let themeId = ''
+        let filename = ''
+        if (file.category == 'question_file') {
+          themeId = 'ANNEXES-AUX-QUESTIONS'
+          filename = `Q${questionnaireNb}-${file.basename}`
+        } else if (file.is_deleted) {
+          themeId = 'CORBEILLE'
+          filename = `Q${questionnaireNb}-${file.basename}`
+        } else {
+          themeId = 'T' + String(file.themeId + 1).padStart(2, '0')
+          const questionId = String(file.questionId + 1).padStart(2, '0')
+          filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`
+        }
+        return { questionnaireId, themeId, filename }
+      }
+      
       files.forEach((file) => {
         const url = window.location.origin + file.url
         JSZipUtils.getBinaryContent(url, (err: any, data: any) => {
           if (err) throw err
-          zip.file(file.basename, data, { binary: true })
+          const formatted = formatFilename(file)
+          zip.folder(formatted.questionnaireId)
+            .folder(formatted.themeId)
+            .file(formatted.filename, data, { binary: true })
+
           cnt++
           if (cnt === files.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => saveAs(content, zipFilename))
@@ -375,7 +464,20 @@ export default defineComponent({
       })
     }
 
-    const exportSelected = () => zipFiles(pickFiles())
+    const exportSelected = () => {
+      function onlyUnique(value: any, index: number, self: any[]) {
+        for (let i = 0; i < self.length; i++) {
+          if (self[i].id == value.id) {
+            return i === index
+          }
+        }
+      }
+      let files: any[] = []
+      for (let i = 0; i < selected.value.length; i++) {
+        files.push(...pickFiles(selected.value[i].id))
+      }
+      zipFiles(files.filter(onlyUnique))
+    }
     const exportAll = () => zipFiles(pickFiles())
     const exportFiltered = () => zipFiles(pickFilesFiltered())
 
@@ -446,7 +548,7 @@ export default defineComponent({
     })
 
     watch(date_filter_start, () => {
-      if (date_filter_start.value) {
+      if (date_filter_start.value instanceof Date) {
         date_filter_start.value.setHours(0, 0, 0, 0)
       }
       selected.value = []
@@ -454,8 +556,8 @@ export default defineComponent({
     })
 
     watch(date_filter_end, () => {
-      if (date_filter_end.value) {
-        date_filter_end.value.setHours(0, 0, 0, 0)
+      if (date_filter_end.value instanceof Date) {
+        date_filter_end.value.setHours(23, 59, 59, 999)
       }
       selected.value = []
       refreshFiles()
