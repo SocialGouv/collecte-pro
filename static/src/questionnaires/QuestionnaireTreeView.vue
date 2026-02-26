@@ -16,9 +16,9 @@
         </span>
         <span class="form-group col-sm-5">
           <label class="form-label mr-2" id="filtre_start_date" for="filtre_startdate">Filtrer par date de dépôt de</label>
-          <Datepicker id="filtre_startdate" class="form-control date-input" aria-labelledby="filtre_start_date" v-model="date_filter_start" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
+          <Datepicker id="filtre_startdate" class="form-control date-input" aria-labelledby="filtre_start_date" v-model="date_filter_start" @update:modelValue="onDateStartChange" @input="onDateStartChange" @change="onDateStartChange" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
           <label class="form-label ml-2 mr-2" id="filtre_end_date" for="filtre_enddate">à</label>
-          <Datepicker id="filtre_enddate" class="form-control date-input" aria-labelledby="filtre_end_date" v-model="date_filter_end" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
+          <Datepicker id="filtre_enddate" class="form-control date-input" aria-labelledby="filtre_end_date" v-model="date_filter_end" @update:modelValue="onDateEndChange" @input="onDateEndChange" @change="onDateEndChange" :locale="frLocale" :typeable="true" :placeholder="placeholder" :format="format" :monday-first="true" />
         </span>
         <span class="form-group col-sm-3" v-if="filter!=='' || !(!date_filter_start && !date_filter_end)">
           <button @click="exportFiltered" type="button" class="btn btn-secondary" :disabled="repondantsListe.length==0">
@@ -547,27 +547,68 @@ export default defineComponent({
       refreshFiles()
     })
 
-    watch(date_filter_start, () => {
-      if (date_filter_start.value instanceof Date) {
-        date_filter_start.value.setHours(0, 0, 0, 0)
+    // Catch when date fields become empty (some datepicker implementations
+    // emit empty string or null without triggering modelValue update events)
+    watch(date_filter_start, (val) => {
+      if (val === null || val === '') {
+        selected.value = []
+        refreshFiles()
       }
-      selected.value = []
-      refreshFiles()
     })
 
-    watch(date_filter_end, () => {
-      if (date_filter_end.value instanceof Date) {
-        date_filter_end.value.setHours(23, 59, 59, 999)
+    watch(date_filter_end, (val) => {
+      if (val === null || val === '') {
+        selected.value = []
+        refreshFiles()
       }
+    })
+
+    const normalizeDate = (val: any, end = false) => {
+      if (val == null || val === '') return null
+      if (val instanceof Date) {
+        const d = new Date(val)
+        if (end) d.setHours(23, 59, 59, 999)
+        else d.setHours(0, 0, 0, 0)
+        return d
+      }
+      const parsed = new Date(val)
+      if (!isNaN(parsed.getTime())) {
+        if (end) parsed.setHours(23, 59, 59, 999)
+        else parsed.setHours(0, 0, 0, 0)
+        return parsed
+      }
+      return null
+    }
+
+    const onDateStartChange = (val: any) => {
+      console.debug('onDateStartChange val=', val)
+      date_filter_start.value = normalizeDate(val, false)
       selected.value = []
       refreshFiles()
-    })
+    }
+
+    const onDateEndChange = (val: any) => {
+      console.debug('onDateEndChange val=', val)
+      date_filter_end.value = normalizeDate(val, true)
+      selected.value = []
+      refreshFiles()
+    }
+
+    const resetFilters = () => {
+      filter.value = ''
+      date_filter_start.value = null
+      date_filter_end.value = null
+      selected.value = []
+      getUsers()
+      refreshFiles()
+    }
 
     return {
       filter, date_filter_start, date_filter_end, selected, repondantsListe, treeViewElements, frLocale, placeholder, format,
       accessibleControls,
       getUsers, refreshFiles, getTreeViewElements, filterByDate, pickFilesFiltered, pickFiles, zipFiles,
       exportSelected, exportFiltered, exportAll, toggleNode, selectNode, optionKey, applyRespondentFilter,
+      onDateStartChange, onDateEndChange, resetFilters,
     }
   }
 })
