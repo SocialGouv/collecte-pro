@@ -19,6 +19,8 @@
                     <button id="btn-espaces-depot-modele" class="btn btn-primary">Espaces de dépôt modèle (.csv)</button>
                     <button id="btn-espaces-depot-elig-supp" class="btn btn-primary">Espaces de dépôt éligibles à la suppression(.csv)</button>
                     <button id="btn-repondants-orphelins" class="btn btn-primary">Répondants orphelins(.csv)</button>
+                    <button id="btn-liste-utilisateurs" class="btn btn-primary">Liste utilisateurs(.csv)</button>
+
                     <div id="result-container"></div>
                     <script>
                         document.getElementById('btn-call_get_top_20').addEventListener('click', function () {
@@ -53,84 +55,109 @@
                                 });
                         });
 
-                                        document.getElementById('btn-espaces-depot-modele').addEventListener('click', function () {
-                                            fetch('/stats/call_get_espace_depot_modele/')
-                                                .then(response => {
-                                                    if (response.status === 200) {
-                                                        response.blob().then(blob => {
-                                                            const url = window.URL.createObjectURL(blob);
-                                                            const a = document.createElement('a');
-                                                            a.href = url;
+                            document.getElementById('btn-espaces-depot-modele').addEventListener('click', function () {
+                                fetch('/stats/call_get_espace_depot_modele/')
+                                    .then(response => {
+                                        if (response.status === 200) {
+                                            response.blob().then(blob => {
+                                                const url = window.URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
 
-                                                        const contentDisposition = response.headers.get('content-disposition');
-                                                        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
-                                                        const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_modele.csv';
+                                            const contentDisposition = response.headers.get('content-disposition');
+                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                            const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_modele.csv';
 
-                                                        a.download = filename;
-                                                        a.click();
-                                                        window.URL.revokeObjectURL(url);
-                                                    });
-                                                } else {
-                                                    console.error('Erreur lors du téléchargement.');
-                                                }
-                                            })
-                                            .catch(error => {
-                                                console.error('Erreur de requête :', error);
-                                            });
-                                    });
+                                            a.download = filename;
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                        });
+                                    } else {
+                                        console.error('Erreur lors du téléchargement.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });
 
-                                                        document.getElementById('btn-espaces-depot-elig-supp').addEventListener('click', function () {
-                                                            fetch('/stats/call_get_espace_depot_elig_supp/')
-                                                                .then(response => {
-                                                                    if (response.status === 200) {
-                                                                        response.blob().then(blob => {
-                                                                            const url = window.URL.createObjectURL(blob);
-                                                                            const a = document.createElement('a');
-                                                                            a.href = url;
+                            document.getElementById('btn-espaces-depot-elig-supp').addEventListener('click', function () {
+                                fetch('/stats/call_get_espace_depot_elig_supp/')
+                                    .then(response => {
+                                        if (response.status === 200) {
+                                            response.blob().then(blob => {
+                                                const url = window.URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
 
-                                                                            const contentDisposition = response.headers.get('content-disposition');
-                                                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
-                                                                            const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_elig_supp.csv';
+                                            const contentDisposition = response.headers.get('content-disposition');
+                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                            const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_elig_supp.csv';
 
-                                                                            a.download = filename;
-                                                                            a.click();
-                                                                            window.URL.revokeObjectURL(url);
-                                                                        });
-                                                                    } else {
-                                                                        console.error('Erreur lors du téléchargement.');
-                                                                    }
-                                                                })
-                                                                .catch(error => {
-                                                                    console.error('Erreur de requête :', error);
-                                                                });
-                                                        });
+                                            a.download = filename;
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                        });
+                                    } else {
+                                        console.error('Erreur lors du téléchargement.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });
 
-                                                                                document.getElementById('btn-repondants-orphelins').addEventListener('click', function () {
-                                                                                    fetch('/stats/call_get_repondants_orphelins/')
-                                                                                        .then(response => {
-                                                                                            if (response.status === 200) {
-                                                                                                response.blob().then(blob => {
-                                                                                                    const url = window.URL.createObjectURL(blob);
-                                                                                                    const a = document.createElement('a');
-                                                                                                    a.href = url;
+                            document.getElementById('btn-repondants-orphelins').addEventListener('click', function () {
+                                fetch('/stats/call_get_repondants_orphelins/')
+                                    .then(response => {
+                                        if (response.status === 200) {
+                                            response.blob().then(blob => {
+                                                const url = window.URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
 
-                                                                                                    const contentDisposition = response.headers.get('content-disposition');
-                                                                                                    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
-                                                                                                    const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_elig_supp.csv';
+                                            const contentDisposition = response.headers.get('content-disposition');
+                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                            const filename = matches ? matches[1].replace(/['"]/g, '') : 'espace_depot_elig_supp.csv';
 
-                                                                                            a.download = filename;
-                                                                                            a.click();
-                                                                                            window.URL.revokeObjectURL(url);
-                                                                                        });
-                                                                                    } else {
-                                                                                        console.error('Erreur lors du téléchargement.');
-                                                                                    }
-                                                                                })
-                                                                                .catch(error => {
-                                                                                    console.error('Erreur de requête :', error);
-                                                                                });
-                                                                        });
-</script>
+                                            a.download = filename;
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                        });
+                                    } else {
+                                        console.error('Erreur lors du téléchargement.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });
+                                                document.getElementById('btn-liste-utilisateurs').addEventListener('click', function () {
+                                                    fetch('/stats/call_get_liste_utilisateurs/')
+                                                        .then(response => {
+                                                            if (response.status === 200) {
+                                                                response.blob().then(blob => {
+                                                                    const url = window.URL.createObjectURL(blob);
+                                                                    const a = document.createElement('a');
+                                                                    a.href = url;
+
+                                                                    const contentDisposition = response.headers.get('content-disposition');
+                                                                    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                                                    const filename = matches ? matches[1].replace(/['"]/g, '') : 'liste_utilisateurs.csv';
+
+                                            a.download = filename;
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                        });
+                                    } else {
+                                        console.error('Erreur lors du téléchargement.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });                                                                       
+                                            </script>
                     </div>
                     </div>
 

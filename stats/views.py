@@ -111,6 +111,31 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
     
+    def call_get_liste_utilisateurs(request):
+        csv_buffer = StringIO()
+        csv_writer = csv.writer(csv_buffer, delimiter=';')
+
+        with connection.cursor() as cursor:
+            cursor.callproc('get_liste_utilisateurs')
+            results = cursor.fetchall()
+            csv_writer.writerow([
+                'type_profil', 
+                'nom', 
+                'prenom', 
+                'mail', 
+                'date_creation', 
+                'actif', 
+                'date_derniere_connexion'
+            ])
+
+            csv_writer.writerows(results)
+
+        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="liste_utilisateurs.csv"'
+
+        return response
+
+    
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
             cursor.callproc('get_statistiques', [action])
