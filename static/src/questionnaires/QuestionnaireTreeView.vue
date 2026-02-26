@@ -436,6 +436,9 @@ export default defineComponent({
         if (file.category == 'question_file') {
           themeId = 'ANNEXES-AUX-QUESTIONS'
           filename = `Q${questionnaireNb}-${file.basename}`
+        } else if (file.category == 'questionnaire_file') {
+          themeId = 'PIECES-JOINTES'
+          filename = `Q${questionnaireNb}-${file.basename}`
         } else if (file.is_deleted) {
           themeId = 'CORBEILLE'
           filename = `Q${questionnaireNb}-${file.basename}`
