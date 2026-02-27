@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.4.3] - 2026-02-27
+### Modifications
+- CP-211 :  Liste des utilisateurs en indiquant ceux avec le profil 'Inspecteur'
+- CP-213 :  Test de V3.4.2 Anomalie sur l'export des fichiers (export vide)
 ## [3.4.2] - 2026-01-26
 ### Modifications
 - CP-209 :  Montée de Django de 4.2.26 à 4.2.27
