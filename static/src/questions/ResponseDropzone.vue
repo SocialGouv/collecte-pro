@@ -143,7 +143,8 @@ export default defineComponent({
 
       if (!dropzoneArea.value) return
 
-      Dropzone.options['dropzone-area-' + props.questionId] = {
+      
+      new Dropzone(dropzoneArea.value, {
         addRemoveLinks: true,
         timeout: UPLOAD_TIMEOUT_MS,
         maxFiles: 1,
@@ -160,10 +161,8 @@ export default defineComponent({
         dictCancelUploadConfirmation: "Etes-vous sûr.e de vouloir annuler l'envoi?",
         dictRemoveFile: 'Retirer le fichier',
         dictFileTooBig: 'La taille du fichier dépasse la limite authorisée.',
-      }
-
-      // Initialize Dropzone instance
-      new Dropzone(dropzoneArea.value)
+        dictMaxFilesExceeded: 'Vous ne pouvez déposer qu\'un seul fichier à la fois.',
+      })
     })
 
     return {
