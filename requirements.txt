@@ -70,7 +70,7 @@ python-keycloak==1.8.1
 python-magic==0.4.27
 pytz==2022.7.1
 redis==4.5.1
-requests==2.28.2
+requests==2.33.0
 rsa==4.9
 screen==1.0.1
 six==1.16.0
