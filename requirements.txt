@@ -43,7 +43,7 @@ django-timezone-field==5.0
 djangorestframework==3.14.0
 docxcompose==1.4.0
 docxtpl==0.16.5
-ecdsa==0.18.0
+ecdsa==0.19.2
 et-xmlfile==1.1.0
 idna==3.4
 importlib-metadata==4.13.0
