@@ -113,9 +113,7 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
-    from rest_framework.documentation import include_docs_urls
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += [path('api/docs/', include_docs_urls(title='collecte-pro API'))]
 
 if settings.DEBUG and settings.ALLOW_DEMO_LOGIN:
     urlpatterns += path(

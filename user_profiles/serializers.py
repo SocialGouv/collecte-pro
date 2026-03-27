@@ -42,11 +42,14 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
 
     def create(self, validated_data):
         if settings.KEYCLOAK_ACTIVE:
+            # python-keycloak 3.x: authenticate via the app's OIDC client
+            # (which has realm-management roles mapped) on the app realm.
             keycloak_admin = KeycloakAdmin(
                 server_url=settings.KEYCLOAK_URL,
                 username=settings.KEYCLOAK_ADMIN_USERNAME,
                 password=settings.KEYCLOAK_ADMIN_PASSWORD,
                 realm_name=settings.KEYCLOAK_REALM,
+                user_realm_name=settings.KEYCLOAK_REALM,
                 client_id=settings.OIDC_RP_CLIENT_ID,
                 client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
                 verify=False,
@@ -79,9 +82,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             raise e
         inspector_role = False
         access_type = 'repondant'
-        if settings.KEYCLOAK_ACTIVE:
-            # Find keycloak inspector role
-            role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
             inspector_role = True
             access_type = 'demandeur'

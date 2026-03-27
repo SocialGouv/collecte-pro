@@ -481,7 +481,6 @@ export default defineComponent({
         axios
           .put(backendUrls.control(this.effectiveControl.id), payload)
           .then((response) => {
-            console.debug(response)
             if (!this.localControl) {
               this.localControl = { ...this.control }
             }

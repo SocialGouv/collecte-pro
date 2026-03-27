@@ -53,7 +53,6 @@ export default defineComponent({
       const index = files.value.findIndex(f => f.id === fileId)
       if (index !== -1) {
         files.value.splice(index, 1)
-        console.debug('Deleted file', fileId, 'from vuex')
       }
     }
 

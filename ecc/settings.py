@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'ckeditor',
     'django_filters',
-    'django_admin',
     'email_obfuscator',
     'django_softdelete',
 

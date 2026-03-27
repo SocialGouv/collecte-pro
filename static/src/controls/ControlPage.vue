@@ -82,7 +82,6 @@ export default defineComponent({
     }
 
     const updateHash = () => {
-      console.debug('hashchange', window.location.hash)
       if (!hashPointsToExistingControl(window.location.hash) && this.controls.length > 0) {
         window.location.hash = '#control-' + this.controls[0].id
         return

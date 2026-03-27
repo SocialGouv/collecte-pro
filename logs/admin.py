@@ -1,5 +1,16 @@
-from django_admin import ReadOnlyModelAdmin
 from django.contrib import admin
+
+
+class ReadOnlyModelAdmin:
+    """Mixin rendant un ModelAdmin en lecture seule (remplace django-admin package)."""
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils.html import format_html

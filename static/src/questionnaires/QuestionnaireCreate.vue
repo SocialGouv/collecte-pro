@@ -361,7 +361,6 @@ export default defineComponent({
       this.state = newState
     },
     next() {
-      console.debug('Navigation "next" from', this.state)
       if (this.state === STATES.START) {
         // Valider le formulaire HTML5 d'abord
         const visibleForm = document.querySelector('#questionnaire-metadata-create form')
@@ -399,7 +398,6 @@ export default defineComponent({
       console.error('Trying to go to "next", from state', this.state)
     },
     back(clickedStep) {
-      console.debug('Navigation "back" from', this.state, 'going to step', clickedStep)
       if (this.state === STATES.CREATING_BODY) {
         // Valider le formulaire HTML5 d'abord
         const visibleForm = document.querySelector('#questionnaire-body-create form')
@@ -476,7 +474,6 @@ export default defineComponent({
       }
     },
     saveDraftAndSwapEditor() {
-      console.debug('save draft before editor swap')
       if (!this.validateCurrentForm()) {
         return
       }
@@ -529,9 +526,7 @@ export default defineComponent({
       this.displaySaveInProgress()
       return this._doSave()
         .then((response) => {
-          console.debug('Successful draft save.')
           this.currentQuestionnaire = response.data
-          console.log('self.currentQuestionnaire : ', this.currentQuestionnaire)
           this.emitQuestionnaireUpdated()
           this.displaySavingDone(nowTimeString())
           return response.data
@@ -544,7 +539,6 @@ export default defineComponent({
         })
     },
     startPublishFlow() {
-      console.log('outer start!')
       if (this.$refs.publishFlow) {
         this.$refs.publishFlow.start()
       } else {

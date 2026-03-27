@@ -285,7 +285,6 @@ export default {
     }
 
     const addTheme = () => {
-      console.debug('addTheme')
       themes.value.push({ title: '', questions: [{ description: '' }] })
     }
 

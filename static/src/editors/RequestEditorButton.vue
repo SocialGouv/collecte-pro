@@ -103,7 +103,6 @@ export default {
       state.errorMessage = ''
       callSwapEditorApi(sessionUser.value.id, props.questionnaire.id)
         .then((response) => {
-          console.debug('got editing rights', response)
           props.window.location.assign(
             backendUrls['questionnaire-edit'](props.questionnaire.id)
           )

@@ -1,4 +1,3 @@
-from django_admin import ReadOnlyModelAdmin
 from django.conf import settings
 from django.contrib import admin
 from django.contrib import messages

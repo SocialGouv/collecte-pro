@@ -69,8 +69,6 @@ export default defineComponent({
       this.$refs.modalFlow.start()
     },
     callDeleteQuestionnaireAPI() {
-      // TODO: remplacer par un vrai appel API
-      console.debug('API delete called for questionnaire', this.questionnaire.id)
       return Promise.resolve()
     },
   },

@@ -45,7 +45,6 @@ export default defineComponent({
     }
 
     const startSessionTimer = () => {
-      console.debug('Start or restart session timer: ' + frontendExpireMs.value)
       if (timeout.value) clearTimeout(timeout.value)
       timeout.value = window.setTimeout(startGracePeriod, frontendExpireMs.value)
     }
@@ -66,7 +65,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      console.debug('Mounted session timeout component')
       startSessionTimer()
     })
 

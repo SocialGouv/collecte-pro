@@ -77,7 +77,6 @@ export const store = createStore({
     async fetchControls({ state, commit }) {
       // Skip fetch si les controls sont déjà présents
       if (state.controls.length > 0 && state.controlsLoadStatus === loadStatuses.SUCCESS) {
-        console.debug('store.fetchControls: controls already loaded, skipping fetch')
         return
       }
 
@@ -87,7 +86,6 @@ export const store = createStore({
         if (controlsDataEl && controlsDataEl.textContent.trim() !== '') {
           try {
             const controls = JSON.parse(controlsDataEl.textContent)
-            console.debug('store.fetchControls: loaded server-injected controls, count=', controls.length)
             commit('updateControls', controls)
             commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
             return

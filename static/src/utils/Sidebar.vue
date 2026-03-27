@@ -165,7 +165,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.debug('this.window.location.pathname', this.window.location.pathname)
     if (this.window.location.pathname === backend.welcome()) {
       this.showSidebar = false
       return
