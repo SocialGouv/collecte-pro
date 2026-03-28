@@ -13,7 +13,7 @@ click-plugins==1.1.1
 click-repl==0.2.0
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==39.0.1
+cryptography==46.0.6
 Deprecated==1.2.13
 Django==4.2.27
 django-activity-stream==2.0.0
