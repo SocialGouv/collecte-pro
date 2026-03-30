@@ -36,6 +36,7 @@ store.commit('updateControls', controls)
 store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 store.commit('updateSessionUser', user)
 store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
+store.dispatch('fetchConfig')
 
 // Création de l'app Vue
 const app = createApp(ControlDetail, {

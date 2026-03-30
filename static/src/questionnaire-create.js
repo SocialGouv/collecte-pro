@@ -21,6 +21,7 @@ if (controlsDataEl && controlsDataEl.textContent.trim() !== '') {
 }
 store.commit('updateControls', controls)
 store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+store.dispatch('fetchConfig')
 
 const userDataEl = document.getElementById('user-data')
 if (userDataEl && userDataEl.textContent.trim() !== '') {

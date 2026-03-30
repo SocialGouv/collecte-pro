@@ -260,9 +260,7 @@ export default defineComponent({ // Remplacement de Vue.extend
           ? 'l\'équipe d\'instruction.'
           : 'l\'organisme contrôlé.') +
         newline + newline +
-        'Pour vous connecter, rendez-vous sur le site de collecte-pro :' +
-        newline + newline +
-        this.site_url + // Utilise le getter local migré
+        'Pour vous connecter, rendez-vous sur le site de collecte-pro : ' + this.site_url +
         newline + newline +
         'Cordialement,'
 
