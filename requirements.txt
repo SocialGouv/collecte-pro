@@ -1,9 +1,9 @@
 # ============================================================
-# requirements.txt — migration Django 5.2 LTS / Python 3.13
+# requirements.txt — migration Django 5.2.12 LTS / Python 3.14
 # ============================================================
 
 # --- CORE DJANGO ---
-Django==5.2                        # LTS jusqu'à avril 2028 (était 4.2.27)
+Django==5.2.12                     # LTS jusqu'à avril 2028 (était 4.2.27)
 asgiref==3.8.1                     # Django 5.2 requiert >=3.8 (était 3.6.0)
 sqlparse==0.5.3                    # bumped (était 0.4.3)
 
