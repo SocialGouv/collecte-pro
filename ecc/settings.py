@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'actstream',
     'rest_framework',
+    'drf_spectacular',
     'celery',
     'django_celery_beat',
     'django_cleanup.apps.CleanupConfig',
@@ -318,7 +319,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 if DEBUG:
@@ -341,6 +343,9 @@ CKEDITOR_CONFIGS = {
         ]
     }
 }
+
+# Silence django-ckeditor 4 EOL warning (CKEditor 4 still functional, migration to ckeditor-5 planned)
+SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
 
 # Demo application
 DEMO_INSPECTOR_USERNAME = env('DEMO_INSPECTOR_USERNAME', default=None)
