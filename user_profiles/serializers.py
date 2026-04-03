@@ -49,6 +49,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 realm_name=settings.KEYCLOAK_REALM,
                 client_id=settings.OIDC_RP_CLIENT_ID,
                 client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
+                #user_realm_name=settings.KEYCLOAK_REALM,
                 verify=False,
             )
         profile_data = validated_data
