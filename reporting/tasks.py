@@ -215,7 +215,7 @@ def identify_purgeable_controls(**kwargs):
 
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('identify_orphanUser', [interval_purge_rep_orph])
+            cursor.execute("SELECT * FROM identify_orphanuser(%s::INTERVAL)", [interval_purge_rep_orph])
             results_orphans = cursor.fetchall()
 
             if not results_orphans:

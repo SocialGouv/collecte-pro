@@ -1,110 +1,101 @@
 
 # --- CORE DJANGO ---
 Django==5.2.13                     
-asgiref==3.8.1                     
+asgiref==3.11.1                    
 sqlparse==0.5.5                    
 
 # --- DJANGO PACKAGES ---
 django-activity-stream==2.0.0      
-django-annoying==0.10.6
-django-celery-beat==2.8.0         
-django-ckeditor==6.7.1            
-django-cleanup==8.1.0              
-django-csp==3.8                   
-django-debug-toolbar==4.4.6        
+django-annoying==0.10.8
+django-celery-beat==2.9.0         
+django-ckeditor==6.7.3            
+django-cleanup==9.0.0              
+django-csp==4.0                   
+django-debug-toolbar==6.3.0        
 django-email-obfuscator==0.1.5
-django-environ==0.11.2             
-django-extensions==3.2.3           
-django-filter==24.3                
-django-js-asset==2.0.0
-django-model-utils==4.5.1          
+django-environ==0.13.0             
+django-extensions==4.1             
+django-filter==25.2                
+django-js-asset==3.1.2
+django-model-utils==5.0.0          
 django-ordered-model==3.7.4        
-django-permissions-policy==4.21.0  
-django-sendfile2==0.7.1
+django-permissions-policy==4.29.0  
+django-sendfile2==0.7.2
 django-session-timeout==0.1.0
 django-settings-export==1.2.1
 django-soft-delete==0.9.21         
-django-timezone-field==7.0         
-djangorestframework==3.16.0        
+django-timezone-field==7.2.1       
+djangorestframework==3.17.1        
 
 # --- MOZILLA OIDC / KEYCLOAK ---
 mozilla-django-oidc==5.0.2         
-python-keycloak==5.12.0            
+python-keycloak==7.1.1             
 
 # --- CELERY / ASYNC ---
-celery==5.4.0                      
-amqp==5.2.0                        
-billiard==4.2.1                    
-kombu==5.3.7                       
+celery==5.6.3                      
+amqp==5.3.1                        
+billiard==4.2.4                    
+kombu==5.6.2                       
 vine==5.1.0                        
-redis==5.0.8                       
-async-timeout==4.0.3               
+redis==7.4.0                       
+async-timeout==5.0.1               
 
 # --- CRYPTO / SÉCURITÉ ---
 cryptography==46.0.7               
 pyOpenSSL==26.0.0                  
 cffi==2.0.0                        
-pycparser==2.21
-python-jose==3.5.0
-ecdsa==0.19.2                      
-rsa==4.9
-pyasn1==0.6.3                      
+pycparser==3.0
 
 # --- HTTP / RÉSEAU ---
 requests==2.33.1                   
 urllib3==2.6.3                     
 certifi==2026.2.25                 
-idna==3.7                         
-charset-normalizer==3.3.2          
+idna==3.11                        
+charset-normalizer==3.4.7          
 
 # --- BASE DE DONNÉES ---
-psycopg[binary]==3.2.13           
+psycopg[binary]==3.3.3            
 
 # --- DOCUMENTS (docx, excel) ---
-python-docx==1.1.2                 
-docxtpl==0.17.0                    
+python-docx==1.2.0                 
+docxtpl==0.20.2                    
 docxcompose==2.1.0                 
-lxml==6.0.2                        
-et-xmlfile==1.1.0
-XlsxWriter==3.2.0                                        
+lxml==6.0.4
+et-xmlfile==2.0.0                        
+XlsxWriter==3.2.9                 
 
 # --- TEMPLATES / FORMATS ---
 Jinja2==3.1.6                      
-MarkupSafe==2.1.5                  
+MarkupSafe==3.0.3                  
 
 # --- UTILITAIRES ---
-python-dateutil==2.9.0             
-python-dotenv==1.0.1               
+python-dateutil==2.9.0.post0       
+python-dotenv==1.2.2               
 python-magic==0.4.27
-pytz==2024.1                       
-tzdata==2024.1                     
-packaging==24.0                    
-wrapt==1.16.0                      
-Deprecated==1.2.14                 
-typing_extensions==4.14.1          
-pyparsing==3.1.2                   
-python-crontab==3.2.0              
+pytz==2026.1.post1                  
+tzdata==2026.1                     
+packaging==26.1                    
+wrapt==2.1.2                       
+Deprecated==1.3.1                  
+typing_extensions==4.15.0          
+pyparsing==3.3.2                   
+python-crontab==3.3.0              
+
 # --- CLI ---
-click==8.2.1                       
-click-didyoumean==0.3.0
-click-plugins==1.1.1
+click==8.3.2                       
+click-didyoumean==0.3.1
+click-plugins==1.1.1.2
 click-repl==0.3.0                  
-prompt-toolkit==3.0.47             
-wcwidth==0.2.13                    
+prompt-toolkit==3.0.52             
+wcwidth==0.6.0                     
 
 # --- API / SCHEMA ---
-# coreapi, coreschema, itypes — SUPPRIMÉS : coreapi est abandonné (2017),
-# incompatible Python 3.13, et include_docs_urls est déprécié dans DRF 3.15+.
-uritemplate==4.1.1
-drf-spectacular==0.28.0            
+uritemplate==4.2.0
+drf-spectacular==0.29.0            
 
 # --- SERVEUR ---
 uWSGI==2.0.31                      
-whitenoise==6.7.0                  
+whitenoise==6.12.0                 
 
 # --- DIVERS ---
-cached-property==1.5.2
-importlib-metadata==7.1.0          
-zipp==3.23.0                       
-screen==1.0.1
 setuptools==82.0.1                 
