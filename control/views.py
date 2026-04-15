@@ -34,8 +34,9 @@ class WithListOfControlsMixin(object):
         # Questionnaires are grouped by control:
         # we get the list of questionnaire from the list of controls
         user_access = self.request.user.profile.access.filter(control__is_deleted=False).all()
-        control_list = Control.objects.filter(access__in=user_access).order_by('-id')
+        control_list = Control.objects.filter(access__in=user_access).prefetch_related('access').distinct().order_by('-id')
         context['controls'] = control_list
+        context['profile'] = self.request.user.profile
         return context
 
 
@@ -45,9 +46,10 @@ class ControlDetail(LoginRequiredMixin, WithListOfControlsMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         control_list = context['controls']
+        profile = context['profile']
         controls_serialized = []
         for control in control_list:
-            control_serialized = ControlDetailControlSerializer(instance=control).data
+            control_serialized = ControlDetailControlSerializer(instance=control, context={'profile': profile}).data
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
         user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
@@ -119,9 +121,10 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         if self.request.user.profile.access.filter(Q(control=questionnaire.control) & Q(access_type='demandeur')).exists():
             serializer = ControlSerializer
         control_list = context['controls']
+        profile = context['profile']
         controls_serialized = []
         for control in control_list:
-            control_serialized = serializer(instance=control).data
+            control_serialized = serializer(instance=control, context={'profile': profile}).data
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
 
@@ -155,9 +158,10 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         control_list = context['controls']
+        profile = context['profile']
         controls_serialized = []
         for control in control_list:
-            control_serialized = ControlDetailControlSerializer(instance=control).data
+            control_serialized = ControlDetailControlSerializer(instance=control, context={'profile': profile}).data
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
         user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
@@ -180,9 +184,10 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         control_list = context['controls']
+        profile = context['profile']
         controls_serialized = []
         for control in control_list:
-            control_serialized = ControlDetailControlSerializer(instance=control).data
+            control_serialized = ControlDetailControlSerializer(instance=control, context={'profile': profile}).data
             controls_serialized.append(control_serialized)
         context['controls_json'] = json.dumps(controls_serialized)
         user_serialized = ControlDetailUserSerializer(instance=self.request.user).data
