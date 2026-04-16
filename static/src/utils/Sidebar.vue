@@ -227,7 +227,7 @@ export default defineComponent({
 
         // Ajouter les questionnaires si on n'est pas sur les pages spéciales
         if (!['/faq/', '/declaration-conformite/', '/cgu/'].includes(currentURL)) {
-          const children = control.questionnaires
+          const children = (control.questionnaires || [])
             .filter(q => accessType === 'demandeur' || !q.is_draft)
             .map(questionnaire => {
               const item = { href: backend['questionnaire-detail'](questionnaire.id), title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title }

@@ -112,6 +112,7 @@ if settings.KEYCLOAK_ACTIVE:
 
 urlpatterns += [
     path('api/', include((router.urls, 'api'))),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
 if settings.DEBUG:

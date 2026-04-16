@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'celery',
     'django_celery_beat',
     'django_cleanup.apps.CleanupConfig',
-    'ckeditor',
+    'django_ckeditor_5',
     'django_filters',
     'email_obfuscator',
     'django_softdelete',
@@ -332,20 +332,20 @@ CELERY_BROKER_URL = env('CELERY_BROKER_URL')
 CELERY_QUEUE = env('CELERY_QUEUE', default='default')
 HTTP_AUTHORIZATION = env('HTTP_AUTHORIZATION', default=None)
 
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList'],
-            ['Link', 'Unlink'],
-            ['RemoveFormat', 'Source']
-        ]
-    }
+        'toolbar': {
+            'items': [
+                'bold', 'italic', 'underline',
+                '|', 'numberedList', 'bulletedList',
+                '|', 'link',
+                '|', 'removeFormat', 'sourceEditing',
+            ],
+        },
+    },
 }
 
-# Silence django-ckeditor 4 EOL warning (CKEditor 4 still functional, migration to ckeditor-5 planned)
-SILENCED_SYSTEM_CHECKS = ["ckeditor.W001"]
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 
 # Demo application
 DEMO_INSPECTOR_USERNAME = env('DEMO_INSPECTOR_USERNAME', default=None)
