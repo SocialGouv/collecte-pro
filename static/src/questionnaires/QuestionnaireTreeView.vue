@@ -126,10 +126,8 @@ export default defineComponent({
       try {
         const resp = await axios.get(backendUrls.getDepositorsInControl(props.control.id))
         repondantsListe.value = Array.isArray(resp.data) ? resp.data : []
-        console.log('repondantsListe après API:', repondantsListe.value)
         if (!repondantsListe.value.length) {
           repondantsListe.value = deriveRespondentsFromLocal()
-          console.log('repondantsListe après deriveRespondentsFromLocal:', repondantsListe.value)
         }
       } catch (err) {
         repondantsListe.value = deriveRespondentsFromLocal()
@@ -140,9 +138,7 @@ export default defineComponent({
     const refreshFiles = async () => {
       try {
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(props.control.id))
-        console.log('refreshFiles API response:', resp.data)
         localControl.value = resp.data.find((obj: any) => obj.id === props.control.id) || props.control
-        console.log('localControl après API:', localControl.value)
       } catch (e) {
         console.log('refreshFiles erreur:', e)
         localControl.value = props.control
@@ -152,7 +148,6 @@ export default defineComponent({
       treeViewElements.value = getTreeViewElements(controlQuestionnaires)
       if (!repondantsListe.value.length) {
         repondantsListe.value = deriveRespondentsFromLocal()
-        console.log('repondantsListe dans refreshFiles:', repondantsListe.value)
       }
     }
 
@@ -584,14 +579,12 @@ export default defineComponent({
     }
 
     const onDateStartChange = (val: any) => {
-      console.debug('onDateStartChange val=', val)
       date_filter_start.value = normalizeDate(val, false)
       selected.value = []
       refreshFiles()
     }
 
     const onDateEndChange = (val: any) => {
-      console.debug('onDateEndChange val=', val)
       date_filter_end.value = normalizeDate(val, true)
       selected.value = []
       refreshFiles()

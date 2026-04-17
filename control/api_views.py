@@ -114,8 +114,10 @@ class ControlViewSet(mixins.CreateModelMixin,
     
     @decorators.action(detail=False, methods=['get'], url_path='controls_list')
     def controls_list(self, request):
-        ctl_list = Control.objects.filter(Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False))
-        ctl_Serializer = ControlListSerializer(ctl_list, many=True)
+        ctl_list = Control.objects.filter(
+            Q(access__in=self.request.user.profile.access.all()) & Q(is_deleted=False)
+        ).prefetch_related('access').distinct()
+        ctl_Serializer = ControlListSerializer(ctl_list, many=True, context={'profile': request.user.profile})
         return Response(ctl_Serializer.data)
     
     @decorators.action(detail=True, methods=['get'], url_path='users')

@@ -187,10 +187,8 @@ export default defineComponent({
     },
     createControl(processingDoneCallback) {
       if (this.selectedModel) {
-        console.log('createControlWithModel ')
         this.createControlWithModel(processingDoneCallback, this.selectedModel);
       } else {
-        console.log('createControlWithoutModel ')
         const payload = {
           title: this.title,
           depositing_organization: this.organization,
@@ -198,7 +196,6 @@ export default defineComponent({
         }
         axios.post(backendUrls.control(), payload)
           .then(response => {
-            console.debug(response);
             processingDoneCallback(null, response, backendUrls.home());
           })
           .catch((error) => {

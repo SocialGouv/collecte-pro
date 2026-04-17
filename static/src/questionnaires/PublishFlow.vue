@@ -192,7 +192,6 @@ export default {
     }
 
     const start = () => {
-      console.debug('PublishFlow.start() called, modalFlow ref:', modalFlow.value)
       if (modalFlow.value) {
         modalFlow.value.start()
       } else {

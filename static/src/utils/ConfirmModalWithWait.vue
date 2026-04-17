@@ -1,6 +1,6 @@
 <template>
   <empty-modal :no-close="noClose">
-    <form id="modalform">
+    <form id="modalform" @submit.prevent>
       <div class="modal-header border-bottom-0">
         <div id="modal_title" class="modal-title">{{ title }}</div>
         <button v-if="!noClose"
@@ -68,12 +68,6 @@ export default defineComponent({
     const confirmClicked = () => {
       if (!modalEl.value) return
 
-      // Désactivation du submit par défaut (Firefox)
-      const form = modalEl.value.querySelector('form')
-      if (form) {
-        form.addEventListener('submit', (event) => event.preventDefault())
-      }
-
       errorMessage.value = ''
       if (!validateForm()) return
 
@@ -84,7 +78,6 @@ export default defineComponent({
           processing.value = false
           return
         }
-        console.debug('ConfirmModalWithWait : processing done', successMsg)
         if (refreshUrl) {
           window.location.href = refreshUrl
         }

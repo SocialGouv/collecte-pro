@@ -49,12 +49,12 @@ INSTALLED_APPS = [
     'django_extensions',
     'actstream',
     'rest_framework',
+    'drf_spectacular',
     'celery',
     'django_celery_beat',
     'django_cleanup.apps.CleanupConfig',
-    'ckeditor',
+    'django_ckeditor_5',
     'django_filters',
-    'django_admin',
     'email_obfuscator',
     'django_softdelete',
 
@@ -83,7 +83,7 @@ INSTALLED_APPS = [
 # Keycloak configuration
 KEYCLOAK_ACTIVE = env('KEYCLOAK_ACTIVE', default=False)
 if KEYCLOAK_ACTIVE:
-    KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/auth/')
+    KEYCLOAK_URL = env('KEYCLOAK_URL', default='http://localhost:8080/')
     KEYCLOAK_REALM = env('KEYCLOAK_REALM', default='collectepro')
     OPENID_PREFIX = f'{KEYCLOAK_URL}realms/{KEYCLOAK_REALM}/protocol/openid-connect'
     OIDC_OP_JWKS_ENDPOINT = f'{OPENID_PREFIX}/certs'
@@ -319,7 +319,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 if DEBUG:
@@ -331,17 +332,20 @@ CELERY_BROKER_URL = env('CELERY_BROKER_URL')
 CELERY_QUEUE = env('CELERY_QUEUE', default='default')
 HTTP_AUTHORIZATION = env('HTTP_AUTHORIZATION', default=None)
 
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     'default': {
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['NumberedList', 'BulletedList'],
-            ['Link', 'Unlink'],
-            ['RemoveFormat', 'Source']
-        ]
-    }
+        'toolbar': {
+            'items': [
+                'bold', 'italic', 'underline',
+                '|', 'numberedList', 'bulletedList',
+                '|', 'link',
+                '|', 'removeFormat', 'sourceEditing',
+            ],
+        },
+    },
 }
+
+CKEDITOR_5_FILE_UPLOAD_PERMISSION = "staff"
 
 # Demo application
 DEMO_INSPECTOR_USERNAME = env('DEMO_INSPECTOR_USERNAME', default=None)

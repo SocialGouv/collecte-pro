@@ -101,7 +101,6 @@ export default defineComponent({
     })
 
     function start() {
-      console.debug('start!')
       $(confirmModal.value.$el).on('hidden.bs.modal', () => {
         error.value = undefined
       })
@@ -118,14 +117,12 @@ export default defineComponent({
     }
 
     async function confirmed() {
-      console.debug('confirmed!')
       $(confirmModal.value.$el).modal('hide')
       $(waitingModal.value.$el).modal('show')
       error.value = undefined
 
       try {
         await Promise.all([wait(SPINNER_DURATION_MILLIS), props.actionFunction()])
-        console.debug('Done action.')
         $(waitingModal.value.$el).modal('hide')
         $(successModal.value.$el).modal('show')
       } catch (err) {

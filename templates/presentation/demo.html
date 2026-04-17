@@ -108,8 +108,7 @@
 {% block js_bundle %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  $(document).ready(function () {
-    console.log("Initialize captcha API v2...");
+    $(document).ready(function () {
 
     // Configuration du captcha
     const captchaEndpoint = '{% url "presentation:simple-captcha-endpoint" %}';
@@ -119,7 +118,6 @@
 
     // Fonction pour charger une nouvelle image captcha
     window.loadCaptcha = function () {
-      console.log('Loading captcha...');
 
       $.ajax({
         method: 'GET',
@@ -127,16 +125,13 @@
         data: { get: 'image', c: captchaStyle },
         dataType: 'json',
         success: function (data) {
-          console.log('Captcha response:', data);
 
           if (!data.uuid) {
             console.error('Invalid captcha data');
             return;
           }
 
-          // Stocker l'UUID
           currentCaptchaId = data.uuid;
-          console.log('UUID:', currentCaptchaId);
 
           var container = document.getElementById('botdetect-captcha');
           container.innerHTML = '';
@@ -152,7 +147,6 @@
           img.style.backgroundColor = '#f5f5f5';
 
           img.onload = function () {
-            console.log('✓ Captcha loaded');
             $('#captchaFormulaireExtInput').val('');
           };
 
@@ -254,7 +248,6 @@
           'X-CSRFToken': csrfToken
         },
         success: function (response) {
-          console.log('Validation response:', response);
           if (response === true || response.valid === true) {
           // Captcha valide, soumettre le formulaire
             $('#demo-form').off('submit').submit();

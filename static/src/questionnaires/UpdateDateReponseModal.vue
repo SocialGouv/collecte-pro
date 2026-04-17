@@ -103,7 +103,6 @@ export default defineComponent({
     const updateDateReponse = async () => {
       try {
         const response = await _doSave()
-        console.debug('Successful response date save.')
         postResult.value = response.data
         emitQuestionnaireUpdated()
         hideThisModal()

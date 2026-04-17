@@ -93,10 +93,19 @@ class QuestionnaireSerializer(serializers.ModelSerializer):
 
 class ControlSerializer(serializers.ModelSerializer):
     questionnaires = QuestionnaireSerializer(many=True, read_only=True)
+    access_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Control
-        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned')
+        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned', 'access_type')
+
+    def get_access_type(self, obj):
+        profile = self.context.get('profile')
+        if profile:
+            access = obj.access.filter(userprofile=profile).first()
+            if access:
+                return access.access_type
+        return None
 
 
 class ControlSerializerWithoutDraft(ControlSerializer):
@@ -133,9 +142,19 @@ class ControlUpdateSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'depositing_organization', 'is_model', 'is_pinned')
 
 class ControlListSerializer(serializers.ModelSerializer):
+    access_type = serializers.SerializerMethodField()
+
     class Meta:
         model = Control
-        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'is_model', 'is_pinned')
+        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'is_model', 'is_pinned', 'access_type')
+
+    def get_access_type(self, obj):
+        profile = self.context.get('profile')
+        if profile:
+            access = obj.access.filter(userprofile=profile).first()
+            if access:
+                return access.access_type
+        return None
 
 class QuestionUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -182,7 +201,16 @@ class ControlDetailQuestionnaireSerializer(serializers.ModelSerializer):
 
 class ControlDetailControlSerializer(serializers.ModelSerializer):
     questionnaires = ControlDetailQuestionnaireSerializer(many=True, read_only=True)
+    access_type = serializers.SerializerMethodField()
 
     class Meta:
         model = Control
-        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned')
+        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned', 'access_type')
+
+    def get_access_type(self, obj):
+        profile = self.context.get('profile')
+        if profile:
+            access = obj.access.filter(userprofile=profile).first()
+            if access:
+                return access.access_type
+        return None

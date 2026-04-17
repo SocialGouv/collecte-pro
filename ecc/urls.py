@@ -5,6 +5,8 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.views.generic.base import RedirectView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
 
 from rest_framework import routers
 
@@ -110,12 +112,18 @@ if settings.KEYCLOAK_ACTIVE:
 
 urlpatterns += [
     path('api/', include((router.urls, 'api'))),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
 if settings.DEBUG:
-    from rest_framework.documentation import include_docs_urls
+    from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += [path('api/docs/', include_docs_urls(title='collecte-pro API'))]
+    urlpatterns += [
+        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    ]
+
 
 if settings.DEBUG and settings.ALLOW_DEMO_LOGIN:
     urlpatterns += path(

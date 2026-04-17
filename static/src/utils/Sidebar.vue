@@ -124,7 +124,6 @@ export default defineComponent({
       isMenuBuilt: false,
       menu: [],
       showSidebar: true,
-      currentAccessType: '',
     }
   },
   computed: {
@@ -165,7 +164,6 @@ export default defineComponent({
     },
   },
   mounted() {
-    console.debug('this.window.location.pathname', this.window.location.pathname)
     if (this.window.location.pathname === backend.welcome()) {
       this.showSidebar = false
       return
@@ -203,24 +201,23 @@ export default defineComponent({
       const currentURL = this.window.location.pathname
       const menu = []
 
-      // Charger l'accessType pour chaque contrôle en séquence (rapide car pas de parallélisation)
       for (const control of this.controls) {
-        await this.getAccessTypeLibelle(control.id)
+        const accessType = control.access_type || 'repondant'
         
         const titleLine1 = control.reference_code
         const titleLine2 = control.depositing_organization || control.title
         const title = titleLine1 + '\n' + titleLine2
 
         const controlMenu = {
-          icon: this.currentAccessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
+          icon: accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
           title: title,
           ctrl_id: control.id,
           is_model: control.is_model,
-          attributes: { title: this.currentAccessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
+          attributes: { title: accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
         }
 
-        if (control.is_model && this.currentAccessType === 'demandeur') {
+        if (control.is_model && accessType === 'demandeur') {
           controlMenu.badge = {
             icon: 'fas fa-thumbtack',
             class: `fas fa-thumbtack ${control.is_pinned ? '' : 'unpinned'}`,
@@ -230,8 +227,8 @@ export default defineComponent({
 
         // Ajouter les questionnaires si on n'est pas sur les pages spéciales
         if (!['/faq/', '/declaration-conformite/', '/cgu/'].includes(currentURL)) {
-          const children = control.questionnaires
-            .filter(q => this.currentAccessType === 'demandeur' || !q.is_draft)
+          const children = (control.questionnaires || [])
+            .filter(q => accessType === 'demandeur' || !q.is_draft)
             .map(questionnaire => {
               const item = { href: backend['questionnaire-detail'](questionnaire.id), title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title }
               if (backend.getIdFromViewUrl(currentURL, 'trash') === questionnaire.id) {
@@ -274,12 +271,6 @@ export default defineComponent({
           this.$refs.sidebar.classList.toggle('hidden')
         }
       }, 300)
-    },
-    async getAccessTypeLibelle(ctlId) {
-      const resp = await axios.get(backend.getAccessToControl(ctlId))
-      const accessType = resp.data[0].access_type
-      this.currentAccessType = accessType === 'demandeur' ? 'demandeur' : 'repondant'
-      return this.currentAccessType
     },
   },
 })

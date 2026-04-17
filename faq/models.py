@@ -1,6 +1,6 @@
 from django.db import models
 
-from ckeditor.fields import RichTextField
+from django_ckeditor_5.fields import CKEditor5Field
 from ordered_model.models import OrderedModel
 from django_softdelete.models import SoftDeleteModel
 
@@ -8,7 +8,7 @@ from django_softdelete.models import SoftDeleteModel
 class FAQItem(OrderedModel, SoftDeleteModel):
     title = models.CharField("title", max_length=255)
     slug = models.SlugField("slug", max_length=255)
-    description = RichTextField("description", blank=True)
+    description = CKEditor5Field("description", blank=True, config_name='default')
 
     class Meta:
         ordering = ('order',)

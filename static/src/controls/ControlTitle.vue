@@ -349,7 +349,6 @@ export default defineComponent({
       const getCreateMethodCtrl = () => axios.post.bind(this, backendUrls.control())
 
       if (this.checkedQuestionnaires.length) {
-        console.log(" idCtlSource ",this.control.id)
         const questionnaires = this.accessibleQuestionnaires
           .filter(aq => this.checkedQuestionnaires.includes(aq.id))
         const ctrl = {
@@ -459,7 +458,6 @@ export default defineComponent({
       }
       axios.put(backendUrls.control(this.control.id), payload)
         .then(response => {
-          console.debug(response)
           this.title = response.data.title
           this.organization = response.data.depositing_organization
           this.isModel = response.data.is_model
@@ -647,7 +645,6 @@ export default defineComponent({
 
       axios.put(backendUrls.control(this.control.id), payload)
         .then(response => {
-          console.debug(response)
           this.title = response.data.title
           this.organization = response.data.depositing_organization
           this.isModel = response.data.is_model
