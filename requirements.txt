@@ -1,6 +1,6 @@
 
 # --- CORE DJANGO ---
-Django==5.2.13                     
+Django==5.2.14                     
 
 # --- DJANGO PACKAGES ---
 django-activity-stream==2.0.0      
