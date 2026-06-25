@@ -7,7 +7,12 @@
       </div>
       <div class="modal-body">
         <div v-if="hasErrors" class="alert alert-danger" role="alert">
-          L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.
+          <div v-if="errorMessages.length > 0">
+            <div v-for="(msg, idx) in errorMessages" :key="idx" class="mb-2">
+              {{ msg }}
+            </div>
+          </div>
+          <div v-else>L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.</div>
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
           <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
@@ -122,12 +127,10 @@
             <div class="form-group">
               <label class="form-label" for="prenom">Prénom<span class="form-required"></span></label>
               <input id="prenom" type="given-name" class="form-control" v-bind:class="{ 'state-invalid': errors.first_name }" v-model="formData.first_name" placeholder="prenom" required>
-              <p class="text-muted pl-2" v-if="errors.first_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.first_name.join(' / ')}}</p>
             </div>
             <div class="form-group">
               <label class="form-label" for="nom">Nom<span class="form-required"></span></label>
               <input id="nom" type="family-name" class="form-control" v-bind:class="{ 'state-invalid': errors.last_name }" v-model="formData.last_name" placeholder="nom" required>
-              <p class="text-muted pl-2" v-if="errors.last_name"><span class="fa fa-warning" aria-hidden="true"></span> {{ errors.last_name.join(' / ')}}</p>
             </div>
           </fieldset>
           <div class="flex-row justify-content-between">
@@ -187,6 +190,7 @@ import { mapState } from 'vuex'
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import backend from '../utils/backend'
+import { validateUserNames } from '../utils/validators'
 // Suppression des imports/initialisations Vue 2: import Vue from 'vue', import { store } from '../store'
 import InfoBar from '../utils/InfoBar.vue'
 import EventBus from '../events'
@@ -277,6 +281,29 @@ export default defineComponent({ // Remplacement de Vue.extend
     postResultEmail(): string {
       return (this.postResult as any)?.email || '';
     },
+    errorMessages(): string[] {
+      if (!this.errors || Object.keys(this.errors).length === 0) {
+        return [];
+      }
+
+      const messages: string[] = [];
+      const collect = (value: unknown) => {
+        if (Array.isArray(value)) {
+          value.forEach(item => collect(item));
+          return;
+        }
+        if (value && typeof value === 'object') {
+          Object.values(value as Record<string, unknown>).forEach(item => collect(item));
+          return;
+        }
+        if (typeof value === 'string') {
+          messages.push(value);
+        }
+      };
+
+      collect(this.errors);
+      return messages;
+    },
   },
   components: {
     InfoBar,
@@ -298,7 +325,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       this.stepShown = 1
       this.foundUser = false
       this.hasErrors = false
-      this.errors = []
+      this.errors = {}
     },
     back() {
       switch (this.stepShown) {
@@ -344,7 +371,74 @@ export default defineComponent({ // Remplacement de Vue.extend
         this.findUser();
       }
     },
+    formatApiErrors(error: any): any {
+      const status = error?.response?.status
+      const errorData = error?.response?.data
+      const knownFieldKeys = ['first_name', 'last_name', 'email', 'non_field_errors', 'profile_type', 'control']
+
+      if (errorData && typeof errorData === 'object' && !Array.isArray(errorData)) {
+        const keys = Object.keys(errorData)
+        if (keys.length > 0 && keys.some(k => knownFieldKeys.includes(k))) {
+          return errorData
+        }
+      }
+
+      const statusMessageByCode: Record<number, string> = {
+        400: 'Requete invalide (400). Verifiez les informations saisies.',
+        401: 'Non autorise (401). Veuillez vous reconnecter.',
+        403: 'Acces refuse (403). Vous n\'avez pas les droits necessaires.',
+        404: 'Service introuvable (404). L\'API ou Keycloak est indisponible.',
+        409: 'Conflit (409). Cet utilisateur existe peut-etre deja.',
+        422: 'Donnees invalides (422). Merci de verifier les champs.',
+        500: 'Erreur interne du serveur (500). Merci de reessayer.',
+        502: 'Passerelle invalide (502). Service distant indisponible.',
+        503: 'Service indisponible (503). Merci de reessayer plus tard.',
+        504: 'Delai depasse (504). Service distant trop lent.',
+        505: 'Version HTTP non prise en charge (505).',
+      }
+
+      const collectMessages = (value: unknown): string[] => {
+        if (!value) return []
+        if (typeof value === 'string') return [value]
+        if (Array.isArray(value)) return value.flatMap(item => collectMessages(item))
+        if (typeof value === 'object') {
+          return Object.values(value as Record<string, unknown>).flatMap(item => collectMessages(item))
+        }
+        return []
+      }
+
+      const messages: string[] = []
+      if (status && statusMessageByCode[status]) {
+        messages.push(statusMessageByCode[status])
+      } else if (status) {
+        messages.push(`Erreur HTTP ${status}.`)
+      }
+
+      const details = collectMessages(errorData)
+      details.forEach(msg => messages.push(msg))
+
+      const uniqueMessages = [...new Set(messages)]
+      if (uniqueMessages.length > 0) {
+        return { error: uniqueMessages }
+      }
+
+      return { error: ['Une erreur est survenue. Veuillez reessayer.'] }
+    },
+
     addUser() {
+      this.hasErrors = false
+      this.errors = {}
+
+      const validationErrors = validateUserNames(
+        this.formData.first_name,
+        this.formData.last_name,
+      );
+      if (validationErrors.first_name.length > 0 || validationErrors.last_name.length > 0) {
+        this.hasErrors = true;
+        this.errors = validationErrors;
+        return;
+      }
+
       const control = this.editingControl as any;
       this.formData.control = control.id
       this.formData.profile_type = this.editingProfileType as string
@@ -360,7 +454,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         })
         .catch((error) => {
           this.hasErrors = true
-          this.errors = error.response.data
+          this.errors = this.formatApiErrors(error)
         })
     },
     findUser() {
