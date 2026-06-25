@@ -4,13 +4,14 @@ from django.conf import settings
 from django.db.models import Q
 
 from rest_framework import serializers, status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from control.models import Control
 
 from .models import UserProfile, Access
 
 from keycloak import KeycloakAdmin
+import re
 
 
 User = get_user_model()
@@ -18,6 +19,33 @@ User = get_user_model()
 # These signals are triggered after the user is created/updated via the API
 user_api_post_add = Signal()
 user_api_post_update = Signal()
+
+
+def validate_special_characters(value, field_name):
+    """
+    Validate that the given value does not contain forbidden special characters.
+    
+    Args:
+        value: The string to validate
+        field_name: The name of the field being validated (for error message)
+    
+    Raises:
+        ValidationError: If forbidden characters are found
+    """
+    if not value:
+        return value
+    
+    # Pattern for forbidden special characters
+    forbidden_chars_pattern = r'[*(){}@#$%^&\[\]=+\\|;:\'",<>?/~`]'
+    found_chars = re.findall(forbidden_chars_pattern, value)
+    
+    if found_chars:
+        unique_chars = ', '.join(set(found_chars))
+        raise ValidationError(
+            f"Le champ '{field_name}' contient des caractères spéciaux non autorisés : {unique_chars}"
+        )
+    
+    return value
 
 
 class RemoveControlSerializer(serializers.Serializer):
@@ -39,6 +67,14 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         fields = (
             'id', 'first_name', 'last_name', 'email', 'profile_type',
             'organization', 'control', 'is_audited', 'is_inspector', 'access')
+
+    def validate_first_name(self, value):
+        """Validate first name for special characters"""
+        return validate_special_characters(value, 'Prénom')
+
+    def validate_last_name(self, value):
+        """Validate last name for special characters"""
+        return validate_special_characters(value, 'Nom')
 
     def create(self, validated_data):
         if settings.KEYCLOAK_ACTIVE:

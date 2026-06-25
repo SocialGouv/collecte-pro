@@ -8,7 +8,12 @@
       </div>
       <div class="modal-body">
         <div v-if="hasErrors" class="alert alert-danger" role="alert">
-          La modification d'utilisateur n'a pas fonctionné.
+          <div v-if="errorMessages.length > 0">
+            <div v-for="(msg, idx) in errorMessages" :key="idx" class="mb-2">
+              {{ msg }}
+            </div>
+          </div>
+          <div v-else>La modification d'utilisateur n'a pas fonctionné.</div>
         </div>
 
           <div class="form-group">
@@ -33,10 +38,6 @@
                     v-model="localFirstName"
                     required
                     aria-labelledby="first-name-label">
-              <p class="text-muted pl-2" v-if="errors.first_name">
-                <span class="fa fa-warning" aria-hidden="true"></span>
-                {{ errors.first_name.join(' / ')}}
-              </p>
             </div>
             <div class="form-group">
               <label id="last-name-label" class="form-label">
@@ -49,10 +50,6 @@
                     v-model="localLastName"
                     required
                     aria-labelledby="last-name-label">
-              <p class="text-muted pl-2" v-if="errors.last_name">
-                <span class="fa fa-warning" aria-hidden="true"></span>
-                {{ errors.last_name.join(' / ')}}
-              </p>
             </div>
           </div>
           <div class="text-right">
@@ -72,6 +69,7 @@ import { mapState } from 'vuex' // mapState pour l'accès en lecture si nécessa
 import { defineComponent } from 'vue'
 import axios from 'axios'
 import backend from '../utils/backend'
+import { validateUserNames } from '../utils/validators'
 // Suppression de l'initialisation Vue 2: import Vue from 'vue', import Vuex from 'vuex', Vue.use(Vuex)
 
 // Suppression de: import { store } from '../store'
@@ -93,6 +91,21 @@ export default defineComponent({ // Remplacement de Vue.extend
   computed: {
     // expose editingControl and editingUser from store
     ...mapState(['editingControl', 'editingUser']),
+
+    errorMessages(): string[] {
+      if (!this.errors || Object.keys(this.errors).length === 0) {
+        return [];
+      }
+      const messages: string[] = [];
+      for (const [field, fieldErrors] of Object.entries(this.errors)) {
+        if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+          fieldErrors.forEach(err => {
+            messages.push(err);
+          });
+        }
+      }
+      return messages;
+    },
 
     localEditingControl() {
       return this.$store.state.editingControl || {}
@@ -132,9 +145,76 @@ export default defineComponent({ // Remplacement de Vue.extend
     },
     resetFormData() {
       this.hasErrors = false
-      this.errors = []
+      this.errors = {}
     },
+    formatApiErrors(error: any): any {
+      const status = error?.response?.status
+      const errorData = error?.response?.data
+      const knownFieldKeys = ['first_name', 'last_name', 'email', 'non_field_errors', 'profile_type', 'control']
+
+      if (errorData && typeof errorData === 'object' && !Array.isArray(errorData)) {
+        const keys = Object.keys(errorData)
+        if (keys.length > 0 && keys.some(k => knownFieldKeys.includes(k))) {
+          return errorData
+        }
+      }
+
+      const statusMessageByCode: Record<number, string> = {
+        400: 'Requete invalide (400). Verifiez les informations saisies.',
+        401: 'Non autorise (401). Veuillez vous reconnecter.',
+        403: 'Acces refuse (403). Vous n\'avez pas les droits necessaires.',
+        404: 'Service introuvable (404). L\'API ou Keycloak est indisponible.',
+        409: 'Conflit (409). Cet utilisateur existe peut-etre deja.',
+        422: 'Donnees invalides (422). Merci de verifier les champs.',
+        500: 'Erreur interne du serveur (500). Merci de reessayer.',
+        502: 'Passerelle invalide (502). Service distant indisponible.',
+        503: 'Service indisponible (503). Merci de reessayer plus tard.',
+        504: 'Delai depasse (504). Service distant trop lent.',
+        505: 'Version HTTP non prise en charge (505).',
+      }
+
+      const collectMessages = (value: unknown): string[] => {
+        if (!value) return []
+        if (typeof value === 'string') return [value]
+        if (Array.isArray(value)) return value.flatMap(item => collectMessages(item))
+        if (typeof value === 'object') {
+          return Object.values(value as Record<string, unknown>).flatMap(item => collectMessages(item))
+        }
+        return []
+      }
+
+      const messages: string[] = []
+      if (status && statusMessageByCode[status]) {
+        messages.push(statusMessageByCode[status])
+      } else if (status) {
+        messages.push(`Erreur HTTP ${status}.`)
+      }
+
+      const details = collectMessages(errorData)
+      details.forEach(msg => messages.push(msg))
+
+      const uniqueMessages = [...new Set(messages)]
+      if (uniqueMessages.length > 0) {
+        return { error: uniqueMessages }
+      }
+
+      return { error: ['Une erreur est survenue. Veuillez reessayer.'] }
+    },
+
     updateUser() {
+      this.hasErrors = false
+      this.errors = {}
+
+      const validationErrors = validateUserNames(
+        this.$store.state.editingUser?.first_name,
+        this.$store.state.editingUser?.last_name,
+      )
+      if (validationErrors.first_name.length > 0 || validationErrors.last_name.length > 0) {
+        this.hasErrors = true
+        this.errors = validationErrors
+        return
+      }
+
       // NOTE: L'objet this.editingUser n'existe plus directement. 
       // Nous utilisons l'état actuel du store (this.$store.state.editingUser)
       const userToUpdate = this.$store.state.editingUser;
@@ -148,7 +228,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         })
         .catch((error) => {
           this.hasErrors = true
-          this.errors = error.response.data
+          this.errors = this.formatApiErrors(error)
         })
     },
   }
