@@ -11,7 +11,60 @@ from control.models import Control
 from .models import UserProfile, Access
 
 from keycloak import KeycloakAdmin
+from keycloak.exceptions import KeycloakError
+import json
+import logging
 import re
+
+logger = logging.getLogger(__name__)
+
+# Caractères interdits par Keycloak (sur-ensemble de la validation Django, inclut '!')
+_KEYCLOAK_FORBIDDEN_CHARS = re.compile(r'[!*(){}@#$%^&\[\]=+\\|;:\'",<>?/~`]')
+
+
+def validate_keycloak_name(value: str, field_label: str):
+    """
+    Validation locale qui mime les règles Keycloak pour firstName/lastName.
+    Utilisée quand l'utilisateur est absent de Keycloak (fallback).
+    """
+    if not value:
+        return
+    found = _KEYCLOAK_FORBIDDEN_CHARS.findall(value)
+    if found:
+        unique = ', '.join(set(found))
+        raise ValidationError({
+            'keycloak_error': f'Le {field_label} contient un caractère non autorisé : {unique}',
+            'error_code': 'error-person-name-invalid-character',
+        })
+
+
+# Mapping des codes d'erreur Keycloak vers des messages lisibles
+KEYCLOAK_ERROR_MESSAGES = {
+    'error-person-name-invalid-character': 'Le prénom ou le nom contient un ou plusieurs caractères non autorisés.',
+    'error-invalid-email': "L'adresse email est invalide.",
+    'User exists with same username': 'Un utilisateur avec ce username existe déjà.',
+    'User exists with same email': 'Un utilisateur avec cet email existe déjà.',
+}
+
+
+def handle_keycloak_error(e: KeycloakError):
+    """
+    Convertit une KeycloakError en ValidationError DRF (HTTP 400)
+    avec un message lisible pour le frontend.
+    """
+    logger.error("Erreur Keycloak : %s", str(e), exc_info=True)
+    error_code = None
+    try:
+        body = json.loads(e.response_body)
+        error_code = body.get('errorMessage') or body.get('error')
+    except Exception:
+        error_code = getattr(e, 'error_message', None) or str(e)
+
+    message = KEYCLOAK_ERROR_MESSAGES.get(
+        error_code,
+        f"Erreur lors de la création/mise à jour de l'utilisateur (code : {error_code})."
+    )
+    raise ValidationError({'keycloak_error': message, 'error_code': error_code})
 
 
 User = get_user_model()
@@ -115,6 +168,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             raise e
         inspector_role = False
         access_type = 'repondant'
+       
         if settings.KEYCLOAK_ACTIVE:
             # Find keycloak inspector role
             role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
@@ -124,12 +178,23 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         if profile:
             if settings.KEYCLOAK_ACTIVE:
                 user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
-                # Update keycloak user data if exist
-                keycloak_admin.update_user(
-                    user_id=user_id_keycloak,
-                    payload={'firstName': user_data.get('first_name'),
-                    'lastName': user_data.get('last_name')}
-                )
+                if user_id_keycloak:
+                    # Update keycloak user data if exist
+                    try:
+                        keycloak_admin.update_user(
+                            user_id=user_id_keycloak,
+                            payload={'firstName': user_data.get('first_name'),
+                            'lastName': user_data.get('last_name')}
+                        )
+                    except KeycloakError as e:
+                        handle_keycloak_error(e)
+                else:
+                    logger.warning(
+                        "Utilisateur '%s' introuvable dans Keycloak, validation locale appliquée.",
+                        user_data['username']
+                    )
+                    validate_keycloak_name(user_data.get('first_name', ''), 'prénom')
+                    validate_keycloak_name(user_data.get('last_name', ''), 'nom')
             profile.user.first_name = user_data.get('first_name')
             profile.user.last_name = user_data.get('last_name')
             profile.organization = profile_data.get('organization')
@@ -140,16 +205,19 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         else:
             if settings.KEYCLOAK_ACTIVE:
                 # Create keycloak user if doesn't exist
-                new_user = keycloak_admin.create_user(
-                    {
-                        "email": user_data['username'],
-                        "username": user_data['username'],
-                        "enabled": True,
-                        "firstName": user_data['first_name'],
-                        "lastName": user_data['last_name']
-                    },
-                    exist_ok=True
-                )
+                try:
+                    new_user = keycloak_admin.create_user(
+                        {
+                            "email": user_data['username'],
+                            "username": user_data['username'],
+                            "enabled": True,
+                            "firstName": user_data['first_name'],
+                            "lastName": user_data['last_name']
+                        },
+                        exist_ok=True
+                    )
+                except KeycloakError as e:
+                    handle_keycloak_error(e)
             user = User.objects.create(**user_data)
             profile_data['user'] = user
             profile_data['send_files_report'] = True

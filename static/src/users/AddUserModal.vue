@@ -374,27 +374,18 @@ export default defineComponent({ // Remplacement de Vue.extend
     formatApiErrors(error: any): any {
       const status = error?.response?.status
       const errorData = error?.response?.data
-      const knownFieldKeys = ['first_name', 'last_name', 'email', 'non_field_errors', 'profile_type', 'control']
+      const knownFieldKeys = ['first_name', 'last_name', 'email', 'non_field_errors', 'profile_type', 'control', 'keycloak_error']
+
+      // Erreur Keycloak structurée : priorité absolue
+      if (errorData?.keycloak_error) {
+        return { keycloak_error: [errorData.keycloak_error] }
+      }
 
       if (errorData && typeof errorData === 'object' && !Array.isArray(errorData)) {
         const keys = Object.keys(errorData)
         if (keys.length > 0 && keys.some(k => knownFieldKeys.includes(k))) {
           return errorData
         }
-      }
-
-      const statusMessageByCode: Record<number, string> = {
-        400: 'Requete invalide (400). Verifiez les informations saisies.',
-        401: 'Non autorise (401). Veuillez vous reconnecter.',
-        403: 'Acces refuse (403). Vous n\'avez pas les droits necessaires.',
-        404: 'Service introuvable (404). L\'API ou Keycloak est indisponible.',
-        409: 'Conflit (409). Cet utilisateur existe peut-etre deja.',
-        422: 'Donnees invalides (422). Merci de verifier les champs.',
-        500: 'Erreur interne du serveur (500). Merci de reessayer.',
-        502: 'Passerelle invalide (502). Service distant indisponible.',
-        503: 'Service indisponible (503). Merci de reessayer plus tard.',
-        504: 'Delai depasse (504). Service distant trop lent.',
-        505: 'Version HTTP non prise en charge (505).',
       }
 
       const collectMessages = (value: unknown): string[] => {
@@ -408,9 +399,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       }
 
       const messages: string[] = []
-      if (status && statusMessageByCode[status]) {
-        messages.push(statusMessageByCode[status])
-      } else if (status) {
+      if (status) {
         messages.push(`Erreur HTTP ${status}.`)
       }
 
