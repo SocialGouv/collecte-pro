@@ -5,7 +5,7 @@
 /**
  * Special characters that are not allowed in user names
  */
-const FORBIDDEN_SPECIAL_CHARS = /[*(){}@#$%^&\[\]=+\\|;:'",<>?/~`]/g;
+const FORBIDDEN_SPECIAL_CHARS = /[*(){}@#$%^&€\[\]=+\\|;:'",<>?/~`]/g;
 
 /**
  * Validates if a string contains forbidden special characters
