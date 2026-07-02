@@ -13,7 +13,6 @@
               {{ msg }}
             </div>
           </div>
-          <div v-else>La modification d'utilisateur n'a pas fonctionné.</div>
         </div>
 
           <div class="form-group">
