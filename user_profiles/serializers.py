@@ -14,28 +14,8 @@ from keycloak import KeycloakAdmin
 from keycloak.exceptions import KeycloakError
 import json
 import logging
-import re
 
 logger = logging.getLogger(__name__)
-
-# Caractères interdits par Keycloak (sur-ensemble de la validation Django, inclut '!')
-_KEYCLOAK_FORBIDDEN_CHARS = re.compile(r'[!*(){}@#$%^&\[\]=+\\|;:\'",<>?/~`]')
-
-
-def validate_keycloak_name(value: str, field_label: str):
-    """
-    Validation locale qui mime les règles Keycloak pour firstName/lastName.
-    Utilisée quand l'utilisateur est absent de Keycloak (fallback).
-    """
-    if not value:
-        return
-    found = _KEYCLOAK_FORBIDDEN_CHARS.findall(value)
-    if found:
-        unique = ', '.join(set(found))
-        raise ValidationError({
-            'keycloak_error': f'Le {field_label} contient un caractère non autorisé : {unique}',
-            'error_code': 'error-person-name-invalid-character',
-        })
 
 
 # Mapping des codes d'erreur Keycloak vers des messages lisibles
@@ -47,24 +27,67 @@ KEYCLOAK_ERROR_MESSAGES = {
 }
 
 
-def handle_keycloak_error(e: KeycloakError):
+def get_keycloak_field_label(field_name: str | None) -> str | None:
+    """Return a user-friendly label for a Keycloak field name."""
+    if field_name == 'firstName':
+        return 'Prénom'
+    if field_name == 'lastName':
+        return 'Nom'
+    return None
+
+
+def resolve_keycloak_user_id(keycloak_admin: KeycloakAdmin, username_or_email: str) -> str | None:
+    """Resolve Keycloak user id, first by username then by email fallback."""
+    user_id = keycloak_admin.get_user_id(username_or_email)
+    if user_id:
+        return user_id
+
+    try:
+        users = keycloak_admin.get_users(query={'email': username_or_email})
+    except Exception:
+        users = []
+
+    if users:
+        return users[0].get('id')
+    return None
+
+
+def handle_keycloak_error(e: Exception):
     """
-    Convertit une KeycloakError en ValidationError DRF (HTTP 400)
+    Convertit une erreur Keycloak/réseau en ValidationError DRF (HTTP 400)
     avec un message lisible pour le frontend.
     """
     logger.error("Erreur Keycloak : %s", str(e), exc_info=True)
+
     error_code = None
+    error_description = None
+    error_field = None
     try:
         body = json.loads(e.response_body)
         error_code = body.get('errorMessage') or body.get('error')
+        error_description = body.get('error_description')
+        error_field = body.get('field')
     except Exception:
         error_code = getattr(e, 'error_message', None) or str(e)
 
-    message = KEYCLOAK_ERROR_MESSAGES.get(
-        error_code,
-        f"Erreur lors de la création/mise à jour de l'utilisateur (code : {error_code})."
-    )
-    raise ValidationError({'keycloak_error': message, 'error_code': error_code})
+    if error_code in KEYCLOAK_ERROR_MESSAGES:
+        message = KEYCLOAK_ERROR_MESSAGES[error_code]
+        if error_code == 'error-person-name-invalid-character':
+            field_label = get_keycloak_field_label(error_field)
+            if field_label:
+                message = f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
+    elif error_description:
+        message = error_description
+    else:
+        message = (
+            f"Erreur lors de la création/mise à jour de l'utilisateur"
+            f" (code : {error_code or 'inconnu'})."
+        )
+
+    raise ValidationError({
+        'keycloak_error': message,
+        'error_code': error_code or 'keycloak-unknown-error',
+    })
 
 
 User = get_user_model()
@@ -72,33 +95,6 @@ User = get_user_model()
 # These signals are triggered after the user is created/updated via the API
 user_api_post_add = Signal()
 user_api_post_update = Signal()
-
-
-def validate_special_characters(value, field_name):
-    """
-    Validate that the given value does not contain forbidden special characters.
-    
-    Args:
-        value: The string to validate
-        field_name: The name of the field being validated (for error message)
-    
-    Raises:
-        ValidationError: If forbidden characters are found
-    """
-    if not value:
-        return value
-    
-    # Pattern for forbidden special characters
-    forbidden_chars_pattern = r'[*(){}@#$%^&\[\]=+\\|;:\'",<>?/~`]'
-    found_chars = re.findall(forbidden_chars_pattern, value)
-    
-    if found_chars:
-        unique_chars = ', '.join(set(found_chars))
-        raise ValidationError(
-            f"Le champ '{field_name}' contient des caractères spéciaux non autorisés : {unique_chars}"
-        )
-    
-    return value
 
 
 class RemoveControlSerializer(serializers.Serializer):
@@ -120,14 +116,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         fields = (
             'id', 'first_name', 'last_name', 'email', 'profile_type',
             'organization', 'control', 'is_audited', 'is_inspector', 'access')
-
-    def validate_first_name(self, value):
-        """Validate first name for special characters"""
-        return validate_special_characters(value, 'Prénom')
-
-    def validate_last_name(self, value):
-        """Validate last name for special characters"""
-        return validate_special_characters(value, 'Nom')
 
     def create(self, validated_data):
         if settings.KEYCLOAK_ACTIVE:
@@ -177,7 +165,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             access_type = 'demandeur'
         if profile:
             if settings.KEYCLOAK_ACTIVE:
-                user_id_keycloak = keycloak_admin.get_user_id(user_data['username'])
+                user_id_keycloak = resolve_keycloak_user_id(keycloak_admin, user_data['username'])
                 if user_id_keycloak:
                     # Update keycloak user data if exist
                     try:
@@ -186,15 +174,13 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                             payload={'firstName': user_data.get('first_name'),
                             'lastName': user_data.get('last_name')}
                         )
-                    except KeycloakError as e:
+                    except Exception as e:
                         handle_keycloak_error(e)
                 else:
-                    logger.warning(
-                        "Utilisateur '%s' introuvable dans Keycloak, validation locale appliquée.",
-                        user_data['username']
-                    )
-                    validate_keycloak_name(user_data.get('first_name', ''), 'prénom')
-                    validate_keycloak_name(user_data.get('last_name', ''), 'nom')
+                    raise ValidationError({
+                        'keycloak_error': "Utilisateur introuvable dans Keycloak.",
+                        'error_code': 'keycloak-user-not-found',
+                    })
             profile.user.first_name = user_data.get('first_name')
             profile.user.last_name = user_data.get('last_name')
             profile.organization = profile_data.get('organization')
@@ -216,7 +202,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                         },
                         exist_ok=True
                     )
-                except KeycloakError as e:
+                except Exception as e:
                     handle_keycloak_error(e)
             user = User.objects.create(**user_data)
             profile_data['user'] = user

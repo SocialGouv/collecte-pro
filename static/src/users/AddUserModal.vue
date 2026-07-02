@@ -12,7 +12,6 @@
               {{ msg }}
             </div>
           </div>
-          <div v-else>L'ajout d'utilisateur n'a pas fonctionné. Vous pouvez réessayer.</div>
         </div>
         <div v-if="editingProfileType==='inspector'" class="text-center">
           <h4><span class="fa fa-university mr-2" aria-hidden="true"></span><strong>Équipe d'instruction</strong></h4>
