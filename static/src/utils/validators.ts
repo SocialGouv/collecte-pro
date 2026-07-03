@@ -5,7 +5,7 @@
 /**
  * Special characters that are not allowed in user names
  */
-const FORBIDDEN_SPECIAL_CHARS = /[*(){}@#$%^&€\[\]=+\\|;:'",<>?/~`]/g;
+const FORBIDDEN_SPECIAL_CHARS = /[*(){}@#$%^&€\[\]=+\\|;:'",<>!?/~`]/g;
 
 /**
  * Validates if a string contains forbidden special characters
@@ -23,7 +23,7 @@ export function validateNoSpecialCharacters(value: string): string[] {
   
   if (foundChars) {
     const uniqueChars = [...new Set(foundChars)].join(', ');
-    errors.push(`Les caractères spéciaux suivants ne sont pas autorisés : ${uniqueChars}`);
+    errors.push(` Un ou plusieurs caractères non autorisés ont été détectés : ${uniqueChars}`);
   }
   
   return errors;
