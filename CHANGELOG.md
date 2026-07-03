@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.4.6] - 2026-07-03
+### Modifications
+- CP-223 :  Empêcher la saisie des caractères spéciaux pouvant poser problème dans l’application quand on ajoute un utilisateur
 ## [3.4.5] - 2026-03-30
 ### Modifications
 - CP-218 :  Lien vers le site collecte-pro absent du message envoyé à un nouveau déposant
