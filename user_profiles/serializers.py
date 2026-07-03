@@ -36,6 +36,15 @@ def get_keycloak_field_label(field_name: str | None) -> str | None:
     return None
 
 
+def get_serializer_field_name(field_name: str | None) -> str | None:
+    """Map a Keycloak field name to the serializer field name."""
+    if field_name == 'firstName':
+        return 'first_name'
+    if field_name == 'lastName':
+        return 'last_name'
+    return None
+
+
 def resolve_keycloak_user_id(keycloak_admin: KeycloakAdmin, username_or_email: str) -> str | None:
     """Resolve Keycloak user id, first by username then by email fallback."""
     user_id = keycloak_admin.get_user_id(username_or_email)
@@ -64,9 +73,32 @@ def handle_keycloak_error(e: Exception):
     error_field = None
     try:
         body = json.loads(e.response_body)
+        errors = body.get('errors') or []
+        name_field_errors = {}
+        for error in errors:
+            error_code = error.get('errorMessage') or error.get('error')
+            error_field = error.get('field')
+            if not error_field:
+                params = error.get('params') or []
+                if params:
+                    error_field = params[0]
+
+            if error_code == 'error-person-name-invalid-character':
+                field_label = get_keycloak_field_label(error_field)
+                serializer_field = get_serializer_field_name(error_field)
+                if field_label and serializer_field:
+                    name_field_errors[serializer_field] = [
+                        f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
+                    ]
+
+        if name_field_errors:
+            raise ValidationError(name_field_errors)
+
         error_code = body.get('errorMessage') or body.get('error')
         error_description = body.get('error_description')
         error_field = body.get('field')
+    except ValidationError:
+        raise
     except Exception:
         error_code = getattr(e, 'error_message', None) or str(e)
 
@@ -74,8 +106,13 @@ def handle_keycloak_error(e: Exception):
         message = KEYCLOAK_ERROR_MESSAGES[error_code]
         if error_code == 'error-person-name-invalid-character':
             field_label = get_keycloak_field_label(error_field)
-            if field_label:
-                message = f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
+            serializer_field = get_serializer_field_name(error_field)
+            if field_label and serializer_field:
+                raise ValidationError({
+                    serializer_field: [
+                        f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
+                    ]
+                })
     elif error_description:
         message = error_description
     else:
