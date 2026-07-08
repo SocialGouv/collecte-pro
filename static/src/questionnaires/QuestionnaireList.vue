@@ -650,6 +650,8 @@ export default defineComponent({
           }),
       )
 
+      files = files.filter((file) => !file.is_deleted)
+
       const zipFilename = this.effectiveControl.reference_code + '.zip'
       const zip = new JSZip()
       let cnt = 0
