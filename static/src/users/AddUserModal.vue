@@ -118,7 +118,7 @@
           <div class="form-fieldset">
             <p class="form-label">Email : {{ formData.email}}</p>
           </div>
-          <div v-if="foundUser" class="form-fieldset">
+          <div v-if="foundUser && !errors.first_name && !errors.last_name" class="form-fieldset">
             <p class="form-label">Prénom : {{ formData.first_name}}</p>
             <p class="form-label">Nom : {{ formData.last_name}}</p>
           </div>
