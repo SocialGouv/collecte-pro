@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [3.4.8] - 2026-07-10
+### Modifications
+- CP-224 :  Téléchargement en masse via la fonction « Export ZIP » ne fonctionne plus
 ## [3.4.7] - 2026-07-08
 ### Modifications
 - CP-223 :  Empêcher la saisie des caractères spéciaux pouvant poser problème dans l’application quand on ajoute un utilisateur (cas d'un demandeur ou d'un répondant déjà existant avec des caractères spéciaux non autorisés)

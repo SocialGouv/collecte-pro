@@ -419,6 +419,7 @@ export default defineComponent({
     const pickFilesFiltered = () => pickFiles().filter((file: any) => filterByDate(file))
 
     const zipFiles = (files: any[]) => {
+      const exportFiles = files.filter((file: any) => !file?.is_deleted && file?._id !== 'fileCorbeille')
       const zip = new JSZip()
       let cnt = 0
       const zipFilename = props.control.reference_code + '.zip'
@@ -445,7 +446,11 @@ export default defineComponent({
         return { questionnaireId, themeId, filename }
       }
       
-      files.forEach((file) => {
+      if (exportFiles.length === 0) {
+        return
+      }
+
+      exportFiles.forEach((file) => {
         const url = window.location.origin + file.url
         JSZipUtils.getBinaryContent(url, (err: any, data: any) => {
           if (err) throw err
@@ -455,7 +460,7 @@ export default defineComponent({
             .file(formatted.filename, data, { binary: true })
 
           cnt++
-          if (cnt === files.length) {
+          if (cnt === exportFiles.length) {
             zip.generateAsync({ type: 'blob' }).then((content) => saveAs(content, zipFilename))
           }
         })

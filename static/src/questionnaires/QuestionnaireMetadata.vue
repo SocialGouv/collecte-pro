@@ -147,11 +147,12 @@ export default defineComponent({
         return { questionnaireId, themeId, filename }
       }
 
+      const exportFiles = files.filter(file => !file.is_deleted)
       let cnt = 0
       const zipFilename = props.control.reference_code + '.zip'
-      if (files.length === 0) return
+      if (exportFiles.length === 0) return
 
-      files.forEach(file => {
+      exportFiles.forEach(file => {
         const url = window.location.origin + file.url
         JSZipUtils.getBinaryContent(url, (err: any, data: any) => {
           if (err) throw err
@@ -161,7 +162,7 @@ export default defineComponent({
             ?.file(formatted.filename, data, { binary: true })
 
           cnt++
-          if (cnt === files.length) zip.generateAsync({ type: 'blob' }).then(content => saveAs(content, zipFilename))
+          if (cnt === exportFiles.length) zip.generateAsync({ type: 'blob' }).then(content => saveAs(content, zipFilename))
         })
       })
     }

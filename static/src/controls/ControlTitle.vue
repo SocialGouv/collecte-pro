@@ -568,6 +568,8 @@ export default defineComponent({
       }
     }
 
+    files = files.filter(file => !file.is_deleted);
+
     const zipFilename = (this.localControl || this.control).reference_code + '.zip';
     const zip = new JSZip();
     let cnt = 0;
