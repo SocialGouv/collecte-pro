@@ -14,7 +14,12 @@ from utils.email import send_email
 def create_questionnaire_path(instance, **kwargs):
     """
     Create the questionnaire folder after the API's save.
+
+    This is only relevant for local filesystem storage : S3 (and other object storage
+    backends) have no real concept of directories, so there is nothing to pre-create there.
     """
+    if settings.USE_S3:
+        return
     questionnaire = instance
     relative_path = questionnaire_path(questionnaire)
     absolute_path = os.path.join(settings.MEDIA_ROOT, relative_path)

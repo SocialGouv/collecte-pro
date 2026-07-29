@@ -12,7 +12,6 @@ from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
 
-from django.http import HttpResponse
 from django.http import FileResponse
 import mimetypes
 from actstream import action
@@ -347,18 +346,18 @@ class SendFileMixin(SingleObjectMixin):
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
 
-        content_type, encoding = mimetypes.guess_type(obj.file.path)
+        filename = os.path.basename(obj.file.name)
+        content_type, encoding = mimetypes.guess_type(filename)
         content_type = content_type or 'application/octet-stream'
 
-        with open(obj.file.path, 'rb') as f:
-            file_data = f.read()
-
-        response = HttpResponse(file_data, content_type=content_type)
-
-        filename = os.path.basename(obj.file.path)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
-
-        return response
+        # Read the file through the configured storage backend (local filesystem or S3),
+        # so downloads work the same way regardless of settings.USE_S3.
+        return FileResponse(
+            obj.file.open('rb'),
+            content_type=content_type,
+            as_attachment=True,
+            filename=filename,
+        )
 
     def add_access_log_entry(self, accessed_object):
         verb = f'accessed {self.file_type}'

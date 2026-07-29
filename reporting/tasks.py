@@ -229,7 +229,10 @@ def identify_purgeable_controls(**kwargs):
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM identify_orphanuser(%s::INTERVAL)", [interval_purge_rep_orph])
+            cursor.execute(
+                "SELECT * FROM identify_orphanuser(%s::INTERVAL)",
+                [interval_purge_rep_orph],
+            )
             results_orphans = cursor.fetchall()
 
             if not results_orphans:
@@ -252,6 +255,7 @@ def logical_delete_controls():
 
 @app.task(queue=settings.CELERY_QUEUE)
 def physical_delete_controls():
+    failed_reference_codes = []
 
     try:
         with connection.cursor() as cursor:
@@ -265,10 +269,26 @@ def physical_delete_controls():
 
             for row in results:
                 reference_code = row[0]
-                delete_media_directory(reference_code)
+                if not delete_media_directory(reference_code):
+                    failed_reference_codes.append(reference_code)
 
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la requête -  delete_media_directory : {e}")
+        # We couldn't even enumerate/attempt to delete the media directories, so we must
+        # not proceed to physically delete the corresponding database records.
+        return
+
+    if failed_reference_codes:
+        # Do not physically delete the corresponding database records unless we know their
+        # media files were actually removed : leaving `is_supp_physique = FALSE` in DB lets
+        # the stored procedure retry these controls on the next run instead of losing the
+        # ability to clean up their orphaned files (local or S3).
+        logger.error(
+            "Suppression physique en base annulée pour cette exécution : "
+            f"{len(failed_reference_codes)} espace(s) de dépôt n'ont pas pu être "
+            f"entièrement nettoyé(s) sur le stockage de fichiers : {failed_reference_codes}"
+        )
+        return
 
     try:
         with connection.cursor() as cursor:
@@ -460,6 +480,14 @@ def generate_disk_usage_report_file():
 
 
 def delete_media_directory(reference_code):
+    """
+    Delete every file stored for `reference_code`, on whichever storage backend is
+    configured (local filesystem or S3). Returns True if deletion succeeded (or there was
+    nothing to delete), False if any error occurred.
+    """
+    if settings.USE_S3:
+        return _delete_s3_media_directory(reference_code)
+
     media_root = settings.MEDIA_ROOT
 
     target_path = os.path.abspath(os.path.join(media_root, reference_code))
@@ -472,10 +500,64 @@ def delete_media_directory(reference_code):
         try:
             shutil.rmtree(target_path)
             logger.info(f"Supprimé : {target_path}")
+            return True
         except Exception as e:
             logger.error(f"Erreur pendant la suppression : {e}")
+            return False
     else:
         logger.info(f"Le dossier n'existe pas : {target_path}")
+        return True
+
+
+def _delete_s3_media_directory(reference_code):
+    """
+    Recursively delete every file stored under `reference_code` in the configured
+    S3 (or S3-compatible) bucket, using the default storage backend rather than the
+    local filesystem, since MEDIA_ROOT/os.path have no meaning for object storage.
+
+    Returns True only if every file was actually deleted (or there was nothing to
+    delete), False if any file failed to delete, so a partial deletion is never
+    mistaken for a successful one.
+    """
+    from django.core.files.storage import default_storage
+
+    def _collect_files(path):
+        files_found = []
+        try:
+            subdirs, files = default_storage.listdir(path)
+        except FileNotFoundError:
+            return files_found
+        for filename in files:
+            files_found.append(os.path.join(path, filename))
+        for subdir in subdirs:
+            files_found.extend(_collect_files(os.path.join(path, subdir)))
+        return files_found
+
+    files_to_delete = _collect_files(reference_code)
+
+    if not files_to_delete:
+        logger.info(f"Le dossier n'existe pas ou est vide sur S3 : {reference_code}")
+        return True
+
+    failed_files = []
+    for file_path in files_to_delete:
+        try:
+            default_storage.delete(file_path)
+        except Exception as e:
+            logger.error(f"Erreur pendant la suppression S3 de {file_path} : {e}")
+            failed_files.append(file_path)
+
+    deleted_count = len(files_to_delete) - len(failed_files)
+    if failed_files:
+        logger.error(
+            f"Suppression S3 incomplète pour {reference_code} : "
+            f"{deleted_count}/{len(files_to_delete)} fichier(s) supprimé(s), "
+            f"échec pour {failed_files}"
+        )
+        return False
+
+    logger.info(f"Supprimé sur S3 : {reference_code} ({deleted_count} fichier(s))")
+    return True
 
 
 def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):

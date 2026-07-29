@@ -1,12 +1,9 @@
-import ntpath
-import os
-
+import io
 
 from django.conf import settings
+from django.core.files.base import ContentFile
 
 from docxtpl import DocxTemplate, RichText
-
-from .upload_path import questionnaire_file_path
 
 
 class DocxMixin(object):
@@ -26,21 +23,21 @@ def generate_questionnaire_file(questionnaire):
     """
     doc = DocxTemplate(settings.TEMPLATE_DIR + "/ecc/questionnaire.docx")
     context = {
-        'questionnaire': questionnaire,
-        'description': RichText(questionnaire.description)
+        "questionnaire": questionnaire,
+        "description": RichText(questionnaire.description),
     }
     # Note : autoescape is for HTML-escaping the user-provided questionnaire data, for XSS
     # protection.
     doc.render(context, autoescape=True)
-    filename = f'Questionnaire-{questionnaire.numbering}.docx'
-    # Why do we need both relative and absolte path?
-    # For django's FileField, we need a relative path from the root of the MEDIA_ROOT.
-    # For saving the file via DocxTemplate, we need to absolute path.
-    relative_path = questionnaire_file_path(questionnaire, filename)
-    absolute_path = os.path.join(settings.MEDIA_ROOT, relative_path)
-    file_folder = ntpath.split(absolute_path)[0]
-    if not os.path.exists(file_folder):
-        os.makedirs(file_folder)
-    doc.save(absolute_path)
-    questionnaire.generated_file = relative_path
+    filename = f"Questionnaire-{questionnaire.numbering}.docx"
+    # Save the generated docx in memory, then hand it off to the configured file storage
+    # backend (local filesystem or S3, depending on settings) instead of writing directly
+    # to disk, so the file ends up wherever DEFAULT_FILE_STORAGE / STORAGES["default"] points to.
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    # Delete any previously generated file first.
+    if questionnaire.generated_file:
+        questionnaire.generated_file.delete(save=False)
+    questionnaire.generated_file.save(filename, ContentFile(buffer.read()), save=False)
     questionnaire.save()

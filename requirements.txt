@@ -23,6 +23,7 @@ django-settings-export==1.2.1
 django-soft-delete==0.9.21         
 django-timezone-field==7.2.2       
 djangorestframework==3.18.3        
+django-storages[s3]==1.14.6        
 
 # --- MOZILLA OIDC / KEYCLOAK ---
 mozilla-django-oidc==5.0.2         
