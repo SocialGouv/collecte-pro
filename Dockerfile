@@ -13,4 +13,4 @@ COPY --from=node /app /app
 RUN rm .env
 RUN pip install -r requirements.txt
 
-CMD ["python", "manage.py", "runserver", "0:8080"]
+CMD ["/bin/bash", "-c", "/app/start_container.sh"]
