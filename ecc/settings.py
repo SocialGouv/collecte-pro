@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'django_filters',
     'email_obfuscator',
     'django_softdelete',
+    'storages',
 
     # Project's apps
     'backoffice',
@@ -293,6 +294,45 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 DEFAULT_MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_ROOT = env('MEDIA_ROOT', default=DEFAULT_MEDIA_ROOT)
+
+# File storage : by default files (uploaded questionnaires, responses, generated docx, ...)
+# are saved on the local filesystem, under MEDIA_ROOT. Set USE_S3=True to save them on an
+# S3 (or S3-compatible) bucket instead, using django-storages.
+USE_S3 = env.bool('USE_S3', default=False)
+
+if USE_S3:
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME', default=None)
+    # Custom endpoint URL, useful for S3-compatible providers (Scaleway, OVH, Minio, ...)
+    AWS_S3_ENDPOINT_URL = env('AWS_S3_ENDPOINT_URL', default=None)
+    # Optional custom domain for serving files (e.g. a CDN URL)
+    AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN', default=None)
+    AWS_S3_FILE_OVERWRITE = env.bool('AWS_S3_FILE_OVERWRITE', default=False)
+    AWS_DEFAULT_ACL = env('AWS_DEFAULT_ACL', default=None)
+    AWS_QUERYSTRING_AUTH = env.bool('AWS_QUERYSTRING_AUTH', default=True)
+    # How long the generated signed URLs stay valid, in seconds.
+    AWS_QUERYSTRING_EXPIRE = env.int('AWS_QUERYSTRING_EXPIRE', default=3600)
+    AWS_LOCATION = env('AWS_LOCATION', default='media')
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 SENDFILE_BACKEND = env('SENDFILE_BACKEND', default='sendfile.backends.simple')
 
