@@ -23,7 +23,23 @@ services:
       - type: volume
         source: rustfs_logs
         target: /logs
+  postgres:
+    image: postgres:15.15-alpine
+    container_name: collecte-db
+    ports:
+      - target: 5432
+        published: 5432
+    environment:
+      POSTGRES_DB: ecc
+      POSTGRES_USER: ecc
+      POSTGRES_PASSWORD: ecc
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+    command: ["postgres", "-c", "log_statement=all", "-c", "max_connections=100"]
 
 volumes:
   rustfs_data:
   rustfs_logs:
+  postgres_data:
