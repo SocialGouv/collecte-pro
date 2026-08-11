@@ -337,18 +337,19 @@ class SendFileMixin(SingleObjectMixin):
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
         
-        content_type, encoding = mimetypes.guess_type(obj.file.path)
-        content_type = content_type or 'application/octet-stream'
+        file_url = obj.file.url  # This will get the S3 URL
 
-        with open(obj.file.path, 'rb') as f:
-            file_data = f.read()
+        # Use requests or a similar library to read the file from the URL
+        import requests
+        response = requests.get(file_url)
+        file_data = response.content
 
-        response = HttpResponse(file_data, content_type=content_type)
-        
-        filename = os.path.basename(obj.file.path)
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        content_type = response.headers.get('Content-Type', 'application/octet-stream')
+        filename = os.path.basename(file_url)
+        http_response = HttpResponse(file_data, content_type=content_type)
+        http_response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
-        return response
+        return http_response
 
     def add_access_log_entry(self, accessed_object):
         verb = f'accessed {self.file_type}'
