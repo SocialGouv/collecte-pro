@@ -1,5 +1,6 @@
 import magic
 import os
+import requests
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -336,16 +337,16 @@ class SendFileMixin(SingleObjectMixin):
         # get the object fetched by SingleObjectMixin
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
-        
-        file_url = obj.file.url  # This will get the S3 URL
 
-        # Use requests or a similar library to read the file from the URL
-        import requests
+        # We get the object S3 URL
+        file_url = obj.file.url
+
+        # We download the file
         response = requests.get(file_url)
         file_data = response.content
 
         content_type = response.headers.get('Content-Type', 'application/octet-stream')
-        filename = os.path.basename(file_url)
+        filename = os.path.basename(obj.file.name)
         http_response = HttpResponse(file_data, content_type=content_type)
         http_response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
