@@ -6,6 +6,10 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## [4.0.0] - 2026-09-03
+### Modifications
+- CP-210 : Montée de version Django 4.2 vers 5.2.13 LTS
+- CP-215 : Montée de version Python de 3.11 vers 3.14
 ## [3.4.8] - 2026-07-10
 ### Modifications
 - CP-224 :  Téléchargement en masse via la fonction « Export ZIP » ne fonctionne plus
