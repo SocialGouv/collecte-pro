@@ -52,7 +52,11 @@ services:
       - type: volume
         source: keycloack-data
         target: /opt/keycloak/data
-    command: ["start-dev"]
+      - type: bind
+        source: ./collecte-pro-realm.json
+        target: /opt/keycloak/data/import/collecte-pro-realm.json
+        read_only: true
+    command: ["start-dev", "--import-realm"]
 
 volumes:
   rustfs_data:
