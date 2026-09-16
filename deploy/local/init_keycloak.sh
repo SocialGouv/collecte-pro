@@ -11,7 +11,7 @@
 # It also regenerates the "client_1" client secret and updates it in .env.
 #
 # Requirements: curl, jq
-# Usage: ./init_keycloak.sh
+# Usage: ./deploy/local/init_keycloak.sh
 #
 # Configuration values are fixed below (edit the script to change them).
 
@@ -32,8 +32,9 @@ REALM_MANAGEMENT_CLIENT="realm-management"
 ROLES=(view-users view-clients manage-users query-clients query-users)
 APP_CLIENT_ID="client_1"
 FUNC_ADMIN_ROLES=(inspector admin igas)
-ENV_FILE="$(dirname "$0")/.env"
-ENV_SAMPLE_FILE="$(dirname "$0")/.env.sample"
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ENV_FILE="${REPO_ROOT}/.env"
+ENV_SAMPLE_FILE="${REPO_ROOT}/.env.sample"
 
 for bin in curl jq; do
   if ! command -v "$bin" >/dev/null 2>&1; then
