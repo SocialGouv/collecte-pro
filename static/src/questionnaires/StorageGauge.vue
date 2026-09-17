@@ -1,5 +1,18 @@
 <template>
-  <div class="card storage-gauge">
+  <div v-if="compact" class="storage-gauge storage-gauge-compact">
+    <div class="progress">
+      <div class="progress-bar"
+           :class="colorClass"
+           role="progressbar"
+           :style="{ width: percent + '%' }"
+           :aria-valuenow="percent"
+           aria-valuemin="0"
+           aria-valuemax="100">
+      </div>
+    </div>
+    <small class="text-muted">{{ label }}</small>
+  </div>
+  <div v-else class="card storage-gauge">
     <div class="card-body">
       <div class="form-label">
         Espace utilisé pour le dépôt de fichiers : {{ label }}
@@ -35,6 +48,7 @@ export default defineComponent({
   name: 'StorageGauge',
   props: {
     usedBytes: { type: Number, required: true },
+    compact: { type: Boolean, default: false },
   },
   setup(props) {
     const percent = computed(() => Math.min(100, Math.round((props.usedBytes / QUOTA_BYTES) * 100)))

@@ -59,6 +59,20 @@
     max-width: 7em;
 }
 
+.storage-column {
+    min-width: 9em;
+    max-width: 11em;
+}
+
+.storage-gauge-compact .progress {
+    height: 6px;
+}
+
+.storage-gauge-compact small {
+    display: block;
+    margin-top: 2px;
+}
+
 .editor-column {
     min-width: 9em;
 }
