@@ -41,6 +41,9 @@
           :accessType="accessType">
         </questionnaire-metadata>
 
+        <storage-gauge :used-bytes="usedStorageBytes">
+        </storage-gauge>
+
         <div>
           <theme-box v-for="(theme, themeIndex) in questionnaire.themes"
                      :key="theme.id"
@@ -94,6 +97,7 @@ import QuestionnaireMetadata from './QuestionnaireMetadata'
 import RequestEditorButton from '../editors/RequestEditorButton'
 import ResponseDropzone from '../questions/ResponseDropzone'
 import ResponseFileList from '../questions/ResponseFileList'
+import StorageGauge from './StorageGauge'
 import SuccessBar from '../utils/SuccessBar'
 import ThemeBox from '../themes/ThemeBox'
 import UpdateDateReponseModal from '../questionnaires/UpdateDateReponseModal'
@@ -113,6 +117,7 @@ export default defineComponent({
     RequestEditorButton,
     ResponseDropzone,
     ResponseFileList,
+    StorageGauge,
     SuccessBar,
     ThemeBox,
     UpdateDateReponseModal,
@@ -140,6 +145,20 @@ export default defineComponent({
       return { color: 'green', label: 'Publié' }
     })
 
+    const usedStorageBytes = computed(() => {
+      const q = questionnaire.value
+      if (!q) return 0
+      let total = 0
+      q.themes?.forEach((theme: any) => {
+        theme.questions?.forEach((question: any) => {
+          question.response_files?.forEach((file: any) => {
+            if (file && !file.is_deleted) total += file.size || 0
+          })
+        })
+      })
+      return total
+    })
+
     const getAccessType = async () => {
       try {
         const resp = await axios.get(backendUrls.getAccessToControl(props.controlId))
@@ -161,6 +180,7 @@ export default defineComponent({
       control,
       questionnaire,
       statusTag,
+      usedStorageBytes,
     }
   }
 })

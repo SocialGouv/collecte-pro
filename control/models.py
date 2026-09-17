@@ -444,6 +444,16 @@ class ResponseFile(TimeStampedModel, FileInfoMixin):
         return reverse('send-response-file', args=[self.id])
 
     @property
+    def size(self):
+        """
+        Size of the file in bytes.
+        """
+        try:
+            return self.file.size
+        except (ValueError, OSError):
+            return 0
+
+    @property
     def basename(self):
         """
         Name of file, without path and without name prefix.
