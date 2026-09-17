@@ -21,15 +21,15 @@ logger = get_task_logger(__name__)
 logger.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 
-ACTION_LOG_REPORT_VERB_SENT = 'files report email sent'
-ACTION_LOG_REPORT_VERB_NOT_SENT = 'files report email not sent'
-ACTION_LOG_DUE_VERB_SENT = 'due date report email sent'
-ACTION_LOG_DUE_VERB_NOT_SENT = 'due date report email not sent'
+ACTION_LOG_REPORT_VERB_SENT = "files report email sent"
+ACTION_LOG_REPORT_VERB_NOT_SENT = "files report email not sent"
+ACTION_LOG_DUE_VERB_SENT = "due date report email sent"
+ACTION_LOG_DUE_VERB_NOT_SENT = "due date report email not sent"
 
 
 def get_date_cutoff(control):
@@ -38,7 +38,9 @@ def get_date_cutoff(control):
     - La dernière fois qu'un email a été envoyé
     - ou bien depuis 24h
     """
-    latest_email_sent = control.actor_actions.filter(verb=ACTION_LOG_REPORT_VERB_SENT).first()
+    latest_email_sent = control.actor_actions.filter(
+        verb=ACTION_LOG_REPORT_VERB_SENT
+    ).first()
     if latest_email_sent:
         date_cutoff = latest_email_sent.timestamp
     else:
@@ -48,45 +50,48 @@ def get_date_cutoff(control):
 
 def get_files(control):
     date_cutoff = get_date_cutoff(control)
-    logger.info("Recherche des fichiers téléversés après le {}".format(
-        date_cutoff.strftime("%Y-%m-%d %H:%M:%S")))
+    logger.info(
+        "Recherche des fichiers téléversés après le {}".format(
+            date_cutoff.strftime("%Y-%m-%d %H:%M:%S")
+        )
+    )
     files = ResponseFile.objects.filter(
         question__theme__questionnaire__control=control,
         created__gt=date_cutoff,
     )
-    logger.info(f'Fichiers trouvés : {len(files)}')
+    logger.info(f"Fichiers trouvés : {len(files)}")
     return files
 
 
 @app.task(queue=settings.CELERY_QUEUE)
 def send_files_report():
-    html_template = 'reporting/email/files_report.html'
-    text_template = 'reporting/email/files_report.txt'
+    html_template = "reporting/email/files_report.html"
+    text_template = "reporting/email/files_report.txt"
     for control in Control.objects.all():
-        logger.info(f'Contrôle : {control.id}')
+        logger.info(f"Contrôle : {control.id}")
         if control.depositing_organization:
             subject = control.depositing_organization
         else:
             subject = control.title
-        subject += ' - de nouveaux documents déposés !'
+        subject += " - de nouveaux documents déposés !"
         files = get_files(control)
         if not files:
-            logger.info(f'Pas de nouveau document, arrêt.')
+            logger.info(f"Pas de nouveau document, arrêt.")
             continue
         recipient_list = [
             access.userprofile.user.email
             for access in control.access.all()
-            if access.userprofile.send_files_report==True
+            if access.userprofile.send_files_report == True
         ]
         if not recipient_list:
-            logger.info(f'Pas de destinataire, arrêt.')
+            logger.info(f"Pas de destinataire, arrêt.")
             continue
-        logger.debug(f'Destinataires : {len(recipient_list)}')
+        logger.debug(f"Destinataires : {len(recipient_list)}")
         date_cutoff = get_date_cutoff(control)
         context = {
-            'control': control,
-            'date_cutoff': date_cutoff.strftime("%A %d %B %Y"),
-            'files': files,
+            "control": control,
+            "date_cutoff": date_cutoff.strftime("%A %d %B %Y"),
+            "files": files,
         }
         number_of_sent_email = send_email(
             to=recipient_list,
@@ -99,18 +104,20 @@ def send_files_report():
         number_of_recipients = len(recipient_list)
         if number_of_sent_email != number_of_recipients:
             logger.warning(
-                f'Il y avait {number_of_recipients} destinataires(s), '
-                f'et {number_of_sent_email} email(s) envoyé(s).')
+                f"Il y avait {number_of_recipients} destinataires(s), "
+                f"et {number_of_sent_email} email(s) envoyé(s)."
+            )
         if number_of_sent_email > 0:
-            logger.info(f'Email envoyé pour le contrôle {control.id}')
+            logger.info(f"Email envoyé pour le contrôle {control.id}")
             action.send(sender=control, verb=ACTION_LOG_REPORT_VERB_SENT)
         else:
-            logger.info(f'Aucun email envoyé pour le contrôle {control.id}')
+            logger.info(f"Aucun email envoyé pour le contrôle {control.id}")
             action.send(sender=control, verb=ACTION_LOG_REPORT_VERB_NOT_SENT)
 
         EMAIL_SPACING_TIME_SECONDS = settings.EMAIL_SPACING_TIME_MILLIS / 1000
         logger.info(
-            f'Attente de {EMAIL_SPACING_TIME_SECONDS}s après reporting pour le contrôle {control.id}')
+            f"Attente de {EMAIL_SPACING_TIME_SECONDS}s après reporting pour le contrôle {control.id}"
+        )
         time.sleep(EMAIL_SPACING_TIME_SECONDS)
 
 
@@ -118,7 +125,11 @@ def send_files_report():
 def send_notifs_dates_echeances():
     html_template = "reporting/email/notif_date_echeance.html"
     text_template = "reporting/email/notif_date_echeance.txt"
-    jours_echeance = Parametre.objects.filter(code="JOURS_ECHEANCE").filter(deleted_at__isnull=True).first()
+    jours_echeance = (
+        Parametre.objects.filter(code="JOURS_ECHEANCE")
+        .filter(deleted_at__isnull=True)
+        .first()
+    )
     try:
         jours_echeance = int(jours_echeance.name)
     except:
@@ -164,26 +175,33 @@ def send_notifs_dates_echeances():
                 logger.info(f"Email envoyé pour le questionnaire {questionnaire.id}")
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_SENT)
             else:
-                logger.info(f"Aucun email envoyé pour le questionnaire {questionnaire.id}")
+                logger.info(
+                    f"Aucun email envoyé pour le questionnaire {questionnaire.id}"
+                )
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_NOT_SENT)
 
-        
+
 @app.task(queue=settings.CELERY_QUEUE)
 def identify_purgeable_controls(**kwargs):
-    INTERVAL_PURGE = 'interval_purge'
-    ENVOI_NOTIF_MAIL = 'envoi_notif_mail'
-    INTERVAL_PURGE_REP_ORPH= 'interval_purge_rep_orph'
+    INTERVAL_PURGE = "interval_purge"
+    ENVOI_NOTIF_MAIL = "envoi_notif_mail"
+    INTERVAL_PURGE_REP_ORPH = "interval_purge_rep_orph"
 
     interval_purge_fr = kwargs.get(INTERVAL_PURGE, "").strip()
     envoi_notif_mail_fr = kwargs.get(ENVOI_NOTIF_MAIL, "").strip()
     interval_purge_rep_orph_fr = kwargs.get(INTERVAL_PURGE_REP_ORPH, "").strip()
-    
+
     # Dictionnaires de mapping
     INTERVAL_MAP = {
-        **{f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)},
-        **{f"{i} an" + ("s" if i > 1 else ""): f"{i} year" + ("s" if i > 1 else "") for i in range(1, 6)}
+        **{
+            f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)
+        },
+        **{
+            f"{i} an" + ("s" if i > 1 else ""): f"{i} year" + ("s" if i > 1 else "")
+            for i in range(1, 6)
+        },
     }
-    VAL_ENVOI_NOTIF_MAIL_FR = {'Oui': True, 'Non': False}
+    VAL_ENVOI_NOTIF_MAIL_FR = {"Oui": True, "Non": False}
 
     interval_purge = INTERVAL_MAP.get(interval_purge_fr)
     interval_purge_rep_orph = INTERVAL_MAP.get(interval_purge_rep_orph_fr)
@@ -198,7 +216,7 @@ def identify_purgeable_controls(**kwargs):
 
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('identify_purgeable_controls', [interval_purge])
+            cursor.callproc("identify_purgeable_controls", [interval_purge])
             results_controls = cursor.fetchall()
 
             if not results_controls:
@@ -206,43 +224,46 @@ def identify_purgeable_controls(**kwargs):
             else:
                 if envoi_notif_mail:
                     for mail_inspecteur, espaces_depot, _ in results_controls:
-                        logger.info(f"Envoi mail à : {mail_inspecteur} pour espaces : {espaces_depot}")
-                        send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot)
+                        logger.info(
+                            f"Envoi mail à : {mail_inspecteur} pour espaces : {espaces_depot}"
+                        )
+                        send_mail_identify_purgeable_controls(
+                            mail_inspecteur, espaces_depot
+                        )
 
     except Exception as e:
         logger.error(f"Erreur lors de la procédure identify_purgeable_controls : {e}")
 
-
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM identify_orphanuser(%s::INTERVAL)", [interval_purge_rep_orph])
+            cursor.execute(
+                "SELECT * FROM identify_orphanuser(%s::INTERVAL)",
+                [interval_purge_rep_orph],
+            )
             results_orphans = cursor.fetchall()
 
             if not results_orphans:
                 logger.info("Aucun répondant éligible à la suppression.")
-           
+
     except Exception as e:
         logger.error(f"Erreur lors de la procédure identify_orphanUser : {e}")
 
-   
-    return {
-        "espaces_depot": results_controls,
-        "repondants_orphelins": results_orphans
-    }
+    return {"espaces_depot": results_controls, "repondants_orphelins": results_orphans}
 
-        
+
 @app.task(queue=settings.CELERY_QUEUE)
 def logical_delete_controls():
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('logical_delete_controls')
+            cursor.callproc("logical_delete_controls")
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
 
 
 @app.task(queue=settings.CELERY_QUEUE)
 def physical_delete_controls():
-    
+    failed_reference_codes = []
+
     try:
         with connection.cursor() as cursor:
             cursor.execute("""
@@ -255,22 +276,44 @@ def physical_delete_controls():
 
             for row in results:
                 reference_code = row[0]
-                delete_media_directory(reference_code)
+                if not delete_media_directory(reference_code):
+                    failed_reference_codes.append(reference_code)
 
     except Exception as e:
-        logger.error(f"Erreur lors de l'exécution de la requête -  delete_media_directory : {e}")
-    
+        logger.error(
+            f"Erreur lors de l'exécution de la requête -  delete_media_directory : {e}"
+        )
+        # We couldn't even enumerate/attempt to delete the media directories, so we must
+        # not proceed to physically delete the corresponding database records.
+        return
+
+    if failed_reference_codes:
+        # Do not physically delete the corresponding database records unless we know their
+        # media files were actually removed : leaving `is_supp_physique = FALSE` in DB lets
+        # the stored procedure retry these controls on the next run instead of losing the
+        # ability to clean up their orphaned files (local or S3).
+        logger.error(
+            "Suppression physique en base annulée pour cette exécution : "
+            f"{len(failed_reference_codes)} espace(s) de dépôt n'ont pas pu être "
+            f"entièrement nettoyé(s) sur le stockage de fichiers : {failed_reference_codes}"
+        )
+        return
+
     try:
         with connection.cursor() as cursor:
-            cursor.callproc('physical_delete_controls')
+            cursor.callproc("physical_delete_controls")
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
 
 
 def delete_media_directory(reference_code):
+    """
+    Delete every file stored for `reference_code`, on whichever storage backend is
+    configured (local filesystem or S3). Returns True if deletion succeeded (or there was
+    nothing to delete), False if any error occurred.
+    """
     if settings.USE_S3:
-        _delete_s3_media_directory(reference_code)
-        return
+        return _delete_s3_media_directory(reference_code)
 
     media_root = settings.MEDIA_ROOT
 
@@ -278,16 +321,19 @@ def delete_media_directory(reference_code):
 
     if not target_path.startswith(os.path.abspath(media_root)):
         logger.error(f"Refusé : le chemin cible sort de MEDIA_ROOT. ({target_path})")
-        return 
+        return False
 
     if os.path.exists(target_path) and os.path.isdir(target_path):
         try:
             shutil.rmtree(target_path)
             logger.info(f"Supprimé : {target_path}")
+            return True
         except Exception as e:
             logger.error(f"Erreur pendant la suppression : {e}")
+            return False
     else:
         logger.info(f"Le dossier n'existe pas : {target_path}")
+        return True
 
 
 def _delete_s3_media_directory(reference_code):
@@ -295,6 +341,10 @@ def _delete_s3_media_directory(reference_code):
     Recursively delete every file stored under `reference_code` in the configured
     S3 (or S3-compatible) bucket, using the default storage backend rather than the
     local filesystem, since MEDIA_ROOT/os.path have no meaning for object storage.
+
+    Returns True only if every file was actually deleted (or there was nothing to
+    delete), False if any file failed to delete, so a partial deletion is never
+    mistaken for a successful one.
     """
     from django.core.files.storage import default_storage
 
@@ -314,31 +364,42 @@ def _delete_s3_media_directory(reference_code):
 
     if not files_to_delete:
         logger.info(f"Le dossier n'existe pas ou est vide sur S3 : {reference_code}")
-        return
+        return True
 
+    failed_files = []
     for file_path in files_to_delete:
         try:
             default_storage.delete(file_path)
         except Exception as e:
             logger.error(f"Erreur pendant la suppression S3 de {file_path} : {e}")
+            failed_files.append(file_path)
 
-    logger.info(f"Supprimé sur S3 : {reference_code} ({len(files_to_delete)} fichier(s))")
+    deleted_count = len(files_to_delete) - len(failed_files)
+    if failed_files:
+        logger.error(
+            f"Suppression S3 incomplète pour {reference_code} : "
+            f"{deleted_count}/{len(files_to_delete)} fichier(s) supprimé(s), "
+            f"échec pour {failed_files}"
+        )
+        return False
 
+    logger.info(f"Supprimé sur S3 : {reference_code} ({deleted_count} fichier(s))")
+    return True
 
 
 def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
     html_template = "reporting/email/notif_espace_depot_elig_supp.html"
     text_template = "reporting/email/notif_espace_depot_elig_supp.txt"
-    
+
     subject = "Notification : Espaces de dépôt éligibles à la suppression"
     recipient_list = [mail_inspecteur]
-    
+
     logger.info("Destinataire: %s", recipient_list)
-    
+
     espaces_depot_list = espaces_depot.split(";") if espaces_depot else []
 
     context = {
-        "list_espace_depot": espaces_depot_list, 
+        "list_espace_depot": espaces_depot_list,
     }
 
     send_email(
@@ -348,9 +409,6 @@ def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
         text_template=text_template,
         extra_context=context,
     )
-    
+
     logger.info(f"Email envoyé à {mail_inspecteur} pour les espaces : {espaces_depot}")
 
-
-
-            
