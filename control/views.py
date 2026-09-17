@@ -1,6 +1,5 @@
 import magic
 import os
-import requests
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,7 +12,6 @@ from django.views.generic import DetailView, CreateView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.db.models import Q
 
-from django.http import HttpResponse
 from django.http import FileResponse
 import mimetypes
 from actstream import action
@@ -338,19 +336,18 @@ class SendFileMixin(SingleObjectMixin):
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
 
-        # We get the object S3 URL
-        file_url = obj.file.url
-
-        # We download the file
-        response = requests.get(file_url)
-        file_data = response.content
-
-        content_type = response.headers.get('Content-Type', 'application/octet-stream')
         filename = os.path.basename(obj.file.name)
-        http_response = HttpResponse(file_data, content_type=content_type)
-        http_response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        content_type, encoding = mimetypes.guess_type(filename)
+        content_type = content_type or 'application/octet-stream'
 
-        return http_response
+        # Read the file through the configured storage backend (local filesystem or S3),
+        # so downloads work the same way regardless of settings.USE_S3.
+        return FileResponse(
+            obj.file.open('rb'),
+            content_type=content_type,
+            as_attachment=True,
+            filename=filename,
+        )
 
     def add_access_log_entry(self, accessed_object):
         verb = f'accessed {self.file_type}'
