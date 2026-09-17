@@ -5,8 +5,6 @@ from django.core.files.base import ContentFile
 
 from docxtpl import DocxTemplate, RichText
 
-from .upload_path import questionnaire_file_path
-
 
 class DocxMixin(object):
     """
@@ -25,19 +23,21 @@ def generate_questionnaire_file(questionnaire):
     """
     doc = DocxTemplate(settings.TEMPLATE_DIR + "/ecc/questionnaire.docx")
     context = {
-        'questionnaire': questionnaire,
-        'description': RichText(questionnaire.description)
+        "questionnaire": questionnaire,
+        "description": RichText(questionnaire.description),
     }
     # Note : autoescape is for HTML-escaping the user-provided questionnaire data, for XSS
     # protection.
     doc.render(context, autoescape=True)
-    filename = f'Questionnaire-{questionnaire.numbering}.docx'
-    relative_path = questionnaire_file_path(questionnaire, filename)
+    filename = f"Questionnaire-{questionnaire.numbering}.docx"
     # Save the generated docx in memory, then hand it off to the configured file storage
     # backend (local filesystem or S3, depending on settings) instead of writing directly
     # to disk, so the file ends up wherever DEFAULT_FILE_STORAGE / STORAGES["default"] points to.
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    questionnaire.generated_file.save(relative_path, ContentFile(buffer.read()), save=False)
+    # Delete any previously generated file first.
+    if questionnaire.generated_file:
+        questionnaire.generated_file.delete(save=False)
+    questionnaire.generated_file.save(filename, ContentFile(buffer.read()), save=False)
     questionnaire.save()
