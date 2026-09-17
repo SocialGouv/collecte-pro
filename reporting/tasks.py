@@ -268,6 +268,10 @@ def physical_delete_controls():
 
 
 def delete_media_directory(reference_code):
+    if settings.USE_S3:
+        _delete_s3_media_directory(reference_code)
+        return
+
     media_root = settings.MEDIA_ROOT
 
     target_path = os.path.abspath(os.path.join(media_root, reference_code))
@@ -284,6 +288,41 @@ def delete_media_directory(reference_code):
             logger.error(f"Erreur pendant la suppression : {e}")
     else:
         logger.info(f"Le dossier n'existe pas : {target_path}")
+
+
+def _delete_s3_media_directory(reference_code):
+    """
+    Recursively delete every file stored under `reference_code` in the configured
+    S3 (or S3-compatible) bucket, using the default storage backend rather than the
+    local filesystem, since MEDIA_ROOT/os.path have no meaning for object storage.
+    """
+    from django.core.files.storage import default_storage
+
+    def _collect_files(path):
+        files_found = []
+        try:
+            subdirs, files = default_storage.listdir(path)
+        except FileNotFoundError:
+            return files_found
+        for filename in files:
+            files_found.append(os.path.join(path, filename))
+        for subdir in subdirs:
+            files_found.extend(_collect_files(os.path.join(path, subdir)))
+        return files_found
+
+    files_to_delete = _collect_files(reference_code)
+
+    if not files_to_delete:
+        logger.info(f"Le dossier n'existe pas ou est vide sur S3 : {reference_code}")
+        return
+
+    for file_path in files_to_delete:
+        try:
+            default_storage.delete(file_path)
+        except Exception as e:
+            logger.error(f"Erreur pendant la suppression S3 de {file_path} : {e}")
+
+    logger.info(f"Supprimé sur S3 : {reference_code} ({len(files_to_delete)} fichier(s))")
 
 
 

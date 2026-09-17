@@ -1,6 +1,8 @@
 import os
 import re
 
+from django.core.files.storage import default_storage
+
 
 def questionnaire_path(questionnaire):
     return os.path.join(
@@ -70,7 +72,7 @@ class PathBuilder(object):
     def get_response_file_path(self):
         prefix = self.prefixer.make_file_prefix()
         response_filename = f'{prefix}-{self.filename}'
-        if os.path.exists(os.path.join(self.theme_path, response_filename)):
+        if default_storage.exists(os.path.join(self.theme_path, response_filename)):
             return os.path.join(self.theme_path, response_filename)
         return os.path.join(self.theme_path, self.filename)
 
@@ -78,7 +80,7 @@ class PathBuilder(object):
         prefix = self.prefixer.make_deleted_file_prefix()
         response_filename = f'{prefix}-{self.filename}'
         path = os.path.join(self.questionnaire_path, "CORBEILLE", self.theme_folder)
-        if os.path.exists(os.path.join(path, response_filename)):
+        if default_storage.exists(os.path.join(path, response_filename)):
             return os.path.join(path, response_filename)
         return os.path.join(path, self.filename)
 
