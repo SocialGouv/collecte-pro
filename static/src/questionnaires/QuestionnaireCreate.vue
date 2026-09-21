@@ -521,6 +521,11 @@ export default defineComponent({
       this.saveMessage.isWaitingForMinDisplayTime = false
       this.saveMessage.isSaveHappening = false
     },
+    goHome() {
+      setTimeout(() => {
+        this.window.location.href = backend['control-detail'](this.controlId)
+      }, 500)
+    },
     saveDraft() {
       this.currentQuestionnaire.is_draft = true
       this.displaySaveInProgress()

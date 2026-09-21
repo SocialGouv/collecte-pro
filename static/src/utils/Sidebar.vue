@@ -197,6 +197,15 @@ export default defineComponent({
       this.errorMessage = err.message ? err.message : err
       this.error = err
     },
+    makeQuestionnaireLink(questionnaire) {
+      if (!questionnaire.is_draft) {
+        return backend['questionnaire-detail'](questionnaire.id)
+      }
+      if (questionnaire.editor && questionnaire.editor.id === this.user.id) {
+        return backend['questionnaire-edit'](questionnaire.id)
+      }
+      return backend['questionnaire-detail'](questionnaire.id)
+    },
     async buildMenu() {
       const currentURL = this.window.location.pathname
       const menu = []
@@ -230,7 +239,7 @@ export default defineComponent({
           const children = (control.questionnaires || [])
             .filter(q => accessType === 'demandeur' || !q.is_draft)
             .map(questionnaire => {
-              const item = { href: backend['questionnaire-detail'](questionnaire.id), title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title }
+              const item = { href: this.makeQuestionnaireLink(questionnaire), title: 'Questionnaire ' + questionnaire.numbering + ' - ' + questionnaire.title }
               if (backend.getIdFromViewUrl(currentURL, 'trash') === questionnaire.id) {
                 item.child = [{ href: backend.trash(questionnaire.id), title: 'Corbeille' }]
               }

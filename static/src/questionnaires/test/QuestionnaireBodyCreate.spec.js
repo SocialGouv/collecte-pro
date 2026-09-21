@@ -1,16 +1,19 @@
-import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 
 import QuestionnaireBodyCreate from '../QuestionnaireBodyCreate.vue'
-import Vuex from 'vuex'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
+import { createStore } from 'vuex'
 
 describe('QuestionnaireBodyCreate.vue', () => {
   let store
   let themes
   beforeEach(() => {
+    global.$ = jest.fn(() => ({
+      addClass: jest.fn(),
+      css: jest.fn(),
+      focus: jest.fn(),
+      removeClass: jest.fn(),
+    }))
     themes = [
       {
         id: 777,
@@ -18,15 +21,17 @@ describe('QuestionnaireBodyCreate.vue', () => {
           {
             id: 111,
             order: 0,
+            question_files: [],
           },
           {
             id: 222,
             order: 1,
+            question_files: [],
           },
         ],
       },
     ]
-    store = new Vuex.Store({
+    store = createStore({
       state: {
         currentQuestionnaire: { themes: themes },
       },
@@ -44,11 +49,16 @@ describe('QuestionnaireBodyCreate.vue', () => {
     if (console.error.mockRestore) {
       console.error.mockRestore()
     }
+    delete global.$
   })
 
   test('is a Vue instance', () => {
-    const wrapper = mount(QuestionnaireBodyCreate, { store, localVue })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    const wrapper = mount(QuestionnaireBodyCreate, {
+      global: {
+        plugins: [store],
+      },
+    })
+    expect(wrapper.exists()).toBeTruthy()
     expect(wrapper.vm.themes).toEqual(themes)
   })
 
@@ -57,14 +67,18 @@ describe('QuestionnaireBodyCreate.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(
         QuestionnaireBodyCreate,
-        { store, localVue },
+        {
+          global: {
+            plugins: [store],
+          },
+        },
       )
     })
     test('moving question down changes question order', async () => {
       const question0 = themes[0].questions[0]
       const question1 = themes[0].questions[1]
 
-      wrapper.find('#theme-0-question-0 .move-down-button').trigger('click')
+      await wrapper.find('#theme-0-question-0 .move-down-button').trigger('click')
 
       // Questions are swapped in array
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question1.id)
@@ -78,7 +92,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
       const question0 = themes[0].questions[0]
       const question1 = themes[0].questions[1]
 
-      wrapper.find('#theme-0-question-1 .move-up-button').trigger('click')
+      await wrapper.find('#theme-0-question-1 .move-up-button').trigger('click')
 
       // Questions are swapped in array
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question1.id)
@@ -100,7 +114,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.find('#theme-0-question-0 .move-up-button').classes()).toContain('disabled')
 
       // Click anyway
-      wrapper.find('#theme-0-question-0 .move-up-button').trigger('click')
+      await wrapper.find('#theme-0-question-0 .move-up-button').trigger('click')
 
       // Questions are NOT swapped in array
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question0.id)
@@ -122,7 +136,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.find('#theme-0-question-1 .move-down-button').classes()).toContain('disabled')
 
       // Click anyway
-      wrapper.find('#theme-0-question-1 .move-down-button').trigger('click')
+      await wrapper.find('#theme-0-question-1 .move-down-button').trigger('click')
 
       // Questions are NOT swapped in array
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question0.id)

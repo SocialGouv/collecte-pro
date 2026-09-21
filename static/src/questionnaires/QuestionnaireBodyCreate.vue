@@ -13,7 +13,7 @@
           <p>A cette étape, vous pouvez créer votre questionnaire en ajoutant des thèmes,
           des questions et des annexes à vos questions.</p>
         </info-bar>
-        <form ref="form">
+        <form ref="formRef">
           <div class="card"
                v-for="(theme, themeIndex) in themes"
                :key="'theme-' + theme.id"> <!-- Card for each theme-->
@@ -242,7 +242,7 @@
 
 <script>
 import '../../css/questionnaires.css'
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import ConfirmModal from '../utils/ConfirmModal'
 import InfoBar from '../utils/InfoBar'
@@ -266,6 +266,7 @@ export default {
     const state = reactive({
       errors: [],
     })
+    const formRef = ref(null)
 
     // Remplace mapFields('currentQuestionnaire.themes')
     const themes = computed({
@@ -313,8 +314,7 @@ export default {
     }
 
     const validateForm = () => {
-      const form = document.querySelector('form') // Remplace this.$refs.form
-      return reportValidity(form)
+      return formRef.value ? reportValidity(formRef.value) : true
     }
 
     const moveQuestionUp = (themeIndex, qIndex) => {
@@ -332,6 +332,7 @@ export default {
     return {
       ...state,
       themes,
+      formRef,
       addQuestion,
       addTheme,
       deleteQuestion,

@@ -1,20 +1,17 @@
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
 
 import axios from 'axios'
 import RequestEditorButton from '../RequestEditorButton'
-import Vuex from 'vuex'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
+import { createStore } from 'vuex'
 jest.mock('axios')
 
 describe('RequestEditorButton.vue', () => {
   let store
   const user = { id: 123 }
   beforeEach(() => {
-    store = new Vuex.Store({
+    store = createStore({
       state: {
         sessionUser: user,
       },
@@ -33,13 +30,14 @@ describe('RequestEditorButton.vue', () => {
     }
     const wrapper = shallowMount(RequestEditorButton,
       {
-        store,
-        localVue,
-        propsData: {
+        global: {
+          plugins: [store],
+        },
+        props: {
           questionnaire: questionnaire,
         },
       })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.exists()).toBeTruthy()
   })
 
   describe('if questionnaire has no editor', () => {
@@ -59,9 +57,10 @@ describe('RequestEditorButton.vue', () => {
       }
       wrapper = shallowMount(RequestEditorButton,
         {
-          store,
-          localVue,
-          propsData: {
+          global: {
+            plugins: [store],
+          },
+          props: {
             questionnaire: questionnaire,
             window: mockWindow,
           },

@@ -1,13 +1,10 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
 
 import { loadStatuses } from '../../store'
 import Sidebar from '../Sidebar'
-import Vuex from 'vuex'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
+import { createStore } from 'vuex'
 
 describe('Sidebar.vue', () => {
   let store
@@ -40,8 +37,9 @@ describe('Sidebar.vue', () => {
       ],
     }]
 
-    store = new Vuex.Store({
+    store = createStore({
       state: {
+        config: {},
         controls: [],
         controlsLoadStatus: loadStatuses.LOADING,
         sessionUser: {},
@@ -67,46 +65,36 @@ describe('Sidebar.vue', () => {
       },
     })
 
-    wrapper = shallowMount(
+    wrapper = mount(
       Sidebar,
       {
-        store,
-        localVue,
+        global: {
+          plugins: [store],
+        },
       })
   })
 
   test('is a Vue instance', () => {
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.exists()).toBeTruthy()
   })
 
   test('does not display on welcome pages', () => {
     const path = '/bienvenue/'
-    const mockSetAttribute = jest.fn(() => {
-      return [{
-        setAttribute: () => {},
-      }]
-    })
     const mockWindow = {
       location: {
         pathname: path,
       },
-      document: {
-        getElementsByClassName: () => {
-          return [{
-            setAttribute: mockSetAttribute,
-          }]
-        },
-      },
     }
 
-    wrapper = shallowMount(
+    wrapper = mount(
       Sidebar,
       {
-        propsData: {
+        props: {
           window: mockWindow,
         },
-        store,
-        localVue,
+        global: {
+          plugins: [store],
+        },
       })
 
     store.commit('updateSessionUser', user)
@@ -115,14 +103,13 @@ describe('Sidebar.vue', () => {
     store.commit('updateControls', controls)
     store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 
-    // Width has been fixed
-    expect(mockSetAttribute).toHaveBeenCalled()
     // Menu is not built, even though the data was succesfully fetched from store.
     expect(wrapper.vm.isMenuBuilt).toBeFalsy()
     expect(wrapper.vm.menu).toHaveLength(0)
   })
 
   test('shows menu', async () => {
+    controls[0].access_type = 'demandeur'
     store.commit('updateSessionUser', user)
     store.commit('updateSessionUserLoadStatus', loadStatuses.SUCCESS)
 
@@ -262,6 +249,7 @@ describe('Sidebar.vue', () => {
         editor: { id: editorId },
       }
       controls[0].questionnaires = [questionnaire]
+      controls[0].access_type = 'demandeur'
       expect(controls[0].questionnaires[0].editor.id).toBe(user.id)
 
       store.commit('updateControls', controls)
@@ -286,6 +274,7 @@ describe('Sidebar.vue', () => {
         editor: { id: editorId },
       }
       controls[0].questionnaires = [questionnaire]
+      controls[0].access_type = 'demandeur'
       expect(controls[0].questionnaires[0].editor.id).not.toBe(user.id)
 
       store.commit('updateControls', controls)

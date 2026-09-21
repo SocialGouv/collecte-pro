@@ -85,9 +85,11 @@ export default defineComponent({
 
     return {
       errorMessage,
+      file,
       fileInput,
       handleFileUpload,
       clearError,
+      submitFile,
     }
   },
 })
