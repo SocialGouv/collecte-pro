@@ -48,9 +48,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
 import axios from 'axios'
 import backendUrls from '../utils/backend.js'
+import EventBus from '../events'
 import SwapEditorModal from './SwapEditorModal'
 import SwapEditorSuccessModal from './SwapEditorSuccessModal'
 
@@ -104,16 +105,18 @@ export default defineComponent({
         })
     }
 
+    const showModal = (id) => {
+      questionnaireId.value = id
+      $('#swapEditorModal').modal('show')
+    }
+
     onMounted(() => {
-      const showModal = (id) => {
-        questionnaireId.value = id
-        $('#swapEditorModal').modal('show')
-      }
-      // Lien avec l'événement parent
-      // Assure-toi que ton parent émet 'show-swap-editor-modal'
-      if (typeof window !== 'undefined') {
-        window.$parent?.$on('show-swap-editor-modal', showModal)
-      }
+      // Lien avec l'événement émis par QuestionnaireCreate après sauvegarde.
+      EventBus.$on('show-swap-editor-modal', showModal)
+    })
+
+    onBeforeUnmount(() => {
+      EventBus.$off('show-swap-editor-modal', showModal)
     })
 
     return {

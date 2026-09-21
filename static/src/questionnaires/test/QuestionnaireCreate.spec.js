@@ -2,6 +2,7 @@ import assert from 'assert'
 import axios from 'axios'
 import { mount, shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
+import EventBus from '../../events'
 import QuestionnaireCreate from '../QuestionnaireCreate.vue'
 import { createStore } from 'vuex'
 import { loadStatuses } from '../../store'
@@ -640,6 +641,82 @@ describe('QuestionnaireCreate.vue', () => {
     })
     // Todo : test the navigation : back, next
   })
-  // Todo : test the swapEditor flow
+
+  // Regression test for a bug introduced during the Vue 2 -> 3 migration : SwapEditorButton used
+  // to listen via `window.$parent.$on(...)`, which never actually worked in Vue 3 (instances no
+  // longer have $on/$off, and window has no $parent). The communication now goes through the
+  // shared EventBus instead.
+  describe('swapEditor flow', () => {
+    let wrapper
+    const controlId = 5678
+    const questionnaireId = 999
+
+    beforeEach(() => {
+      const questionnaire = {
+        control: controlId,
+        id: questionnaireId,
+        is_draft: true,
+      }
+      mockLoadedQuestionnaire(controlId, questionnaire)
+      store.commit('updateControls', [{
+        id: controlId,
+        questionnaires: [questionnaire],
+      }])
+      store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+
+      wrapper = shallowMount(
+        QuestionnaireCreateForTest,
+        {
+          props: {
+            controlId: controlId,
+            questionnaireId: questionnaireId,
+            controlHasMultipleInspectors: true,
+          },
+          global: {
+            plugins: [store],
+          },
+        })
+    })
+
+    test('saveDraftAndSwapEditor saves the draft then emits show-swap-editor-modal on the EventBus',
+      async () => {
+        await flushPromises()
+
+        const eventBusListener = jest.fn()
+        EventBus.$on('show-swap-editor-modal', eventBusListener)
+
+        jest.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => true)
+        axios.put.mockImplementation((url, payload) => {
+          return Promise.resolve({ data: payload })
+        })
+
+        wrapper.vm.saveDraftAndSwapEditor()
+        await flushPromises()
+
+        expect(axios.put).toHaveBeenCalledWith(
+          '/api/questionnaire/' + questionnaireId + '/',
+          expect.any(Object))
+        expect(eventBusListener).toHaveBeenCalledWith(questionnaireId)
+
+        EventBus.$off('show-swap-editor-modal', eventBusListener)
+      })
+
+    test('does not emit show-swap-editor-modal if form validation fails', async () => {
+      await flushPromises()
+
+      const eventBusListener = jest.fn()
+      EventBus.$on('show-swap-editor-modal', eventBusListener)
+
+      jest.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => false)
+
+      wrapper.vm.saveDraftAndSwapEditor()
+      await flushPromises()
+
+      expect(axios.put).not.toHaveBeenCalled()
+      expect(eventBusListener).not.toHaveBeenCalled()
+
+      EventBus.$off('show-swap-editor-modal', eventBusListener)
+    })
+  })
   // Todo : test the save button
 })
