@@ -49,7 +49,7 @@ def test_do_not_redirect_logout(client):
     utils.login(client, user=user)
     url = reverse('logout')
 
-    response = client.get(url)
+    response = client.post(url)
 
     # redirected but not to welcome
     assert response.status_code == 302
