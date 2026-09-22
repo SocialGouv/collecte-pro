@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 // Tests for the whole flow of questionnaire creation. These are not unit tests.
 
 import { mount } from '@vue/test-utils'
@@ -12,7 +13,7 @@ import QuestionFileUpload from '../../questions/QuestionFileUpload'
 import { createStore } from 'vuex'
 import flushPromises from 'flush-promises'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const QuestionnaireCreateForTest = {
   ...QuestionnaireCreate,
@@ -35,19 +36,19 @@ describe('Questionnaire creation flow', () => {
 
   beforeEach(() => {
     // Setup the questionnaire creation page.
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
     resetAllWhenMocks()
 
-    global.$ = jest.fn(() => ({
-      addClass: jest.fn(),
-      css: jest.fn(),
-      height: jest.fn(() => 0),
-      modal: jest.fn(),
-      removeClass: jest.fn(),
-      resize: jest.fn(),
-      scroll: jest.fn(),
-      scrollTop: jest.fn(() => 0),
+    global.$ = vi.fn(() => ({
+      addClass: vi.fn(),
+      css: vi.fn(),
+      height: vi.fn(() => 0),
+      modal: vi.fn(),
+      removeClass: vi.fn(),
+      resize: vi.fn(),
+      scroll: vi.fn(),
+      scrollTop: vi.fn(() => 0),
     }))
 
     store = createStore({

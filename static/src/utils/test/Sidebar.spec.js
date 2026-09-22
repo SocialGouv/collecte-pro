@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
@@ -12,8 +13,8 @@ describe('Sidebar.vue', () => {
   let user
   let controls
   beforeEach(() => {
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
 
     user = { id: 123, is_inspector: true, is_audited: false }
     controls = [{

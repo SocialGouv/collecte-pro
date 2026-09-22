@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { mount, shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 
@@ -8,11 +9,11 @@ describe('QuestionnaireBodyCreate.vue', () => {
   let store
   let themes
   beforeEach(() => {
-    global.$ = jest.fn(() => ({
-      addClass: jest.fn(),
-      css: jest.fn(),
-      focus: jest.fn(),
-      removeClass: jest.fn(),
+    global.$ = vi.fn(() => ({
+      addClass: vi.fn(),
+      css: vi.fn(),
+      focus: vi.fn(),
+      removeClass: vi.fn(),
     }))
     themes = [
       {
@@ -104,7 +105,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
 
     test('cannot move first question up', async () => {
       // Disable error logging since we expect it in this test
-      jest.spyOn(console, 'error')
+      vi.spyOn(console, 'error')
       console.error.mockImplementation(() => {})
 
       const question0 = themes[0].questions[0]
@@ -126,7 +127,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
 
     test('cannot move last question down', async () => {
       // Disable error logging since we expect it in this test
-      jest.spyOn(console, 'error')
+      vi.spyOn(console, 'error')
       console.error.mockImplementation(() => {})
 
       const question0 = themes[0].questions[0]

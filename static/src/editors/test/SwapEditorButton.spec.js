@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 
 import EventBus from '../../events'
@@ -8,8 +9,8 @@ describe('SwapEditorButton.vue', () => {
   let mockModal
 
   beforeEach(() => {
-    mockModal = jest.fn()
-    global.$ = jest.fn(() => ({
+    mockModal = vi.fn()
+    global.$ = vi.fn(() => ({
       modal: mockModal,
     }))
 

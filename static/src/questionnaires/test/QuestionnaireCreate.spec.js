@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import assert from 'assert'
 import axios from 'axios'
 import { mount, shallowMount } from '@vue/test-utils'
@@ -9,7 +10,7 @@ import { loadStatuses } from '../../store'
 import testUtils from '../../utils/testUtils'
 import flushPromises from 'flush-promises'
 
-jest.mock('axios')
+vi.mock('axios')
 
 const QuestionnaireCreateForTest = {
   ...QuestionnaireCreate,
@@ -30,20 +31,20 @@ describe('QuestionnaireCreate.vue', () => {
   let jqueryMock
 
   beforeEach(() => {
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
 
     jqueryMock = {
-      addClass: jest.fn(),
-      css: jest.fn(),
-      height: jest.fn(() => 0),
-      modal: jest.fn(),
-      removeClass: jest.fn(),
-      scrollTop: jest.fn(() => 0),
-      scroll: jest.fn(),
-      resize: jest.fn(),
+      addClass: vi.fn(),
+      css: vi.fn(),
+      height: vi.fn(() => 0),
+      modal: vi.fn(),
+      removeClass: vi.fn(),
+      scrollTop: vi.fn(() => 0),
+      scroll: vi.fn(),
+      resize: vi.fn(),
     }
-    global.$ = jest.fn(() => jqueryMock)
+    global.$ = vi.fn(() => jqueryMock)
 
     store = createStore({
       state: {
@@ -113,7 +114,7 @@ describe('QuestionnaireCreate.vue', () => {
 
   test('crashes without a controlId or questionnaireId', () => {
     // Remove error output, since we expect an error. Avoids clutter in test log.
-    jest.spyOn(console, 'error')
+    vi.spyOn(console, 'error')
     console.error.mockImplementation(() => {})
 
     expect(() => {
@@ -267,7 +268,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     describe('displays error', () => {
       test('if cannot get questionnaire from store', async () => {
-        jest.spyOn(console, 'error')
+        vi.spyOn(console, 'error')
         console.error.mockImplementation(() => {})
 
         const questionnaireId = 1234
@@ -309,7 +310,7 @@ describe('QuestionnaireCreate.vue', () => {
       })
 
       test('if questionnaire is not a draft', async () => {
-        jest.spyOn(console, 'error')
+        vi.spyOn(console, 'error')
         console.error.mockImplementation(() => {})
 
         const questionnaireId = 1234
@@ -414,21 +415,21 @@ describe('QuestionnaireCreate.vue', () => {
       // rather than component-level v-if/v-show. Make the jQuery mock actually toggle the
       // "show" class on the target element (like real Bootstrap would), so tests can observe
       // which modal is currently shown, and support `.on(...)` which ModalFlow calls.
-      global.$ = jest.fn((el) => ({
-        on: jest.fn(),
-        modal: jest.fn((action) => {
+      global.$ = vi.fn((el) => ({
+        on: vi.fn(),
+        modal: vi.fn((action) => {
           if (el && el.classList) {
             if (action === 'show') el.classList.add('show')
             else if (action === 'hide') el.classList.remove('show')
           }
         }),
-        addClass: jest.fn(),
-        removeClass: jest.fn(),
-        css: jest.fn(),
-        height: jest.fn(() => 0),
-        scrollTop: jest.fn(() => 0),
-        scroll: jest.fn(),
-        resize: jest.fn(),
+        addClass: vi.fn(),
+        removeClass: vi.fn(),
+        css: vi.fn(),
+        height: vi.fn(() => 0),
+        scrollTop: vi.fn(() => 0),
+        scroll: vi.fn(),
+        resize: vi.fn(),
       }))
 
       // Setup component to load existing questionnaire
@@ -534,7 +535,7 @@ describe('QuestionnaireCreate.vue', () => {
     }, 8000)
 
     test('displays errors when publish api returned errors', async () => {
-      jest.spyOn(console, 'error')
+      vi.spyOn(console, 'error')
       console.error.mockImplementation(() => {})
 
       // Mock axios to return publish error
@@ -584,7 +585,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     test('Saves draft before returning home', async () => {
       // Spy on form validation to make it pass
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
+      vi.spyOn(wrapper.vm, 'validateCurrentForm')
       wrapper.vm.validateCurrentForm.mockImplementation(() => true)
       // Mock axios to return the questionnaire it got in argument
       axios.post.mockImplementation((url, payload) => {
@@ -607,7 +608,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     test('If draft save fails, return home anyway', async () => {
       // Spy on form validation to make it pass
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
+      vi.spyOn(wrapper.vm, 'validateCurrentForm')
       wrapper.vm.validateCurrentForm.mockImplementation(() => true)
       // Mock axios to fail save
       axios.post.mockRejectedValue({})
@@ -628,7 +629,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     test('If form validation fails, don\'t save and don\'t go home', async () => {
       // Spy on form validation to make it fail
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
+      vi.spyOn(wrapper.vm, 'validateCurrentForm')
       wrapper.vm.validateCurrentForm.mockImplementation(() => false)
       await flushPromises()
 
@@ -682,10 +683,10 @@ describe('QuestionnaireCreate.vue', () => {
       async () => {
         await flushPromises()
 
-        const eventBusListener = jest.fn()
+        const eventBusListener = vi.fn()
         EventBus.$on('show-swap-editor-modal', eventBusListener)
 
-        jest.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => true)
+        vi.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => true)
         axios.put.mockImplementation((url, payload) => {
           return Promise.resolve({ data: payload })
         })
@@ -704,10 +705,10 @@ describe('QuestionnaireCreate.vue', () => {
     test('does not emit show-swap-editor-modal if form validation fails', async () => {
       await flushPromises()
 
-      const eventBusListener = jest.fn()
+      const eventBusListener = vi.fn()
       EventBus.$on('show-swap-editor-modal', eventBusListener)
 
-      jest.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => false)
+      vi.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => false)
 
       wrapper.vm.saveDraftAndSwapEditor()
       await flushPromises()

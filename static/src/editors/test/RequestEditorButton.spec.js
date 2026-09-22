@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import { shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
@@ -5,7 +6,7 @@ import flushPromises from 'flush-promises'
 import axios from 'axios'
 import RequestEditorButton from '../RequestEditorButton'
 import { createStore } from 'vuex'
-jest.mock('axios')
+vi.mock('axios')
 
 describe('RequestEditorButton.vue', () => {
   let store
@@ -48,7 +49,7 @@ describe('RequestEditorButton.vue', () => {
       axios.put.mockResolvedValue({})
       mockWindow = {
         location: {
-          assign: jest.fn(() => {}),
+          assign: vi.fn(() => {}),
         },
       }
 
