@@ -46,7 +46,7 @@
     </empty-modal>
 
     <empty-modal ref="waitingModal"
-                 no-close="true">
+                 :no-close="true">
       <div class="d-flex flex-column align-items-center p-8">
         <div class="m-4">
           <!--
@@ -59,7 +59,7 @@
     </empty-modal>
 
     <empty-modal ref="successModal"
-                 no-close="true">
+                 :no-close="true">
       <!--
         This slot should contain the success modal.
       -->

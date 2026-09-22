@@ -2,7 +2,7 @@
 <confirm-modal title="Réorganiser les thèmes du questionnaire"
                icon-class="fa fa-exchange-alt fa-rotate-90"
                confirm-button="Terminer"
-               no-close="true"
+               :no-close="true"
                aria-describedby="reorganize-themes-title"
                @confirm="handleConfirm"
                >
