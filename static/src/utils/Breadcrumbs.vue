@@ -28,7 +28,8 @@ export default defineComponent({
   props: {
     control: {
       type: Object,
-      required: true,
+      required: false,
+      default: null,
     },
   },
   computed: {
