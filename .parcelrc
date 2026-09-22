@@ -3,6 +3,10 @@
   "transformers": {
     "*.vue": [
       "@parcel/transformer-vue"
+    ],
+    "*.{js,mjs,jsx,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
     ]
   }
 }
