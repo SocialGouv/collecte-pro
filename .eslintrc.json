@@ -6,7 +6,7 @@
         "jest/globals": true
     },
     "extends": [
-        "plugin:vue/essential",
+        "plugin:vue/vue3-essential",
         "standard",
         "plugin:jest/recommended",
         "plugin:jest/style"
