@@ -681,7 +681,7 @@ export default defineComponent({
         this.loaderActive.value = false
       }
 
-      files.map((file) => {
+      files.forEach((file) => {
         const url = window.location.origin + file.url
         JSZipUtils.getBinaryContent(url, (err, data) => {
           if (err) throw err

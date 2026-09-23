@@ -403,7 +403,7 @@ export default defineComponent({
         const qId = response.data.id
         const newQ = { ...questionnaire, themes }
 
-        newQ.questionnaire_files.map(qf => {
+        newQ.questionnaire_files.forEach(qf => {
           axios.get(qf.url, { responseType: 'blob' }).then(response => {
             const formData = new FormData()
             formData.append('file', response.data, qf.basename)
@@ -419,12 +419,12 @@ export default defineComponent({
         await getUpdateMethod(qId)(newQ).then(response => {
           const updatedQ = response.data
 
-          oldThemes.map(t => {
-            t.questions.map(q => {
+          oldThemes.forEach(t => {
+            t.questions.forEach(q => {
               const qId = updatedQ.themes.find(updatedT => updatedT.order === t.order)
                 .questions.find(updatedQ => updatedQ.order === q.order).id
 
-              q.question_files.map(qf => {
+              q.question_files.forEach(qf => {
                 axios.get(qf.url, { responseType: 'blob' }).then(response => {
                   const formData = new FormData()
                   formData.append('file', response.data, qf.basename)
@@ -476,7 +476,7 @@ export default defineComponent({
       this.allChecked = !this.allChecked
 
       if (this.allChecked) {
-        this.accessibleQuestionnaires.map(q => {
+        this.accessibleQuestionnaires.forEach(q => {
           this.checkedQuestionnaires.push(q.id)
         })
       }
