@@ -240,7 +240,7 @@ export default defineComponent({ // Remplacement de Vue.extend
     // Les computed methods pour l'emailSubject et emailBody sont conservées
     emailSubject(): string {
       const config = this.config as any;
-      if (config.env_name && config.env_name != '' && !config.env_name.toLowerCase().startsWith('production')) {
+      if (config.env_name && config.env_name !== '' && !config.env_name.toLowerCase().startsWith('production')) {
         return config.env_name + ' - Bienvenue sur collecte-pro';
       }
       return 'Bienvenue sur collecte-pro';

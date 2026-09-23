@@ -426,10 +426,10 @@ export default defineComponent({
         const questionnaireId = `Q${questionnaireNb}`
         let themeId = ''
         let filename = ''
-        if (file.category == 'question_file') {
+        if (file.category === 'question_file') {
           themeId = 'ANNEXES-AUX-QUESTIONS'
           filename = `Q${questionnaireNb}-${file.basename}`
-        } else if (file.category == 'questionnaire_file') {
+        } else if (file.category === 'questionnaire_file') {
           themeId = 'PIECES-JOINTES'
           filename = `Q${questionnaireNb}-${file.basename}`
         } else if (file.is_deleted) {
@@ -467,7 +467,7 @@ export default defineComponent({
     const exportSelected = () => {
       function onlyUnique(value: any, index: number, self: any[]) {
         for (let i = 0; i < self.length; i++) {
-          if (self[i].id == value.id) {
+          if (self[i].id === value.id) {
             return i === index
           }
         }

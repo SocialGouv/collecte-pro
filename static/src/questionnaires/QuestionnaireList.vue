@@ -596,7 +596,7 @@ export default defineComponent({
         const questionnaireId = `Q${questionnaireNb}`
         let themeId = ''
         let filename = ''
-        if (file.category == 'question_file') {
+        if (file.category === 'question_file') {
           themeId = 'ANNEXES-AUX-QUESTIONS'
           filename = `Q${questionnaireNb}-${file.basename}`
         } else if (file.is_deleted) {
@@ -642,7 +642,7 @@ export default defineComponent({
       files.push.apply(
         files,
         this.accessibleQuestionnaires
-          .filter((aq) => questionnaireId == aq.id)
+          .filter((aq) => questionnaireId === aq.id)
           .flatMap((fq) => {
             if (fq.themes) {
               return fq.themes.flatMap((t) => {
@@ -677,7 +677,7 @@ export default defineComponent({
       const zip = new JSZip()
       let cnt = 0
 
-      if (files.length == 0) {
+      if (files.length === 0) {
         this.loaderActive.value = false
       }
 
