@@ -3,6 +3,21 @@ import { mount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
 
+//Mock axios to avoid making real HTTP requests during tests
+vi.mock('axios', () => {
+  const resolved = () => Promise.resolve({ data: [] })
+  return {
+    default: {
+      get: vi.fn(resolved),
+      post: vi.fn(resolved),
+      put: vi.fn(resolved),
+      patch: vi.fn(resolved),
+      delete: vi.fn(resolved),
+      defaults: { xsrfCookieName: '', xsrfHeaderName: '', headers: { common: {} } },
+    },
+  }
+})
+
 import { loadStatuses } from '../../store'
 import Sidebar from '../Sidebar'
 import { createStore } from 'vuex'
@@ -71,6 +86,12 @@ describe('Sidebar.vue', () => {
       {
         global: {
           plugins: [store],
+          stubs: {
+            'router-link': {
+              props: ['to'],
+              template: '<a :href="typeof to === \'string\' ? to : (to && to.path) || \'#\'"><slot /></a>',
+            },
+          },
         },
       })
   })
@@ -95,6 +116,12 @@ describe('Sidebar.vue', () => {
         },
         global: {
           plugins: [store],
+          stubs: {
+            'router-link': {
+              props: ['to'],
+              template: '<a :href="typeof to === \'string\' ? to : (to && to.path) || \'#\'"><slot /></a>',
+            },
+          },
         },
       })
 

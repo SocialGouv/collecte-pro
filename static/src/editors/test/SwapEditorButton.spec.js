@@ -17,6 +17,7 @@ describe('SwapEditorButton.vue', () => {
     wrapper = shallowMount(SwapEditorButton, {
       props: {
         controlId: 5678,
+        initialQuestionnaireId: 1234,
       },
     })
   })

@@ -115,7 +115,7 @@ describe('QuestionnaireCreate.vue', () => {
   test('crashes without a controlId or questionnaireId', () => {
     // Remove error output, since we expect an error. Avoids clutter in test log.
     vi.spyOn(console, 'error')
-    console.error.mockImplementation(() => {})
+    console.error.mockImplementation(() => { })
 
     expect(() => {
       shallowMount(
@@ -269,13 +269,13 @@ describe('QuestionnaireCreate.vue', () => {
     describe('displays error', () => {
       test('if cannot get questionnaire from store', async () => {
         vi.spyOn(console, 'error')
-        console.error.mockImplementation(() => {})
+        console.error.mockImplementation(() => { })
 
         const questionnaireId = 1234
         const controlId = 5678
         const TestQuestionnaireCreate = {
           ...QuestionnaireCreateForTest,
-          mounted() {},
+          mounted() { },
         }
 
         const wrapper = shallowMount(
@@ -311,7 +311,7 @@ describe('QuestionnaireCreate.vue', () => {
 
       test('if questionnaire is not a draft', async () => {
         vi.spyOn(console, 'error')
-        console.error.mockImplementation(() => {})
+        console.error.mockImplementation(() => { })
 
         const questionnaireId = 1234
         const controlId = 5678
@@ -332,7 +332,7 @@ describe('QuestionnaireCreate.vue', () => {
 
         const TestQuestionnaireCreate = {
           ...QuestionnaireCreateForTest,
-          mounted() {},
+          mounted() { },
         }
 
         const wrapper = shallowMount(
@@ -536,7 +536,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     test('displays errors when publish api returned errors', async () => {
       vi.spyOn(console, 'error')
-      console.error.mockImplementation(() => {})
+      console.error.mockImplementation(() => { })
 
       // Mock axios to return publish error
       const error = { error: 'I am not happpyyyy', details: ['stuff', 'more stuff'] }
@@ -607,24 +607,32 @@ describe('QuestionnaireCreate.vue', () => {
     })
 
     test('If draft save fails, return home anyway', async () => {
-      // Spy on form validation to make it pass
-      vi.spyOn(wrapper.vm, 'validateCurrentForm')
-      wrapper.vm.validateCurrentForm.mockImplementation(() => true)
-      // Mock axios to fail save
-      axios.post.mockRejectedValue({})
-      await flushPromises()
+      // The component intentionally logs the failure via console.error; silence it for this
+      // test only so the expected error path doesn't pollute the test output.
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
 
-      wrapper.find('#go-home-button').trigger('click')
-      await flushPromises()
-      // goHome() redirects after a short delay (so the user sees the "loading" state on the
-      // button they clicked), so wait for it here.
-      await new Promise((resolve) => setTimeout(resolve, 600))
+      try {
+        // Spy on form validation to make it pass
+        vi.spyOn(wrapper.vm, 'validateCurrentForm')
+        wrapper.vm.validateCurrentForm.mockImplementation(() => true)
+        // Mock axios to fail save
+        axios.post.mockRejectedValue({})
+        await flushPromises()
 
-      expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
-      expect(axios.post).toHaveBeenCalledWith(
-        '/api/questionnaire/',
-        expect.any(Object))
-      expect(mockWindow.location.href).not.toEqual('')
+        wrapper.find('#go-home-button').trigger('click')
+        await flushPromises()
+        // goHome() redirects after a short delay (so the user sees the "loading" state on the
+        // button they clicked), so wait for it here.
+        await new Promise((resolve) => setTimeout(resolve, 600))
+
+        expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
+        expect(axios.post).toHaveBeenCalledWith(
+          '/api/questionnaire/',
+          expect.any(Object))
+        expect(mockWindow.location.href).not.toEqual('')
+      } finally {
+        consoleErrorSpy.mockRestore()
+      }
     })
 
     test('If form validation fails, don\'t save and don\'t go home', async () => {

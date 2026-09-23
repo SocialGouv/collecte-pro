@@ -59,13 +59,17 @@ export default defineComponent({
   name: 'SwapEditorButton',
   props: {
     controlId: Number,
+    initialQuestionnaireId: {
+      type: [String, Number],
+      default: null,
+    },
   },
   components: {
     SwapEditorModal,
     SwapEditorSuccessModal,
   },
   setup(props, { emit, expose }) {
-    const questionnaireId = ref(undefined)
+    const questionnaireId = ref(props.initialQuestionnaireId)
     const newEditor = ref({})
     const swapEditorModalRef = ref(null)
 
