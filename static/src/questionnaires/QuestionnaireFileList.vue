@@ -43,7 +43,7 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { files, withDelete } = toRefs(props)
+    const { files } = toRefs(props)
     const errorMessage = ref<string | undefined>(undefined)
 
     const clearError = () => {
