@@ -32,6 +32,6 @@
         "no-useless-return": "off",
         "space-before-function-paren": "off",
         "jest/expect-expect": "off",
-        "max-len": ["error", { "code": 100 }]
+        "semi": "off"
     }
 }
