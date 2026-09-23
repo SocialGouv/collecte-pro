@@ -567,12 +567,13 @@ describe('QuestionnaireCreate.vue', () => {
           href: '',
         },
       }
+
+      vi.stubGlobal('location', mockWindow.location)
       wrapper = shallowMount(
         QuestionnaireCreateForTest,
         {
           props: {
             controlId,
-            window: mockWindow,
           },
           global: {
             plugins: [store],
@@ -580,6 +581,10 @@ describe('QuestionnaireCreate.vue', () => {
         })
       store.commit('updateControls', [{ id: controlId }])
       store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
     })
 
     test('Saves draft before returning home', async () => {

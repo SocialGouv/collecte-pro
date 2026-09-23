@@ -179,10 +179,6 @@ export default defineComponent({
     controlHasMultipleInspectors: Boolean,
     questionnaireId: Number,
     questionnaireNumbering: Number,
-    // Pass window dependency for testing
-    window: {
-      default: () => window,
-    },
   },
   data() {
     return {
@@ -523,7 +519,7 @@ export default defineComponent({
     },
     goHome() {
       setTimeout(() => {
-        this.window.location.href = backendUrls['control-detail'](this.controlId)
+        window.location.href = backendUrls['control-detail'](this.controlId)
       }, 500)
     },
     saveDraft() {

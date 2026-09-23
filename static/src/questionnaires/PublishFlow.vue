@@ -144,7 +144,6 @@ export default {
     questionnaire: Object,
     controlId: Number,
     publishFunction: Function,
-    window: { default: () => window },
   },
   setup(props) {
     const store = useStore()
@@ -201,7 +200,7 @@ export default {
 
     const goHome = () => {
       setTimeout(() => {
-        props.window.location.href = backend['control-detail'](props.questionnaire.control)
+        window.location.href = backend['control-detail'](props.questionnaire.control)
       }, 500)
     }
 
