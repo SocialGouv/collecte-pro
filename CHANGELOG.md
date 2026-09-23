@@ -6,6 +6,9 @@ Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), 
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
 ## [En cours]
+## 4.1.0 - 2026-09-23
+### Modifications
+- CP-224 : Ajout d’une gauge pour la visualisation de l’espace de stockage utilisé par les fichiers déposés dans un espace de dépôt
 ## [4.0.0] - 2026-09-03
 ### Modifications
 - CP-210 : Montée de version Django 4.2 vers 5.2.13 LTS
