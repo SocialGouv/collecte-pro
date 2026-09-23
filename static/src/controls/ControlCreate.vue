@@ -291,7 +291,6 @@ export default defineComponent({
                   headers: { 'Content-Type': 'multipart/form-data' },
                 });
               }
-              const updatedQuestionnaire = { ...newQuestionnaire, id: qId };
               const updateResponse = await updateMethod(qId);
               const updatedThemes = updateResponse.data.themes;
               for (const updatedTheme of updatedThemes) {

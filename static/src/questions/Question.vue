@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import EventBus from '../events'
 import '../../css/questions.css'
 

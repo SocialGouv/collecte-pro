@@ -147,18 +147,17 @@
 <script>
 import '../../css/questionnaires.css'
 import axios from 'axios'
-import backend from '../utils/backend'
 import EventBus from '../events'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
 import Breadcrumbs from '../utils/Breadcrumbs'
-import { loadStatuses, useStore } from '../store'
+import { loadStatuses } from '../store'
 import PublishFlow from './PublishFlow'
 import QuestionnaireBodyCreate from './QuestionnaireBodyCreate'
 import QuestionnaireMetadataCreate from './QuestionnaireMetadataCreate'
 import QuestionnairePreview from './QuestionnairePreview'
 import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent } from 'vue'
 import Wizard from '../utils/Wizard'
 import backendUrls from '../utils/backend'
 
@@ -451,8 +450,8 @@ export default defineComponent({
           delete this.currentQuestionnaire.end_date
         }
       }
-      const getCreateMethod = () => axios.post.bind(this, backend.questionnaire())
-      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
+      const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
+      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backendUrls.questionnaire(questionnaireId))
       this.clearErrors()
       cleanPreSave()
       let saveMethod
@@ -524,7 +523,7 @@ export default defineComponent({
     },
     goHome() {
       setTimeout(() => {
-        this.window.location.href = backend['control-detail'](this.controlId)
+        this.window.location.href = backendUrls['control-detail'](this.controlId)
       }, 500)
     },
     saveDraft() {

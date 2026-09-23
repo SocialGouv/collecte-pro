@@ -79,8 +79,6 @@ import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
 
 import backendUrls from '../utils/backend'
-import InfoBar from '../utils/InfoBar.vue'
-import DateFormat from '../utils/DateFormat.js'
 import { fr } from 'date-fns/locale'
 import Datepicker from 'vue3-datepicker'
 import TreeNode from './TreeNode.vue'
@@ -101,7 +99,6 @@ export default defineComponent({
     control: { type: Object, default: () => ({}) },
   },
   components: {
-    InfoBar,
     Datepicker,
     TreeNode,
   },

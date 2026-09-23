@@ -96,7 +96,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         return [];
       }
       const messages: string[] = [];
-      for (const [field, fieldErrors] of Object.entries(this.errors)) {
+      for (const [, fieldErrors] of Object.entries(this.errors)) {
         if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
           fieldErrors.forEach(err => {
             messages.push(err);

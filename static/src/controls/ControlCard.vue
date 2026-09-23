@@ -13,7 +13,6 @@
 
 <script>
 import { defineComponent } from 'vue'
-import ControlCreate from './ControlCreate'
 import ControlTitle from './ControlTitle'
 import QuestionnaireList from '../questionnaires/QuestionnaireList'
 import UserSection from '../users/UserSection'
@@ -32,7 +31,6 @@ export default defineComponent({
     },
   },
   components: {
-    ControlCreate,
     ControlTitle,
     QuestionnaireList,
     UserSection,

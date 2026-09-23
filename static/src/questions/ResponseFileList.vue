@@ -72,7 +72,6 @@ import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
 import SuccessBar from '../utils/SuccessBar'
 import EventBus from '../events'
-import DateFormat from '../utils/DateFormat.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'

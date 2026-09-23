@@ -61,9 +61,6 @@ import backendUrls from '../utils/backend'
 import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
 import { defineComponent } from 'vue'
-// Suppression de: import { mapFields } from 'vuex-map-fields'
-import { mapState, mapMutations } from 'vuex' // mapMutations peut être utile
-// Suppression de: import SwapMixin from '../utils/SwapMixin'
 
 export default defineComponent({
   components: {

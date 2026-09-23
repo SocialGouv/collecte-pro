@@ -7,7 +7,6 @@ import EventBus from '../../events'
 import QuestionnaireCreate from '../QuestionnaireCreate.vue'
 import { createStore } from 'vuex'
 import { loadStatuses } from '../../store'
-import testUtils from '../../utils/testUtils'
 import flushPromises from 'flush-promises'
 
 vi.mock('axios')
