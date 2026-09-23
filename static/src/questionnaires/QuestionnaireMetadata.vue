@@ -82,7 +82,7 @@ export default defineComponent({
   components: { QuestionnaireFileList },
   props: {
     questionnaire: { type: Object, required: true },
-    control: { type: Object, required: true },
+    control: { type: Object, required: false, default: null },
     withTrash: { type: Boolean, default: false },
     accessType: { type: String, default: '' },
   },
@@ -149,6 +149,10 @@ export default defineComponent({
 
       const exportFiles = files.filter(file => !file.is_deleted)
       let cnt = 0
+      if (!props.control) {
+        console.warn('exportQuestionnaire called without a control; aborting zip export.')
+        return
+      }
       const zipFilename = props.control.reference_code + '.zip'
       if (exportFiles.length === 0) return
 

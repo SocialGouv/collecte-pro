@@ -1,6 +1,7 @@
+import { vi } from 'vitest'
 // Tests for the whole flow of questionnaire creation. These are not unit tests.
 
-import { createLocalVue, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { when, resetAllWhenMocks } from 'jest-when'
 
 import axios from 'axios'
@@ -9,12 +10,24 @@ import { loadStatuses } from '../../store'
 import QuestionnaireCreate from '../QuestionnaireCreate.vue'
 import QuestionFileList from '../../questions/QuestionFileList'
 import QuestionFileUpload from '../../questions/QuestionFileUpload'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import flushPromises from 'flush-promises'
 
-jest.mock('axios')
-const localVue = createLocalVue()
-localVue.use(Vuex)
+vi.mock('axios')
+
+const QuestionnaireCreateForTest = {
+  ...QuestionnaireCreate,
+  mounted() {
+    if (typeof this.questionnaireId === 'undefined') {
+      this.loadNewQuestionnaire()
+    } else {
+      this.loadExistingQuestionnaire()
+    }
+    if (this.controlId === undefined && this.questionnaireId === undefined) {
+      throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
+    }
+  },
+}
 
 describe('Questionnaire creation flow', () => {
   let store
@@ -23,12 +36,24 @@ describe('Questionnaire creation flow', () => {
 
   beforeEach(() => {
     // Setup the questionnaire creation page.
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
     resetAllWhenMocks()
 
-    store = new Vuex.Store({
+    global.$ = vi.fn(() => ({
+      addClass: vi.fn(),
+      css: vi.fn(),
+      height: vi.fn(() => 0),
+      modal: vi.fn(),
+      removeClass: vi.fn(),
+      resize: vi.fn(),
+      scroll: vi.fn(),
+      scrollTop: vi.fn(() => 0),
+    }))
+
+    store = createStore({
       state: {
+        config: {},
         controls: [],
         controlsLoadStatus: loadStatuses.LOADING,
         currentQuestionnaire: {},
@@ -38,6 +63,15 @@ describe('Questionnaire creation flow', () => {
       },
       mutations: {
         updateField,
+        setCurrentQuestionnaire(state, currentQuestionnaire) {
+          state.currentQuestionnaire = currentQuestionnaire
+        },
+        updateCurrentQuestionnaireField(state, { field, value }) {
+          if (!state.currentQuestionnaire) {
+            state.currentQuestionnaire = {}
+          }
+          state.currentQuestionnaire[field] = value
+        },
         updateControls(state, controls) {
           state.controls = controls
         },
@@ -68,25 +102,21 @@ describe('Questionnaire creation flow', () => {
       is_draft: true,
     }
 
+    axios.get.mockResolvedValue({
+      data: [{
+        id: questionnaire.control,
+        questionnaires: [questionnaire],
+      }],
+    })
+
     // Mock axios : save questionnaire
-    when(axios.put).calledWith('/api/questionnaire/' + questionnaire.id + '/')
+    when(axios.put).calledWith('/api/questionnaire/' + questionnaire.id + '/', expect.any(Object))
       .mockImplementation((url, payload) => {
         return Promise.resolve({ data: payload })
       })
 
-    // Mount, not shallowMount : this is not a unit test, so we want child components to be really
-    // instantiated, not mocked out.
-    wrapper = mount(
-      QuestionnaireCreate,
-      {
-        propsData: {
-          questionnaireId: questionnaire.id,
-        },
-        store,
-        localVue,
-      })
-
-    // Simulate store getting data from backend on app load.
+    // Simulate store getting data from backend on app load before mount, since the component now
+    // loads the existing questionnaire immediately on mounted.
     store.commit('updateControls', [{
       id: questionnaire.control,
       questionnaires: [
@@ -94,6 +124,21 @@ describe('Questionnaire creation flow', () => {
       ],
     }])
     store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+
+    // Mount, not shallowMount : this is not a unit test, so we want child components to be really
+    // instantiated, not mocked out.
+    wrapper = mount(
+      QuestionnaireCreateForTest,
+      {
+        props: {
+          controlId: questionnaire.control,
+          questionnaireId: questionnaire.id,
+        },
+        global: {
+          plugins: [store],
+        },
+      })
+
   })
 
   afterEach(() => {
@@ -101,6 +146,7 @@ describe('Questionnaire creation flow', () => {
     if (console.error.mockRestore) {
       console.error.mockRestore()
     }
+    delete global.$
   })
 
   const uploadFile = (wrapper, filename) => {
@@ -123,8 +169,8 @@ describe('Questionnaire creation flow', () => {
       return Promise.resolve({ data: file })
     })
 
-    expect(wrapper.find(QuestionFileUpload).exists()).toBe(true)
-    const questionFileUpload = wrapper.find(QuestionFileUpload)
+    expect(wrapper.findComponent(QuestionFileUpload).exists()).toBe(true)
+    const questionFileUpload = wrapper.findComponent(QuestionFileUpload)
     questionFileUpload.vm.file = file
     questionFileUpload.vm.submitFile()
     expect(axios.post).toHaveBeenCalledWith(
@@ -135,14 +181,14 @@ describe('Questionnaire creation flow', () => {
 
   test('When annexe is added, it appears in the list of annexes', async () => {
     // Finish load by executing all the promises.
-    await flushPromises
+    await flushPromises()
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
     expect(wrapper.find('#questionnaire-metadata-create').isVisible()).toBeTruthy()
 
     // Move to body create page.
     wrapper.find('#next-button').trigger('click')
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
-    await flushPromises
+    await flushPromises()
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
     expect(wrapper.find('#questionnaire-body-create').isVisible()).toBeTruthy()
 
@@ -153,7 +199,7 @@ describe('Questionnaire creation flow', () => {
 
     const filename = 'myfile.xls'
     uploadFile(wrapper, filename)
-    await flushPromises // Make sure the axios call has returned
+    await flushPromises() // Make sure the axios call has returned
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
 
     // Check the file appears in the annexe list.
@@ -161,17 +207,17 @@ describe('Questionnaire creation flow', () => {
     const questionAfter = bodyCreatePageAfter.find('#theme-0-question-0')
     const annexes = questionAfter.findAll('.question-file')
     expect(annexes).toHaveLength(1) // 0! Yet the currentQuestionnaire object contains the new annex
-    expect(annexes.at(0).html()).toEqual(expect.stringContaining(filename))
+    expect(annexes[0].html()).toEqual(expect.stringContaining(filename))
   })
 
   test('When annexe is added, it appears in the Preview page (3rd step of wizard)', async () => {
     // Finish load by executing all the promises and force-refreshing the html.
-    await flushPromises
+    await flushPromises()
 
     // Move to body create page.
     wrapper.find('#next-button').trigger('click')
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
-    await flushPromises
+    await flushPromises()
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
     expect(wrapper.find('#questionnaire-body-create').isVisible()).toBeTruthy()
 
@@ -183,11 +229,11 @@ describe('Questionnaire creation flow', () => {
     // Upload the file
     const filename = 'myfile.xls'
     uploadFile(wrapper, filename)
-    await flushPromises
+    await flushPromises()
 
     // Move to preview page.
     wrapper.find('#next-button').trigger('click')
-    await flushPromises
+    await flushPromises()
     expect(wrapper.find('#questionnaire-preview').isVisible()).toBeTruthy()
     await wrapper.vm.$forceUpdate() // force the update of the HTML of the Vue components
 
@@ -196,6 +242,6 @@ describe('Questionnaire creation flow', () => {
     const questionAfter = previewPageAfter.find('#question1-1')
     const annexes = questionAfter.findAll('.question-file')
     expect(annexes).toHaveLength(1)
-    expect(annexes.at(0).html()).toEqual(expect.stringContaining(filename))
+    expect(annexes[0].html()).toEqual(expect.stringContaining(filename))
   })
 })

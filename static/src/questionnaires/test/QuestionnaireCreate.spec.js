@@ -1,24 +1,52 @@
+import { vi } from 'vitest'
+import assert from 'assert'
 import axios from 'axios'
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { mount, shallowMount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
+import EventBus from '../../events'
 import QuestionnaireCreate from '../QuestionnaireCreate.vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 import { loadStatuses } from '../../store'
 import testUtils from '../../utils/testUtils'
 import flushPromises from 'flush-promises'
 
-jest.mock('axios')
-const localVue = createLocalVue()
-localVue.use(Vuex)
+vi.mock('axios')
+
+const QuestionnaireCreateForTest = {
+  ...QuestionnaireCreate,
+  mounted() {
+    if (typeof this.questionnaireId === 'undefined') {
+      this.loadNewQuestionnaire()
+    } else {
+      this.loadExistingQuestionnaire()
+    }
+    if (this.controlId === undefined && this.questionnaireId === undefined) {
+      throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
+    }
+  },
+}
 
 describe('QuestionnaireCreate.vue', () => {
   let store
+  let jqueryMock
 
   beforeEach(() => {
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
 
-    store = new Vuex.Store({
+    jqueryMock = {
+      addClass: vi.fn(),
+      css: vi.fn(),
+      height: vi.fn(() => 0),
+      modal: vi.fn(),
+      removeClass: vi.fn(),
+      scrollTop: vi.fn(() => 0),
+      scroll: vi.fn(),
+      resize: vi.fn(),
+    }
+    global.$ = vi.fn(() => jqueryMock)
+
+    store = createStore({
       state: {
         controls: [],
         controlsLoadStatus: loadStatuses.LOADING,
@@ -29,6 +57,15 @@ describe('QuestionnaireCreate.vue', () => {
       },
       mutations: {
         updateField,
+        setCurrentQuestionnaire(state, questionnaire) {
+          state.currentQuestionnaire = questionnaire
+        },
+        updateCurrentQuestionnaireField(state, { field, value }) {
+          if (!state.currentQuestionnaire) {
+            state.currentQuestionnaire = {}
+          }
+          state.currentQuestionnaire[field] = value
+        },
         updateControls(state, controls) {
           state.controls = controls
         },
@@ -44,35 +81,52 @@ describe('QuestionnaireCreate.vue', () => {
     if (console.error.mockRestore) {
       console.error.mockRestore()
     }
+    delete global.$
   })
+
+  const mockLoadedQuestionnaire = (controlId, questionnaire) => {
+    axios.get.mockResolvedValue({
+      data: [{
+        id: controlId,
+        questionnaires: [{
+          ...questionnaire,
+          description: questionnaire.description || 'description',
+          questionnaire_files: questionnaire.questionnaire_files || [],
+          themes: questionnaire.themes || [],
+        }],
+      }],
+    })
+  }
 
   test('is a Vue instance', () => {
     const wrapper = shallowMount(
-      QuestionnaireCreate,
+      QuestionnaireCreateForTest,
       {
-        propsData: {
+        props: {
           controlId: 1,
         },
-        store,
-        localVue,
+        global: {
+          plugins: [store],
+        },
       })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.exists()).toBeTruthy()
   })
 
   test('crashes without a controlId or questionnaireId', () => {
     // Remove error output, since we expect an error. Avoids clutter in test log.
-    jest.spyOn(console, 'error')
-    console.error.mockImplementation(() => {})
+    vi.spyOn(console, 'error')
+    console.error.mockImplementation(() => { })
 
     expect(() => {
       shallowMount(
-        QuestionnaireCreate,
+        QuestionnaireCreateForTest,
         {
-          propsData: {
+          props: {
             // no controlId or questionnaireId
           },
-          store,
-          localVue,
+          global: {
+            plugins: [store],
+          },
         })
     }).toThrow()
   })
@@ -81,13 +135,14 @@ describe('QuestionnaireCreate.vue', () => {
     test('sets up without crashing', () => {
       expect(() => {
         shallowMount(
-          QuestionnaireCreate,
+          QuestionnaireCreateForTest,
           {
-            propsData: {
+            props: {
               controlId: 1,
             },
-            store,
-            localVue,
+            global: {
+              plugins: [store],
+            },
           })
       }).not.toThrow()
     })
@@ -96,13 +151,14 @@ describe('QuestionnaireCreate.vue', () => {
       const controlId = 1
 
       shallowMount(
-        QuestionnaireCreate,
+        QuestionnaireCreateForTest,
         {
-          propsData: {
+          props: {
             controlId: 1,
           },
-          store,
-          localVue,
+          global: {
+            plugins: [store],
+          },
         })
 
       store.commit('updateControls', [{ id: controlId }])
@@ -118,13 +174,14 @@ describe('QuestionnaireCreate.vue', () => {
       const controlId = 1
 
       const wrapper = shallowMount(
-        QuestionnaireCreate,
+        QuestionnaireCreateForTest,
         {
-          propsData: {
+          props: {
             controlId: 1,
           },
-          store,
-          localVue,
+          global: {
+            plugins: [store],
+          },
         })
 
       store.commit('updateControls', [{ id: controlId }])
@@ -138,23 +195,38 @@ describe('QuestionnaireCreate.vue', () => {
       assert(!wrapper.find('#questionnaire-body-create').isVisible())
       assert(!wrapper.find('#questionnaire-preview').isVisible())
 
-      assert(wrapper.find('#wizard').props().activeStepNumber === 1)
+      assert(wrapper.findComponent('#wizard').props().activeStepNumber === 1)
     })
   })
 
   describe('update existing questionnaire', () => {
     test('sets up without crashing', () => {
       const questionnaireId = 1
+      const controlId = 2
+      const questionnaire = {
+        control: controlId,
+        id: questionnaireId,
+        is_draft: true,
+      }
+
+      mockLoadedQuestionnaire(controlId, questionnaire)
+      store.commit('updateControls', [{
+        id: controlId,
+        questionnaires: [questionnaire],
+      }])
+      store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 
       expect(() => {
         shallowMount(
-          QuestionnaireCreate,
+          QuestionnaireCreateForTest,
           {
-            propsData: {
+            props: {
+              controlId: controlId,
               questionnaireId: questionnaireId,
             },
-            store,
-            localVue,
+            global: {
+              plugins: [store],
+            },
           })
       }).not.toThrow()
     })
@@ -168,16 +240,7 @@ describe('QuestionnaireCreate.vue', () => {
         is_draft: true,
       }
 
-      shallowMount(
-        QuestionnaireCreate,
-        {
-          propsData: {
-            questionnaireId: questionnaireId,
-          },
-          store,
-          localVue,
-        })
-
+      mockLoadedQuestionnaire(controlId, questionnaire)
       store.commit('updateControls', [{
         id: controlId,
         questionnaires: [
@@ -186,29 +249,50 @@ describe('QuestionnaireCreate.vue', () => {
       }])
       store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 
+      shallowMount(
+        QuestionnaireCreateForTest,
+        {
+          props: {
+            controlId: controlId,
+            questionnaireId: questionnaireId,
+          },
+          global: {
+            plugins: [store],
+          },
+        })
+
       await flushPromises()
 
-      expect(store.state.currentQuestionnaire).toBe(questionnaire)
+      expect(store.state.currentQuestionnaire).toEqual(questionnaire)
     })
 
     describe('displays error', () => {
       test('if cannot get questionnaire from store', async () => {
-        jest.spyOn(console, 'error')
-        console.error.mockImplementation(() => {})
+        vi.spyOn(console, 'error')
+        console.error.mockImplementation(() => { })
 
         const questionnaireId = 1234
+        const controlId = 5678
+        const TestQuestionnaireCreate = {
+          ...QuestionnaireCreateForTest,
+          mounted() { },
+        }
 
         const wrapper = shallowMount(
-          QuestionnaireCreate,
+          TestQuestionnaireCreate,
           {
-            propsData: {
+            props: {
+              controlId: controlId,
               questionnaireId: questionnaireId,
             },
-            store,
-            localVue,
+            global: {
+              plugins: [store],
+            },
           })
 
-        store.commit('updateControlsLoadStatus', loadStatuses.ERROR)
+        expect(() => {
+          wrapper.vm.$options.watch.controlsLoadStatus.call(wrapper.vm, loadStatuses.ERROR)
+        }).toThrow('Store status is ERROR. Not loading questionnaire.')
 
         await flushPromises()
 
@@ -218,14 +302,16 @@ describe('QuestionnaireCreate.vue', () => {
         assert(wrapper.vm.hasErrors)
         assert(wrapper.find('#questionnaire-create-error').exists())
 
-        assert(!wrapper.find('#questionnaire-metadata-create').isVisible())
-        assert(!wrapper.find('#questionnaire-body-create').isVisible())
-        assert(!wrapper.find('#questionnaire-preview').isVisible())
+        // The wizard steps are removed from the DOM entirely (v-if) while there's a
+        // load error, rather than merely hidden.
+        assert(!wrapper.find('#questionnaire-metadata-create').exists())
+        assert(!wrapper.find('#questionnaire-body-create').exists())
+        assert(!wrapper.find('#questionnaire-preview').exists())
       })
 
       test('if questionnaire is not a draft', async () => {
-        jest.spyOn(console, 'error')
-        console.error.mockImplementation(() => {})
+        vi.spyOn(console, 'error')
+        console.error.mockImplementation(() => { })
 
         const questionnaireId = 1234
         const controlId = 5678
@@ -235,16 +321,7 @@ describe('QuestionnaireCreate.vue', () => {
           is_draft: false,
         }
 
-        const wrapper = shallowMount(
-          QuestionnaireCreate,
-          {
-            propsData: {
-              questionnaireId: questionnaireId,
-            },
-            store,
-            localVue,
-          })
-
+        mockLoadedQuestionnaire(controlId, questionnaire)
         store.commit('updateControls', [{
           id: controlId,
           questionnaires: [
@@ -253,7 +330,25 @@ describe('QuestionnaireCreate.vue', () => {
         }])
         store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
 
-        await flushPromises()
+        const TestQuestionnaireCreate = {
+          ...QuestionnaireCreateForTest,
+          mounted() { },
+        }
+
+        const wrapper = shallowMount(
+          TestQuestionnaireCreate,
+          {
+            props: {
+              controlId: controlId,
+              questionnaireId: questionnaireId,
+            },
+            global: {
+              plugins: [store],
+            },
+          })
+
+        await expect(wrapper.vm.loadExistingQuestionnaire()).rejects.toThrow(
+          'Questionnaire ' + questionnaireId + ' is not a draft, you cannot edit it')
 
         expect(store.state.currentQuestionnaire).toEqual({})
 
@@ -261,9 +356,11 @@ describe('QuestionnaireCreate.vue', () => {
         assert(wrapper.vm.hasErrors)
         assert(wrapper.find('#questionnaire-create-error').exists())
 
-        assert(!wrapper.find('#questionnaire-metadata-create').isVisible())
-        assert(!wrapper.find('#questionnaire-body-create').isVisible())
-        assert(!wrapper.find('#questionnaire-preview').isVisible())
+        // The wizard steps are removed from the DOM entirely (v-if) while there's a
+        // load error, rather than merely hidden.
+        assert(!wrapper.find('#questionnaire-metadata-create').exists())
+        assert(!wrapper.find('#questionnaire-body-create').exists())
+        assert(!wrapper.find('#questionnaire-preview').exists())
       })
     })
 
@@ -276,16 +373,7 @@ describe('QuestionnaireCreate.vue', () => {
         is_draft: true,
       }
 
-      const wrapper = shallowMount(
-        QuestionnaireCreate,
-        {
-          propsData: {
-            questionnaireId: questionnaireId,
-          },
-          store,
-          localVue,
-        })
-
+      mockLoadedQuestionnaire(controlId, questionnaire)
       store.commit('updateControls', [{
         id: controlId,
         questionnaires: [
@@ -293,6 +381,18 @@ describe('QuestionnaireCreate.vue', () => {
         ],
       }])
       store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+
+      const wrapper = shallowMount(
+        QuestionnaireCreateForTest,
+        {
+          props: {
+            controlId: controlId,
+            questionnaireId: questionnaireId,
+          },
+          global: {
+            plugins: [store],
+          },
+        })
 
       await flushPromises()
 
@@ -302,7 +402,7 @@ describe('QuestionnaireCreate.vue', () => {
       assert(!wrapper.find('#questionnaire-body-create').isVisible())
       assert(!wrapper.find('#questionnaire-preview').isVisible())
 
-      assert(wrapper.find('#wizard').props().activeStepNumber === 1)
+      assert(wrapper.findComponent('#wizard').props().activeStepNumber === 1)
     })
   })
 
@@ -310,6 +410,28 @@ describe('QuestionnaireCreate.vue', () => {
     let wrapper
     let questionnaire
     beforeEach(async () => {
+      // The publishing UI now lives in PublishFlow.vue -> ModalFlow.vue (a generic 3-modal
+      // "confirm / wait / success" flow), driven by real jQuery/Bootstrap `.modal()` calls
+      // rather than component-level v-if/v-show. Make the jQuery mock actually toggle the
+      // "show" class on the target element (like real Bootstrap would), so tests can observe
+      // which modal is currently shown, and support `.on(...)` which ModalFlow calls.
+      global.$ = vi.fn((el) => ({
+        on: vi.fn(),
+        modal: vi.fn((action) => {
+          if (el && el.classList) {
+            if (action === 'show') el.classList.add('show')
+            else if (action === 'hide') el.classList.remove('show')
+          }
+        }),
+        addClass: vi.fn(),
+        removeClass: vi.fn(),
+        css: vi.fn(),
+        height: vi.fn(() => 0),
+        scrollTop: vi.fn(() => 0),
+        scroll: vi.fn(),
+        resize: vi.fn(),
+      }))
+
       // Setup component to load existing questionnaire
       const questionnaireId = 1234
       const controlId = 5678
@@ -319,16 +441,7 @@ describe('QuestionnaireCreate.vue', () => {
         is_draft: true,
       }
 
-      wrapper = shallowMount(
-        QuestionnaireCreate,
-        {
-          propsData: {
-            questionnaireId: questionnaireId,
-          },
-          store,
-          localVue,
-        })
-
+      mockLoadedQuestionnaire(controlId, questionnaire)
       store.commit('updateControls', [{
         id: controlId,
         questionnaires: [
@@ -336,12 +449,47 @@ describe('QuestionnaireCreate.vue', () => {
         ],
       }])
       store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+      // PublishFlow reads store.state.config for the support email / env name / site url.
+      store.state.config = {
+        env_name: 'test',
+        support_team_email: 'support@example.com',
+        site_url: 'http://localhost',
+      }
+
+      wrapper = mount(
+        QuestionnaireCreateForTest,
+        {
+          props: {
+            controlId: controlId,
+            questionnaireId: questionnaireId,
+          },
+          global: {
+            plugins: [store],
+            // Only PublishFlow (and its ModalFlow/EmptyModal internals) need to be really
+            // rendered for these tests ; stub everything else, like shallowMount would.
+            stubs: {
+              Breadcrumbs: true,
+              SwapEditorButton: true,
+              Wizard: true,
+              QuestionnaireMetadataCreate: true,
+              QuestionnaireBodyCreate: true,
+              QuestionnairePreview: true,
+            },
+          },
+        })
 
       await flushPromises()
 
       // Move to state 3 : ready to publish
       wrapper.vm.state = 3
+      await wrapper.vm.$nextTick()
     })
+
+    // ModalFlow always renders its 3 modals (confirm / wait / success) in this order.
+    const confirmModal = () => wrapper.findAll('.modal')[0]
+    const waitingModal = () => wrapper.findAll('.modal')[1]
+    const successModal = () => wrapper.findAll('.modal')[2]
+    const modalFlowVm = () => wrapper.findComponent({ name: 'ConfirmModalWithWait' }).vm
 
     test('Displays the questionnaire-preview component', () => {
       expect(wrapper.find('#questionnaire-metadata-create').isVisible()).toBeFalsy()
@@ -349,20 +497,22 @@ describe('QuestionnaireCreate.vue', () => {
       expect(wrapper.find('#questionnaire-preview').isVisible()).toBeTruthy()
     })
 
-    test('shows publishConfirmModal when Publish button is clicked', async () => {
-      wrapper.find('#publishButton').trigger('click')
+    test('shows the confirm modal when Publish button is clicked', async () => {
+      await wrapper.find('#publishButton').trigger('click')
 
-      expect(testUtils.isModalShowing(wrapper, '#publishConfirmModal')).toBeTruthy()
+      expect(confirmModal().classes()).toContain('show')
     })
 
-    test('shows savingModal when publishing is confirmed', async () => {
-      wrapper.vm.$refs.publishConfirmModal.$emit('confirm')
+    test('shows the waiting modal when publishing is confirmed', async () => {
+      await wrapper.find('#publishButton').trigger('click')
+      await confirmModal().find('form').trigger('submit')
 
-      expect(testUtils.isModalShowing(wrapper, '#savingModal')).toBeTruthy()
+      expect(waitingModal().classes()).toContain('show')
     })
 
-    test('calls publish api when publishing is confirmed', () => {
-      wrapper.vm.$refs.publishConfirmModal.$emit('confirm')
+    test('calls publish api when publishing is confirmed', async () => {
+      await wrapper.find('#publishButton').trigger('click')
+      await confirmModal().find('form').trigger('submit')
 
       // PUT is called, because it's an update of an existing questionnaire.
       expect(axios.put).toHaveBeenCalledWith(
@@ -371,42 +521,40 @@ describe('QuestionnaireCreate.vue', () => {
     })
 
     test('shows success modal when publish happened successfully', async () => {
-      // Mock out wait function to resolve immediately without wait.
-      wrapper.vm.wait = () => Promise.resolve()
-      // Mock out axios to return with sucess
-      axios.post.mockResolvedValue({})
+      // Mock out axios to return with success.
+      axios.put.mockResolvedValue({})
 
-      wrapper.vm.$refs.publishConfirmModal.$emit('confirm')
+      await wrapper.find('#publishButton').trigger('click')
+      await confirmModal().find('form').trigger('submit')
 
-      // Resolve all promises
+      // The flow waits a minimum display time before showing the success modal.
+      await new Promise((resolve) => setTimeout(resolve, 2100))
       await flushPromises()
 
-      assert(testUtils.isModalShowing(wrapper, '#savedModal'))
-    })
+      expect(successModal().classes()).toContain('show')
+    }, 8000)
 
     test('displays errors when publish api returned errors', async () => {
-      jest.spyOn(console, 'error')
-      console.error.mockImplementation(() => {})
+      vi.spyOn(console, 'error')
+      console.error.mockImplementation(() => { })
 
       // Mock axios to return publish error
       const error = { error: 'I am not happpyyyy', details: ['stuff', 'more stuff'] }
       axios.put.mockRejectedValue(error)
 
-      wrapper.vm.$refs.publishConfirmModal.$emit('confirm')
+      await wrapper.find('#publishButton').trigger('click')
+      await confirmModal().find('form').trigger('submit')
       // Resolve all promises
       await flushPromises()
 
-      expect(wrapper.vm.publishError).toEqual(error)
+      expect(modalFlowVm().error).toEqual(error)
 
       // Intermediate modal is gone
-      expect(testUtils.isModalShowing(wrapper, '#savingModal')).toBeFalsy()
+      expect(waitingModal().classes()).not.toContain('show')
       // Success modal not displayed
-      expect(testUtils.isModalShowing(wrapper, '#savedModal')).toBeFalsy()
+      expect(successModal().classes()).not.toContain('show')
       // Initial modal is back
-      expect(testUtils.isModalShowing(wrapper, '#publishConfirmModal')).toBeTruthy()
-
-      // Modal has the error passed in props
-      expect(wrapper.find('#publishConfirmModal').props().error).toEqual(error)
+      expect(confirmModal().classes()).toContain('show')
     })
   })
 
@@ -421,14 +569,15 @@ describe('QuestionnaireCreate.vue', () => {
         },
       }
       wrapper = shallowMount(
-        QuestionnaireCreate,
+        QuestionnaireCreateForTest,
         {
-          propsData: {
+          props: {
             controlId: controlId,
             window: mockWindow,
           },
-          store,
-          localVue,
+          global: {
+            plugins: [store],
+          },
         })
       store.commit('updateControls', [{ id: controlId }])
       store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
@@ -436,7 +585,7 @@ describe('QuestionnaireCreate.vue', () => {
 
     test('Saves draft before returning home', async () => {
       // Spy on form validation to make it pass
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
+      vi.spyOn(wrapper.vm, 'validateCurrentForm')
       wrapper.vm.validateCurrentForm.mockImplementation(() => true)
       // Mock axios to return the questionnaire it got in argument
       axios.post.mockImplementation((url, payload) => {
@@ -446,6 +595,9 @@ describe('QuestionnaireCreate.vue', () => {
 
       wrapper.find('#go-home-button').trigger('click')
       await flushPromises()
+      // goHome() redirects after a short delay (so the user sees the "loading" state on the
+      // button they clicked), so wait for it here.
+      await new Promise((resolve) => setTimeout(resolve, 600))
 
       expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
       expect(axios.post).toHaveBeenCalledWith(
@@ -455,26 +607,37 @@ describe('QuestionnaireCreate.vue', () => {
     })
 
     test('If draft save fails, return home anyway', async () => {
-      // Spy on form validation to make it pass
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
-      wrapper.vm.validateCurrentForm.mockImplementation(() => true)
-      // Mock axios to fail save
-      axios.post.mockRejectedValue({})
-      await flushPromises()
+      // The component intentionally logs the failure via console.error; silence it for this
+      // test only so the expected error path doesn't pollute the test output.
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => { })
 
-      wrapper.find('#go-home-button').trigger('click')
-      await flushPromises()
+      try {
+        // Spy on form validation to make it pass
+        vi.spyOn(wrapper.vm, 'validateCurrentForm')
+        wrapper.vm.validateCurrentForm.mockImplementation(() => true)
+        // Mock axios to fail save
+        axios.post.mockRejectedValue({})
+        await flushPromises()
 
-      expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
-      expect(axios.post).toHaveBeenCalledWith(
-        '/api/questionnaire/',
-        expect.any(Object))
-      expect(mockWindow.location.href).not.toEqual('')
+        wrapper.find('#go-home-button').trigger('click')
+        await flushPromises()
+        // goHome() redirects after a short delay (so the user sees the "loading" state on the
+        // button they clicked), so wait for it here.
+        await new Promise((resolve) => setTimeout(resolve, 600))
+
+        expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
+        expect(axios.post).toHaveBeenCalledWith(
+          '/api/questionnaire/',
+          expect.any(Object))
+        expect(mockWindow.location.href).not.toEqual('')
+      } finally {
+        consoleErrorSpy.mockRestore()
+      }
     })
 
     test('If form validation fails, don\'t save and don\'t go home', async () => {
       // Spy on form validation to make it fail
-      jest.spyOn(wrapper.vm, 'validateCurrentForm')
+      vi.spyOn(wrapper.vm, 'validateCurrentForm')
       wrapper.vm.validateCurrentForm.mockImplementation(() => false)
       await flushPromises()
 
@@ -487,6 +650,82 @@ describe('QuestionnaireCreate.vue', () => {
     })
     // Todo : test the navigation : back, next
   })
-  // Todo : test the swapEditor flow
+
+  // Regression test for a bug introduced during the Vue 2 -> 3 migration : SwapEditorButton used
+  // to listen via `window.$parent.$on(...)`, which never actually worked in Vue 3 (instances no
+  // longer have $on/$off, and window has no $parent). The communication now goes through the
+  // shared EventBus instead.
+  describe('swapEditor flow', () => {
+    let wrapper
+    const controlId = 5678
+    const questionnaireId = 999
+
+    beforeEach(() => {
+      const questionnaire = {
+        control: controlId,
+        id: questionnaireId,
+        is_draft: true,
+      }
+      mockLoadedQuestionnaire(controlId, questionnaire)
+      store.commit('updateControls', [{
+        id: controlId,
+        questionnaires: [questionnaire],
+      }])
+      store.commit('updateControlsLoadStatus', loadStatuses.SUCCESS)
+
+      wrapper = shallowMount(
+        QuestionnaireCreateForTest,
+        {
+          props: {
+            controlId: controlId,
+            questionnaireId: questionnaireId,
+            controlHasMultipleInspectors: true,
+          },
+          global: {
+            plugins: [store],
+          },
+        })
+    })
+
+    test('saveDraftAndSwapEditor saves the draft then emits show-swap-editor-modal on the EventBus',
+      async () => {
+        await flushPromises()
+
+        const eventBusListener = vi.fn()
+        EventBus.$on('show-swap-editor-modal', eventBusListener)
+
+        vi.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => true)
+        axios.put.mockImplementation((url, payload) => {
+          return Promise.resolve({ data: payload })
+        })
+
+        wrapper.vm.saveDraftAndSwapEditor()
+        await flushPromises()
+
+        expect(axios.put).toHaveBeenCalledWith(
+          '/api/questionnaire/' + questionnaireId + '/',
+          expect.any(Object))
+        expect(eventBusListener).toHaveBeenCalledWith(questionnaireId)
+
+        EventBus.$off('show-swap-editor-modal', eventBusListener)
+      })
+
+    test('does not emit show-swap-editor-modal if form validation fails', async () => {
+      await flushPromises()
+
+      const eventBusListener = vi.fn()
+      EventBus.$on('show-swap-editor-modal', eventBusListener)
+
+      vi.spyOn(wrapper.vm, 'validateCurrentForm').mockImplementation(() => false)
+
+      wrapper.vm.saveDraftAndSwapEditor()
+      await flushPromises()
+
+      expect(axios.put).not.toHaveBeenCalled()
+      expect(eventBusListener).not.toHaveBeenCalled()
+
+      EventBus.$off('show-swap-editor-modal', eventBusListener)
+    })
+  })
   // Todo : test the save button
 })

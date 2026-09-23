@@ -148,6 +148,7 @@
 import '../../css/questionnaires.css'
 import axios from 'axios'
 import backend from '../utils/backend'
+import EventBus from '../events'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
 import Breadcrumbs from '../utils/Breadcrumbs'
 import { loadStatuses, useStore } from '../store'
@@ -479,7 +480,7 @@ export default defineComponent({
       }
       this.saveDraft()
         .then(savedQuestionnaire => {
-          this.$emit('show-swap-editor-modal', savedQuestionnaire.id)
+          EventBus.$emit('show-swap-editor-modal', savedQuestionnaire.id)
         })
     },
     validateFormAndSaveDraft() {
@@ -520,6 +521,11 @@ export default defineComponent({
       this.saveMessage.text = 'Erreur lors de la sauvegarde : les modifications ne sont pas enregistrées.'
       this.saveMessage.isWaitingForMinDisplayTime = false
       this.saveMessage.isSaveHappening = false
+    },
+    goHome() {
+      setTimeout(() => {
+        this.window.location.href = backend['control-detail'](this.controlId)
+      }, 500)
     },
     saveDraft() {
       this.currentQuestionnaire.is_draft = true

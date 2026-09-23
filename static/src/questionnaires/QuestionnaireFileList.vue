@@ -34,7 +34,8 @@ export default defineComponent({
   props: {
     files: {
       type: Array,
-      required: true
+      required: false,
+      default: () => []
     },
     withDelete: {
       type: Boolean,

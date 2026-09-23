@@ -1,16 +1,18 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import QuestionnaireMetadataCreate from '../QuestionnaireMetadataCreate.vue'
-import Vuex from 'vuex'
-
-const localVue = createLocalVue()
-localVue.use(Vuex)
+import { createStore } from 'vuex'
 
 describe('QuestionnaireMetadataCreate.vue', () => {
   let store
-  const currentQuestionnaire = { id: 12345 }
+  const currentQuestionnaire = {
+    id: 12345,
+    description: '',
+    questionnaire_files: [],
+    title: '',
+  }
   beforeEach(() => {
-    store = new Vuex.Store({
+    store = createStore({
       state: {
         currentQuestionnaire: currentQuestionnaire,
       },
@@ -19,12 +21,23 @@ describe('QuestionnaireMetadataCreate.vue', () => {
       },
       mutations: {
         updateField,
+        updateCurrentQuestionnaireField(state, { field, value }) {
+          state.currentQuestionnaire[field] = value
+        },
       },
     })
   })
 
   test('is a Vue instance', () => {
-    const wrapper = mount(QuestionnaireMetadataCreate, { store, localVue })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    const wrapper = mount(QuestionnaireMetadataCreate, {
+      props: {
+        questionnaire: currentQuestionnaire,
+        questionnaireNumbering: 1,
+      },
+      global: {
+        plugins: [store],
+      },
+    })
+    expect(wrapper.exists()).toBeTruthy()
   })
 })

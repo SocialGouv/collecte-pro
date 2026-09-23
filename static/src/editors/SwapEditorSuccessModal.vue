@@ -1,5 +1,5 @@
 <template>
-  <empty-modal no-close="true">
+  <empty-modal :no-close="true">
     <div class="modal-header pb-0 border-bottom-0 flex-column align-items-center">
       <span class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></span>
     </div>

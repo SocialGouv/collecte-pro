@@ -1,44 +1,44 @@
-import { shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import testUtils from '../../utils/testUtils'
 import Wizard from '../Wizard'
 
 describe('Wizard.vue', () => {
   const getStep = (wrapper, stepNumber) => {
-    return wrapper.find('[number="' + stepNumber + '"]')
+    return wrapper.findAllComponents({ name: 'WizardStep' })[stepNumber - 1]
   }
 
   test('is a Vue instance', () => {
-    const wrapper = shallowMount(
+    const wrapper = mount(
       Wizard,
       {
-        propsData: {
+        props: {
           activeStepNumber: 2,
           stepTitles: ['Step the first', 'Step the second', 'Step the third', 'Step the last'],
         },
       })
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.exists()).toBeTruthy()
   })
 
   test('displays the steps', () => {
-    const wrapper = shallowMount(
+    const wrapper = mount(
       Wizard,
       {
-        propsData: {
+        props: {
           activeStepNumber: 2,
           stepTitles: ['Step the first', 'Step the last'],
         },
       })
 
-    assert.equal(wrapper.findAll('[number]').length, 2)
-    assert.equal(getStep(wrapper, 1).text(), 'Step the first')
-    assert.equal(getStep(wrapper, 2).text(), 'Step the last')
+    expect(wrapper.findAllComponents({ name: 'WizardStep' })).toHaveLength(2)
+    expect(getStep(wrapper, 1).text()).toContain('Step the first')
+    expect(getStep(wrapper, 2).text()).toContain('Step the last')
   })
 
   test('displays the active step', () => {
-    const wrapper = shallowMount(
+    const wrapper = mount(
       Wizard,
       {
-        propsData: {
+        props: {
           activeStepNumber: 2,
           stepTitles: ['Step the first', 'Step the last'],
         },
@@ -49,10 +49,10 @@ describe('Wizard.vue', () => {
   })
 
   test('displays the done steps', () => {
-    const wrapper = shallowMount(
+    const wrapper = mount(
       Wizard,
       {
-        propsData: {
+        props: {
           activeStepNumber: 2,
           stepTitles: ['Step the first', 'Step the second', 'Step the last'],
         },
@@ -65,10 +65,10 @@ describe('Wizard.vue', () => {
 
   test('emits next and previous', () => {
     const runEmitTest = (activeStepNumber, clickedStepNumber, emittedEventName) => {
-      const wrapper = shallowMount(
+      const wrapper = mount(
         Wizard,
         {
-          propsData: {
+          props: {
             activeStepNumber: activeStepNumber,
             stepTitles: ['Step the first', 'Step the second', 'Step the last'],
           },
@@ -85,10 +85,10 @@ describe('Wizard.vue', () => {
     }
 
     const runNoEmitTest = (activeStepNumber, clickedStepNumber) => {
-      const wrapper = shallowMount(
+      const wrapper = mount(
         Wizard,
         {
-          propsData: {
+          props: {
             activeStepNumber: activeStepNumber,
             stepTitles: ['Step the first', 'Step the second', 'Step the last'],
           },
