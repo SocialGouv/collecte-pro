@@ -42,10 +42,11 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['file-uploaded'],
   components: {
     ErrorBar,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const errorMessage = ref<string | undefined>(undefined)
     const file = ref<File | null>(null)
     const fileInput = ref<HTMLInputElement | null>(null)
@@ -72,7 +73,7 @@ export default defineComponent({
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         const newFile = response.data
-        props.question.question_files.push(newFile)
+        emit('file-uploaded', newFile)
       } catch (error: any) {
         console.error('Error when posting question file', error)
         if (error.response && Array.isArray(error.response.data)) {

@@ -110,6 +110,8 @@ export default defineComponent({
   },
   mounted() {
     EventBus.$on(EVENT_NAME + this.question.id, (files) => {
+      // This EventBus handler keeps it in sync with the trash flow without an extra emit round-trip.
+      // eslint-disable-next-line vue/no-mutating-props
       this.question.response_files = files
     })
   },

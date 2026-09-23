@@ -64,7 +64,7 @@
             </datepicker>
           </div>
           <div class="form-group">
-            <questionnaire-file-upload :questionnaire="questionnaire"></questionnaire-file-upload>
+            <questionnaire-file-upload :questionnaire="questionnaire" @file-uploaded="$emit('file-uploaded', $event)"></questionnaire-file-upload>
             <questionnaire-file-list :files="questionnaire.questionnaire_files" :with-delete="true">
             </questionnaire-file-list>
           </div>
@@ -100,6 +100,7 @@ const QuestionnaireMetadataCreate = defineComponent({
     questionnaireNumbering: Number,
     questionnaire: Object,
   },
+  emits: ['file-uploaded'],
   setup(props) {
     const store = useStore()
     const formRef = ref(null)

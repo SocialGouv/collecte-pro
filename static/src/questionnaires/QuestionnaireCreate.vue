@@ -50,6 +50,7 @@
               ref="questionnaireMetadataCreate"
               :questionnaire-numbering="questionnaireNumbering"
               :questionnaire="currentQuestionnaire"
+              @file-uploaded="onQuestionnaireFileUploaded"
               v-show="state === STATES.START">
       </questionnaire-metadata-create>
       <questionnaire-body-create
@@ -516,6 +517,9 @@ export default defineComponent({
       this.saveMessage.text = 'Erreur lors de la sauvegarde : les modifications ne sont pas enregistrées.'
       this.saveMessage.isWaitingForMinDisplayTime = false
       this.saveMessage.isSaveHappening = false
+    },
+    onQuestionnaireFileUploaded(newFile) {
+      this.currentQuestionnaire.questionnaire_files.push(newFile)
     },
     goHome() {
       setTimeout(() => {

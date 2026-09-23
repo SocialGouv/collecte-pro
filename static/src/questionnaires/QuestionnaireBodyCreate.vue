@@ -190,7 +190,7 @@
                     </confirm-modal>
                   </span>
 
-                  <question-file-upload :question="question"></question-file-upload>
+                  <question-file-upload :question="question" @file-uploaded="(file) => question.question_files.push(file)"></question-file-upload>
                 </div>
                 <div class="card-body">
                   <question-file-list :files="question.question_files" :with-delete="true">

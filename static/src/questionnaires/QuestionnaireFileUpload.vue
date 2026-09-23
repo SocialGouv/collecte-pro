@@ -35,8 +35,9 @@ export default defineComponent({
   props: {
     questionnaire: { type: Object, default: () => ({ questionnaire_files: [] }) },
   },
+  emits: ['file-uploaded'],
   components: { ErrorBar },
-  setup(props) {
+  setup(props, { emit }) {
     const errorMessage = ref<string | undefined>()
     const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -58,7 +59,7 @@ export default defineComponent({
       })
         .then(response => {
           const newFile = response.data
-          props.questionnaire.questionnaire_files.push(newFile)
+          emit('file-uploaded', newFile)
         })
         .catch(error => {
           console.error('Error when posting questionnaire file', error)
