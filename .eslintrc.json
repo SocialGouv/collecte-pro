@@ -32,6 +32,8 @@
         "no-useless-return": "off",
         "space-before-function-paren": "off",
         "jest/expect-expect": "off",
-        "semi": "off"
+        "semi": "off",
+        // Remove this rule to allow the non-breaking whitespace character (U+00A0) in a string template literal.
+        "no-irregular-whitespace": ["error", { "skipTemplates": true }]
     }
 }
