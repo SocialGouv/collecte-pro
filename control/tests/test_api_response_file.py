@@ -189,3 +189,34 @@ def test_inspector_cannot_trash_response_file_if_already_deleted():
 
     assert response.status_code == 403
     assert ResponseFile.objects.get(id=response_file.id).is_deleted
+
+
+########## size (used to feed the storage gauge)
+
+def test_size_returns_the_file_size_in_bytes():
+    response_file = factories.ResponseFileFactory()
+    assert response_file.size == response_file.file.size
+    assert response_file.size > 0
+
+
+def test_size_returns_0_if_file_is_missing_on_disk():
+    response_file = factories.ResponseFileFactory()
+    response_file.file.name = 'this/file/does/not/exist.pdf'
+    response_file.save()
+
+    assert ResponseFile.objects.get(id=response_file.id).size == 0
+
+
+def test_size_is_exposed_by_the_question_serializer():
+    response_file = factories.ResponseFileFactory()
+    question = response_file.question
+    questionnaire = question.theme.questionnaire
+    questionnaire.is_draft = False
+    questionnaire.save()
+    user = utils.make_audited_user(questionnaire.control)
+
+    response = utils.get_resource(client, user, 'question', question.id)
+
+    assert response.status_code == 200
+    [serialized_file] = response.data['response_files']
+    assert serialized_file['size'] == response_file.size
