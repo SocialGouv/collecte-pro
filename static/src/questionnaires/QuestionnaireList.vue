@@ -426,7 +426,7 @@ export default defineComponent({
       try {
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.effectiveControl.id))
         this.localControl = resp.data.filter((obj) => obj.id === this.effectiveControl.id)[0]
-        let questionnaires = this.accessibleQuestionnaires.filter((aq) => aq.has_replies)
+        const questionnaires = this.accessibleQuestionnaires.filter((aq) => aq.has_replies)
         this.hasAnyAnswerValue = questionnaires.length > 0
       } catch (error) {
         console.error('Erreur lors de la requête HTTP :', error)
@@ -542,7 +542,7 @@ export default defineComponent({
 
           getCreateMethod()(newQ).then((response) => {
             const qId = response.data.id
-            newQ = { ...newQ, id: qId, questionnaire_files: curQ.questionnaire_files, themes: themes }
+            newQ = { ...newQ, id: qId, questionnaire_files: curQ.questionnaire_files, themes }
 
             curQ.questionnaire_files.forEach((qf) => {
               axios.get(qf.url, { responseType: 'blob' }).then((response) => {

@@ -157,7 +157,7 @@ export default {
     const config = computed(() => store.state.config)
 
     const emailSubject = computed(() => {
-      if (config.value.env_name && !config.value.env_name.toLowerCase().startsWith("production")) {
+      if (config.value.env_name && !config.value.env_name.toLowerCase().startsWith('production')) {
         return `${config.value.env_name} - Questionnaire publié`
       }
       return 'Questionnaire publié'
@@ -166,7 +166,7 @@ export default {
     const emailHeader = computed(() => {
       const currentControl = controls.value.find(c => c.id === props.questionnaire.control)
       if (!currentControl) return {}
-      
+
       const inspectors = state.users.filter(u => u.profile_type === 'inspector').map(u => u.email).join(';')
       const audited = state.users.filter(u => u.profile_type === 'audited').map(u => u.email).join(';')
       return { inspectors, audited }
@@ -176,7 +176,7 @@ export default {
       const newline = '%0d%0a'
       const currentControl = controls.value.find(c => c.id === props.questionnaire.control)
       if (!currentControl) return ''
-      
+
       const expiryDateString = props.questionnaire.end_date
         ? `${newline}${newline}La date limite de réponse est le ${props.questionnaire.end_date}.`
         : ''
@@ -201,7 +201,7 @@ export default {
 
     const goHome = () => {
       setTimeout(() => {
-        props.window.location.href = backend["control-detail"](props.questionnaire.control)
+        props.window.location.href = backend['control-detail'](props.questionnaire.control)
       }, 500)
     }
 

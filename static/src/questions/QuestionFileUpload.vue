@@ -66,7 +66,7 @@ export default defineComponent({
       const formData = new FormData()
       formData.append('file', file.value)
       formData.append('question', String(props.question.id))
-      
+
       try {
         const response = await axios.post(backendUrls.annexe(), formData, {
           headers: { 'Content-Type': 'multipart/form-data' },

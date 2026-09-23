@@ -34,12 +34,12 @@ export default defineComponent({
   props: {
     files: {
       type: Array,
-      required: true
+      required: true,
     },
     withDelete: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: { ErrorBar },
   setup(props) {
@@ -71,8 +71,8 @@ export default defineComponent({
     return {
       errorMessage,
       clearError,
-      deleteFile
+      deleteFile,
     }
-  }
+  },
 })
 </script>

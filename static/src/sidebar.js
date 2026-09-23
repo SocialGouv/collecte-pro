@@ -2,9 +2,9 @@
 // Remplacement de @babel/polyfill
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
-import './utils/polyfills.js'          // Polyfills éventuels pour le navigateur
-import { createApp, h } from 'vue'       // Vue 3
-import { store, loadStatuses } from './store'       // Store Vuex
+import './utils/polyfills.js' // Polyfills éventuels pour le navigateur
+import { createApp, h } from 'vue' // Vue 3
+import { store, loadStatuses } from './store' // Store Vuex
 import Sidebar from './utils/Sidebar.vue' // Composant Sidebar
 
 // Création de l'application Vue 3
@@ -64,4 +64,3 @@ if (sidebarEl) {
 } else {
   console.error('Sidebar: #sidebar-vm element not found in DOM!')
 }
-

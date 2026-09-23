@@ -14,18 +14,18 @@ const FORBIDDEN_SPECIAL_CHARS = /[*(){}@#$%^&€\[\]=+\\|;:'",<>!?/~`]/g;
  */
 export function validateNoSpecialCharacters(value: string): string[] {
   const errors: string[] = [];
-  
+
   if (!value) {
     return errors;
   }
 
   const foundChars = value.match(FORBIDDEN_SPECIAL_CHARS);
-  
+
   if (foundChars) {
     const uniqueChars = [...new Set(foundChars)].join(', ');
     errors.push(` Un ou plusieurs caractères non autorisés ont été détectés : ${uniqueChars}`);
   }
-  
+
   return errors;
 }
 

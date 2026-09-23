@@ -35,12 +35,12 @@ export default defineComponent({
     files: {
       type: Array,
       required: false,
-      default: () => []
+      default: () => [],
     },
     withDelete: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   setup(props) {
     const { files, withDelete } = toRefs(props)
@@ -72,8 +72,8 @@ export default defineComponent({
       withDelete,
       errorMessage,
       clearError,
-      deleteFile
+      deleteFile,
     }
-  }
+  },
 })
 </script>

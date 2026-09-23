@@ -56,18 +56,18 @@ export default defineComponent({
       axios.post(backendUrls.piecejointe(), formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .then(response => {
-        const newFile = response.data
-        props.questionnaire.questionnaire_files.push(newFile)
-      })
-      .catch(error => {
-        console.error('Error when posting questionnaire file', error)
-        if (error.response && Array.isArray(error.response.data)) {
-          errorMessage.value = error.response.data[0]
-        } else {
-          errorMessage.value = 'La pièce jointe n\'a pu être sauvée.'
-        }
-      })
+        .then(response => {
+          const newFile = response.data
+          props.questionnaire.questionnaire_files.push(newFile)
+        })
+        .catch(error => {
+          console.error('Error when posting questionnaire file', error)
+          if (error.response && Array.isArray(error.response.data)) {
+            errorMessage.value = error.response.data[0]
+          } else {
+            errorMessage.value = 'La pièce jointe n\'a pu être sauvée.'
+          }
+        })
     }
 
     return { errorMessage, fileInput, clearError, handleFileUpload }

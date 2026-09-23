@@ -120,7 +120,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       },
       set(value) {
         this.$store.commit('setEditingUserField', { field: 'first_name', value })
-      }
+      },
     },
     localLastName: {
       get() {
@@ -128,7 +128,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       },
       set(value) {
         this.$store.commit('setEditingUserField', { field: 'last_name', value })
-      }
+      },
     },
   },
   methods: {
@@ -203,7 +203,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         return
       }
 
-      // NOTE: L'objet this.editingUser n'existe plus directement. 
+      // NOTE: L'objet this.editingUser n'existe plus directement.
       // Nous utilisons l'état actuel du store (this.$store.state.editingUser)
       const userToUpdate = this.$store.state.editingUser;
 
@@ -211,7 +211,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         .then(response => {
           this.postResult = response.data
           // Utilisation de l'EventBus déprécié, mais conservé pour l'instant.
-          EventBus.$emit('users-changed', this.postResult) 
+          EventBus.$emit('users-changed', this.postResult)
           this.hideThisModal()
         })
         .catch((error) => {
@@ -219,6 +219,6 @@ export default defineComponent({ // Remplacement de Vue.extend
           this.errors = this.formatApiErrors(error)
         })
     },
-  }
+  },
 })
 </script>

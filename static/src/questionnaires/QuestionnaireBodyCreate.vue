@@ -293,11 +293,11 @@ export default {
       themes.value[themeIndex].questions.splice(qIndex, 1)
       SwapMixin.methods.swapMixin_updateOrderFields(themes.value[themeIndex].questions)
       if (themes.value[themeIndex].questions.length <= 1) {
-        $("#add_question_" + themeIndex).focus()
+        $('#add_question_' + themeIndex).focus()
       } else if (qIndex >= themes.value[themeIndex].questions.length) {
-        $("#delete_question_"+themeIndex+"_"+(qIndex-1)).focus()
+        $('#delete_question_' + themeIndex + '_' + (qIndex - 1)).focus()
       } else {
-        $("#delete_question_"+themeIndex+"_"+(qIndex+1)).focus()
+        $('#delete_question_' + themeIndex + '_' + (qIndex + 1)).focus()
       }
     }
 
@@ -305,11 +305,11 @@ export default {
       themes.value.splice(themeIndex, 1)
       SwapMixin.methods.swapMixin_updateOrderFields(themes.value)
       if (themes.value.length <= 1) {
-        setTimeout(() => { $("#add_theme").focus() }, 300)
+        setTimeout(() => { $('#add_theme').focus() }, 300)
       } else if (themeIndex >= themes.value.length) {
-        setTimeout(() => { $("#delete_theme_"+(themeIndex-1)).focus() }, 300)
+        setTimeout(() => { $('#delete_theme_' + (themeIndex - 1)).focus() }, 300)
       } else {
-        setTimeout(() => { $("#delete_theme_"+themeIndex).focus() }, 300)
+        setTimeout(() => { $('#delete_theme_' + themeIndex).focus() }, 300)
       }
     }
 

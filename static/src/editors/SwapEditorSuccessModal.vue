@@ -24,17 +24,17 @@ export default defineComponent({
   props: {
     questionnaireId: {
       type: [String, Number],
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    EmptyModal
+    EmptyModal,
   },
   methods: {
     goToReadonlyPage() {
       const url = backendUrls['questionnaire-detail'](this.questionnaireId)
       window.location.assign(url)
-    }
-  }
+    },
+  },
 })
 </script>

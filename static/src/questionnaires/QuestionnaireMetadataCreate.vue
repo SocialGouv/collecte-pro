@@ -77,7 +77,6 @@
   </div>
 </template>
 
-
 <script>
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -108,7 +107,7 @@ const QuestionnaireMetadataCreate = defineComponent({
     // Accès direct aux champs du store
     const description = computed({
       get: () => store.state.currentQuestionnaire.description,
-      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'description', value })
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'description', value }),
     })
 
     const end_date = computed({
@@ -123,12 +122,12 @@ const QuestionnaireMetadataCreate = defineComponent({
       set: (value) => {
         // Le datepicker envoie un objet Date, le stocker tel quel
         store.commit('updateCurrentQuestionnaireField', { field: 'end_date', value })
-      }
+      },
     })
 
     const title = computed({
       get: () => store.state.currentQuestionnaire.title,
-      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'title', value })
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'title', value }),
     })
 
     const errors = ref([])

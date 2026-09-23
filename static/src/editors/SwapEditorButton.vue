@@ -91,7 +91,7 @@ export default defineComponent({
         })
         .catch((error) => {
           swapEditorModalRef.value.showError(
-            "Le transfert de droits n'a pas fonctionné. Vous pouvez réessayer. " + error
+            "Le transfert de droits n'a pas fonctionné. Vous pouvez réessayer. " + error,
           )
         })
     }
@@ -104,7 +104,7 @@ export default defineComponent({
         })
         .catch((error) => {
           swapEditorModalRef.value.showError(
-            "Le transfert de droits n'a pas fonctionné. Vous pouvez réessayer. " + error
+            "Le transfert de droits n'a pas fonctionné. Vous pouvez réessayer. " + error,
           )
         })
     }

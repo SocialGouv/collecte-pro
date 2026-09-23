@@ -223,9 +223,9 @@ export default defineComponent({ // Remplacement de Vue.extend
       'editingControl',
       'editingProfileType',
       // Nous récupérons l'objet config complet pour accéder aux sous-champs
-      'config', 
+      'config',
     ]),
-    
+
     // Remplacement des champs imbriqués de mapFields par des getters locaux sur l'objet 'config'
     expected_inspector_email_endings(): string {
       // Accès direct à la sous-propriété de l'état 'config'
@@ -240,7 +240,7 @@ export default defineComponent({ // Remplacement de Vue.extend
     // Les computed methods pour l'emailSubject et emailBody sont conservées
     emailSubject(): string {
       const config = this.config as any;
-      if (config.env_name && config.env_name != '' && !config.env_name.toLowerCase().startsWith("production")) {
+      if (config.env_name && config.env_name != '' && !config.env_name.toLowerCase().startsWith('production')) {
         return config.env_name + ' - Bienvenue sur collecte-pro';
       }
       return 'Bienvenue sur collecte-pro';
@@ -344,19 +344,19 @@ export default defineComponent({ // Remplacement de Vue.extend
     validateEmail() {
       let expectedEndingsArray: string[] = [];
       const isInspectorEmail = (email: string) => {
-          // At least one ending should match.
-          // Utilise le getter local migré `this.expected_inspector_email_endings`
-          const endingsString = this.expected_inspector_email_endings;
+        // At least one ending should match.
+        // Utilise le getter local migré `this.expected_inspector_email_endings`
+        const endingsString = this.expected_inspector_email_endings;
 
-          // Si pas de fins d'emails attendues, on considère que c'est bon
-          if (!endingsString) return true; 
+        // Si pas de fins d'emails attendues, on considère que c'est bon
+        if (!endingsString) return true;
 
-          expectedEndingsArray = (endingsString as string).split(',');
-          this.expectedEndingsArray = expectedEndingsArray; // Met à jour data() pour l'affichage (étape 1.5)
+        expectedEndingsArray = (endingsString as string).split(',');
+        this.expectedEndingsArray = expectedEndingsArray; // Met à jour data() pour l'affichage (étape 1.5)
 
-          return expectedEndingsArray.some((ending: string) => {
-            return email.endsWith(ending)
-          })
+        return expectedEndingsArray.some((ending: string) => {
+          return email.endsWith(ending)
+        })
       }
 
       if (this.formData.email !== this.formData.email_confirm) {
@@ -431,8 +431,8 @@ export default defineComponent({ // Remplacement de Vue.extend
       this.formData.control = control.id
       this.formData.profile_type = this.editingProfileType as string
       this.formData.email = this.formData.email.toLowerCase()
-      
-      // Ici, on envoie le contenu de `formData` (qui est local au composant), 
+
+      // Ici, on envoie le contenu de `formData` (qui est local au composant),
       // donc aucune mutation n'est nécessaire pour cette étape.
       axios.post((backend as any).user(), this.formData)
         .then(response => {
@@ -462,6 +462,6 @@ export default defineComponent({ // Remplacement de Vue.extend
           this.stepShown = 2
         })
     },
-  }
+  },
 })
 </script>

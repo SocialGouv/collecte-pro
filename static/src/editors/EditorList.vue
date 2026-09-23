@@ -33,12 +33,12 @@ export default defineComponent({
   props: {
     users: {
       type: Array,
-      required: true
+      required: true,
     },
     questionnaireId: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['swap-editor'],
   setup(props, { emit }) {
@@ -47,8 +47,8 @@ export default defineComponent({
     }
 
     return {
-      swapEditor
+      swapEditor,
     }
-  }
+  },
 })
 </script>

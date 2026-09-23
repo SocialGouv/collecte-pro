@@ -25,7 +25,7 @@ export default defineComponent({ // Export standard Options API Vue 3 via define
   computed: {
     // Remplacement de ...mapFields(['config']) par mapState
     ...mapState({
-      config: state => state.config // Accès direct au state.config
+      config: state => state.config, // Accès direct au state.config
     }),
   },
 })

@@ -13,12 +13,12 @@
             :id="'dropzone-area-' + questionId"
             ref="dropzoneArea"
             class="dropzone">
-        
+
         <input :id="'csrf-token-' + questionId" type="hidden" name="csrfmiddlewaretoken" :value="csrftoken" aria-label="CSRF Token" role="presentation">
         <div class="dz-message" data-dz-message>
           <button type="button" class="btn" :aria-label="'Importer des fichiers pour la question ' + questionId">Cliquer ou glisser-déposer vos fichiers.</button>
         </div>
-        
+
         <input :id="'question-id-' + questionId" type="hidden" name="question_id" :value="questionId" aria-label="ID de la question" role="presentation"/>
         <div class="fallback">
           <label :id="'file-label-' + questionId" :for="'file-input-' + questionId">
@@ -143,7 +143,6 @@ export default defineComponent({
 
       if (!dropzoneArea.value) return
 
-      
       new Dropzone(dropzoneArea.value, {
         addRemoveLinks: true,
         timeout: UPLOAD_TIMEOUT_MS,

@@ -14,7 +14,7 @@ describe('QuestionnaireMetadataCreate.vue', () => {
   beforeEach(() => {
     store = createStore({
       state: {
-        currentQuestionnaire: currentQuestionnaire,
+        currentQuestionnaire,
       },
       getters: {
         getField,

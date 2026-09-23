@@ -14,7 +14,7 @@
           return;
         }
         this.parentNode.removeChild(this);
-      }
+      },
     });
   });
 })([Element.prototype, CharacterData.prototype, DocumentType.prototype]);

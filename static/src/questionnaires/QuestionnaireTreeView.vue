@@ -53,9 +53,9 @@
           </tr>
         </thead>
         <tbody>
-          <TreeNode 
-            v-for="row in treeViewElements" 
-            :key="row.id" 
+          <TreeNode
+            v-for="row in treeViewElements"
+            :key="row.id"
             :node="row"
             :selected="selected"
             @toggle="toggleNode"
@@ -98,7 +98,7 @@ const formatDateTime = (date: Date | string): string => {
 export default defineComponent({
   name: 'QuestionnaireFiles',
   props: {
-    control: { type: Object, default: () => ({}) }
+    control: { type: Object, default: () => ({}) },
   },
   components: {
     InfoBar,
@@ -163,7 +163,7 @@ export default defineComponent({
         isFichierAnnexe?: boolean
         isFichierCorbeille?: boolean
         isFichierPieceJointe?: boolean
-      } = {}
+      } = {},
     ) => {
       const {
         isAnnexe = false,
@@ -201,7 +201,7 @@ export default defineComponent({
     }
 
     const getTreeViewElements = (accessibleQuestionnaires: any[]) => {
-      let tree = (accessibleQuestionnaires || []).map((element: any) => {
+      const tree = (accessibleQuestionnaires || []).map((element: any) => {
         const objQuestionnaire = getTreeViewLevel(element)
         if (element.themes && element.themes.length) {
           objQuestionnaire._children = element.themes.map((theme: any) => {
@@ -262,17 +262,17 @@ export default defineComponent({
 
         return objQuestionnaire
       })
-      
+
       // Appliquer le filtre par répondant
       return applyRespondentFilter(tree)
     }
 
     const applyRespondentFilter = (tree: any[]): any[] => {
       if (!filter.value) return tree
-      
+
       return tree.map((questionnaire: any) => {
         const filtered = { ...questionnaire, _children: [] }
-        
+
         if (questionnaire._children && questionnaire._children.length) {
           filtered._children = questionnaire._children
             .map((section: any) => {
@@ -280,9 +280,9 @@ export default defineComponent({
               if (section._id === 'annexes' || section._id === 'piecesjointes') {
                 return null
               }
-              
+
               const filteredSection = { ...section, _children: [] }
-              
+
               if (section._children && section._children.length) {
                 filteredSection._children = section._children
                   .map((item: any) => {
@@ -295,8 +295,8 @@ export default defineComponent({
                             if (question._id === 'question') {
                               const filteredQuestion = { ...question, _children: [] }
                               if (question._children && question._children.length) {
-                                filteredQuestion._children = question._children.filter((file: any) => 
-                                  file.repondant && file.repondant === filter.value
+                                filteredQuestion._children = question._children.filter((file: any) =>
+                                  file.repondant && file.repondant === filter.value,
                                 )
                               }
                               return filteredQuestion._children.length > 0 ? filteredQuestion : null
@@ -319,7 +319,7 @@ export default defineComponent({
             })
             .filter(Boolean)
         }
-        
+
         return filtered._children.length > 0 ? filtered : null
       }).filter(Boolean)
     }
@@ -339,22 +339,22 @@ export default defineComponent({
     const pickFiles = (selected_id = '') => {
       const files: any[] = []
       const filterVal = filter.value
-      
+
       const collectFilesRecursive = (node: any, questionnaireOrder: number | null = null, themeOrder: number | null = null, questionOrder: number | null = null): void => {
         if (!node) return
-        
+
         // Si c'est un fichier
         if (node._id && node._id.startsWith('file')) {
           let category = 'response_file'
           if (node._id === 'fileAnnexe') category = 'question_file'
           if (node._id === 'filePieceJointe') category = 'questionnaire_file'
-          
+
           if (!filterVal || node.repondant === filterVal) {
             files.push({
               questionnaireNb: questionnaireOrder,
               themeId: themeOrder,
               questionId: questionOrder,
-              category: category,
+              category,
               id: node.id,
               basename: node.name,
               url: node.url,
@@ -363,7 +363,7 @@ export default defineComponent({
           }
           return
         }
-        
+
         // Si c'est un questionnaire
         if (node._id === 'questionnaire') {
           const children = Array.isArray(node._children) ? node._children : []
@@ -372,7 +372,7 @@ export default defineComponent({
           })
           return
         }
-        
+
         // Si c'est un thème
         if (node._id === 'theme') {
           const children = Array.isArray(node._children) ? node._children : []
@@ -381,7 +381,7 @@ export default defineComponent({
           })
           return
         }
-        
+
         // Si c'est une question
         if (node._id === 'question') {
           const children = Array.isArray(node._children) ? node._children : []
@@ -390,7 +390,7 @@ export default defineComponent({
           })
           return
         }
-        
+
         // Sections spéciales: annexes, piecesjointes, corbeille
         if (node._id === 'annexes' || node._id === 'piecesjointes' || node._id === 'corbeille') {
           const children = Array.isArray(node._children) ? node._children : []
@@ -399,18 +399,18 @@ export default defineComponent({
           })
           return
         }
-        
+
         // Pour les autres nœuds, continuer la récursion
         const children = Array.isArray(node._children) ? node._children : []
         children.forEach((child: any) => {
           collectFilesRecursive(child, questionnaireOrder, themeOrder, questionOrder)
         })
       }
-      
+
       treeViewElements.value.forEach((node: any) => {
         collectFilesRecursive(node)
       })
-      
+
       return files
         .filter((file: any) => typeof file !== 'undefined')
         .filter((file: any) => !selected_id || file.id.startsWith(selected_id))
@@ -423,7 +423,7 @@ export default defineComponent({
       const zip = new JSZip()
       let cnt = 0
       const zipFilename = props.control.reference_code + '.zip'
-      
+
       const formatFilename = (file: any) => {
         const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
         const questionnaireId = `Q${questionnaireNb}`
@@ -445,7 +445,7 @@ export default defineComponent({
         }
         return { questionnaireId, themeId, filename }
       }
-      
+
       if (exportFiles.length === 0) {
         return
       }
@@ -475,7 +475,7 @@ export default defineComponent({
           }
         }
       }
-      let files: any[] = []
+      const files: any[] = []
       for (let i = 0; i < selected.value.length; i++) {
         files.push(...pickFiles(selected.value[i].id))
       }
@@ -605,13 +605,35 @@ export default defineComponent({
     }
 
     return {
-      filter, date_filter_start, date_filter_end, selected, repondantsListe, treeViewElements, frLocale, placeholder, format,
+      filter,
+      date_filter_start,
+      date_filter_end,
+      selected,
+      repondantsListe,
+      treeViewElements,
+      frLocale,
+      placeholder,
+      format,
       accessibleControls,
-      getUsers, refreshFiles, getTreeViewElements, filterByDate, pickFilesFiltered, pickFiles, zipFiles,
-      exportSelected, exportFiltered, exportAll, toggleNode, selectNode, optionKey, applyRespondentFilter,
-      onDateStartChange, onDateEndChange, resetFilters,
+      getUsers,
+      refreshFiles,
+      getTreeViewElements,
+      filterByDate,
+      pickFilesFiltered,
+      pickFiles,
+      zipFiles,
+      exportSelected,
+      exportFiltered,
+      exportAll,
+      toggleNode,
+      selectNode,
+      optionKey,
+      applyRespondentFilter,
+      onDateStartChange,
+      onDateEndChange,
+      resetFilters,
     }
-  }
+  },
 })
 </script>
 

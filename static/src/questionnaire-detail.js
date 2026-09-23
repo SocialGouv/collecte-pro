@@ -45,7 +45,7 @@ if (controlIdDataEl && controlIdDataEl.textContent) {
 const app = createApp({
   render: () => h(QuestionnaireDetail, {
     controlId,
-    questionnaireId
+    questionnaireId,
   }),
   mounted() {
     this.fetchConfig()
@@ -59,8 +59,8 @@ const app = createApp({
     },
     fetchSessionUser() {
       this.$store.dispatch('fetchSessionUser')
-    }
-  }
+    },
+  },
 })
 
 app.use(store)

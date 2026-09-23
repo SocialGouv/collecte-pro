@@ -99,7 +99,7 @@
             <label id="title-label" for="nom_controle" class="form-label">
               Sélectionnez un espace de dépôt modèle si besoin (non obligatoire) :
             </label>
-          
+
             <div class="flex-row align-items-center">
               <span class="far fa-file-alt mr-2 text-muted" aria-hidden="true"></span>
               <select
@@ -164,7 +164,7 @@ export default defineComponent({
       $(this.$refs.modal.$el).modal('show');
       $(this.$refs.modal.$el).on('hidden.bs.modal', this.closeModal);
       this.$nextTick(() => {
-        this.$refs['nom_controle'].focus();
+        this.$refs.nom_controle.focus();
       });
     },
     closeModal() {
@@ -298,7 +298,7 @@ export default defineComponent({
                 const originalTheme = themes.find((t) => t.order === updatedTheme.order);
                 for (const originalQuestion of originalTheme.questions) {
                   const updatedQuestion = updatedTheme.questions.find(
-                    (uq) => uq.order === originalQuestion.order
+                    (uq) => uq.order === originalQuestion.order,
                   );
                   for (const qf of originalQuestion.question_files) {
                     const fileResponse = await axios.get(qf.url, { responseType: 'blob' });

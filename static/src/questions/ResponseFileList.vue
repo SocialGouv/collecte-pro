@@ -123,16 +123,16 @@ export default defineComponent({
       axios.put(backendUrls.responseFileTrash(file.id), formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .then(() => {
-        clearCache()
-        file.is_deleted = true
-        EventBus.$emit(EVENT_NAME + this.question.id, this.question.response_files)
-        this.showSuccess(file.basename)
-      })
-      .catch((error) => {
-        console.error('Error sending file to trash', error)
-        this.showError(`Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`)
-      })
+        .then(() => {
+          clearCache()
+          file.is_deleted = true
+          EventBus.$emit(EVENT_NAME + this.question.id, this.question.response_files)
+          this.showSuccess(file.basename)
+        })
+        .catch((error) => {
+          console.error('Error sending file to trash', error)
+          this.showError(`Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`)
+        })
     },
     showSuccess(filename: string) {
       this.notification.type = 'success'

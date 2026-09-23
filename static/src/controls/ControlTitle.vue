@@ -207,7 +207,7 @@
                 Exporter (.zip)
               </button>
 
-              <button v-if="!isModel" 
+              <button v-if="!isModel"
                 class="dropdown-item"
                 type="button"
                 @click="markAsModel"
@@ -263,8 +263,8 @@ export default defineComponent({
       editMode: false,
       title: '',
       organization: '',
-      isModel: false, 
-      isPinned:false,
+      isModel: false,
+      isPinned: false,
       errors: '',
       hasErrors: false,
       referenceError: false,
@@ -335,7 +335,6 @@ export default defineComponent({
       return 'Répondant'
     },
     cloneControl(newRefCode) {
-
       this.markAsModel()
 
       const valid = this.reference_code &&
@@ -352,30 +351,30 @@ export default defineComponent({
         const questionnaires = this.accessibleQuestionnaires
           .filter(aq => this.checkedQuestionnaires.includes(aq.id))
         const ctrl = {
-          idCtlSource:this.control.id,
+          idCtlSource: this.control.id,
           title: this.control.title,
           depositing_organization: this.control.depositing_organization,
           reference_code: newRefCode,
-          questionnaires: questionnaires,
+          questionnaires,
         }
-       
+
         getCreateMethodCtrl()(ctrl).then(async response => {
           // Copy users for new control
-          
+
           const controlId = response.data.id
-         
-          /*this.users
+
+          /* this.users
             .filter(u => u.profile_type === 'inspector')
             .map(i => {
               const inspector = { ...i, control: controlId }
               axios.post(backendUrls.user(), inspector)
-          })*/
-        
-        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
-        this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0]
+          }) */
 
-        const filteredQuestionnaires = this.localControl.questionnaires
-          .filter(aq => this.checkedQuestionnaires.includes(aq.id))
+          const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id))
+          this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0]
+
+          const filteredQuestionnaires = this.localControl.questionnaires
+            .filter(aq => this.checkedQuestionnaires.includes(aq.id))
 
           const promises = filteredQuestionnaires
             .map(q => {
@@ -384,7 +383,7 @@ export default defineComponent({
                 return { title: t.title, questions: qq }
               })
 
-              const newQ = { ...q, control: controlId, is_draft: true, is_replied:false, has_replies:false, is_finalized:false, id: null, themes: [] }
+              const newQ = { ...q, control: controlId, is_draft: true, is_replied: false, has_replies: false, is_finalized: false, id: null, themes: [] }
               return this.cloneQuestionnaire(newQ, themes, q.themes)
             })
 
@@ -402,20 +401,20 @@ export default defineComponent({
 
       const promise = await getCreateMethod()(questionnaire).then(async response => {
         const qId = response.data.id
-        const newQ = { ...questionnaire, themes: themes }
+        const newQ = { ...questionnaire, themes }
 
-          newQ.questionnaire_files.map(qf => {
-                axios.get(qf.url, { responseType: 'blob' }).then(response => {
-                  const formData = new FormData()
-                  formData.append('file', response.data, qf.basename)
-                  formData.append('questionnaire', qId)
-                  axios.post(backendUrls.piecejointe(), formData, {
-                    headers: {
-                      'Content-Type': 'multipart/form-data',
-                    },
-                  })
-                })
-              }) 
+        newQ.questionnaire_files.map(qf => {
+          axios.get(qf.url, { responseType: 'blob' }).then(response => {
+            const formData = new FormData()
+            formData.append('file', response.data, qf.basename)
+            formData.append('questionnaire', qId)
+            axios.post(backendUrls.piecejointe(), formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+          })
+        })
 
         await getUpdateMethod(qId)(newQ).then(response => {
           const updatedQ = response.data
@@ -454,7 +453,7 @@ export default defineComponent({
       const payload = {
         title: this.title,
         depositing_organization: this.organization,
-        is_model: true
+        is_model: true,
       }
       axios.put(backendUrls.control(this.control.id), payload)
         .then(response => {
@@ -467,7 +466,7 @@ export default defineComponent({
           this.errors = error.response.data
           this.hasErrors = true
         })
-  },
+    },
 
     hideExportModal() {
       $(this.$refs.modalexp.$el).modal('hide')
@@ -482,135 +481,133 @@ export default defineComponent({
         })
       }
     },
-  async exportControl() {
-  if (!this.checkedQuestionnaires.length) {
-    this.hideExportModal();
-    return;
-  }
+    async exportControl() {
+      if (!this.checkedQuestionnaires.length) {
+        this.hideExportModal();
+        return;
+      }
 
-  this.loaderActive = true;
+      this.loaderActive = true;
 
-  const formatFilename = (file) => {
-    const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
-    const questionnaireId = `Q${questionnaireNb}`;
-    let themeId = '';
-    let filename = ''
-    if (file.category == 'question_file') {
-      themeId = 'ANNEXES-AUX-QUESTIONS';
-      filename = `Q${questionnaireNb}-${file.basename}`;
-    } else if (file.is_deleted) {
-      themeId = 'CORBEILLE';
-      filename = `Q${questionnaireNb}-${file.basename}`;
-    } else {
-      themeId = 'T' + String(file.themeId + 1).padStart(2, '0');
-      const questionId = String(file.questionId + 1).padStart(2, '0');
-      filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
-    }
-    return { questionnaireId, themeId, filename };
-  };
+      const formatFilename = (file) => {
+        const questionnaireNb = String(file.questionnaireNb).padStart(2, '0')
+        const questionnaireId = `Q${questionnaireNb}`;
+        let themeId = '';
+        let filename = ''
+        if (file.category == 'question_file') {
+          themeId = 'ANNEXES-AUX-QUESTIONS';
+          filename = `Q${questionnaireNb}-${file.basename}`;
+        } else if (file.is_deleted) {
+          themeId = 'CORBEILLE';
+          filename = `Q${questionnaireNb}-${file.basename}`;
+        } else {
+          themeId = 'T' + String(file.themeId + 1).padStart(2, '0');
+          const questionId = String(file.questionId + 1).padStart(2, '0');
+          filename = `Q${questionnaireNb}-${themeId}-${questionId}-${file.basename}`;
+        }
+        return { questionnaireId, themeId, filename };
+      };
 
-  try {
-    const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
-    this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0];
-    const filteredQuestionnaires = this.localControl.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
-    let files = [];
+      try {
+        const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.control.id));
+        this.localControl = resp.data.filter(obj => obj.id === this.control.id)[0];
+        const filteredQuestionnaires = this.localControl.questionnaires.filter(aq => this.checkedQuestionnaires.includes(aq.id));
+        let files = [];
 
-    for (const fq of filteredQuestionnaires) {
-      if (fq.themes) {
-        for (const t of fq.themes) {
-          if (t.questions) {
-            for (const q of t.questions) {
-              if (q.response_files) {
-                for (const rf of q.response_files) {
-                  if (rf) {
-                    files.push({
-                      questionnaireNb: fq.numbering,
-                      themeId: t.order,
-                      questionId: q.order,
-                      category: 'response_file',
-                      basename: rf.basename,
-                      url: rf.url,
-                      is_deleted: rf.is_deleted,
-                    });
+        for (const fq of filteredQuestionnaires) {
+          if (fq.themes) {
+            for (const t of fq.themes) {
+              if (t.questions) {
+                for (const q of t.questions) {
+                  if (q.response_files) {
+                    for (const rf of q.response_files) {
+                      if (rf) {
+                        files.push({
+                          questionnaireNb: fq.numbering,
+                          themeId: t.order,
+                          questionId: q.order,
+                          category: 'response_file',
+                          basename: rf.basename,
+                          url: rf.url,
+                          is_deleted: rf.is_deleted,
+                        });
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    }
 
-    for (const fq of filteredQuestionnaires) {
-      if (fq.themes) {
-        for (const t of fq.themes) {
-          if (t.questions) {
-            for (const q of t.questions) {
-              if (q.question_files) {
-                for (const qf of q.question_files) {
-                  if (qf) {
-                    files.push({
-                      questionnaireNb: fq.numbering,
-                      themeId: t.order,
-                      questionId: q.order,
-                      category: 'question_file',
-                      basename: qf.basename,
-                      url: qf.url,
-                      is_deleted: qf.is_deleted,
-                    });
-                    
+        for (const fq of filteredQuestionnaires) {
+          if (fq.themes) {
+            for (const t of fq.themes) {
+              if (t.questions) {
+                for (const q of t.questions) {
+                  if (q.question_files) {
+                    for (const qf of q.question_files) {
+                      if (qf) {
+                        files.push({
+                          questionnaireNb: fq.numbering,
+                          themeId: t.order,
+                          questionId: q.order,
+                          category: 'question_file',
+                          basename: qf.basename,
+                          url: qf.url,
+                          is_deleted: qf.is_deleted,
+                        });
+                      }
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    }
 
-    files = files.filter(file => !file.is_deleted);
+        files = files.filter(file => !file.is_deleted);
 
-    const zipFilename = (this.localControl || this.control).reference_code + '.zip';
-    const zip = new JSZip();
-    let cnt = 0;
+        const zipFilename = (this.localControl || this.control).reference_code + '.zip';
+        const zip = new JSZip();
+        let cnt = 0;
 
-    if (files.length === 0) {
-      this.loaderActive = false;
-      this.hideExportModal();
-      return;
-    }
-
-    files.forEach(file => {
-      const url = window.location.origin + file.url;
-      JSZipUtils.getBinaryContent(url, (err, data) => {
-        if (err) {
-          console.error('Error loading file:', err);
+        if (files.length === 0) {
           this.loaderActive = false;
           this.hideExportModal();
           return;
         }
-        const formatted = formatFilename(file);
-        zip.folder(formatted.questionnaireId)
-          .folder(formatted.themeId)
-          .file(formatted.filename, data, { binary: true });
 
-        cnt++;
-        if (cnt === files.length) {
-          zip.generateAsync({ type: 'blob' }).then((content) => {
-            this.loaderActive = false;
-            this.hideExportModal();
-            saveAs(content, zipFilename);
+        files.forEach(file => {
+          const url = window.location.origin + file.url;
+          JSZipUtils.getBinaryContent(url, (err, data) => {
+            if (err) {
+              console.error('Error loading file:', err);
+              this.loaderActive = false;
+              this.hideExportModal();
+              return;
+            }
+            const formatted = formatFilename(file);
+            zip.folder(formatted.questionnaireId)
+              .folder(formatted.themeId)
+              .file(formatted.filename, data, { binary: true });
+
+            cnt++;
+            if (cnt === files.length) {
+              zip.generateAsync({ type: 'blob' }).then((content) => {
+                this.loaderActive = false;
+                this.hideExportModal();
+                saveAs(content, zipFilename);
+              });
+            }
           });
-        }
-      });
-    });
-
-  } catch (error) {
-    console.error('Error exporting control:', error);
-    this.loaderActive = false;
-    this.hideExportModal();
-  }
-},
+        });
+      } catch (error) {
+        console.error('Error exporting control:', error);
+        this.loaderActive = false;
+        this.hideExportModal();
+      }
+    },
 
     restoreForm() {
       this.title = this.control.title
@@ -638,11 +635,10 @@ export default defineComponent({
       const payload = {
         title: this.title,
         depositing_organization: this.organization,
-        is_model: this.isModel
+        is_model: this.isModel,
       }
       if (!this.isModel) {
         payload.is_pinned = false;
-        
       }
 
       axios.put(backendUrls.control(this.control.id), payload)
@@ -650,7 +646,7 @@ export default defineComponent({
           this.title = response.data.title
           this.organization = response.data.depositing_organization
           this.isModel = response.data.is_model
-           if (!this.isModel) {
+          if (!this.isModel) {
             this.isPinned = response.data.is_pinned
           }
           // Display a "loading" spinner on clicked button, while the page reloads, so that they know their click

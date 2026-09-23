@@ -50,7 +50,6 @@ import { fr } from 'date-fns/locale'
 import backend from '../utils/backend'
 import { toBackendFormat } from '../utils/DateFormat'
 
-
 declare const $: any
 
 axios.defaults.xsrfCookieName = 'csrftoken'

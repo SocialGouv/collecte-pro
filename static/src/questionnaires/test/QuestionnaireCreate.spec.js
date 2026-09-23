@@ -167,7 +167,7 @@ describe('QuestionnaireCreate.vue', () => {
       await flushPromises()
 
       expect(store.state.currentQuestionnaire.control).toBe(controlId)
-      expect(store.state.currentQuestionnaire.description).not.toEqual('')
+      expect(store.state.currentQuestionnaire.description).not.toBe('')
     })
 
     test('moves to first step of wizard', async () => {
@@ -189,7 +189,7 @@ describe('QuestionnaireCreate.vue', () => {
 
       await flushPromises()
 
-      expect(wrapper.vm.state).toEqual(1)
+      expect(wrapper.vm.state).toBe(1)
 
       assert(wrapper.find('#questionnaire-metadata-create').isVisible())
       assert(!wrapper.find('#questionnaire-body-create').isVisible())
@@ -221,8 +221,8 @@ describe('QuestionnaireCreate.vue', () => {
           QuestionnaireCreateForTest,
           {
             props: {
-              controlId: controlId,
-              questionnaireId: questionnaireId,
+              controlId,
+              questionnaireId,
             },
             global: {
               plugins: [store],
@@ -253,8 +253,8 @@ describe('QuestionnaireCreate.vue', () => {
         QuestionnaireCreateForTest,
         {
           props: {
-            controlId: controlId,
-            questionnaireId: questionnaireId,
+            controlId,
+            questionnaireId,
           },
           global: {
             plugins: [store],
@@ -282,8 +282,8 @@ describe('QuestionnaireCreate.vue', () => {
           TestQuestionnaireCreate,
           {
             props: {
-              controlId: controlId,
-              questionnaireId: questionnaireId,
+              controlId,
+              questionnaireId,
             },
             global: {
               plugins: [store],
@@ -339,8 +339,8 @@ describe('QuestionnaireCreate.vue', () => {
           TestQuestionnaireCreate,
           {
             props: {
-              controlId: controlId,
-              questionnaireId: questionnaireId,
+              controlId,
+              questionnaireId,
             },
             global: {
               plugins: [store],
@@ -386,8 +386,8 @@ describe('QuestionnaireCreate.vue', () => {
         QuestionnaireCreateForTest,
         {
           props: {
-            controlId: controlId,
-            questionnaireId: questionnaireId,
+            controlId,
+            questionnaireId,
           },
           global: {
             plugins: [store],
@@ -396,7 +396,7 @@ describe('QuestionnaireCreate.vue', () => {
 
       await flushPromises()
 
-      expect(wrapper.vm.state).toEqual(1)
+      expect(wrapper.vm.state).toBe(1)
 
       assert(wrapper.find('#questionnaire-metadata-create').isVisible())
       assert(!wrapper.find('#questionnaire-body-create').isVisible())
@@ -460,8 +460,8 @@ describe('QuestionnaireCreate.vue', () => {
         QuestionnaireCreateForTest,
         {
           props: {
-            controlId: controlId,
-            questionnaireId: questionnaireId,
+            controlId,
+            questionnaireId,
           },
           global: {
             plugins: [store],
@@ -572,7 +572,7 @@ describe('QuestionnaireCreate.vue', () => {
         QuestionnaireCreateForTest,
         {
           props: {
-            controlId: controlId,
+            controlId,
             window: mockWindow,
           },
           global: {
@@ -603,7 +603,7 @@ describe('QuestionnaireCreate.vue', () => {
       expect(axios.post).toHaveBeenCalledWith(
         '/api/questionnaire/',
         expect.any(Object))
-      expect(mockWindow.location.href).not.toEqual('')
+      expect(mockWindow.location.href).not.toBe('')
     })
 
     test('If draft save fails, return home anyway', async () => {
@@ -629,7 +629,7 @@ describe('QuestionnaireCreate.vue', () => {
         expect(axios.post).toHaveBeenCalledWith(
           '/api/questionnaire/',
           expect.any(Object))
-        expect(mockWindow.location.href).not.toEqual('')
+        expect(mockWindow.location.href).not.toBe('')
       } finally {
         consoleErrorSpy.mockRestore()
       }
@@ -646,7 +646,7 @@ describe('QuestionnaireCreate.vue', () => {
 
       expect(wrapper.vm.validateCurrentForm).toHaveBeenCalled()
       expect(axios.post).not.toHaveBeenCalled()
-      expect(mockWindow.location.href).toEqual('')
+      expect(mockWindow.location.href).toBe('')
     })
     // Todo : test the navigation : back, next
   })
@@ -677,8 +677,8 @@ describe('QuestionnaireCreate.vue', () => {
         QuestionnaireCreateForTest,
         {
           props: {
-            controlId: controlId,
-            questionnaireId: questionnaireId,
+            controlId,
+            questionnaireId,
             controlHasMultipleInspectors: true,
           },
           global: {

@@ -58,8 +58,10 @@ if (questionnaireEl) {
 
   if (controlIdRaw !== undefined) props.controlId = Number(controlIdRaw.replace(/"/g, ''))
   if (questionnaireIdRaw !== undefined) props.questionnaireId = Number(questionnaireIdRaw.replace(/"/g, ''))
-  if (controlHasMultipleInspectorsRaw !== undefined) props.controlHasMultipleInspectors =
+  if (controlHasMultipleInspectorsRaw !== undefined) {
+    props.controlHasMultipleInspectors =
     controlHasMultipleInspectorsRaw.replace(/"/g, '') === 'true'
+  }
   if (questionnaireNumberingRaw !== undefined) props.questionnaireNumbering = Number(questionnaireNumberingRaw.replace(/"/g, ''))
 
   const questionnaireApp = createApp(QuestionnaireCreate, props)
@@ -85,7 +87,7 @@ if (sidebarEl) {
           mountSidebar()
           unwatch()
         }
-      }
+      },
     )
   } else {
     mountSidebar()

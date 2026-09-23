@@ -92,7 +92,7 @@ import backendUrls from '../utils/backend.js'
 import ModalFlow from '../utils/ModalFlow'
 
 const props = defineProps({
-  control: Object
+  control: Object,
 })
 
 const modalFlow = ref(null)
@@ -130,6 +130,6 @@ const start = () => {
 
 // Expose la fonction start pour que le parent puisse l'appeler
 defineExpose({
-  start
+  start,
 })
 </script>

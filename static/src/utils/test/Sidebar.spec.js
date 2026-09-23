@@ -3,7 +3,11 @@ import { mount } from '@vue/test-utils'
 import { getField, updateField } from 'vuex-map-fields'
 import flushPromises from 'flush-promises'
 
-//Mock axios to avoid making real HTTP requests during tests
+import { loadStatuses } from '../../store'
+import Sidebar from '../Sidebar'
+import { createStore } from 'vuex'
+
+// Mock axios to avoid making real HTTP requests during tests
 vi.mock('axios', () => {
   const resolved = () => Promise.resolve({ data: [] })
   return {
@@ -17,10 +21,6 @@ vi.mock('axios', () => {
     },
   }
 })
-
-import { loadStatuses } from '../../store'
-import Sidebar from '../Sidebar'
-import { createStore } from 'vuex'
 
 describe('Sidebar.vue', () => {
   let store
@@ -188,7 +188,7 @@ describe('Sidebar.vue', () => {
     expect(wrapper.vm.menu).toHaveLength(0)
 
     expect(wrapper.vm.hasError).toBeTruthy()
-    expect(wrapper.vm.errorMessage).not.toBeUndefined()
+    expect(wrapper.vm.errorMessage).toBeDefined()
 
     // Error message is displayed in error-bar
     expect(wrapper.find('#sidebar-error-bar').isVisible()).toBeTruthy()
@@ -208,7 +208,7 @@ describe('Sidebar.vue', () => {
     expect(wrapper.vm.menu).toHaveLength(0)
 
     expect(wrapper.vm.hasError).toBeTruthy()
-    expect(wrapper.vm.errorMessage).not.toBeUndefined()
+    expect(wrapper.vm.errorMessage).toBeDefined()
 
     // Error message is displayed in error-bar
     expect(wrapper.find('#sidebar-error-bar').isVisible()).toBeTruthy()

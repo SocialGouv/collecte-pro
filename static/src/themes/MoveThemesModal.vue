@@ -17,7 +17,7 @@
             :key="theme.id || themeIndex"
             class="flex-row">
           <td>
-            <div class="flex-column align-items-center"> 
+            <div class="flex-column align-items-center">
               <button :disabled="themeIndex === 0"
                       class="btn btn-secondary btn-sm move-up-button"
                       role="button"
@@ -42,7 +42,7 @@
               <div class="not-sr-only">
                 {{ themeIndex + 1 }}
               </div>
-            </div> 
+            </div>
           </td>
           <td class="flex-grow-1 flex-column justify-content-center">
             {{ theme.title }}
@@ -86,7 +86,7 @@ export default defineComponent({
       set(newThemes) {
         // Cette mutation doit être ajoutée à votre store.js
         this.$store.commit('setCurrentQuestionnaireThemes', newThemes)
-      }
+      },
     },
   },
   methods: {
@@ -94,24 +94,24 @@ export default defineComponent({
     // (ceci remplace les appels au SwapMixin)
     swapItems(array, fromIndex, toIndex) {
       if (toIndex < 0 || toIndex >= array.length) return;
-      
+
       const newArray = [...array]; // Copie pour éviter la mutation directe du state (strict mode)
       [newArray[fromIndex], newArray[toIndex]] = [newArray[toIndex], newArray[fromIndex]];
-      
+
       // Mettre à jour l'ordre de chaque thème pour la persistance immédiate
       newArray[fromIndex].order = fromIndex + 1;
       newArray[toIndex].order = toIndex + 1;
 
       // Utiliser le setter de la computed property 'themes' pour mettre à jour le store
       this.themes = newArray;
-      
+
       return newArray;
     },
 
     moveThemeUp(themeIndex) {
       if (themeIndex === 0) return;
       const newThemes = this.swapItems(this.themes, themeIndex, themeIndex - 1);
-      
+
       // Suppression de la dépendance à jQuery pour la manipulation DOM:
       // const selectedJqueryElement = $('#move-themes-modal-theme-' + themeIndex)
       // this.swapMixin_moveItemUp(array, themeIndex, selectedJqueryElement)
@@ -126,7 +126,7 @@ export default defineComponent({
     moveThemeDown(themeIndex) {
       if (themeIndex === (this.themes.length - 1)) return;
       const newThemes = this.swapItems(this.themes, themeIndex, themeIndex + 1);
-      
+
       // Suppression de la dépendance à jQuery
       // const selectedJqueryElement = $('#move-themes-modal-theme-' + themeIndex)
       // this.swapMixin_moveItemDown(array, themeIndex, selectedJqueryElement)
@@ -150,7 +150,7 @@ export default defineComponent({
       return axios.put(
         backendUrls.theme(theme.id),
         {
-          title: theme.title, 
+          title: theme.title,
           order: theme.order,
         })
         .catch(err => {
@@ -158,12 +158,12 @@ export default defineComponent({
             (err.message ? err.message : JSON.stringify(err))
         })
     },
-    
+
     // Si la modale a un événement 'confirm', il doit être géré ici.
     handleConfirm() {
       this.saveThemeOrder(); // Sauvegarde finale (si nécessaire)
       // Fermer la modale (doit être géré par le composant parent ou la modale elle-même)
-    }
-  }
+    },
+  },
 })
 </script>

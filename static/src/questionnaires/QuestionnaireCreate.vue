@@ -190,8 +190,8 @@ export default defineComponent({
       errorMessage: '',
       errors: [],
       hasErrors: false,
-      userId:'',
-      STATES: STATES,
+      userId: '',
+      STATES,
       state: STATES.LOADING,
       saveMessage: {
         text: '',
@@ -215,7 +215,7 @@ export default defineComponent({
       },
       set(val) {
         this.$store.commit('setCurrentQuestionnaire', val)
-      }
+      },
     },
     currentControl() {
       if (!this.currentQuestionnaire || !this.currentQuestionnaire.control) {
@@ -487,25 +487,25 @@ export default defineComponent({
       // Déclencher la validation HTML5 native du navigateur
       // Uniquement sur les formulaires visibles de l'étape active
       let visibleForm = null
-      
+
       if (this.state === STATES.START) {
         visibleForm = document.querySelector('#questionnaire-metadata-create form')
       } else if (this.state === STATES.CREATING_BODY) {
         visibleForm = document.querySelector('#questionnaire-body-create form')
       }
-      
+
       // Valider le formulaire visible si présent
       if (visibleForm && !visibleForm.checkValidity()) {
         // Déclencher l'affichage des messages de validation HTML5
         visibleForm.reportValidity()
         return
       }
-      
+
       // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return
       }
-      
+
       this.saveDraft()
     },
     displaySaveInProgress() {
@@ -571,18 +571,18 @@ export default defineComponent({
     saveAndShowMoveThemesModal() {
       // Valider le formulaire HTML5 d'abord
       let visibleForm = null
-      
+
       if (this.state === STATES.CREATING_BODY) {
         visibleForm = document.querySelector('#questionnaire-body-create form')
       }
-      
+
       // Valider le formulaire visible si présent
       if (visibleForm && !visibleForm.checkValidity()) {
         // Déclencher l'affichage des messages de validation HTML5
         visibleForm.reportValidity()
         return
       }
-      
+
       // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return

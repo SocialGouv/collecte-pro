@@ -138,7 +138,6 @@ describe('Questionnaire creation flow', () => {
           plugins: [store],
         },
       })
-
   })
 
   afterEach(() => {
