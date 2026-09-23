@@ -78,6 +78,10 @@ Finalisé : l'instruction des pièces déposées est achevée"
               />
             </th>
 
+            <th v-if="accessType === 'demandeur'" scope="col">
+              Espace utilisé
+            </th>
+
             <th scope="col">Titre</th>
             <th scope="col">Date de réponse</th>
             <th v-if="accessType === 'demandeur'" scope="col">Rédacteur</th>
@@ -103,6 +107,10 @@ Finalisé : l'instruction des pièces déposées est achevée"
               <div v-else>
                 <div class="tag tag-green round-tag font-italic">Publié</div>
               </div>
+            </td>
+
+            <td class="storage-column" v-if="accessType === 'demandeur'">
+              <storage-gauge :used-bytes="usedStorageBytes(questionnaire)" compact></storage-gauge>
             </td>
 
             <td>
@@ -330,6 +338,7 @@ import ConfirmModal from '../utils/ConfirmModal'
 import { defineComponent, inject } from 'vue'
 import { mapState } from 'vuex'
 import QuestionnaireTreeView from '../questionnaires/QuestionnaireTreeView'
+import StorageGauge from './StorageGauge'
 
 import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
@@ -343,6 +352,7 @@ export default defineComponent({
     InfoBar,
     ConfirmModal,
     QuestionnaireTreeView,
+    StorageGauge,
   },
 
   data() {
@@ -388,6 +398,18 @@ export default defineComponent({
   },
 
   methods: {
+    usedStorageBytes(questionnaire) {
+      let total = 0
+      ;(questionnaire.themes || []).forEach((theme) => {
+        ;(theme.questions || []).forEach((question) => {
+          ;(question.response_files || []).forEach((file) => {
+            if (file && !file.is_deleted) total += file.size || 0
+          })
+        })
+      })
+      return total
+    },
+
     formatDate(date) {
       // DateFormat est supposé être un utilitaire: DateFormat(date)
       // Gestion simple si date falsy

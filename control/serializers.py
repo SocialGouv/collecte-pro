@@ -26,7 +26,7 @@ class ResponseFileSerializer(serializers.ModelSerializer):
         model = ResponseFile
         fields = (
             'id', 'url', 'basename', 'created', 'creation_date', 'creation_time', 'author',
-            'is_deleted', 'question')
+            'is_deleted', 'question', 'size')
 
 
 class ResponseFileTrashSerializer(serializers.ModelSerializer):
