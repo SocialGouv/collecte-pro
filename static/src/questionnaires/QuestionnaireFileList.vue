@@ -68,8 +68,6 @@ export default defineComponent({
     }
 
     return {
-      files,
-      withDelete,
       errorMessage,
       clearError,
       deleteFile,
