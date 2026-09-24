@@ -2,6 +2,7 @@ import csv
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+from django.views.decorators.http import require_GET
 from django.db import connection
 from django.http import HttpResponse
 import zipfile
@@ -27,6 +28,7 @@ class Stats(LoginRequiredMixin, TemplateView):
         'nb_users': ACTION_NB_USERS,
     }
 
+    @require_GET
     def call_get_top_20(request):
         current_week_number = datetime.now().strftime("%U")
         zip_buffer = BytesIO()
@@ -55,6 +57,7 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
 
+    @require_GET
     def call_get_espace_depot_modele(request):
         generation_date = datetime.now().strftime("%Y-%m-%d")
         csv_buffer = StringIO()
@@ -74,6 +77,7 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
 
+    @require_GET
     def call_get_espace_depot_elig_supp(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')
@@ -91,6 +95,7 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
 
+    @require_GET
     def call_get_repondants_orphelins(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')
@@ -116,6 +121,7 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         return response
 
+    @require_GET
     def call_get_liste_utilisateurs(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')

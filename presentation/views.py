@@ -14,6 +14,7 @@ from django.http import HttpResponse, JsonResponse
 from django.conf import settings
 
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 
 import requests
 import base64
@@ -38,6 +39,7 @@ class Presentation(TemplateView):
     template_name = "presentation/presentation.html"
 
 
+@require_GET
 def simple_captcha_endpoint(request):
     try:
         oauth_token = get_oauth_token()
@@ -123,6 +125,7 @@ def simple_captcha_endpoint(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+@require_GET
 def captcha_image_endpoint(request):
     """Endpoint qui retourne l'image PNG binaire pour contourner les restrictions CSP."""
     uuid = request.GET.get('uuid')
