@@ -96,17 +96,17 @@
           </div>
 
           <div class="form-group mb-6">
-            <label id="title-label" for="nom_controle" class="form-label">
+            <label id="model-label" for="modele_controle" class="form-label">
               Sélectionnez un espace de dépôt modèle si besoin (non obligatoire) :
             </label>
 
             <div class="flex-row align-items-center">
               <span class="far fa-file-alt mr-2 text-muted" aria-hidden="true"></span>
               <select
-                id="nom_controle"
+                id="modele_controle"
                 v-model="selectedModel"
                 class="form-control"
-                aria-labelledby="title-label"
+                aria-labelledby="model-label"
               >
                 <option value="">Sélectionnez un modèle</option>
                 <option v-for="model in models" :key="model.id" :value="model.id">

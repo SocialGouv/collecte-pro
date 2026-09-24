@@ -154,7 +154,9 @@ def captcha_image_endpoint(request):
         return HttpResponse('Error decoding image', status=500)
 
 
-@csrf_exempt
+# Public, unauthenticated endpoint
+# no CSRF-exploitable privileged action
+@csrf_exempt  # NOSONAR
 def validationFormulaire(request):
     if request.method == 'POST':
         post_data = request.POST
@@ -233,7 +235,9 @@ def get_oauth_token():
         return None
 
 
-@csrf_exempt
+# Public, unauthenticated form, no session-bound privileged
+# CSRF token validation is not required
+@csrf_exempt  # NOSONAR
 def demo(request):
     accounts = [
         {

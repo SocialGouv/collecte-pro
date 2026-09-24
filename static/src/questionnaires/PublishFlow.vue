@@ -2,7 +2,7 @@
   <modal-flow ref="modalFlow" :action-function="publishFunction">
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <div id="modal_title" class="modal-title">
+        <div id="confirm-modal-title" class="modal-title">
           Vous y êtes presque ! En cochant ces mentions, vous êtes informés que :
         </div>
       </div>
@@ -93,7 +93,7 @@
         <p>
           <span class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></span>
         </p>
-        <div id="modal_title" class="text-center">
+        <div id="success-modal-title" class="text-center">
           Bravo, votre questionnaire est publié!
         </div>
         <div class="mt-5">
