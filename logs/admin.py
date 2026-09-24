@@ -1,3 +1,7 @@
+from actstream.models import Action, Follow
+from django.utils.html import format_html
+from django.urls import reverse
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import admin
 
 
@@ -11,14 +15,6 @@ class ReadOnlyModelAdmin:
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-from django.contrib.contenttypes.models import ContentType
-from django.urls import reverse
-from django.utils.html import format_html
-
-
-from actstream.models import Action, Follow
 
 
 admin.site.unregister(Action)

@@ -76,7 +76,7 @@ def send_files_report():
         recipient_list = [
             access.userprofile.user.email
             for access in control.access.all()
-            if access.userprofile.send_files_report == True
+            if access.userprofile.send_files_report
         ]
         if not recipient_list:
             logger.info('Pas de destinataire, arrêt.')
@@ -245,7 +245,7 @@ def physical_delete_controls():
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT pec.reference_code
-                FROM purge_eligible_control_trv pec 
+                FROM purge_eligible_control_trv pec
                 INNER JOIN control_control cc ON pec.control_id = cc.id
                 WHERE cc.is_model = FALSE
             """)

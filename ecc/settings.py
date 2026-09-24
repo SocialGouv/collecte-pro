@@ -1,3 +1,4 @@
+import locale
 import os
 import environ
 from dotenv import load_dotenv
@@ -250,7 +251,6 @@ USE_L10N = True
 USE_TZ = True
 
 # A trick for DRF that does not seems to know about the locale
-import locale
 try:
     locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
 except locale.Error:

@@ -1,3 +1,4 @@
+from control.export_response_files import get_files_for_export
 from pytest import mark
 
 from django.shortcuts import reverse
@@ -78,7 +79,6 @@ def test_send_response_file_list_fails_for_draft_questionnaire_for_audited(clien
 # Tests for contents of file list
 ###################################
 # Decoding the xlsx file is too complicated, so we test the file list before it is written to file.
-from control.export_response_files import get_files_for_export
 
 
 def test_send_response_file_list_contains_file(client):

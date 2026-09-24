@@ -205,7 +205,7 @@ def test_questionnaire_create_success():
     # Response.data is filled in
     questionnaire = response.data
     assert questionnaire['id'] > -1
-    assert questionnaire['is_draft'] == True
+    assert questionnaire['is_draft']
 
     theme = response.data['themes'][0]
     assert theme['id'] > -1
@@ -219,7 +219,7 @@ def test_questionnaire_create_success():
     assert Questionnaire.objects.all().count() == 1
     questionnaire = Questionnaire.objects.get(id=response.data['id'])  # should not throw
     assert questionnaire.control == control
-    assert questionnaire.is_draft == True
+    assert questionnaire.is_draft
 
     assert Theme.objects.all().count() == 1
     theme = Theme.objects.get(id=response.data['themes'][0]['id'])  # should not throw
@@ -393,7 +393,7 @@ def test_questionnaire_update__questionnaire_update():
     saved_qr = Questionnaire.objects.get(id=questionnaire.id)
     assert saved_qr.description != questionnaire.description
     assert saved_qr.description == payload['description']
-    assert saved_qr.is_draft == False
+    assert not saved_qr.is_draft
 
 
 def test_questionnaire_update__theme_update():
