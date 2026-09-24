@@ -13,10 +13,10 @@
     </div>
 
     <div v-else>
-      <label class="btn btn-primary disabled">
+      <span class="btn btn-primary disabled">
         <span class="fe fe-upload mr-2"></span>
         Ajouter une pièce jointe
-      </label>
+      </span>
       <div class="small">Pour pouvoir ajouter des pièces jointes,</div>
       <div class="small">vous devez d'abord enregistrer</div>
       <div class="small">votre brouillon.</div>

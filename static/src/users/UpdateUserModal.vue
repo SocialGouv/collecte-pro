@@ -27,11 +27,12 @@
         <form @submit.prevent="updateUser" @keydown.esc="resetFormData">
           <div class="form-fieldset">
             <div class="form-group">
-              <label id="first-name-label" class="form-label">
+              <label id="first-name-label" for="update-user-first-name" class="form-label">
                 Prénom
                 <span class="form-required"></span>
               </label>
               <input type="text"
+                    id="update-user-first-name"
                     class="form-control"
                     v-bind:class="{ 'state-invalid': errors.first_name }"
                     v-model="localFirstName"
@@ -39,11 +40,12 @@
                     aria-labelledby="first-name-label">
             </div>
             <div class="form-group">
-              <label id="last-name-label" class="form-label">
+              <label id="last-name-label" for="update-user-last-name" class="form-label">
                 Nom
                 <span class="form-required"></span>
               </label>
               <input type="text"
+                    id="update-user-last-name"
                     class="form-control"
                     v-bind:class="{ 'state-invalid': errors.last_name }"
                     v-model="localLastName"

@@ -11,10 +11,10 @@
     </label>
   </div>
   <div v-else>
-    <label class="btn btn-primary disabled" >
+    <span class="btn btn-primary disabled" >
       <span class="fe fe-upload mr-2" ></span>
       Ajouter un fichier annexe
-    </label>
+    </span>
     <div class="small">
       Pour pouvoir ajouter des annexes,
     </div>

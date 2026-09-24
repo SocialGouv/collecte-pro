@@ -6,8 +6,8 @@
     <div class="card">
       <span class="form-inline">
         <span class="form-group col-sm-4">
-          <span class="form-label mr-2">Filtrer par répondant</span>
-          <select v-model="filter" class="form-control">
+          <label class="form-label mr-2" id="filtre_respondant" for="filtre_respondant_select">Filtrer par répondant</label>
+          <select id="filtre_respondant_select" v-model="filter" class="form-control" aria-labelledby="filtre_respondant">
             <option></option>
             <option v-for="option in repondantsListe" :key="optionKey(option)" :value="option.first_name + ' ' + option.last_name">
               {{ option.first_name + ' ' + option.last_name }}

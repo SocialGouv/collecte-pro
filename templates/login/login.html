@@ -55,12 +55,13 @@
 
                 {%if settings.KEYCLOAK_ACTIVE %}
                   <div class="form-group">
-                    <h4><label class="form-label form-label-h4 text-center">Connectez-vous à collecte-pro</label></h4>
+                    <h4 class="form-label form-label-h4 text-center">Connectez-vous à collecte-pro</h4>
                   </div>
                   <a href="{% url 'oidc_authentication_init' %}" class="btn btn-primary btn-block">Se connecter</a>
                 {%else%}
                   <div class="form-group">
-                    <h4><label class="form-label form-label-h4 text-center">Connectez-vous à collecte-pro</label></h4>
+                    <h4 class="form-label form-label-h4 text-center">Connectez-vous à collecte-pro</h4>
+                    <label for="username" class="sr-only">Votre identifiant</label>
                     <input type="text"
                             name="username"
                             size="40"
@@ -74,6 +75,7 @@
                           {{ error }}
                         </div>
                       {% endfor %}
+                    <label for="password" class="sr-only">Votre mot de passe</label>
                     <input type="password"
                             name="password"
                             size="40"
