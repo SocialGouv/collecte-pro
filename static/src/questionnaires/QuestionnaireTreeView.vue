@@ -572,7 +572,7 @@ export default defineComponent({
         return d
       }
       const parsed = new Date(val)
-      if (!isNaN(parsed.getTime())) {
+      if (!Number.isNaN(parsed.getTime())) {
         if (end) parsed.setHours(23, 59, 59, 999)
         else parsed.setHours(0, 0, 0, 0)
         return parsed

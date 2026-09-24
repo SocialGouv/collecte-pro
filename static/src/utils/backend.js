@@ -96,7 +96,7 @@ urlMaker.getIdFromViewUrl = (urlValue, urlName) => {
   if (!found) {
     return null
   }
-  return parseInt(found[1], 10)
+  return Number.parseInt(found[1], 10)
 }
 
 export default urlMaker
