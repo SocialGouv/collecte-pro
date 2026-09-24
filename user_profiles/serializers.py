@@ -190,14 +190,9 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 code=status.HTTP_403_FORBIDDEN,
             )
             raise e
-        inspector_role = False
         access_type = 'repondant'
 
-        if settings.KEYCLOAK_ACTIVE:
-            # Find keycloak inspector role
-            role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
-            inspector_role = True
             access_type = 'demandeur'
         if profile:
             if settings.KEYCLOAK_ACTIVE:
@@ -228,7 +223,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             if settings.KEYCLOAK_ACTIVE:
                 # Create keycloak user if doesn't exist
                 try:
-                    new_user = keycloak_admin.create_user(
+                    keycloak_admin.create_user(
                         {
                             "email": user_data['username'],
                             "username": user_data['username'],
