@@ -84,7 +84,9 @@ def test_audited_cannot_upload_question_file_if_questionnaire_is_draft(client):
 def test_cannot_upload_question_file_in_a_control_user_is_not_in(client):
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question = factories.QuestionFactory()
-    assert question.theme.questionnaire.control not in [access.control for access in audited.access.all() if access.control.active()]
+    assert question.theme.questionnaire.control not in [
+        access.control for access in audited.access.all() if access.control.active()
+    ]
     question.theme.questionnaire.is_draft = False
     question.theme.questionnaire.save()
     utils.login(client, user=audited.user)

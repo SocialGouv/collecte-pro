@@ -89,7 +89,9 @@ class ControlViewSet(mixins.CreateModelMixin,
         if request.data.__contains__('idCtlSource') :
             print("Duplication : ", request.data['idCtlSource'])
             controlSource = Control.objects.active().get(id=request.data['idCtlSource'])
-            self.add_log_duplicate_entry(controlSource=controlSource, controlDestination=control, verb='created control')
+            self.add_log_duplicate_entry(
+                controlSource=controlSource, controlDestination=control, verb='created control'
+            )
         else:
             print("Creation")
             self.add_log_entry(control=control, verb='created control')
@@ -156,7 +158,12 @@ class ControlViewSet(mixins.CreateModelMixin,
 
     @decorators.action(detail=True, methods=['get'], url_path='access')
     def access(self, request, pk):
-        serialized_access = AccessSerializer(self.get_object().access.filter(Q(userprofile=request.user.profile) & Q(control__is_deleted=False)).all(), many=True)
+        serialized_access = AccessSerializer(
+            self.get_object().access.filter(
+                Q(userprofile=request.user.profile) & Q(control__is_deleted=False)
+            ).all(),
+            many=True,
+        )
         return Response(serialized_access.data)
 
     @decorators.action(detail=True, methods=['get'], url_path='unique-code')
@@ -215,7 +222,8 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
 
         if any(header.lower() in ['x-infection-found', 'x-virus-name'] for header in self.request.headers):
             raise ValidationError(
-                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant de le déposer à nouveau."
+                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant "
+                "de le déposer à nouveau."
             )
 
         file = files[0] if files else None
@@ -270,7 +278,8 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
 
         if any(header.lower() in ['x-infection-found', 'x-virus-name'] for header in self.request.headers):
             raise ValidationError(
-                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant de le déposer à nouveau."
+                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant "
+                "de le déposer à nouveau."
             )
 
         file = files[0] if files else None
@@ -297,8 +306,12 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
     permission_classes = (OnlyRepondantCanAccess,)
 
     def get_queryset(self):
+        # Modifier par les controls des access
         queryset = ResponseFile.objects.filter(
-            question__theme__questionnaire__control__in=Control.objects.filter(access__in=self.request.user.profile.access.all()))  # Modifier par les controls des access
+            question__theme__questionnaire__control__in=Control.objects.filter(
+                access__in=self.request.user.profile.access.all()
+            )
+        )
         return queryset
 
     def put(self, request, *args, **kwargs):

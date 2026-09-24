@@ -230,7 +230,8 @@ EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 # Time we wait in between emails, to space them out and avoid going over our allowed email quota
 EMAIL_SPACING_TIME_MILLIS = env('EMAIL_SPACING_TIME_MILLIS', default=10000)
 
-# The user will get a warning when trying to add an inspector whose email doesn't end with EXPECTED_INSPECTOR_EMAIL_ENDINGS
+# The user will get a warning when trying to add an inspector whose email doesn't end with
+# EXPECTED_INSPECTOR_EMAIL_ENDINGS
 EXPECTED_INSPECTOR_EMAIL_ENDINGS = env('EXPECTED_INSPECTOR_EMAIL_ENDINGS', default='')
 
 SEND_EMAIL_WHEN_USER_ADDED = env('SEND_EMAIL_WHEN_USER_ADDED', default=False)

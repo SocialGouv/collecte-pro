@@ -14,7 +14,9 @@ from django_softdelete.models import SoftDeleteModel
 from soft_deletion.managers import DeletableQuerySet
 
 from .docx import DocxMixin
-from .upload_path import questionnaire_file_path, question_file_path, response_file_path, questionnaire_pj_file_path, Prefixer
+from .upload_path import (
+    questionnaire_file_path, question_file_path, response_file_path, questionnaire_pj_file_path, Prefixer,
+)
 
 
 class WithNumberingMixin(object):

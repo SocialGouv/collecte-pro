@@ -116,7 +116,8 @@ def handle_keycloak_error(e: Exception):
         message = error_description
     else:
         message = (
-            f"Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur. Veuillez vous rapprocher de votre administrateur."
+            "Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur. "
+            "Veuillez vous rapprocher de votre administrateur."
             f" (code : {error_code or 'inconnu'})."
         )
 

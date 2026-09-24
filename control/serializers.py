@@ -99,7 +99,10 @@ class ControlSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Control
-        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned', 'access_type')
+        fields = (
+            'id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model',
+            'is_pinned', 'access_type',
+        )
 
     def get_access_type(self, obj):
         profile = self.context.get('profile')
@@ -210,7 +213,10 @@ class ControlDetailControlSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Control
-        fields = ('id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model', 'is_pinned', 'access_type')
+        fields = (
+            'id', 'title', 'depositing_organization', 'reference_code', 'questionnaires', 'is_model',
+            'is_pinned', 'access_type',
+        )
 
     def get_access_type(self, obj):
         profile = self.context.get('profile')

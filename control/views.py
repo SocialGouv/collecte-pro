@@ -33,7 +33,9 @@ class WithListOfControlsMixin(object):
         # Questionnaires are grouped by control:
         # we get the list of questionnaire from the list of controls
         user_access = self.request.user.profile.access.filter(control__is_deleted=False).all()
-        control_list = Control.objects.filter(access__in=user_access).prefetch_related('access').distinct().order_by('-id')
+        control_list = Control.objects.filter(access__in=user_access).prefetch_related(
+            'access'
+        ).distinct().order_by('-id')
         context['controls'] = control_list
         context['profile'] = self.request.user.profile
         return context
@@ -107,7 +109,10 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         controls_questionnaires = Questionnaire.objects.filter(control__in=user_controls)
         user_questionnaires = []
         for result in controls_questionnaires:
-            if not (result.is_draft & self.request.user.profile.access.filter(Q(control=result.control) & Q(access_type='repondant')).exists()):
+            has_repondant_access = self.request.user.profile.access.filter(
+                Q(control=result.control) & Q(access_type='repondant')
+            ).exists()
+            if not (result.is_draft & has_repondant_access):
                 user_questionnaires.append(result.id)
         queryset = Questionnaire.objects.filter(id__in=user_questionnaires)
         return queryset
@@ -117,7 +122,9 @@ class QuestionnaireDetail(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
 
         serializer = ControlSerializerWithoutDraft
         questionnaire = context['object']
-        if self.request.user.profile.access.filter(Q(control=questionnaire.control) & Q(access_type='demandeur')).exists():
+        if self.request.user.profile.access.filter(
+            Q(control=questionnaire.control) & Q(access_type='demandeur')
+        ).exists():
             serializer = ControlSerializer
         control_list = context['controls']
         profile = context['profile']
@@ -145,7 +152,9 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
 
     def get_queryset(self):
         questionnaire = Questionnaire.objects.filter(id=self.kwargs['pk']).first()
-        if not self.request.user.profile.access.filter(Q(control=questionnaire.control) & Q(access_type='demandeur')).exists():
+        if not self.request.user.profile.access.filter(
+            Q(control=questionnaire.control) & Q(access_type='demandeur')
+        ).exists():
             return Control.objects.none()
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         questionnaires = Questionnaire.objects.filter(

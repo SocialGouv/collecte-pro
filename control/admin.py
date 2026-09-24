@@ -83,7 +83,9 @@ class QuestionnaireInline(OrderedTabularInline):
 
 @admin.register(Control)
 class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, OrderedModelAdmin):
-    list_display = ('id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action', 'created_date')
+    list_display = (
+        'id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action', 'created_date',
+    )
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
     inlines = (QuestionnaireInline, )
@@ -138,7 +140,9 @@ class QuestionnaireFileInline(OrderedTabularInline):
 
 
 @admin.register(Questionnaire)
-class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinksMixin):
+class QuestionnaireAdmin(
+    QuestionnaireDuplicateMixin, OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinksMixin
+):
     save_as = True
     list_display = (
         'id', 'numbering', 'title', 'order', 'link_to_control', 'is_draft', 'editor',

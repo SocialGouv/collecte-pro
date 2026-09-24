@@ -85,7 +85,8 @@ def simple_captcha_endpoint(request):
 
                     print(f"[CAPTCHA SUCCESS] UUID: {captcha_uuid}")
                     print(f"[CAPTCHA SUCCESS] Image base64 length: {len(image_base64) if image_base64 else 0}")
-                    print(f"[CAPTCHA SUCCESS] Image base64 starts with: {image_base64[:50] if image_base64 else 'NULL'}")
+                    b64_preview = image_base64[:50] if image_base64 else 'NULL'
+                    print(f"[CAPTCHA SUCCESS] Image base64 starts with: {b64_preview}")
 
                     if not image_base64:
                         print("[CAPTCHA ERROR] No imageb64 in response")
