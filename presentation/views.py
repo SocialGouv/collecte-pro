@@ -283,6 +283,8 @@ def demo(request):
             extra_context=context,
         )
         if access:
-            return render(request, "presentation/access.html", choice(accounts))
+            # Sonar issue about PRNG, this is a non-security related use.
+            # We ignore the false positive
+            return render(request, "presentation/access.html", choice(accounts))  # NOSONAR
         return render(request, "presentation/access.html")
     return render(request, "presentation/demo.html")
