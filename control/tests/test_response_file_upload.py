@@ -235,6 +235,7 @@ def test_uploaded_pdf_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     assert response_file.file.size == dummy_file.size
 
@@ -257,6 +258,7 @@ def test_uploaded_xls_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     assert response_file.file.size == dummy_file.size
 
@@ -279,6 +281,7 @@ def test_uploaded_doc_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     print(response_file)
     assert response_file.file.size == dummy_file.size

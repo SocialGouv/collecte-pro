@@ -136,7 +136,7 @@ def test_cannot_create_control_with_special_characters_in_reference_code():
 
 
 def test_no_access_to_control_create_api_if_not_inspector():
-    control = factories.ControlFactory()
+    factories.ControlFactory()
     user = utils.make_audited_user()
     assert create_control(user, make_create_payload()).status_code == 403
 

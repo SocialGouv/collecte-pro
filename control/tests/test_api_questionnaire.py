@@ -309,7 +309,7 @@ def test_inspector_cannot_update_published_questionnaire():
 
 def test_inspector_can_finalize_questionnaire():
     increment_ids()
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_inspector_user(control)
     questionnaire = factories.QuestionnaireFactory(
@@ -338,7 +338,7 @@ def test_audited_cannot_update_published_questionnaire():
 
 def test_audited_can_reply_to_questionnaire():
     increment_ids()
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_audited_user(control)
     questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control)

@@ -16,7 +16,7 @@ User = get_user_model()
 def test_email_is_sent_if_there_is_a_response_file():
     response_file = factories.ResponseFileFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=response_file.question.theme.questionnaire.control,
         access_type=Access.DEMANDEUR,
@@ -32,7 +32,7 @@ def test_email_is_sent_if_there_is_a_response_file():
 def test_email_is_not_sent_if_sending_flag_is_disabled():
     response_file = factories.ResponseFileFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=response_file.question.theme.questionnaire.control,
         access_type=Access.DEMANDEUR,
