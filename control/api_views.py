@@ -226,7 +226,7 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
 
         mime_type = magic.from_buffer(file.read(2048), mime=True)
         if not self.file_mime_type_is_valid(mime_type):
-           raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
+            raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
 
         serializer.save(file=file)
 
@@ -281,7 +281,7 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
 
         mime_type = magic.from_buffer(file.read(2048), mime=True)
         if not self.file_mime_type_is_valid(mime_type):
-           raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
+            raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
 
         """MAX_SIZE_BYTES = 1048576 * settings.UPLOAD_FILE_MAX_SIZE_MB
         if file.size > MAX_SIZE_BYTES:

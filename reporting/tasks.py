@@ -121,7 +121,7 @@ def send_notifs_dates_echeances():
     jours_echeance = Parametre.objects.filter(code="JOURS_ECHEANCE").filter(deleted_at__isnull=True).first()
     try:
         jours_echeance = int(jours_echeance.name)
-    except:
+    except Exception:
         jours_echeance = settings.JOURS_ECHEANCE
     logger.info(f"Jours : {jours_echeance}")
     for questionnaire in Questionnaire.objects.filter(end_date__isnull=False).all():
