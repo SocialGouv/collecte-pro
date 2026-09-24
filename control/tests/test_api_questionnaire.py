@@ -456,7 +456,7 @@ def run_test_questionnaire_update__theme_create(added_theme):
 
 
 def test_questionnaire_update__theme_create():
-    added_theme = {'title': 'this is a great theme.' }
+    added_theme = {'title': 'this is a great theme.'}
     run_test_questionnaire_update__theme_create(added_theme)
 
 

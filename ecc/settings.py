@@ -90,7 +90,7 @@ if KEYCLOAK_ACTIVE:
     OIDC_OP_AUTHORIZATION_ENDPOINT = f'{OPENID_PREFIX}/auth'
     OIDC_OP_TOKEN_ENDPOINT = f'{OPENID_PREFIX}/token'
     OIDC_OP_USER_ENDPOINT = f'{OPENID_PREFIX}/userinfo'
-    OIDC_OP_LOGOUT_ENDPOINT= f'{OPENID_PREFIX}/logout'
+    OIDC_OP_LOGOUT_ENDPOINT = f'{OPENID_PREFIX}/logout'
     OIDC_OP_LOGOUT_URL_METHOD = env('OIDC_OP_LOGOUT_URL_METHOD', default='ecc.provider_logout')
     OIDC_RP_CLIENT_ID = env('OIDC_RP_CLIENT_ID', default='')
     OIDC_RP_CLIENT_SECRET = env('OIDC_RP_CLIENT_SECRET', default='')
@@ -208,7 +208,7 @@ CSP_STYLE_SRC += ("https://static.piste.gouv.fr",)
 CSP_SCRIPT_SRC = env('CSP_SCRIPT_SRC', default=("'self'", "'unsafe-eval'", "'unsafe-inline'"))
 CSP_SCRIPT_SRC += ("https://code.jquery.com",)
 
-CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'","https:",))
+CSP_IMG_SRC = env('CSP_IMG_SRC', default=("'self'", "https:",))
 
 if DEBUG:
     CSRF_COOKIE_SECURE = False
@@ -230,7 +230,7 @@ EMAIL_USE_SSL = env('EMAIL_USE_SSL')
 EMAIL_SPACING_TIME_MILLIS = env('EMAIL_SPACING_TIME_MILLIS', default=10000)
 
 # The user will get a warning when trying to add an inspector whose email doesn't end with EXPECTED_INSPECTOR_EMAIL_ENDINGS
-EXPECTED_INSPECTOR_EMAIL_ENDINGS=env('EXPECTED_INSPECTOR_EMAIL_ENDINGS', default='')
+EXPECTED_INSPECTOR_EMAIL_ENDINGS = env('EXPECTED_INSPECTOR_EMAIL_ENDINGS', default='')
 
 SEND_EMAIL_WHEN_USER_ADDED = env('SEND_EMAIL_WHEN_USER_ADDED', default=False)
 SEND_EMAIL_WHEN_USER_REMOVED = env('SEND_EMAIL_WHEN_USER_REMOVED', default=False)
@@ -253,7 +253,7 @@ USE_TZ = True
 import locale
 try:
     locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
-except locale.Error as e:
+except locale.Error:
     pass  # setlocale can crash, for instance when running on Heroku.
 
 # Static files (CSS, JavaScript, Images)
@@ -353,17 +353,17 @@ DEMO_AUDITED_USERNAME = env('DEMO_AUDITED_USERNAME', default=None)
 ALLOW_DEMO_LOGIN = env('ALLOW_DEMO_LOGIN', default=False)
 
 # Session management
-SESSION_EXPIRE_SECONDS = env('SESSION_EXPIRE_SECONDS', default=24*60*60)
+SESSION_EXPIRE_SECONDS = env('SESSION_EXPIRE_SECONDS', default=24 * 60 * 60)
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 # Ip adress
 SAVE_IP_ADDRESS = env('SAVE_IP_ADDRESS', default=False)
 
 # Environnement name
-ENV_NAME = env ('ENV_NAME', default='')
+ENV_NAME = env('ENV_NAME', default='')
 
 # Url of collecte-pro in questionnaire
-QUESTIONNAIRE_SITE_URL = env ('QUESTIONNAIRE_SITE_URL', default='')
+QUESTIONNAIRE_SITE_URL = env('QUESTIONNAIRE_SITE_URL', default='')
 
 # Mise à jour pour Django>=3.2
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -374,7 +374,7 @@ JOURS_ECHEANCE = env('JOURS_ECHEANCE', default=7)
 # Indique si la page par défaut est celle de présentation
 PRESENTATION_ACTIVE = env('PRESENTATION_ACTIVE', default=True)
 
-#Captcha
+# Captcha
 load_dotenv()
 GRANT_TYPE = os.getenv('GRANT_TYPE')
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -384,6 +384,3 @@ SCOPE = os.getenv('SCOPE')
 OAUTH_URL = os.getenv('OAUTH_URL')
 SIMPLE_CAPTCHA_ENDPOINT_URL = os.getenv('SIMPLE_CAPTCHA_ENDPOINT_URL')
 VALIDER_CAPTCHA_URL = os.getenv('VALIDER_CAPTCHA_URL')
-
-
-    

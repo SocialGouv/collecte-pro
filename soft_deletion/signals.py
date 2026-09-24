@@ -1,11 +1,9 @@
-from django.conf import settings
 from django.dispatch import receiver
 from utils.email import send_email
 
 from control.models import Control
 from .api_views import soft_delete_signal
 from parametres.models import Parametre
-from user_profiles.models import UserProfile
 
 
 @receiver(soft_delete_signal, sender=Control)

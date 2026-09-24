@@ -26,7 +26,6 @@ from .serializers import ControlDetailUserSerializer, ControlSerializerWithoutDr
 from .serializers import ControlSerializer, ControlDetailControlSerializer
 
 
-
 class WithListOfControlsMixin(object):
 
     def get_context_data(self, **kwargs):
@@ -169,6 +168,7 @@ class QuestionnaireEdit(LoginRequiredMixin, WithListOfControlsMixin, DetailView)
         context['user_json'] = json.dumps(user_serialized)
         return context
 
+
 class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailView):
     """
     Creates a questionnaire on a given control (pk of control passed in URL).
@@ -194,7 +194,8 @@ class QuestionnaireCreate(LoginRequiredMixin, WithListOfControlsMixin, DetailVie
         user_serialized['is_inspector'] = self.request.user.profile.is_inspector
         context['user_json'] = json.dumps(user_serialized)
         return context
-    
+
+
 class UploadResponseFile(LoginRequiredMixin, CreateView):
     model = ResponseFile
     fields = ('file',)
@@ -227,9 +228,9 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         action.send(**action_details)
 
     def file_extension_is_valid(self, extension):
-        
+
         split_extensions = extension.split(".")
-        if len(split_extensions) > 2: 
+        if len(split_extensions) > 2:
             return False
         normalized_extension = f".{split_extensions[-1].lower()}"
         return normalized_extension not in settings.UPLOAD_FILE_EXTENSION_BLACKLIST
@@ -241,12 +242,12 @@ class UploadResponseFile(LoginRequiredMixin, CreateView):
         return True
 
     def form_valid(self, form):
-        
+
         if isinstance(self.request.FILES.getlist('file'), list) and len(self.request.FILES.getlist('file')) > 1:
             return HttpResponseForbidden(
             "Le téléchargement de plusieurs fichiers via un seul champ est interdit."
         )
-            
+
         if (
             "x-infection-found" in [header.lower() for header in self.request.headers]
             or "x-virus-name" in [header.lower() for header in self.request.headers]
@@ -336,7 +337,7 @@ class SendFileMixin(SingleObjectMixin):
         # get the object fetched by SingleObjectMixin
         obj = self.get_object()
         self.add_access_log_entry(accessed_object=obj)
-        
+
         content_type, encoding = mimetypes.guess_type(obj.file.path)
         content_type = content_type or 'application/octet-stream'
 
@@ -344,7 +345,7 @@ class SendFileMixin(SingleObjectMixin):
             file_data = f.read()
 
         response = HttpResponse(file_data, content_type=content_type)
-        
+
         filename = os.path.basename(obj.file.path)
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
@@ -374,7 +375,7 @@ class SendQuestionnaireFile(SendFileMixin, LoginRequiredMixin, View):
         """
         questionnaire = self.get_object()
         if questionnaire.is_draft:
-            if not questionnaire.control in request.user.profile.user_controls("demandeur"):
+            if questionnaire.control not in request.user.profile.user_controls("demandeur"):
                 raise Http404
         generate_questionnaire_file(questionnaire)
         return super().get(request, *args, **kwargs)
@@ -396,6 +397,7 @@ class SendQuestionFile(SendFileMixin, LoginRequiredMixin, View):
         return self.model.objects.filter(
             question__theme__questionnaire__control__in=user_controls)
 
+
 class SendQuestionnairePjFile(SendFileMixin, LoginRequiredMixin, View):
     model = QuestionnaireFile
     file_type = 'questionnaire-file'
@@ -407,7 +409,6 @@ class SendQuestionnairePjFile(SendFileMixin, LoginRequiredMixin, View):
         user_controls = Control.objects.filter(access__in=self.request.user.profile.access.all())
         return self.model.objects.filter(
             questionnaire__control__in=user_controls)
-
 
 
 class SendResponseFile(SendQuestionFile):

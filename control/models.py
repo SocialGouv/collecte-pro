@@ -5,7 +5,6 @@ from django.contrib.sites.models import Site
 from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
-from django.apps import apps
 
 from django_cleanup import cleanup
 from model_utils.models import TimeStampedModel
@@ -16,8 +15,6 @@ from soft_deletion.managers import DeletableQuerySet
 
 from .docx import DocxMixin
 from .upload_path import questionnaire_file_path, question_file_path, response_file_path, questionnaire_pj_file_path, Prefixer
-
-from user_profiles.models import UserProfile
 
 
 class WithNumberingMixin(object):
@@ -45,7 +42,6 @@ class FileInfoMixin(object):
         if not self.questionnaire:
             return None
         return self.questionnaire.control
-        
 
     @property
     def questionnaire(self):
@@ -105,15 +101,15 @@ class Control(SoftDeleteModel):
         default=False,
         help_text="Indique si cette procédure est un modèle"
     )
-    
+
     is_pinned = models.BooleanField(
         verbose_name="Epinglé",
         default=False,
         help_text="Indique si cette procédure est épinglée"
     )
-    
+
     created_date = models.DateTimeField("Date de création", null=True, blank=True)
-    
+
     objects = DeletableQuerySet.as_manager()
 
     class Meta:
@@ -126,7 +122,7 @@ class Control(SoftDeleteModel):
             'title': self.title,
             'depositing_organization': self.depositing_organization,
             'is_model': self.is_model,
-            'is_pinned': self.is_pinned, 
+            'is_pinned': self.is_pinned,
         }
 
     @property
@@ -150,17 +146,19 @@ class Control(SoftDeleteModel):
             return f'[ID{self.id}] - {self.title} - {self.depositing_organization}'
         return f'[ID{self.id}] - {self.title}'
 
+
 class PurgeEligibleControlTrv(models.Model):
     control_id = models.IntegerField()
-    reference_code =models.CharField(max_length=30)
+    reference_code = models.CharField(max_length=30)
     date_traitement = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "purge_eligible_control_trv"
-        
+
+
 class PurgeHistoControl(models.Model):
     control_id = models.IntegerField()
-    reference_code =models.CharField(max_length=30)
+    reference_code = models.CharField(max_length=30)
     is_supp_logique = models.BooleanField(default=False)
     date_supp_logique = models.DateTimeField(null=True, blank=True)
     is_supp_physique = models.BooleanField(default=False)
@@ -169,6 +167,7 @@ class PurgeHistoControl(models.Model):
 
     class Meta:
         db_table = "purge_histo_control"
+
 
 class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
     title = models.CharField("titre", max_length=255)
@@ -291,6 +290,7 @@ class Questionnaire(OrderedModel, WithNumberingMixin, DocxMixin):
         display_text += f' [Q{self.numbering}]'
         display_text += f' - {self.title}'
         return display_text
+
 
 class QuestionnaireFile(OrderedModel, FileInfoMixin):
     questionnaire = models.ForeignKey(

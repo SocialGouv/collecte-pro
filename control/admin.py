@@ -20,7 +20,6 @@ from soft_deletion.admin import SoftDeletedAdminControle, IsActiveFilter, IsMode
 
 from .models import Control, Questionnaire, Theme, Question, QuestionFile, ResponseFile, QuestionnaireFile
 from .questionnaire_duplicate import QuestionnaireDuplicateMixin
-from user_profiles.models import UserProfile
 
 
 class ParentLinksMixin(object):
@@ -88,15 +87,15 @@ class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, Order
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
     inlines = (QuestionnaireInline, )
-    list_filter = (IsActiveFilter,IsModelFilter,)
-    
+    list_filter = (IsActiveFilter, IsModelFilter,)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(_last_response_date=Max('questionnaires__last_response_file_action'))
 
-        col_index = 5  
+        col_index = 5
 
-        ordering_param = request.GET.get('o', '') 
+        ordering_param = request.GET.get('o', '')
         is_desc = False
         for part in ordering_param.split('.'):
             if part.lstrip('-') == str(col_index):
@@ -120,7 +119,6 @@ class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, Order
         if questionnaire and questionnaire.last_response_file_action:
             return questionnaire.last_response_file_action
         return "Aucun"
-
 
 
 class ThemeInline(OrderedTabularInline):
@@ -249,6 +247,7 @@ class Megacontrol(LoginRequiredMixin, QuestionnaireDuplicateMixin, SingleObjectM
         messages.success(self.request, message)
 
         return super().get(*args, **kwargs)
+
 
 admin.site.register(QuestionFile)
 admin.site.register(QuestionnaireFile)

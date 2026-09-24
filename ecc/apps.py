@@ -8,8 +8,11 @@ class EccConfig(AppConfig):
     verbose_name = "ecc"
 
     def ready(self):
-        from .celery import app as celery_app
-        __all__ = ('celery_app',)
+        # Import the Celery app here (rather than at module level) so Django loads it
+        # on startup, per Celery's recommended Django integration pattern. `__all__`
+        # re-exports it for anything doing `from ecc import celery_app`.
+        from .celery import app as celery_app  # noqa: F401
+        __all__ = ('celery_app',)  # noqa: F841
 
         # Activity stream registration
         from actstream import registry

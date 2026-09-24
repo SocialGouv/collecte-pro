@@ -47,6 +47,7 @@ class IsActiveFilter(admin.SimpleListFilter):
             return queryset.filter(deleted_at__isnull=False)
         return queryset
 
+
 class IsModelFilter(admin.SimpleListFilter):
     title = 'modèle'
     parameter_name = 'is_model'
@@ -65,6 +66,7 @@ class IsModelFilter(admin.SimpleListFilter):
             return queryset.filter(is_model=False)
         return queryset
 
+
 class SoftDeletedAdmin(object):
     actions = [soft_delete, undelete]
 
@@ -74,13 +76,14 @@ class SoftDeletedAdmin(object):
     is_active.short_description = "active"
 
     def get_list_display(self, request):
-        return super().get_list_display(request) + ( 'deleted_at', 'is_active')
+        return super().get_list_display(request) + ('deleted_at', 'is_active')
 
     def get_readonly_fields(self, request, obj=None):
         return super().get_readonly_fields(request, obj) + ('is_deleted', 'deleted_at',)
 
     def has_delete_permission(self, request, obj=None):
         return False
+
 
 class SoftDeletedAdminControle(object):
     actions = [soft_delete, undelete]

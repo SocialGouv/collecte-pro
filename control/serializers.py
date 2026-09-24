@@ -67,11 +67,13 @@ class ControlDetailUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('first_name', 'last_name', 'email', 'id',)
 
+
 class QuestionnaireFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionnaireFile
         fields = ('id', 'url', 'basename', 'file', 'questionnaire')
+
 
 class QuestionnaireSerializer(serializers.ModelSerializer):
     themes = ThemeSerializer(many=True, read_only=True)
@@ -120,6 +122,7 @@ class ControlSerializerWithoutDraft(ControlSerializer):
         serializer = QuestionnaireSerializer(instance=questionnaires, many=True)
         return serializer.data
 
+
 class ControlFilteredSerializer(ControlSerializer):
     """
     Questionnaires are filtered to exclude draft if user is repondant.
@@ -141,6 +144,7 @@ class ControlUpdateSerializer(serializers.ModelSerializer):
         model = Control
         fields = ('id', 'title', 'depositing_organization', 'is_model', 'is_pinned')
 
+
 class ControlListSerializer(serializers.ModelSerializer):
     access_type = serializers.SerializerMethodField()
 
@@ -155,6 +159,7 @@ class ControlListSerializer(serializers.ModelSerializer):
             if access:
                 return access.access_type
         return None
+
 
 class QuestionUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)

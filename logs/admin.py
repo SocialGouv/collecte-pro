@@ -11,6 +11,8 @@ class ReadOnlyModelAdmin:
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.utils.html import format_html

@@ -36,6 +36,7 @@ def test_send_response_file_list_fails_for_audited_if_the_control_is_not_associa
 
     assert response.status_code != 200
 
+
 def test_send_response_file_list_works_for_inspector_if_the_control_is_associated_with_the_user(client):
     questionnaire = factories.QuestionnaireFactory(is_draft=False)
     user = utils.make_inspector_user(questionnaire.control)
@@ -78,6 +79,7 @@ def test_send_response_file_list_fails_for_draft_questionnaire_for_audited(clien
 ###################################
 # Decoding the xlsx file is too complicated, so we test the file list before it is written to file.
 from control.export_response_files import get_files_for_export
+
 
 def test_send_response_file_list_contains_file(client):
     response_file = factories.ResponseFileFactory(is_deleted=False)
