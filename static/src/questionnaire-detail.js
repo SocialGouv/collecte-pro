@@ -20,24 +20,24 @@ if (controlsDataEl && controlsDataEl.textContent && controlsDataEl.textContent.t
 }
 
 const questionnaireIdDataEl = typeof document !== 'undefined' ? document.getElementById('questionnaire-id-data') : null
-let questionnaireId = NaN
+let questionnaireId = Number.NaN
 if (questionnaireIdDataEl && questionnaireIdDataEl.textContent) {
   try {
     questionnaireId = Number(questionnaireIdDataEl.textContent.trim())
   } catch (e) {
     console.error('questionnaire-detail: failed to read questionnaire-id-data', e)
-    questionnaireId = NaN
+    questionnaireId = Number.NaN
   }
 }
 
 const controlIdDataEl = typeof document !== 'undefined' ? document.getElementById('control-id-data') : null
-let controlId = NaN
+let controlId = Number.NaN
 if (controlIdDataEl && controlIdDataEl.textContent) {
   try {
     controlId = Number(controlIdDataEl.textContent.trim())
   } catch (e) {
     console.error('questionnaire-detail: failed to read control-id-data', e)
-    controlId = NaN
+    controlId = Number.NaN
   }
 }
 
