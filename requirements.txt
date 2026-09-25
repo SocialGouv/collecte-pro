@@ -60,6 +60,7 @@ python-magic==0.4.27
 tzdata==2026.1                     
 packaging==26.1                    
 python-crontab==3.3.0              
+html-sanitizer==2.6.0              
 
 # --- API / SCHEMA ---
 drf-spectacular==0.29.0            
