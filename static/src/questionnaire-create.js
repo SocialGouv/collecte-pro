@@ -55,13 +55,13 @@ if (questionnaireEl) {
   const controlHasMultipleInspectorsRaw = readPropAttr(questionnaireEl, 'control-has-multiple-inspectors')
   const questionnaireNumberingRaw = readPropAttr(questionnaireEl, 'questionnaire-numbering')
 
-  if (controlIdRaw !== undefined) props.controlId = Number(controlIdRaw.replace(/"/g, ''))
-  if (questionnaireIdRaw !== undefined) props.questionnaireId = Number(questionnaireIdRaw.replace(/"/g, ''))
+  if (controlIdRaw !== undefined) props.controlId = Number(controlIdRaw.replaceAll('"', ''))
+  if (questionnaireIdRaw !== undefined) props.questionnaireId = Number(questionnaireIdRaw.replaceAll('"', ''))
   if (controlHasMultipleInspectorsRaw !== undefined) {
     props.controlHasMultipleInspectors =
-    controlHasMultipleInspectorsRaw.replace(/"/g, '') === 'true'
+      controlHasMultipleInspectorsRaw.replaceAll('"', '') === 'true'
   }
-  if (questionnaireNumberingRaw !== undefined) props.questionnaireNumbering = Number(questionnaireNumberingRaw.replace(/"/g, ''))
+  if (questionnaireNumberingRaw !== undefined) props.questionnaireNumbering = Number(questionnaireNumberingRaw.replaceAll('"', ''))
 
   const questionnaireApp = createApp(QuestionnaireCreate, props)
   questionnaireApp.use(store)
