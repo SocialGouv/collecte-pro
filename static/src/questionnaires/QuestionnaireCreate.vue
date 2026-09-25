@@ -290,7 +290,7 @@ export default defineComponent({
     }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
     if (this.controlId === undefined && this.questionnaireId === undefined) {
-      throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
+      throw new Error('QuestionnaireCreate needs a controlId or a questionnaireId')
     }
   },
   methods: {

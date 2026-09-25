@@ -81,7 +81,7 @@ for (const [name, url] of Object.entries(viewUrls)) {
       return url
     }
     if (id === undefined) {
-      throw Error('Url ' + url + ' needs id arg')
+      throw new Error('Url ' + url + ' needs id arg')
     }
     return url.replace('<int:pk>', id)
   }
