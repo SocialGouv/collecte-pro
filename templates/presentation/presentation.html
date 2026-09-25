@@ -81,14 +81,14 @@
     <div class="illustration right">
       <p>
       <ol>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('76XCQO9J3k0');">Présentation</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('LdSus0uAe3w');">Introduction et connexion</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('oaYiAX7v_m8');">Demandeur : Créer un espace de dépôt</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('1dcZFx3quKo');">Demandeur : Créer un questionnaire</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('gaTCAgTsAg0');">Demandeur : Dupliquer un espace de dépôt</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('DOvRU3Jh5rY');">Répondant : Déposer des réponses</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('sJPGV9Dcmgg');">Répondant : Voir et exporter les réponses</a></li>
-        <li><a href="#video" role="button" tabindex="0" onclick="return play('3cM2yDOSHxE');">Répondant : Exporter la liste des réponses</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('76XCQO9J3k0');" onkeydown="return playOnKey(event, '76XCQO9J3k0');">Présentation</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('LdSus0uAe3w');" onkeydown="return playOnKey(event, 'LdSus0uAe3w');">Introduction et connexion</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('oaYiAX7v_m8');" onkeydown="return playOnKey(event, 'oaYiAX7v_m8');">Demandeur : Créer un espace de dépôt</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('1dcZFx3quKo');" onkeydown="return playOnKey(event, '1dcZFx3quKo');">Demandeur : Créer un questionnaire</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('gaTCAgTsAg0');" onkeydown="return playOnKey(event, 'gaTCAgTsAg0');">Demandeur : Dupliquer un espace de dépôt</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('DOvRU3Jh5rY');" onkeydown="return playOnKey(event, 'DOvRU3Jh5rY');">Répondant : Déposer des réponses</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('sJPGV9Dcmgg');" onkeydown="return playOnKey(event, 'sJPGV9Dcmgg');">Répondant : Voir et exporter les réponses</a></li>
+        <li><a href="#video" role="button" tabindex="0" onclick="return play('3cM2yDOSHxE');" onkeydown="return playOnKey(event, '3cM2yDOSHxE');">Répondant : Exporter la liste des réponses</a></li>
       </ol>
       </p>
     </div>
@@ -118,6 +118,14 @@
     video = document.getElementById('video');
     video.src = "https://www.youtube.com/embed/" + vid;
     return false;
+  }
+
+  function playOnKey(event, vid) {
+    // role="button" links must handle Enter and Space like a native <button>
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+      event.preventDefault();
+      return play(vid);
+    }
   }
 </script>
 
