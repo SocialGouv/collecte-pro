@@ -89,7 +89,6 @@
         </button>
         <button v-if="state === STATES.CREATING_BODY"
                 id="move-themes-button"
-                role="button"
                 type="button"
                 class="btn btn-secondary"
                 @click="saveAndShowMoveThemesModal"

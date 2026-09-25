@@ -20,7 +20,6 @@
             <div class="flex-column align-items-center">
               <button :disabled="themeIndex === 0"
                       class="btn btn-secondary btn-sm move-up-button"
-                      role="button"
                       type="button"
                       :aria-label="`Déplacer le thème '${theme.title}' vers le haut`"
                       title="Déplacer le thème vers le haut"
@@ -31,7 +30,6 @@
               <div aria-live="polite" class="sr-only">{{ themeIndex + 1 }}</div>
               <button :disabled="themeIndex === (themes.length - 1)"
                       class="btn btn-secondary btn-sm move-down-button"
-                      role="button"
                       type="button"
                       :aria-label="`Déplacer le thème '${theme.title}' vers le bas`"
                       title="Déplacer le thème vers le bas"
