@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 120
+exclude = [
+    "migrations",
+    "settings",
+    "venv",
+    "node_modules",
+    "staticfiles",
+    "htmlcov",
+    "media",
+    "media_test",
+]
+# needed so preview-only pycodestyle rules (E1/E2/E3xx) are enabled below,
+# matching flake8's default coverage
+preview = true
+
+[tool.ruff.lint]
+# E/W (full pycodestyle) + F (pyflakes): matches flake8's actual default rule set
+select = ["E", "W", "F"]
+ignore = ["E203"]

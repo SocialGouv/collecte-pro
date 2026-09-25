@@ -13,13 +13,13 @@
             :id="'dropzone-area-' + questionId"
             ref="dropzoneArea"
             class="dropzone">
-        
-        <input :id="'csrf-token-' + questionId" type="hidden" name="csrfmiddlewaretoken" :value="csrftoken" aria-label="CSRF Token" role="presentation">
+
+        <input :id="'csrf-token-' + questionId" type="hidden" name="csrfmiddlewaretoken" :value="csrftoken" aria-label="CSRF Token">
         <div class="dz-message" data-dz-message>
           <button type="button" class="btn" :aria-label="'Importer des fichiers pour la question ' + questionId">Cliquer ou glisser-déposer vos fichiers.</button>
         </div>
-        
-        <input :id="'question-id-' + questionId" type="hidden" name="question_id" :value="questionId" aria-label="ID de la question" role="presentation"/>
+
+        <input :id="'question-id-' + questionId" type="hidden" name="question_id" :value="questionId" aria-label="ID de la question"/>
         <div class="fallback">
           <label :id="'file-label-' + questionId" :for="'file-input-' + questionId">
             Sélectionner un fichier
@@ -66,6 +66,7 @@ export default defineComponent({
     const hasErrors = ref(false)
     const errorMessage = ref('')
     const dropzoneArea = ref<HTMLFormElement | null>(null)
+    const dropzoneInstance = ref<Dropzone | null>(null)
 
     const readCookie = (name: string) => {
       const nameEQ = name + '='
@@ -121,8 +122,7 @@ export default defineComponent({
     const dropzoneSuccessCallback = async (file: any) => {
       clearCache()
       styleSuccess(file)
-      const dz = Dropzone.forElement(dropzoneArea.value!)
-      dz.removeAllFiles(true)
+      dropzoneInstance.value?.removeAllFiles(true)
 
       const responseFiles = await fetchQuestionData()
       EventBus.$emit('response-files-updated-' + props.questionId, responseFiles)
@@ -143,8 +143,7 @@ export default defineComponent({
 
       if (!dropzoneArea.value) return
 
-      
-      new Dropzone(dropzoneArea.value, {
+      dropzoneInstance.value = new Dropzone(dropzoneArea.value, {
         addRemoveLinks: true,
         timeout: UPLOAD_TIMEOUT_MS,
         maxFiles: 1,

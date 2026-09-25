@@ -50,6 +50,7 @@
               ref="questionnaireMetadataCreate"
               :questionnaire-numbering="questionnaireNumbering"
               :questionnaire="currentQuestionnaire"
+              @file-uploaded="onQuestionnaireFileUploaded"
               v-show="state === STATES.START">
       </questionnaire-metadata-create>
       <questionnaire-body-create
@@ -88,7 +89,6 @@
         </button>
         <button v-if="state === STATES.CREATING_BODY"
                 id="move-themes-button"
-                role="button"
                 type="button"
                 class="btn btn-secondary"
                 @click="saveAndShowMoveThemesModal"
@@ -147,18 +147,17 @@
 <script>
 import '../../css/questionnaires.css'
 import axios from 'axios'
-import backend from '../utils/backend'
 import EventBus from '../events'
 import { nowTimeString, toBackendFormat } from '../utils/DateFormat'
 import Breadcrumbs from '../utils/Breadcrumbs'
-import { loadStatuses, useStore } from '../store'
+import { loadStatuses } from '../store'
 import PublishFlow from './PublishFlow'
 import QuestionnaireBodyCreate from './QuestionnaireBodyCreate'
 import QuestionnaireMetadataCreate from './QuestionnaireMetadataCreate'
 import QuestionnairePreview from './QuestionnairePreview'
 import StickyBottomMixin from '../utils/StickyBottomMixin'
 import SwapEditorButton from '../editors/SwapEditorButton'
-import { defineComponent, computed, ref } from 'vue'
+import { defineComponent } from 'vue'
 import Wizard from '../utils/Wizard'
 import backendUrls from '../utils/backend'
 
@@ -180,18 +179,14 @@ export default defineComponent({
     controlHasMultipleInspectors: Boolean,
     questionnaireId: Number,
     questionnaireNumbering: Number,
-    // Pass window dependency for testing
-    window: {
-      default: () => window,
-    },
   },
   data() {
     return {
       errorMessage: '',
       errors: [],
       hasErrors: false,
-      userId:'',
-      STATES: STATES,
+      userId: '',
+      STATES,
       state: STATES.LOADING,
       saveMessage: {
         text: '',
@@ -215,7 +210,7 @@ export default defineComponent({
       },
       set(val) {
         this.$store.commit('setCurrentQuestionnaire', val)
-      }
+      },
     },
     currentControl() {
       if (!this.currentQuestionnaire || !this.currentQuestionnaire.control) {
@@ -295,7 +290,7 @@ export default defineComponent({
     }
     this.stickyBottom_makeStickyBottom('bottom-bar', 140, 103, 44)
     if (this.controlId === undefined && this.questionnaireId === undefined) {
-      throw Error('QuestionnaireCreate needs a controlId or a questionnaireId')
+      throw new Error('QuestionnaireCreate needs a controlId or a questionnaireId')
     }
   },
   methods: {
@@ -451,8 +446,8 @@ export default defineComponent({
           delete this.currentQuestionnaire.end_date
         }
       }
-      const getCreateMethod = () => axios.post.bind(this, backend.questionnaire())
-      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backend.questionnaire(questionnaireId))
+      const getCreateMethod = () => axios.post.bind(this, backendUrls.questionnaire())
+      const getUpdateMethod = (questionnaireId) => axios.put.bind(this, backendUrls.questionnaire(questionnaireId))
       this.clearErrors()
       cleanPreSave()
       let saveMethod
@@ -487,25 +482,25 @@ export default defineComponent({
       // Déclencher la validation HTML5 native du navigateur
       // Uniquement sur les formulaires visibles de l'étape active
       let visibleForm = null
-      
+
       if (this.state === STATES.START) {
         visibleForm = document.querySelector('#questionnaire-metadata-create form')
       } else if (this.state === STATES.CREATING_BODY) {
         visibleForm = document.querySelector('#questionnaire-body-create form')
       }
-      
+
       // Valider le formulaire visible si présent
       if (visibleForm && !visibleForm.checkValidity()) {
         // Déclencher l'affichage des messages de validation HTML5
         visibleForm.reportValidity()
         return
       }
-      
+
       // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return
       }
-      
+
       this.saveDraft()
     },
     displaySaveInProgress() {
@@ -522,9 +517,12 @@ export default defineComponent({
       this.saveMessage.isWaitingForMinDisplayTime = false
       this.saveMessage.isSaveHappening = false
     },
+    onQuestionnaireFileUploaded(newFile) {
+      this.currentQuestionnaire.questionnaire_files.push(newFile)
+    },
     goHome() {
       setTimeout(() => {
-        this.window.location.href = backend['control-detail'](this.controlId)
+        window.location.href = backendUrls['control-detail'](this.controlId)
       }, 500)
     },
     saveDraft() {
@@ -571,18 +569,18 @@ export default defineComponent({
     saveAndShowMoveThemesModal() {
       // Valider le formulaire HTML5 d'abord
       let visibleForm = null
-      
+
       if (this.state === STATES.CREATING_BODY) {
         visibleForm = document.querySelector('#questionnaire-body-create form')
       }
-      
+
       // Valider le formulaire visible si présent
       if (visibleForm && !visibleForm.checkValidity()) {
         // Déclencher l'affichage des messages de validation HTML5
         visibleForm.reportValidity()
         return
       }
-      
+
       // Ensuite valider les règles personnalisées Vue
       if (!this.validateCurrentForm()) {
         return

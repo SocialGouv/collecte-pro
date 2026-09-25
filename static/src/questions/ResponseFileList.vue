@@ -72,7 +72,6 @@ import ConfirmModal from '../utils/ConfirmModal'
 import ErrorBar from '../utils/ErrorBar'
 import SuccessBar from '../utils/SuccessBar'
 import EventBus from '../events'
-import DateFormat from '../utils/DateFormat.js'
 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
@@ -111,6 +110,8 @@ export default defineComponent({
   },
   mounted() {
     EventBus.$on(EVENT_NAME + this.question.id, (files) => {
+      // This EventBus handler keeps it in sync with the trash flow without an extra emit round-trip.
+      // eslint-disable-next-line vue/no-mutating-props
       this.question.response_files = files
     })
   },
@@ -123,16 +124,16 @@ export default defineComponent({
       axios.put(backendUrls.responseFileTrash(file.id), formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .then(() => {
-        clearCache()
-        file.is_deleted = true
-        EventBus.$emit(EVENT_NAME + this.question.id, this.question.response_files)
-        this.showSuccess(file.basename)
-      })
-      .catch((error) => {
-        console.error('Error sending file to trash', error)
-        this.showError(`Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`)
-      })
+        .then(() => {
+          clearCache()
+          file.is_deleted = true
+          EventBus.$emit(EVENT_NAME + this.question.id, this.question.response_files)
+          this.showSuccess(file.basename)
+        })
+        .catch((error) => {
+          console.error('Error sending file to trash', error)
+          this.showError(`Le fichier n'a pu être envoyé à la corbeille. Erreur : ${error}`)
+        })
     },
     showSuccess(filename: string) {
       this.notification.type = 'success'

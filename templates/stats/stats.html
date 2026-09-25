@@ -9,7 +9,7 @@
 {% block page_main_container_with_sidebar %}
 <div class="page-main flex-row">
     <main class="mt-3 mt-md-5 flex-grow-1 ml-6 ie-flex-row-child mb-3" role="main">
-        <a id="contenu" tabindex="-1"></a>
+        <span id="contenu" class="sr-only" tabindex="-1">Début du contenu principal</span>
         <div class="container">
             <div class="">
                 <h1 class="page-title">Statistiques d'utilisation</h1>
@@ -163,7 +163,7 @@
 
             <div class="text-justify mt-5">
                 <h2>Nombre d'espaces créés par mois</h2>
-                <canvas id="controls" width="400" height="60" aria-label="Nombre d'espaces créés par mois" role="img"></canvas>
+                <canvas id="controls" width="400" height="60" aria-label="Nombre d'espaces créés par mois"></canvas>
                 <script>
                     let ctx = document.getElementById("controls").getContext("2d");
                         let months_created = {{ months_created | safe }};
@@ -206,7 +206,7 @@
 
             <div class="text-justify mt-6">
                 <h2>Nombre de questionnaires publiés par mois</h2>
-                <canvas id="questionnaires" width="400" height="60" aria-label="Nombre de questionnaires publiés par mois" role="img"></canvas>
+                <canvas id="questionnaires" width="400" height="60" aria-label="Nombre de questionnaires publiés par mois"></canvas>
                 <script>
                     ctx = document.getElementById("questionnaires").getContext("2d");
                         let months_questionnaire = {{ months_questionnaire| safe }};
@@ -249,7 +249,7 @@
 
             <div class="text-justify mt-6">
                 <h2>Nombre de questions publiées par mois</h2>
-                <canvas id="questions" width="400" height="60" aria-label="Nombre de questions publiées par mois" role="img"></canvas>
+                <canvas id="questions" width="400" height="60" aria-label="Nombre de questions publiées par mois"></canvas>
                 <script>
                     ctx = document.getElementById("questions").getContext("2d");
                         let months_question = {{ months_question | safe }};
@@ -292,7 +292,7 @@
 
             <div class="text-justify mt-6">
                 <h2>Nombre d'utilisateurs créés par mois</h2>
-                <canvas id="users" width="400" height="60" aria-label="Nombre d'utilisateurs créés par mois" role="img"></canvas>
+                <canvas id="users" width="400" height="60" aria-label="Nombre d'utilisateurs créés par mois"></canvas>
                 <script>
                     ctx = document.getElementById("users").getContext("2d");
                         let months_nb_users = {{ months_nb_users | safe }};
@@ -335,7 +335,7 @@
 
             <div class="text-justify mt-6">
                 <h2>Nombre de connexions par mois</h2>
-                <canvas id="connections" width="400" height="60" aria-label="Nombre de connexions par mois" role="img"></canvas>
+                <canvas id="connections" width="400" height="60" aria-label="Nombre de connexions par mois"></canvas>
                 <script>
                     ctx = document.getElementById("connections").getContext("2d");
                         let months_logged_in = {{ months_logged_in | safe }};
@@ -378,7 +378,7 @@
 
             <div class="text-justify mt-6">
                 <h2>Nombre de fichiers déposés par mois</h2>
-                <canvas id="responses" width="400" height="60" aria-label="Nombre de fichiers déposés par mois" role="img"></canvas>
+                <canvas id="responses" width="400" height="60" aria-label="Nombre de fichiers déposés par mois"></canvas>
                 <script>
                     ctx = document.getElementById("responses").getContext("2d");
                         let months_uploaded_response_file = {{ months_uploaded_response_file | safe }};

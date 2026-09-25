@@ -5,8 +5,7 @@
         <h4><span class="fe fe-help-circle mr-1" aria-hidden="true"></span>Un problème, une question ?</h4>
         Nous sommes là pour vous aider. N'hésitez pas à prendre contact avec l'équipe collecte-pro !
       </div>
-      <a role="button"
-         :href="'mailto:' + config.support_team_email"
+      <a :href="'mailto:' + config.support_team_email"
          class="btn btn-primary"
          title="Contacter le support collecte-pro">
         <span class="fe fe-mail mr-1" aria-hidden="true"></span>
@@ -25,7 +24,7 @@ export default defineComponent({ // Export standard Options API Vue 3 via define
   computed: {
     // Remplacement de ...mapFields(['config']) par mapState
     ...mapState({
-      config: state => state.config // Accès direct au state.config
+      config: state => state.config, // Accès direct au state.config
     }),
   },
 })

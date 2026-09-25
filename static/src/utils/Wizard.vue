@@ -21,7 +21,7 @@ export default {
   name: 'Wizard',
   props: {
     activeStepNumber: Number,
-    stepTitles: Array
+    stepTitles: Array,
   },
   components: {
     WizardStep,

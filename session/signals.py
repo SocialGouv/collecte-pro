@@ -8,6 +8,7 @@ from actstream import action
 
 User = get_user_model()
 
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -16,9 +17,11 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
+
 def save_ip_address(request):
     userIp = UserIpAddress(ip=get_client_ip(request), username=request.user)
     userIp.save()
+
 
 @receiver(user_logged_in, sender=User)
 def add_action_log_for_login(sender, user, request, **kwargs):
@@ -30,6 +33,7 @@ def add_action_log_for_login(sender, user, request, **kwargs):
         'verb': 'logged in',
     }
     action.send(**action_details)
+
 
 @receiver(user_logged_out, sender=User)
 def add_action_log_for_logout(sender, user, request, **kwargs):

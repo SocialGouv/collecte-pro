@@ -4,6 +4,8 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
+
 const colorClasses = [
   'bg-blue',
   'bg-red',
@@ -12,8 +14,6 @@ const colorClasses = [
   'bg-green',
   'bg-teal',
 ]
-
-import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'ColorBadge',
@@ -30,4 +30,3 @@ export default defineComponent({
   },
 })
 </script>
-

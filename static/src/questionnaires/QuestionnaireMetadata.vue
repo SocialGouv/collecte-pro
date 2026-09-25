@@ -91,21 +91,21 @@ export default defineComponent({
       if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
         return '#'
       }
-  return (backendUrls as any)['questionnaire-export'](props.questionnaire.id)
+      return (backendUrls as any)['questionnaire-export'](props.questionnaire.id)
     })
 
     const exportResponseFilesXlsxUrl = computed(() => {
       if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
         return '#'
       }
-  return (backendUrls as any)['responses-export'](props.questionnaire.id)
+      return (backendUrls as any)['responses-export'](props.questionnaire.id)
     })
 
     const trashUrl = computed(() => {
       if (!props.questionnaire || props.questionnaire.id === undefined || props.questionnaire.id === null) {
         return '#'
       }
-  return (backendUrls as any).trash(props.questionnaire.id)
+      return (backendUrls as any).trash(props.questionnaire.id)
     })
 
     const formatDate = (date: string) => {
@@ -178,6 +178,6 @@ export default defineComponent({
       formatDate,
       exportQuestionnaire,
     }
-  }
+  },
 })
 </script>

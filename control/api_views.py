@@ -4,16 +4,14 @@ import django.dispatch
 import os
 import magic
 from django.conf import settings
-from django.http import HttpResponseForbidden
 from control.serializers import ControlSerializer, ControlListSerializer
 from django.http import HttpResponse
-from django.db import connection
 from actstream import action
 from django.core.files import File
 from django.db.models import Q
 from rest_framework import (decorators, generics, mixins, serializers, status,
                             viewsets)
-from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
@@ -71,7 +69,7 @@ class ControlViewSet(mixins.CreateModelMixin,
             'action_object': control
         }
         action.send(**action_details)
-        
+
     def add_log_duplicate_entry(self, controlSource, controlDestination, verb):
         action_details = {
             'sender': self.request.user,
@@ -89,29 +87,30 @@ class ControlViewSet(mixins.CreateModelMixin,
         # The current user is automatically added to the created control
         Access.objects.create(access_type=access_type, userprofile=profile, control=control)
         if request.data.__contains__('idCtlSource') :
-            print ("Duplication : ", request.data['idCtlSource'])
+            print("Duplication : ", request.data['idCtlSource'])
             controlSource = Control.objects.active().get(id=request.data['idCtlSource'])
-            self.add_log_duplicate_entry( controlSource=controlSource, controlDestination=control, verb='created control')
+            self.add_log_duplicate_entry(
+                controlSource=controlSource, controlDestination=control, verb='created control'
+            )
         else:
-            print ("Creation")
+            print("Creation")
             self.add_log_entry(control=control, verb='created control')
-  
+
         return response
-    
+
     def update(self, request, *args, **kwargs):
         response = super(ControlViewSet, self).update(request, *args, **kwargs)
         control = self.get_queryset().get(id=response.data['id'])
         self.add_log_entry(control=control, verb='updated control')
-        print ("update control")
+        print("update control")
         return response
 
-    
     @decorators.action(detail=True, methods=['get'], url_path='quest_themes')
     def quest_themes(self, request, pk):
         quest_themes_list = Control.objects.filter(id=pk)
         ctl_Serializer = ControlSerializer(quest_themes_list, many=True)
         return Response(ctl_Serializer.data)
-    
+
     @decorators.action(detail=False, methods=['get'], url_path='controls_list')
     def controls_list(self, request):
         ctl_list = Control.objects.filter(
@@ -119,7 +118,7 @@ class ControlViewSet(mixins.CreateModelMixin,
         ).prefetch_related('access').distinct()
         ctl_Serializer = ControlListSerializer(ctl_list, many=True, context={'profile': request.user.profile})
         return Response(ctl_Serializer.data)
-    
+
     @decorators.action(detail=True, methods=['get'], url_path='users')
     def users(self, request, pk):
         users = []
@@ -146,7 +145,6 @@ class ControlViewSet(mixins.CreateModelMixin,
         serialized_users = UserProfileSerializer(list(set(users)), many=True)
         return Response(serialized_users.data)
 
-
     @decorators.action(detail=True, methods=['get'], url_path='depositors')
     def depositors(self, request, pk):
         users = []
@@ -157,10 +155,15 @@ class ControlViewSet(mixins.CreateModelMixin,
                         users.append(response_file.author.profile)
         serialized_users = UserProfileSerializer(list(set(users)), many=True)
         return Response(serialized_users.data)
-    
+
     @decorators.action(detail=True, methods=['get'], url_path='access')
     def access(self, request, pk):
-        serialized_access = AccessSerializer(self.get_object().access.filter(Q(userprofile=request.user.profile) & Q(control__is_deleted=False)).all(), many=True)
+        serialized_access = AccessSerializer(
+            self.get_object().access.filter(
+                Q(userprofile=request.user.profile) & Q(control__is_deleted=False)
+            ).all(),
+            many=True,
+        )
         return Response(serialized_access.data)
 
     @decorators.action(detail=True, methods=['get'], url_path='unique-code')
@@ -188,9 +191,9 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
     permission_classes = (ControlDemandeurAccess, ControlIsNotDeleted, QuestionnaireIsDraft)
 
     def file_extension_is_valid(self, extension):
-        
+
         split_extensions = extension.split(".")
-        if len(split_extensions) > 2: 
+        if len(split_extensions) > 2:
             return False
         normalized_extension = f".{split_extensions[-1].lower()}"
         return normalized_extension not in settings.UPLOAD_FILE_EXTENSION_BLACKLIST
@@ -200,7 +203,7 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
         if any(match.lower() in mime_type.lower() for match in blacklist):
             return False
         return True
-    
+
     def get_queryset(self):
         queryset = QuestionFile.objects.filter(
             Q(question__theme__questionnaire__control__is_deleted=False) &
@@ -219,7 +222,8 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
 
         if any(header.lower() in ['x-infection-found', 'x-virus-name'] for header in self.request.headers):
             raise ValidationError(
-                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant de le déposer à nouveau."
+                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant "
+                "de le déposer à nouveau."
             )
 
         file = files[0] if files else None
@@ -230,10 +234,10 @@ class QuestionFileViewSet(mixins.DestroyModelMixin,
 
         mime_type = magic.from_buffer(file.read(2048), mime=True)
         if not self.file_mime_type_is_valid(mime_type):
-           raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
-
+            raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
 
         serializer.save(file=file)
+
 
 class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
                           mixins.ListModelMixin,
@@ -248,11 +252,11 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
         queryset = QuestionnaireFile.objects.filter(
             questionnaire__in=self.request.user.profile.questionnaires)
         return queryset
-    
+
     def file_extension_is_valid(self, extension):
-        
+
         split_extensions = extension.split(".")
-        if len(split_extensions) > 2: 
+        if len(split_extensions) > 2:
             return False
         normalized_extension = f".{split_extensions[-1].lower()}"
         return normalized_extension not in settings.UPLOAD_FILE_EXTENSION_BLACKLIST
@@ -262,7 +266,7 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
         if any(match.lower() in mime_type.lower() for match in blacklist):
             return False
         return True
-    
+
     def perform_create(self, serializer):
         questionnaire = serializer.validated_data['questionnaire']
 
@@ -274,7 +278,8 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
 
         if any(header.lower() in ['x-infection-found', 'x-virus-name'] for header in self.request.headers):
             raise ValidationError(
-                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant de le déposer à nouveau."
+                "Ce fichier a été notifié comme contenant un virus, merci de vérifier celui-ci avant "
+                "de le déposer à nouveau."
             )
 
         file = files[0] if files else None
@@ -285,7 +290,7 @@ class QuestionnaireFileViewSet(mixins.DestroyModelMixin,
 
         mime_type = magic.from_buffer(file.read(2048), mime=True)
         if not self.file_mime_type_is_valid(mime_type):
-           raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
+            raise ValidationError(f"Ce type de fichier n'est pas autorisé : {mime_type}")
 
         """MAX_SIZE_BYTES = 1048576 * settings.UPLOAD_FILE_MAX_SIZE_MB
         if file.size > MAX_SIZE_BYTES:
@@ -301,8 +306,12 @@ class ResponseFileTrash(mixins.UpdateModelMixin, generics.GenericAPIView):
     permission_classes = (OnlyRepondantCanAccess,)
 
     def get_queryset(self):
+        # Modifier par les controls des access
         queryset = ResponseFile.objects.filter(
-            question__theme__questionnaire__control__in=Control.objects.filter(access__in=self.request.user.profile.access.all())) # Modifier par les controls des access
+            question__theme__questionnaire__control__in=Control.objects.filter(
+                access__in=self.request.user.profile.access.all()
+            )
+        )
         return queryset
 
     def put(self, request, *args, **kwargs):
@@ -372,8 +381,6 @@ class QuestionnaireViewSet(mixins.CreateModelMixin,
         if not self.request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists():
             queryset = queryset.filter(is_draft=False)
         return queryset
-
-    
 
     def __create_or_update(self, request, save_questionnaire_func, is_update):
         if is_update:

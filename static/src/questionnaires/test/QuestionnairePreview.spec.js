@@ -11,7 +11,7 @@ describe('QuestionnairePreview.vue', () => {
   beforeEach(() => {
     store = createStore({
       state: {
-        currentQuestionnaire: currentQuestionnaire,
+        currentQuestionnaire,
       },
       getters: {
         getField,
@@ -46,5 +46,4 @@ describe('QuestionnairePreview.vue', () => {
     expect(child.exists()).toBe(true)
     expect(child.props().questionnaire).toEqual(currentQuestionnaire)
   })
-
 })

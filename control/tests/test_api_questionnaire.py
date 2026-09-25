@@ -205,7 +205,7 @@ def test_questionnaire_create_success():
     # Response.data is filled in
     questionnaire = response.data
     assert questionnaire['id'] > -1
-    assert questionnaire['is_draft'] == True
+    assert questionnaire['is_draft']
 
     theme = response.data['themes'][0]
     assert theme['id'] > -1
@@ -219,7 +219,7 @@ def test_questionnaire_create_success():
     assert Questionnaire.objects.all().count() == 1
     questionnaire = Questionnaire.objects.get(id=response.data['id'])  # should not throw
     assert questionnaire.control == control
-    assert questionnaire.is_draft == True
+    assert questionnaire.is_draft
 
     assert Theme.objects.all().count() == 1
     theme = Theme.objects.get(id=response.data['themes'][0]['id'])  # should not throw
@@ -309,7 +309,7 @@ def test_inspector_cannot_update_published_questionnaire():
 
 def test_inspector_can_finalize_questionnaire():
     increment_ids()
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_inspector_user(control)
     questionnaire = factories.QuestionnaireFactory(
@@ -338,7 +338,7 @@ def test_audited_cannot_update_published_questionnaire():
 
 def test_audited_can_reply_to_questionnaire():
     increment_ids()
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     control = factories.ControlFactory()
     user = utils.make_audited_user(control)
     questionnaire = factories.QuestionnaireFactory(is_draft=False, control=control)
@@ -393,7 +393,7 @@ def test_questionnaire_update__questionnaire_update():
     saved_qr = Questionnaire.objects.get(id=questionnaire.id)
     assert saved_qr.description != questionnaire.description
     assert saved_qr.description == payload['description']
-    assert saved_qr.is_draft == False
+    assert not saved_qr.is_draft
 
 
 def test_questionnaire_update__theme_update():
@@ -456,7 +456,7 @@ def run_test_questionnaire_update__theme_create(added_theme):
 
 
 def test_questionnaire_update__theme_create():
-    added_theme = {'title': 'this is a great theme.' }
+    added_theme = {'title': 'this is a great theme.'}
     run_test_questionnaire_update__theme_create(added_theme)
 
 

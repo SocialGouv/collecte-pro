@@ -84,7 +84,9 @@ def test_audited_cannot_upload_question_file_if_questionnaire_is_draft(client):
 def test_cannot_upload_question_file_in_a_control_user_is_not_in(client):
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     question = factories.QuestionFactory()
-    assert question.theme.questionnaire.control not in [access.control for access in audited.access.all() if access.control.active()]
+    assert question.theme.questionnaire.control not in [
+        access.control for access in audited.access.all() if access.control.active()
+    ]
     question.theme.questionnaire.is_draft = False
     question.theme.questionnaire.save()
     utils.login(client, user=audited.user)
@@ -235,6 +237,7 @@ def test_uploaded_pdf_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     assert response_file.file.size == dummy_file.size
 
@@ -257,6 +260,7 @@ def test_uploaded_xls_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     assert response_file.file.size == dummy_file.size
 
@@ -279,6 +283,7 @@ def test_uploaded_doc_response_file_is_same_size(client):
         "question_id": [question.id]
     }
     response = client.post(url, post_data, format="multipart")
+    assert response.status_code == 200
     response_file = ResponseFile.objects.last()
     print(response_file)
     assert response_file.file.size == dummy_file.size

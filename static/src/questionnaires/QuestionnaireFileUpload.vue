@@ -13,10 +13,10 @@
     </div>
 
     <div v-else>
-      <label class="btn btn-primary disabled">
+      <span class="btn btn-primary disabled">
         <span class="fe fe-upload mr-2"></span>
         Ajouter une pièce jointe
-      </label>
+      </span>
       <div class="small">Pour pouvoir ajouter des pièces jointes,</div>
       <div class="small">vous devez d'abord enregistrer</div>
       <div class="small">votre brouillon.</div>
@@ -35,8 +35,9 @@ export default defineComponent({
   props: {
     questionnaire: { type: Object, default: () => ({ questionnaire_files: [] }) },
   },
+  emits: ['file-uploaded'],
   components: { ErrorBar },
-  setup(props) {
+  setup(props, { emit }) {
     const errorMessage = ref<string | undefined>()
     const fileInput = ref<HTMLInputElement | null>(null)
 
@@ -56,18 +57,18 @@ export default defineComponent({
       axios.post(backendUrls.piecejointe(), formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
-      .then(response => {
-        const newFile = response.data
-        props.questionnaire.questionnaire_files.push(newFile)
-      })
-      .catch(error => {
-        console.error('Error when posting questionnaire file', error)
-        if (error.response && Array.isArray(error.response.data)) {
-          errorMessage.value = error.response.data[0]
-        } else {
-          errorMessage.value = 'La pièce jointe n\'a pu être sauvée.'
-        }
-      })
+        .then(response => {
+          const newFile = response.data
+          emit('file-uploaded', newFile)
+        })
+        .catch(error => {
+          console.error('Error when posting questionnaire file', error)
+          if (error.response && Array.isArray(error.response.data)) {
+            errorMessage.value = error.response.data[0]
+          } else {
+            errorMessage.value = 'La pièce jointe n\'a pu être sauvée.'
+          }
+        })
     }
 
     return { errorMessage, fileInput, clearError, handleFileUpload }

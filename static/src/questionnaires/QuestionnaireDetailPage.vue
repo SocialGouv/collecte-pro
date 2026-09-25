@@ -12,7 +12,7 @@
 
     <template v-else>
       <!-- Bouton demande de droits si brouillon -->
-      <request-editor-button 
+      <request-editor-button
         v-if="accessType === 'demandeur' && questionnaire.is_draft"
         :questionnaire='questionnaire'>
       </request-editor-button>
@@ -25,7 +25,7 @@
       <div class="page-header">
         <h2 class="page-title">
           <span class="fe fe-list mr-2" aria-hidden="true"></span>
-          <span v-if="statusTag" 
+          <span v-if="statusTag"
                 :class="['tag', `tag-${statusTag.color}`, 'round-tag', 'font-italic', 'mr-2']">
             {{ statusTag.label }}
           </span>
@@ -34,10 +34,10 @@
       </div>
 
       <div :class="{ preview: questionnaire.is_draft }">
-        <questionnaire-metadata 
-          :questionnaire="questionnaire" 
-          :control="control" 
-          :with-trash="!questionnaire.is_draft" 
+        <questionnaire-metadata
+          :questionnaire="questionnaire"
+          :control="control"
+          :with-trash="!questionnaire.is_draft"
           :accessType="accessType">
         </questionnaire-metadata>
 
@@ -75,8 +75,8 @@
         </div>
       </div>
 
-      <update-date-reponse-modal 
-        :questionnaireId="questionnaireId" 
+      <update-date-reponse-modal
+        :questionnaireId="questionnaireId"
         :questionnaire="questionnaire">
       </update-date-reponse-modal>
     </template>
@@ -182,6 +182,6 @@ export default defineComponent({
       statusTag,
       usedStorageBytes,
     }
-  }
+  },
 })
 </script>

@@ -4,6 +4,8 @@ from django_ckeditor_5.fields import CKEditor5Field
 from ordered_model.models import OrderedModel
 from django_softdelete.models import SoftDeleteModel
 
+from utils.sanitize import sanitize_rich_text
+
 
 class FAQItem(OrderedModel, SoftDeleteModel):
     title = models.CharField("title", max_length=255)
@@ -17,3 +19,7 @@ class FAQItem(OrderedModel, SoftDeleteModel):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.description = sanitize_rich_text(self.description)
+        super().save(*args, **kwargs)

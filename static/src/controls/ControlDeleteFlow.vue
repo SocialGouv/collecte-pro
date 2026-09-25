@@ -4,7 +4,7 @@
     <!-- Formulaire de confirmation -->
     <template #confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <div id="modal_title" class="modal-title">
+        <div id="confirm-modal-title" class="modal-title">
           Vous êtes sur le point de supprimer l'espace de dépôt "{{ control.reference_code }}"
         </div>
       </div>
@@ -52,7 +52,7 @@
         <p>
           <span class="fe fe-check-circle fg-success big-icon" aria-hidden="true"></span>
         </p>
-        <p id="modal_title" class="text-center">
+        <p id="success-modal-title" class="text-center">
           L'espace de dépôt <strong>"{{ control.title }}"</strong> a bien été supprimé.
         </p>
       </div>
@@ -70,7 +70,7 @@
         <p>
           <span class="fe fe-alert-triangle fg-danger big-icon" aria-hidden="true"></span>
         </p>
-        <p id="modal_title" class="text-center">
+        <p id="error-modal-title" class="text-center">
           Une erreur est survenue lors de la suppression de l'espace de dépôt.
         </p>
         <p class="text-center text-danger">{{ errorMessage }}</p>
@@ -92,7 +92,7 @@ import backendUrls from '../utils/backend.js'
 import ModalFlow from '../utils/ModalFlow'
 
 const props = defineProps({
-  control: Object
+  control: Object,
 })
 
 const modalFlow = ref(null)
@@ -130,6 +130,6 @@ const start = () => {
 
 // Expose la fonction start pour que le parent puisse l'appeler
 defineExpose({
-  start
+  start,
 })
 </script>

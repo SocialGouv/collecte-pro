@@ -10,6 +10,7 @@ def alert_delete(modeladmin, request, queryset):
         item.delete()
         add_log_entry(verb='alert deleted', session_user=request.user, obj=item, target=None)
 
+
 alert_delete.short_description = "Supprimer les alertes sélectionnées"
 
 

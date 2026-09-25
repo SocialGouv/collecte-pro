@@ -9,7 +9,7 @@ pytestmark = mark.django_db
 client = APIClient()
 
 
-### Get is disabled. It should never work.
+# Get is disabled. It should never work.
 
 def get_control(user, id):
     return utils.get_resource(client, user, 'control', id)
@@ -41,7 +41,7 @@ def test_cannot_get_deleted_control():
     assert get_control(user, control.id).status_code == 405
 
 
-### List
+# List
 def list_control(user):
     return utils.list_resource(client, user, 'control')
 
@@ -109,7 +109,7 @@ def test_as_repondant_questionnaire_is_not_listed_if_associated_with_deleted_con
     assert 'MUST NOT BE LISTED' not in str(response.content)
 
 
-### Create
+# Create
 def create_control(user, payload):
     return utils.create_resource(client, user, 'control', payload)
 
@@ -136,7 +136,7 @@ def test_cannot_create_control_with_special_characters_in_reference_code():
 
 
 def test_no_access_to_control_create_api_if_not_inspector():
-    control = factories.ControlFactory()
+    factories.ControlFactory()
     user = utils.make_audited_user()
     assert create_control(user, make_create_payload()).status_code == 403
 
@@ -165,7 +165,7 @@ def test_creates_control_and_adds_to_current_user():
     assert user.profile.access.all().get(control__id=response_control['id']).control == saved_control
 
 
-### Update
+# Update
 
 def update_control(user, payload, control):
     utils.login(client, user=user)
@@ -214,7 +214,7 @@ def test_no_access_to_control_update_api_if_deleted():
     assert update_control(user, make_update_payload(), control).status_code == 404
 
 
-## Delete is never allowed
+# Delete is never allowed
 
 def test_cannot_delete_a_control():
     """
@@ -231,7 +231,7 @@ def test_cannot_delete_a_control():
     assert count_before == count_after
     assert response.status_code == 405
 
-## Get users of a control
+# Get users of a control
 
 
 def get_users_of_control(current_user, control):

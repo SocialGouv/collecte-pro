@@ -64,7 +64,7 @@
             </datepicker>
           </div>
           <div class="form-group">
-            <questionnaire-file-upload :questionnaire="questionnaire"></questionnaire-file-upload>
+            <questionnaire-file-upload :questionnaire="questionnaire" @file-uploaded="$emit('file-uploaded', $event)"></questionnaire-file-upload>
             <questionnaire-file-list :files="questionnaire.questionnaire_files" :with-delete="true">
             </questionnaire-file-list>
           </div>
@@ -77,7 +77,6 @@
   </div>
 </template>
 
-
 <script>
 import { defineComponent, computed, ref } from 'vue'
 import { useStore } from 'vuex'
@@ -88,12 +87,12 @@ import QuestionnaireFileUpload from './QuestionnaireFileUpload'
 import QuestionnaireFileList from './QuestionnaireFileList'
 
 // Texte par défaut
-const DESCRIPTION_DEFAULT = 'À l’occasion de cette procédure, \
-nous vous demandons de nous transmettre des renseignements et des justifications \
-sur les points énumérés dans ce questionnaire.\nVous voudrez bien nous faire \
-parvenir au fur et à mesure votre réponse. \
-\nNous restons à votre disposition ainsi qu’à celle de vos \
-services pour toute information complémentaire qu’appellerait ce questionnaire.'
+const DESCRIPTION_DEFAULT = 'À l’occasion de cette procédure, ' +
+'nous vous demandons de nous transmettre des renseignements et des justifications ' +
+'sur les points énumérés dans ce questionnaire.\nVous voudrez bien nous faire ' +
+'parvenir au fur et à mesure votre réponse. ' +
+'\nNous restons à votre disposition ainsi qu’à celle de vos ' +
+'services pour toute information complémentaire qu’appellerait ce questionnaire.'
 
 const QuestionnaireMetadataCreate = defineComponent({
   name: 'QuestionnaireMetadataCreate',
@@ -101,6 +100,7 @@ const QuestionnaireMetadataCreate = defineComponent({
     questionnaireNumbering: Number,
     questionnaire: Object,
   },
+  emits: ['file-uploaded'],
   setup(props) {
     const store = useStore()
     const formRef = ref(null)
@@ -108,7 +108,7 @@ const QuestionnaireMetadataCreate = defineComponent({
     // Accès direct aux champs du store
     const description = computed({
       get: () => store.state.currentQuestionnaire.description,
-      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'description', value })
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'description', value }),
     })
 
     const end_date = computed({
@@ -123,12 +123,12 @@ const QuestionnaireMetadataCreate = defineComponent({
       set: (value) => {
         // Le datepicker envoie un objet Date, le stocker tel quel
         store.commit('updateCurrentQuestionnaireField', { field: 'end_date', value })
-      }
+      },
     })
 
     const title = computed({
       get: () => store.state.currentQuestionnaire.title,
-      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'title', value })
+      set: (value) => store.commit('updateCurrentQuestionnaireField', { field: 'title', value }),
     })
 
     const errors = ref([])

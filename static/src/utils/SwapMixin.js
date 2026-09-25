@@ -34,7 +34,7 @@ export default {
     // For all items in array, set the 'order' field to match with the
     // order in the array.
     swapMixin_updateOrderFields(array) {
-      array.map((item, index) => {
+      array.forEach((item, index) => {
         item.order = index
       })
     },

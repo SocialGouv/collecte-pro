@@ -30,7 +30,6 @@ class DemoView(View):
             return HttpResponseRedirect(reverse('control-detail'))
         else:
             return HttpResponseForbidden("Non autorisé")
-        return HttpResponseRedirect(reverse('login'))
 
 
 class DemoInspectorView(DemoView):

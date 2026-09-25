@@ -71,15 +71,15 @@ def send_files_report():
         subject += ' - de nouveaux documents déposés !'
         files = get_files(control)
         if not files:
-            logger.info(f'Pas de nouveau document, arrêt.')
+            logger.info('Pas de nouveau document, arrêt.')
             continue
         recipient_list = [
             access.userprofile.user.email
             for access in control.access.all()
-            if access.userprofile.send_files_report==True
+            if access.userprofile.send_files_report
         ]
         if not recipient_list:
-            logger.info(f'Pas de destinataire, arrêt.')
+            logger.info('Pas de destinataire, arrêt.')
             continue
         logger.debug(f'Destinataires : {len(recipient_list)}')
         date_cutoff = get_date_cutoff(control)
@@ -121,7 +121,7 @@ def send_notifs_dates_echeances():
     jours_echeance = Parametre.objects.filter(code="JOURS_ECHEANCE").filter(deleted_at__isnull=True).first()
     try:
         jours_echeance = int(jours_echeance.name)
-    except:
+    except Exception:
         jours_echeance = settings.JOURS_ECHEANCE
     logger.info(f"Jours : {jours_echeance}")
     for questionnaire in Questionnaire.objects.filter(end_date__isnull=False).all():
@@ -139,7 +139,7 @@ def send_notifs_dates_echeances():
                 for access in questionnaire.control.access.all()
             ]
             if not recipient_list:
-                logger.info(f"Pas de destinataire, arrêt.")
+                logger.info("Pas de destinataire, arrêt.")
                 continue
             logger.debug(f"Destinataires : {len(recipient_list)}")
             context = {
@@ -167,17 +167,17 @@ def send_notifs_dates_echeances():
                 logger.info(f"Aucun email envoyé pour le questionnaire {questionnaire.id}")
                 action.send(sender=questionnaire, verb=ACTION_LOG_DUE_VERB_NOT_SENT)
 
-        
+
 @app.task(queue=settings.CELERY_QUEUE)
 def identify_purgeable_controls(**kwargs):
     INTERVAL_PURGE = 'interval_purge'
     ENVOI_NOTIF_MAIL = 'envoi_notif_mail'
-    INTERVAL_PURGE_REP_ORPH= 'interval_purge_rep_orph'
+    INTERVAL_PURGE_REP_ORPH = 'interval_purge_rep_orph'
 
     interval_purge_fr = kwargs.get(INTERVAL_PURGE, "").strip()
     envoi_notif_mail_fr = kwargs.get(ENVOI_NOTIF_MAIL, "").strip()
     interval_purge_rep_orph_fr = kwargs.get(INTERVAL_PURGE_REP_ORPH, "").strip()
-    
+
     # Dictionnaires de mapping
     INTERVAL_MAP = {
         **{f"{i} mois": f"{i} month" if i == 1 else f"{i} months" for i in range(1, 13)},
@@ -212,7 +212,6 @@ def identify_purgeable_controls(**kwargs):
     except Exception as e:
         logger.error(f"Erreur lors de la procédure identify_purgeable_controls : {e}")
 
-
     try:
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM identify_orphanuser(%s::INTERVAL)", [interval_purge_rep_orph])
@@ -220,17 +219,16 @@ def identify_purgeable_controls(**kwargs):
 
             if not results_orphans:
                 logger.info("Aucun répondant éligible à la suppression.")
-           
+
     except Exception as e:
         logger.error(f"Erreur lors de la procédure identify_orphanUser : {e}")
 
-   
     return {
         "espaces_depot": results_controls,
         "repondants_orphelins": results_orphans
     }
 
-        
+
 @app.task(queue=settings.CELERY_QUEUE)
 def logical_delete_controls():
     try:
@@ -242,12 +240,12 @@ def logical_delete_controls():
 
 @app.task(queue=settings.CELERY_QUEUE)
 def physical_delete_controls():
-    
+
     try:
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT pec.reference_code
-                FROM purge_eligible_control_trv pec 
+                FROM purge_eligible_control_trv pec
                 INNER JOIN control_control cc ON pec.control_id = cc.id
                 WHERE cc.is_model = FALSE
             """)
@@ -259,7 +257,7 @@ def physical_delete_controls():
 
     except Exception as e:
         logger.error(f"Erreur lors de l'exécution de la requête -  delete_media_directory : {e}")
-    
+
     try:
         with connection.cursor() as cursor:
             cursor.callproc('physical_delete_controls')
@@ -274,7 +272,7 @@ def delete_media_directory(reference_code):
 
     if not target_path.startswith(os.path.abspath(media_root)):
         logger.error(f"Refusé : le chemin cible sort de MEDIA_ROOT. ({target_path})")
-        return 
+        return
 
     if os.path.exists(target_path) and os.path.isdir(target_path):
         try:
@@ -286,20 +284,19 @@ def delete_media_directory(reference_code):
         logger.info(f"Le dossier n'existe pas : {target_path}")
 
 
-
 def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
     html_template = "reporting/email/notif_espace_depot_elig_supp.html"
     text_template = "reporting/email/notif_espace_depot_elig_supp.txt"
-    
+
     subject = "Notification : Espaces de dépôt éligibles à la suppression"
     recipient_list = [mail_inspecteur]
-    
+
     logger.info("Destinataire: %s", recipient_list)
-    
+
     espaces_depot_list = espaces_depot.split(";") if espaces_depot else []
 
     context = {
-        "list_espace_depot": espaces_depot_list, 
+        "list_espace_depot": espaces_depot_list,
     }
 
     send_email(
@@ -309,9 +306,5 @@ def send_mail_identify_purgeable_controls(mail_inspecteur, espaces_depot):
         text_template=text_template,
         extra_context=context,
     )
-    
+
     logger.info(f"Email envoyé à {mail_inspecteur} pour les espaces : {espaces_depot}")
-
-
-
-            
