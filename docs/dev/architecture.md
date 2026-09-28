@@ -11,12 +11,12 @@ fonctionnent, jetez-y un oeil.
 
 La base de données utilisée est postgreSQL. La structure est automatiquement définie via
 les modèles Django. Vous pouvez regarder :
-https://github.com/SocialGouve/ecollecte/blob/develop/control/models.py et
-https://github.com/SocialGouve/ecollecte/blob/develop/user_profiles/models.py pour les
+<https://github.com/SocialGouv/collecte-pro/blob/develop/control/models.py> et
+<https://github.com/SocialGouv/collecte-pro/blob/develop/user_profiles/models.py> pour les
 tables principales.
 
 Voici un schéma de la base qui date de décembre 2019 :
-https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/ecollecte-database.png
+<https://github.com/SocialGouv/collecte-pro/blob/develop/docs/dev/ecollecte-database.png>
 
 ## Partie serveur
 
@@ -26,28 +26,27 @@ plusieurs applis Django.
 Il existe aussi une API via Django Rest Framework. Vous pouvez obtenir de l'aide sur
 l'API à cette URL : */api/docs*. Il existe aussi une documentation obsolète de
 l'application de départ e-contrôle :
-https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/ecollecte_API_30-06-2020.pdf.
+<https://github.com/SocialGouv/collecte-pro/blob/develop/docs/dev/ecollecte_API_30-06-2020.pdf>.
 
 ### ecc
 
 Application principale. Elle contient le fichier *urls.py*
-(https://github.com/SocialGouve/ecollecte/blob/develop/ecc/urls.py) qui peut être utile
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/ecc/urls.py>) qui peut être utile
 pour voir comment les vues sont mappées aux urls.
 
 ### control
 
 Contient le modèle principal
-(https://github.com/SocialGouve/ecollecte/blob/develop/control/models.py) qui peut être
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/control/models.py>) qui peut être
 utile pour appréhender les objets principaux de la base de données.
 
 La plupart des vues sont également ici
-(https://github.com/SocialGouve/ecollecte/blob/develop/control/views.py). Ce fichier
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/control/views.py>). Ce fichier
 peut être utile pour comprendre comment les objets sont passés aux templates pour les
 clients.
 
 Les vues des API sont aussi ici
-(https://github.com/SocialGouve/ecollecte/blob/develop/control/api_views.py)
-
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/control/api_views.py>)
 
 ### Autres informations
 
@@ -59,7 +58,6 @@ ci-dessous pour les détails des interactions Django-Vue).
 #### Celery
 
 Celery est exécuté régulièrement afin d'envoyer les emails.
-
 
 ## Partie client
 
@@ -88,68 +86,66 @@ Le CSS se trouve dans *static/css/custom.css* et dans les fichiers Vue.js (le fa
 Vue.js permet de déclarer le CSS dans les même fichiers que les composants aide au suivi
 du code).
 
-Pourquoi tant de complexité (et de bizarreries) niveua structure ? Simplement parce que
+Pourquoi tant de complexité (et de bizarreries) niveau structure ? Simplement parce que
 tout a débuté avec Django uniquement et que les morceaux Vue.js ont été ajoutés
 graduellement lorsque le javascript se complexifiait. Une ré-écriture complète n'a pas
 été engagée, mais l'utilisation de Vue.js est de plus en plus importante, donc cela
 pourrait survenir un jour. Tant que ça fonctionne, pas besoin de le réparer !
 
-
 ### Interactions entre les templates Django et Vue.js : la page détail d'un contrôle
 
 - Le serveur sert le template Django situé à *templates/ecc/control_detail.html*. La vue
     correspondante se trouve dans la classe ControlDetail
-    (https://github.com/SocialGouve/ecollecte/blob/develop/control/views.py#L30).
+    (<https://github.com/SocialGouv/collecte-pro/blob/develop/control/views.py#L30>).
 - La vue django fournie les données au template : controls_json, user_json, etc...
     (tout ce qui se trouve entre double accolades : {{ }}). Puis transmet le résultat
     au client.
-- Côté client, le javascript inclus (*dist/control-detail-bundle.css*) dans le HTML est
+- Côté client, le javascript inclus (*static/dist/control-detail.js*) dans le HTML est
     exécuté. Il s'agit d'un composant Vue.js dont le fichier principal est
-    https://github.com/SocialGouve/ecollecte/blob/develop/static/src/control-detail.js.
+    <https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/control-detail.js>.
 - Le fichier Vue.js principal charge le composant racine :
-    https://github.com/SocialGouve/ecollecte/blob/develop/static/src/controls/ControlPage.vue.
-    Il affiche alors les données passées en propriétés depuis le template Djang. Par
+    <https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/controls/ControlPage.vue>.
+    Il affiche alors les données passées en propriétés depuis le template Django. Par
     exemple, la liste des controles passée via
-    https://github.com/SocialGouve/ecollecte/blob/develop/templates/ecc/control_detail.html#L7,
+    <https://github.com/SocialGouv/collecte-pro/blob/develop/templates/ecc/control_detail.html#L7>,
     devient une propriété pour
-    https://github.com/SocialGouve/ecollecte/blob/develop/static/src/controls/ControlPage.vue#L64.
+    <https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/controls/ControlPage.vue#L64>.
 - Dès lors, le code Vue.js fonctionne normalement.
 
 Notons que sur la même page d'autres composants Vue.js sont chargés : la sidebar
-(https://github.com/SocialGouve/ecollecte/blob/develop/templates/base.html#L74) qui
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/templates/base.html#L74>) qui
 affiche le menu de gauche, et le gestionnaire de session
-(https://github.com/SocialGouve/ecollecte/blob/develop/templates/base.html#L84) chargé
+(<https://github.com/SocialGouv/collecte-pro/blob/develop/templates/base.html#L84>) chargé
 de déconnecter l'utilisateur après un certain temps d'inactivité.
 
 Chaque composant est un fichier javascript séparé et ils sont indépendants en terme de
 variables.
 
-
 ### Les composants Parcel
 
 Nous utilisons des composants Parcel qui sont liés et exécutés dans différentes pages.
-Les composants se trouvent dans le répertoire *src/dist*. Chaque Parcel génère des
+Les composants se trouvent dans le répertoire *static/dist*. Chaque Parcel génère des
 fichiers JS et CSS qui peuvent être utilisés dans les templates Django (certains
 composants n'ont qu'un fichier JS et aucun fichier CSS).
 
-#### sidebar-bundle.js et sidebar-bundle.css
+#### sidebar.js et sidebar.css
 
 Utilisé sur chaque page. Il affiche la sidebar sur la gauche. Il récupère les données
 via un appel vers le backend (via la librairie axios) pour les afficher.
 
-#### session-management-bundle.js
+#### session-management.js
 
 Utilisé sur chaque page (via le template de base de Django
-https://github.com/SocialGouve/ecollecte/blob/develop/templates/base.html#L84). Il crée un
+<https://github.com/SocialGouv/collecte-pro/blob/develop/templates/base.html#L84>). Il crée un
 timer qui, une fois le temps écoulé, provoque la déconnexion de l'utilisateur sauf si
 celui-ci a effectué une action.
 
-#### control-detail-bundle.js and control-detail-bundle.css
+#### control-detail.js and control-detail.css
 
 Affiche les "Espaces de dépôt".
 
 Fichier principal :
-https://github.com/SocialGouve/ecollecte/blob/develop/static/src/control-detail.js
+<https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/control-detail.js>
 
 Lorsque l'utilisateur clique sur le menu, il modifie l'espace de dépôt affiché et l'url
 sans avoir à recharger la page.
@@ -159,26 +155,24 @@ informations de l'utilisateur connecté depuis le template Django. D'autres appe
 arrière plan sont faits pour les sous-composants, afin d'obtenir plus de données ou pour
 les mettre à jour.
 
-#### questionnaire-detail-bundle.js and questionnaire-detail-bundle.css
+#### questionnaire-detail.js and questionnaire-detail.css
 
 Affiche un questionnaire, tout simplement.
 
 Fichier principal :
-https://github.com/SocialGouve/ecollecte/blob/develop/static/src/questionnaire-detail.js
+<https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/questionnaire-detail.js>
 
-#### questionnaire-create-bundle.js and questionnaire-create-bundle.css
+#### questionnaire-create.js and questionnaire-create.css
 
 Affiche un Wizard de 3 étapes pour créer un questionnaire. Aucun rechargement serveur
-n'alieu pendant ce Wizard.
+n'a lieu pendant ce Wizard.
 
 Fichier principal :
-https://github.com/SocialGouve/ecollecte/blob/develop/static/src/questionnaire-create.js
-
+<https://github.com/SocialGouv/collecte-pro/blob/develop/static/src/questionnaire-create.js>
 
 ### Sous-composants
 
 Il s'agit des composants Vue.js situés dans le répertoire *static/src*.
-
 
 ## WSGI
 

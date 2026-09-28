@@ -9,7 +9,7 @@ Postgres et keycloak sont lancées via docker-compose, et le front est servi par
 
 Cloner le dépôt :
 
-    git clone git@github.com:SocialGouv/ecollecte.git collectepro
+    git clone git@github.com:SocialGouv/collecte-pro.git collectepro
 
 **Attention**, il faut avoir créer une clef SSH et l'avoir spécifiée sur github.
 
@@ -201,6 +201,7 @@ Quelques commandes bash utiles:
     npm run watch-questionnaire-create
     npm run watch-questionnaire-detail
     npm run watch-session-management
+    npm run watch-sidebar
 
 ## Tests
 
@@ -219,12 +220,12 @@ ou
 ### Frontend tests
 
 Ils se situent dans `static/src/` avec le code, dans des dossiers `test`. Ce sont des
-tests Jest, pour trouver de la doc googler "test Vue with Jest" par exemple.
+tests Vitest, pour trouver de la doc googler "test Vue with Vitest" par exemple.
 
 Lancer les tests : `npm test`
 
 Debugger un test : plusieurs debuggers sont possibles, dont Chrome Dev Tools et
-Webstorm/Pycharm. Voir <https://jestjs.io/docs/en/troubleshooting>
+Webstorm/Pycharm.
 
 Vous pouvez également utiliser VSCode, voir la doc complète :
 <https://code.visualstudio.com/docs/editor/debugging>

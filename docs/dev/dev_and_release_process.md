@@ -24,10 +24,11 @@ pour créer les utilisateurs.
 ## Ecrire la fonctionnalité
 
 On crée une branche de fonctionnalité en suivant le processus suivant :
+
 ```
-    $ git checkout develop
-    $ git pull
-    $ git checkout -b feature/update-user-form
+    git checkout develop
+    git pull
+    git checkout -b feature/update-user-form
 ```
 
 Le développement de la fonctionnalité se fait dans la nouvelle branche
@@ -50,24 +51,26 @@ que ce n'est pas nécessaire).
 ## Fusionner la fonctionnalité
 
 Une fois la fonctionnalité terminée, il faut incorporer la branche dans *develop*:
+
 ```
-    $ git checkout develop
-    $ git pull develop
-    $ git merge --no-ff feature/update-user-form
-    $ git push origin develop
+    git checkout develop
+    git pull develop
+    git merge --no-ff feature/update-user-form
+    git push origin develop
 ```
 
 Note : Le flag --no-ff (no fast-forward) crée un commit de merge dans la branche
 *develop*. Si on ne le met pas, il y a des cas (le cas fast-forward) où tous les commits
 de la branche feature vont être ajoutés dans *develop*. Ce n'est pas souhaitable, car la
-branche feature est une branche de travail, qui peut avoir bcp de commits brouillons et
+branche feature est une branche de travail, qui peut avoir beaucoup de commits brouillons et
 pas interessants à garder. Donc on utilise toujours --no-ff.
 
 Optionnel : supprimer la branche locale. On ne supprime pas la branche remote sur
 github, pour garder l'historique. (On pourra décider plus tard qu'il y a trop de
 branches dans github et les supprimer, si c'est nécessaire.)
+
 ```
-    $ git branch -d feature/update-user-form
+    git branch -d feature/update-user-form
 ```
 
 # Réaliser une release
@@ -81,15 +84,16 @@ n'y a pas de contrainte spécifique d'en faire un certain nombre par sprint.
 ## Créer la release
 
 Pour créer une branche de release, on suivra le processus suivant :
+
 ```
-    $ git checkout develop
-    $ git pull develop
-    $ git checkout -b release/1.20
-    $ git push
+    git checkout develop
+    git pull develop
+    git checkout -b release/1.20
+    git push
 ```
 
 Il y a 2 tâches à faire dans cette nouvelle branche (on peut regarder
-[ce commit](https://github.com/SocialGouv/ecollecte/commit/0d8e703cd95d6ee8cd1f7868d66a199dde992b07)
+[ce commit](https://github.com/SocialGouv/collecte-pro/commit/0d8e703cd95d6ee8cd1f7868d66a199dde992b07)
 pour avoir un exemple) :
 
 - Ajouter des release notes dans le dossier docs/releases. On peut imiter le format des
@@ -97,14 +101,15 @@ pour avoir un exemple) :
 - Mettre à jour la version affichée sur le site dans templates/footer.html.
 
 On met ces deux tâches dans un commit dans la branche release/1.20 :
+
 ```
-    $ git commit -m "Release notes and version number"
-    $ git push
+    git commit -m "Release notes and version number"
+    git push
 ```
 
 ## Tester la release
 
-On doit lancer les tests unitaires régulièrement pendant le dévleoppement.
+On doit lancer les tests unitaires régulièrement pendant le développement.
 
 On réalise les tests de recette sur les navigateurs courants.
 
@@ -125,11 +130,12 @@ Dans le cas où les tests de recette trouvent des bugs, il faut les fixer dans l
 release/1.20. On peut committer directement dans release/1.20. (Si c'est un gros fix, on
 peut brancher depuis release/1.20 pour que ca soit plus propre, et ne laisser que le
 commit de merge dans release/1.20)
+
 ```
-  $ git checkout release/1.20
-  $ git pull
-  $ git commit -m 'Forgot to do the thing, fixed now'
-  $ git push
+  git checkout release/1.20
+  git pull
+  git commit -m 'Forgot to do the thing, fixed now'
+  git push
 ```
 
 Puis on recommence le processus de tests, jusqu'à ce qu'on soit content.
@@ -144,29 +150,32 @@ Une fois que tous les tests sont passés en DEV et en PPROD, on déploie en PROD
 
 Pour garder la trace de cette release, on merge la branche release dans la branche
 *main*. La branche *main* ne contient que des commits qui correspondent à une release.
+
 ```
-    $ git checkout main
-    $ git pull
-    $ git merge --no-ff release/1.20
-    $ git push
+    git checkout main
+    git pull
+    git merge --no-ff release/1.20
+    git push
 ```
 
 On va aussi tagger le commit de *main* : ça fait apparaitre [une release dans la page de
-github](https://github.com/SocialGouv/ecollecte/tags), et ca nous permet de garder
+github](https://github.com/SocialGouv/collecte-pro/tags), et ca nous permet de garder
 des traces. On crée le tag en local, puis on le push sur github.
+
 ```
-    $ git tag -a 1.20
-    $ git push origin 1.20
+    git tag -a 1.20
+    git push origin 1.20
 ```
 
 Ensuite, il faut re fusionner le tout dans *develop* : comme on a ajouté des commits de
 bugfix dans *release*, il faut que ces commits soient ramenés aussi dans *develop*, pour
 qu'ils soient présents dans les versions suivantes.
+
 ```
-    $ git checkout develop
-    $ git pull
-    $ git merge --no-ff release/1.20
-    $ git push
+    git checkout develop
+    git pull
+    git merge --no-ff release/1.20
+    git push
 ```
 
 # Réaliser un hotfix
@@ -185,16 +194,18 @@ Le hotfix se fait directement sur *main*, sans passer par *develop*. C'est le se
 où le code ne commence pas sa vie dans *develop*.
 
 Pour créer une branche de hotfix, on suivra le processus suivant :
+
 ```
-    $ git checkout main
-    $ git pull
-    $ git checkout -b hotfix/fix-dates-in-french
+    git checkout main
+    git pull
+    git checkout -b hotfix/fix-dates-in-french
 ```
 
 On commit le fix dans la branche (ou plusieurs commits) :
+
 ```
-    $ git commit -m "Display the dates in french"
-    $ git push
+    git commit -m "Display the dates in french"
+    git push
 ```
 
 Le fix doit aussi changer le numéro de version et faire des release notes pour cette
@@ -212,11 +223,12 @@ PO que le bug est parti. On fait aussi la code review (c'est pas le moment de ba
 va aller directement en prod !)
 
 Quand on est satisfait du fix, on merge la branche dans *main* :
+
 ```
-    $ git checkout main
-    $ git pull
-    $ git merge --no-ff hotfix/fix-dates-in-french
-    $ git push
+    git checkout main
+    git pull
+    git merge --no-ff hotfix/fix-dates-in-french
+    git push
 ```
 
 On déploie *main* sur la machine de DEV, et on teste que le bug est parti. On n'est pas
@@ -226,18 +238,19 @@ S'il y a encore des problèmes on les fixe.
 Ensuite on fait un déploiement en prod.
 
 On tagge *main* pour garder un historique de cette release :
+
 ```
-    $ git checkout main
-    $ git pull
-    $ git tag -a 1.20.1
-    $ git push origin 1.20.1
+    git checkout main
+    git pull
+    git tag -a 1.20.1
+    git push origin 1.20.1
 ```
 
 Et on fusionne dans *develop* :
-```
-    $ git checkout develop
-    $ git pull
-    $ git merge --no-ff release/1.20.1
-    $ git push
-```
 
+```
+    git checkout develop
+    git pull
+    git merge --no-ff release/1.20.1
+    git push
+```
