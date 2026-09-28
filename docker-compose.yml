@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: collecte-db
+    ports:
+      - target: 5432
+        published: 5432
+    environment:
+      POSTGRES_DB: ecc
+      POSTGRES_USER: ecc
+      POSTGRES_PASSWORD: ecc
+    volumes:
+      - type: volume
+        source: postgres_data_18
+        target: /var/lib/postgresql
+    command: ["postgres", "-c", "log_statement=all", "-c", "max_connections=100"]
+
+  keycloak:
+    image: keycloak/keycloak:26.5.3
+    container_name: collecte-keycloak
+    ports:
+      - target: 8080
+        published: 8080
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - type: volume
+        source: keycloack-data
+        target: /opt/keycloak/data
+      - type: bind
+        source: ./deploy/local/collecte-pro-realm.json
+        target: /opt/keycloak/data/import/collecte-pro-realm.json
+        read_only: true
+    command: ["start-dev", "--import-realm"]
+
+volumes:
+  postgres_data_18:
+  keycloack-data:
