@@ -426,7 +426,7 @@ export default defineComponent({
       try {
         const resp = await axios.get(backendUrls.getQuestionnaireAndThemesByCtlId(this.effectiveControl.id))
         this.localControl = resp.data.filter((obj) => obj.id === this.effectiveControl.id)[0]
-        let questionnaires = this.accessibleQuestionnaires.filter((aq) => aq.has_replies)
+        const questionnaires = this.accessibleQuestionnaires.filter((aq) => aq.has_replies)
         this.hasAnyAnswerValue = questionnaires.length > 0
       } catch (error) {
         console.error('Erreur lors de la requête HTTP :', error)
@@ -542,7 +542,7 @@ export default defineComponent({
 
           getCreateMethod()(newQ).then((response) => {
             const qId = response.data.id
-            newQ = { ...newQ, id: qId, questionnaire_files: curQ.questionnaire_files, themes: themes }
+            newQ = { ...newQ, id: qId, questionnaire_files: curQ.questionnaire_files, themes }
 
             curQ.questionnaire_files.forEach((qf) => {
               axios.get(qf.url, { responseType: 'blob' }).then((response) => {
@@ -596,7 +596,7 @@ export default defineComponent({
         const questionnaireId = `Q${questionnaireNb}`
         let themeId = ''
         let filename = ''
-        if (file.category == 'question_file') {
+        if (file.category === 'question_file') {
           themeId = 'ANNEXES-AUX-QUESTIONS'
           filename = `Q${questionnaireNb}-${file.basename}`
         } else if (file.is_deleted) {
@@ -642,7 +642,7 @@ export default defineComponent({
       files.push.apply(
         files,
         this.accessibleQuestionnaires
-          .filter((aq) => questionnaireId == aq.id)
+          .filter((aq) => questionnaireId === aq.id)
           .flatMap((fq) => {
             if (fq.themes) {
               return fq.themes.flatMap((t) => {
@@ -677,11 +677,11 @@ export default defineComponent({
       const zip = new JSZip()
       let cnt = 0
 
-      if (files.length == 0) {
+      if (files.length === 0) {
         this.loaderActive.value = false
       }
 
-      files.map((file) => {
+      files.forEach((file) => {
         const url = window.location.origin + file.url
         JSZipUtils.getBinaryContent(url, (err, data) => {
           if (err) throw err

@@ -34,7 +34,7 @@ describe('QuestionnaireBodyCreate.vue', () => {
     ]
     store = createStore({
       state: {
-        currentQuestionnaire: { themes: themes },
+        currentQuestionnaire: { themes },
       },
       getters: {
         getField,
@@ -85,8 +85,8 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question1.id)
       expect(wrapper.vm.themes[0].questions[1].id).toEqual(question0.id)
       // Order field is updated to reflect new position
-      expect(wrapper.vm.themes[0].questions[0].order).toEqual(0)
-      expect(wrapper.vm.themes[0].questions[1].order).toEqual(1)
+      expect(wrapper.vm.themes[0].questions[0].order).toBe(0)
+      expect(wrapper.vm.themes[0].questions[1].order).toBe(1)
     })
 
     test('moving question up changes question order', async () => {
@@ -99,8 +99,8 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question1.id)
       expect(wrapper.vm.themes[0].questions[1].id).toEqual(question0.id)
       // Order field is updated to reflect new position
-      expect(wrapper.vm.themes[0].questions[0].order).toEqual(0)
-      expect(wrapper.vm.themes[0].questions[1].order).toEqual(1)
+      expect(wrapper.vm.themes[0].questions[0].order).toBe(0)
+      expect(wrapper.vm.themes[0].questions[1].order).toBe(1)
     })
 
     test('cannot move first question up', async () => {
@@ -121,8 +121,8 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question0.id)
       expect(wrapper.vm.themes[0].questions[1].id).toEqual(question1.id)
       // Order field is unchanged
-      expect(wrapper.vm.themes[0].questions[0].order).toEqual(0)
-      expect(wrapper.vm.themes[0].questions[1].order).toEqual(1)
+      expect(wrapper.vm.themes[0].questions[0].order).toBe(0)
+      expect(wrapper.vm.themes[0].questions[1].order).toBe(1)
     })
 
     test('cannot move last question down', async () => {
@@ -143,8 +143,8 @@ describe('QuestionnaireBodyCreate.vue', () => {
       expect(wrapper.vm.themes[0].questions[0].id).toEqual(question0.id)
       expect(wrapper.vm.themes[0].questions[1].id).toEqual(question1.id)
       // Order field is unchanged
-      expect(wrapper.vm.themes[0].questions[0].order).toEqual(0)
-      expect(wrapper.vm.themes[0].questions[1].order).toEqual(1)
+      expect(wrapper.vm.themes[0].questions[0].order).toBe(0)
+      expect(wrapper.vm.themes[0].questions[1].order).toBe(1)
     })
   })
 })

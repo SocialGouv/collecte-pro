@@ -114,6 +114,7 @@ class OnlyEditorCanChangeQuestionnaire(permissions.BasePermission):
             return True
         return False
 
+
 class ControlDemandeurAccess(permissions.BasePermission):
 
     def has_permission(self, request, view):
@@ -130,6 +131,7 @@ class ControlDemandeurAccess(permissions.BasePermission):
 
         return request.user.profile.access.filter(Q(control=control) & Q(access_type='demandeur')).exists()
 
+
 class UserDemandeurAccess(permissions.BasePermission):
 
     def has_permission(self, request, view):
@@ -142,6 +144,7 @@ class UserDemandeurAccess(permissions.BasePermission):
             return False
         control_id = request.data.get('control')
         return request.user.profile.access.filter(Q(control=control_id) & Q(access_type='demandeur')).exists()
+
 
 class ControlIsNotDeleted(permissions.BasePermission):
     message_format = 'Accessing this resource is not allowed.'

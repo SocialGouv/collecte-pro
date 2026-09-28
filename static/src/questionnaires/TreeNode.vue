@@ -1,7 +1,7 @@
 <template>
   <tr class="tree-row" :class="{ selected: isSelected }">
     <td class="col-expand">
-      <button 
+      <button
         v-if="node._children && node._children.length > 0"
         @click="$emit('toggle', node.id)"
         class="expand-btn"
@@ -11,15 +11,15 @@
         <span v-else class="fe fe-folder-plus" aria-hidden="true"></span>
       </button>
     </td>
-    
+
     <td class="col-checkbox">
       <template v-if="node._id && node._id.startsWith('file')">
         <label :for="'node-' + node._id" class="sr-only">
           Sélectionner {{ node.name }}
         </label>
-        <input 
+        <input
           :id="'node-' + node._id"
-          type="checkbox" 
+          type="checkbox"
           :checked="isSelected"
           @change="$emit('select', node)"
           class="node-checkbox"
@@ -66,7 +66,7 @@
   </tr>
 
   <template v-if="node._showChildren && node._children && node._children.length > 0">
-    <TreeNode 
+    <TreeNode
       v-for="child in node._children"
       :key="child.id"
       :node="child"
@@ -86,7 +86,7 @@ export default defineComponent({
   props: {
     node: { type: Object as PropType<any>, required: true },
     selected: { type: Array as PropType<any[]>, default: () => [] },
-    depth: { type: Number, default: 0 }
+    depth: { type: Number, default: 0 },
   },
   emits: ['toggle', 'select'],
   setup(props) {
@@ -107,7 +107,7 @@ export default defineComponent({
     })
 
     return { isSelected, indentLevel, showDate, showRepondant }
-  }
+  },
 })
 </script>
 

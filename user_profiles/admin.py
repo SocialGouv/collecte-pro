@@ -31,10 +31,12 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'date_joined')
     filter = 'profile__profile_type'
 
+
 @admin.register(UserIpAddress)
 class UserIpAddress(admin.ModelAdmin):
     model = UserIpAddress
     list_display = ('id', 'ip', 'username', 'created_at')
+
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

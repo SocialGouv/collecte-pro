@@ -41,8 +41,8 @@ store.dispatch('fetchConfig')
 // Création de l'app Vue
 const app = createApp(ControlDetail, {
   control: controls[0] || null, // Passe le premier control si besoin
-  user: user,
-  accessType: 'demandeur' // ou dynamique selon contexte
+  user,
+  accessType: 'demandeur', // ou dynamique selon contexte
 })
 
 app.use(store)

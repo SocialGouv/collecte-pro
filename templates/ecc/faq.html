@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load faq_tags %}
+{% load sanitize_tags %}
 {% load email_obfuscator %}
 {% load parametres_tags %}
 {% block site_title %}
@@ -51,7 +52,7 @@
               <div class="card border-0 m-0 p-0 pb-0 pt-2">
                 <div class="card-header border-1">
                   <div class="card-text">
-                    {{ faq_item.description|safe }}
+                    {{ faq_item.description|sanitize_html }}
                   </div>
                 </div>
               </div>

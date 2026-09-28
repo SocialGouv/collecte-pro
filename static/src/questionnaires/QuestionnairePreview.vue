@@ -20,14 +20,14 @@ import { defineComponent } from 'vue'
 import QuestionnaireDetailForPreview from './QuestionnaireDetailForPreview'
 
 export default defineComponent({ // Remplacement de Vue.extend
-	computed: {
-		// Remplacement de mapFields par mapState (Lecture seule)
-		...mapState([
-			'currentQuestionnaire',
-		]),
-	},
-	components: {
-		QuestionnaireDetailForPreview,
-	},
+  computed: {
+    // Remplacement de mapFields par mapState (Lecture seule)
+    ...mapState([
+      'currentQuestionnaire',
+    ]),
+  },
+  components: {
+    QuestionnaireDetailForPreview,
+  },
 })
 </script>

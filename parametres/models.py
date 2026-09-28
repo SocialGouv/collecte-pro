@@ -18,13 +18,19 @@ class Parametre(OrderedModel, SoftDeleteModel):
     )
     name = models.CharField(
         "name",
-        help_text="Texte affiché pour les paramètres de type 'lien' et texte alternatif pour les paramètres de type 'image'",
+        help_text=(
+            "Texte affiché pour les paramètres de type 'lien' et texte alternatif pour les "
+            "paramètres de type 'image'"
+        ),
         max_length=255,
         null=True,
     )
     url = models.CharField(
         "url",
-        help_text="url de destination pour les paramètres de type 'lien' et url de l'image pour les paramètres de type 'image'",
+        help_text=(
+            "url de destination pour les paramètres de type 'lien' et url de l'image pour les "
+            "paramètres de type 'image'"
+        ),
         max_length=255,
         null=True,
     )

@@ -73,8 +73,8 @@ export default defineComponent({
 
     const hashPointsToExistingControl = (hash: string) => {
       if (!isValidHash(hash)) return false
-      const controlId = parseInt(hash.replace('#control-', ''), 10)
-      if (isNaN(controlId)) return false
+      const controlId = Number.parseInt(hash.replace('#control-', ''), 10)
+      if (Number.isNaN(controlId)) return false
       if (this.controls.map(c => c.id).includes(controlId)) return true
       // Contrôle non accessible
       if (this.$parent) (this.$parent as any).noAccess = true

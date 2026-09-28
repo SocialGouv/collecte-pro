@@ -20,7 +20,6 @@ from soft_deletion.admin import SoftDeletedAdminControle, IsActiveFilter, IsMode
 
 from .models import Control, Questionnaire, Theme, Question, QuestionFile, ResponseFile, QuestionnaireFile
 from .questionnaire_duplicate import QuestionnaireDuplicateMixin
-from user_profiles.models import UserProfile
 
 
 class ParentLinksMixin(object):
@@ -84,19 +83,21 @@ class QuestionnaireInline(OrderedTabularInline):
 
 @admin.register(Control)
 class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, OrderedModelAdmin):
-    list_display = ('id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action', 'created_date')
+    list_display = (
+        'id', 'title', 'depositing_organization', 'reference_code', 'get_last_response_file_action', 'created_date',
+    )
     search_fields = (
         'title', 'reference_code', 'questionnaires__title', 'questionnaires__description')
     inlines = (QuestionnaireInline, )
-    list_filter = (IsActiveFilter,IsModelFilter,)
-    
+    list_filter = (IsActiveFilter, IsModelFilter,)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(_last_response_date=Max('questionnaires__last_response_file_action'))
 
-        col_index = 5  
+        col_index = 5
 
-        ordering_param = request.GET.get('o', '') 
+        ordering_param = request.GET.get('o', '')
         is_desc = False
         for part in ordering_param.split('.'):
             if part.lstrip('-') == str(col_index):
@@ -122,7 +123,6 @@ class ControlAdmin(SoftDeletedAdminControle, OrderedInlineModelAdminMixin, Order
         return "Aucun"
 
 
-
 class ThemeInline(OrderedTabularInline):
     model = Theme
     fields = (
@@ -140,7 +140,9 @@ class QuestionnaireFileInline(OrderedTabularInline):
 
 
 @admin.register(Questionnaire)
-class QuestionnaireAdmin(QuestionnaireDuplicateMixin, OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinksMixin):
+class QuestionnaireAdmin(
+    QuestionnaireDuplicateMixin, OrderedInlineModelAdminMixin, OrderedModelAdmin, ParentLinksMixin
+):
     save_as = True
     list_display = (
         'id', 'numbering', 'title', 'order', 'link_to_control', 'is_draft', 'editor',
@@ -249,6 +251,7 @@ class Megacontrol(LoginRequiredMixin, QuestionnaireDuplicateMixin, SingleObjectM
         messages.success(self.request, message)
 
         return super().get(*args, **kwargs)
+
 
 admin.site.register(QuestionFile)
 admin.site.register(QuestionnaireFile)

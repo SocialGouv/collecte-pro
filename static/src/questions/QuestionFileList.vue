@@ -34,12 +34,12 @@ export default defineComponent({
   props: {
     files: {
       type: Array,
-      required: true
+      required: true,
     },
     withDelete: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   components: { ErrorBar },
   setup(props) {
@@ -52,6 +52,8 @@ export default defineComponent({
     const deleteFileFromVuex = (fileId) => {
       const index = props.files.findIndex(f => f.id === fileId)
       if (index !== -1) {
+        // Mutating it in place keeps parent and child in sync without an extra emit round-trip.
+        // eslint-disable-next-line vue/no-mutating-props
         props.files.splice(index, 1)
       }
     }
@@ -71,8 +73,8 @@ export default defineComponent({
     return {
       errorMessage,
       clearError,
-      deleteFile
+      deleteFile,
     }
-  }
+  },
 })
 </script>

@@ -1,4 +1,3 @@
-
 const assertNotEmitted = (obj, eventName) => {
   expect(obj.emitted()).not.toHaveProperty(eventName)
 }
@@ -25,9 +24,9 @@ const isModalShowing = function(wrapper, elementId) {
 }
 
 export default {
-  assertHasEmmitted: assertHasEmmitted,
-  assertLastEmit: assertLastEmit,
-  assertNotEmitted: assertNotEmitted,
-  assertNothingEmitted: assertNothingEmitted,
-  isModalShowing: isModalShowing,
+  assertHasEmmitted,
+  assertLastEmit,
+  assertNotEmitted,
+  assertNothingEmitted,
+  isModalShowing,
 }

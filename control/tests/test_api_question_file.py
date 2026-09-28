@@ -15,7 +15,7 @@ client = APIClient()
 User = get_user_model()
 
 
-## List API
+# List API
 
 def list_annexes(user):
     utils.login(client, user=user)
@@ -151,7 +151,7 @@ def test_cannot_list_question_file_by_question_from_deleted_control():
     assert deleted_question_file.file.name not in str(response.content)
 
 
-### Retrive API endpoint closed.
+# Retrive API endpoint closed.
 
 
 def get_question_file(user, id):
@@ -289,7 +289,7 @@ def test_audited_cannot_update_question_file_from_draft_questionnaire():
     assert update_question_file(audited.user, payload).status_code == 405
 
 
-### Upload API
+# Upload API
 def test_inspector_can_upload_question_file():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     question = factories.QuestionFactory()

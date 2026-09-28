@@ -2,8 +2,9 @@ import csv
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
+from django.views.decorators.http import require_GET
 from django.db import connection
-from django.http import HttpResponse 
+from django.http import HttpResponse
 import zipfile
 from io import StringIO, BytesIO
 
@@ -27,10 +28,11 @@ class Stats(LoginRequiredMixin, TemplateView):
         'nb_users': ACTION_NB_USERS,
     }
 
+    @require_GET
     def call_get_top_20(request):
         current_week_number = datetime.now().strftime("%U")
         zip_buffer = BytesIO()
-        
+
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
             data_types = [
                 ('espaces_de_depot_par_utilisateur', 'Nombre d\'espaces'),
@@ -38,23 +40,24 @@ class Stats(LoginRequiredMixin, TemplateView):
                 ('questions_par_utilisateur', 'Nombre de questions'),
                 ('themes_par_utilisateur', 'Nombre de themes')
             ]
-            
+
             for data_type, data_label in data_types:
                 csv_buffer = StringIO()
-                csv_writer = csv.writer(csv_buffer, delimiter=';') 
+                csv_writer = csv.writer(csv_buffer, delimiter=';')
                 with connection.cursor() as cursor:
                     cursor.callproc('get_top_20', [data_type])
                     results = cursor.fetchall()
                     csv_writer.writerow(['Utilisateur', data_label])
                     csv_writer.writerows(results)
-                
+
                 zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_{data_type}.csv', csv_buffer.getvalue())
-        
+
         response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
         response['Content-Disposition'] = f'attachment; filename="collecte-pro_S{current_week_number}_TOP20.zip"'
-    
+
         return response
 
+    @require_GET
     def call_get_espace_depot_modele(request):
         generation_date = datetime.now().strftime("%Y-%m-%d")
         csv_buffer = StringIO()
@@ -63,14 +66,18 @@ class Stats(LoginRequiredMixin, TemplateView):
         with connection.cursor() as cursor:
             cursor.callproc('get_espace_depot_modele')
             results = cursor.fetchall()
-            csv_writer.writerow(['id_espace_depot', 'reference_code', 'nombre_de_duplication', 'date_derniere_duplication', 'top_model_coche'])
+            csv_writer.writerow([
+                'id_espace_depot', 'reference_code', 'nombre_de_duplication', 'date_derniere_duplication',
+                'top_model_coche',
+            ])
             csv_writer.writerows(results)
 
         response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
         response['Content-Disposition'] = f'attachment; filename="identification_modele_{generation_date}.csv"'
 
         return response
-    
+
+    @require_GET
     def call_get_espace_depot_elig_supp(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')
@@ -78,14 +85,17 @@ class Stats(LoginRequiredMixin, TemplateView):
         with connection.cursor() as cursor:
             cursor.callproc('get_espace_depot_elig_supp')
             results = cursor.fetchall()
-            csv_writer.writerow(['id_espace_depot', 'espace_depot', 'procedure', 'organisme_interroge','date_traitement'])
+            csv_writer.writerow([
+                'id_espace_depot', 'espace_depot', 'procedure', 'organisme_interroge', 'date_traitement',
+            ])
             csv_writer.writerows(results)
 
         response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="espace_depot_elig_supp.csv"'
+        response['Content-Disposition'] = 'attachment; filename="espace_depot_elig_supp.csv"'
 
         return response
-    
+
+    @require_GET
     def call_get_repondants_orphelins(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')
@@ -94,23 +104,24 @@ class Stats(LoginRequiredMixin, TemplateView):
             cursor.callproc('get_repondants_orphelins')
             results = cursor.fetchall()
             csv_writer.writerow([
-                'user_id', 
-                'username', 
-                'profile_type', 
-                'date_inscription', 
-                'date_derniere_connexion', 
-                'status', 
-                'id_control_associe', 
+                'user_id',
+                'username',
+                'profile_type',
+                'date_inscription',
+                'date_derniere_connexion',
+                'status',
+                'id_control_associe',
                 'date_extraction'
             ])
 
             csv_writer.writerows(results)
 
         response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="repondants_orphelins.csv"'
+        response['Content-Disposition'] = 'attachment; filename="repondants_orphelins.csv"'
 
         return response
-    
+
+    @require_GET
     def call_get_liste_utilisateurs(request):
         csv_buffer = StringIO()
         csv_writer = csv.writer(csv_buffer, delimiter=';')
@@ -119,28 +130,27 @@ class Stats(LoginRequiredMixin, TemplateView):
             cursor.callproc('get_liste_utilisateurs')
             results = cursor.fetchall()
             csv_writer.writerow([
-                'type_profil', 
-                'nom', 
-                'prenom', 
-                'mail', 
-                'date_creation', 
-                'actif', 
+                'type_profil',
+                'nom',
+                'prenom',
+                'mail',
+                'date_creation',
+                'actif',
                 'date_derniere_connexion'
             ])
 
             csv_writer.writerows(results)
 
         response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="liste_utilisateurs.csv"'
+        response['Content-Disposition'] = 'attachment; filename="liste_utilisateurs.csv"'
 
         return response
 
-    
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
             cursor.callproc('get_statistiques', [action])
             results = cursor.fetchall()
-            
+
         months = []
         data = []
 
@@ -157,6 +167,5 @@ class Stats(LoginRequiredMixin, TemplateView):
             months, data = self.fetch_statistique_data(action_value)
             context[f'months_{action_name}'] = months
             context[f'data_{action_name}'] = data
-            
+
         return context
-    

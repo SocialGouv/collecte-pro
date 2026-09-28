@@ -15,7 +15,7 @@ def questionnaire_file_path(instance, filename):
 
 class Prefixer(object):
     def __init__(self, file_object):
-        if hasattr(file_object,'question'):
+        if hasattr(file_object, 'question'):
             self.questionnaire_num = file_object.question.theme.questionnaire.numbering
             self.theme_num = file_object.question.theme.numbering
             self.question_num = file_object.question.numbering
@@ -42,20 +42,20 @@ class PathBuilder(object):
         self.filename = filename
         control_folder = ''
         questionnaire_num = ''
-        if hasattr(file_object,'question'):
+        if hasattr(file_object, 'question'):
             control_folder = file_object.question.theme.questionnaire.control.reference_code or \
                 f'CONTROLE-{file_object.question.theme.questionnaire.control.id}'
             questionnaire_num = file_object.question.theme.questionnaire.numbering
             theme_num = file_object.question.theme.numbering
             self.theme_folder = f'T{theme_num:02}'
-            questionnaire_folder = f'Q{questionnaire_num:02}' 
+            questionnaire_folder = f'Q{questionnaire_num:02}'
             self.questionnaire_path = os.path.join(control_folder, questionnaire_folder)
             self.theme_path = os.path.join(self.questionnaire_path, self.theme_folder)
         else:
             control_folder = file_object.questionnaire.control.reference_code or \
             f'CONTROLE-{file_object.questionnaire.control.id}'
             questionnaire_num = file_object.questionnaire.numbering
-            questionnaire_folder = f'Q{questionnaire_num:02}' 
+            questionnaire_folder = f'Q{questionnaire_num:02}'
             self.questionnaire_path = os.path.join(control_folder, questionnaire_folder)
         self.prefixer = Prefixer(file_object)
 
@@ -86,6 +86,7 @@ class PathBuilder(object):
 def question_file_path(instance, filename):
     path = PathBuilder(file_object=instance, filename=filename)
     return path.get_question_file_path()
+
 
 def questionnaire_pj_file_path(instance, filename):
     path = PathBuilder(file_object=instance, filename=filename)

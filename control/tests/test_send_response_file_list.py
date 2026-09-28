@@ -1,3 +1,4 @@
+from control.export_response_files import get_files_for_export
 from pytest import mark
 
 from django.shortcuts import reverse
@@ -35,6 +36,7 @@ def test_send_response_file_list_fails_for_audited_if_the_control_is_not_associa
     response = get_response_list(client, user, questionnaire.id)
 
     assert response.status_code != 200
+
 
 def test_send_response_file_list_works_for_inspector_if_the_control_is_associated_with_the_user(client):
     questionnaire = factories.QuestionnaireFactory(is_draft=False)
@@ -77,7 +79,7 @@ def test_send_response_file_list_fails_for_draft_questionnaire_for_audited(clien
 # Tests for contents of file list
 ###################################
 # Decoding the xlsx file is too complicated, so we test the file list before it is written to file.
-from control.export_response_files import get_files_for_export
+
 
 def test_send_response_file_list_contains_file(client):
     response_file = factories.ResponseFileFactory(is_deleted=False)
@@ -85,7 +87,6 @@ def test_send_response_file_list_contains_file(client):
     questionnaire.is_draft = False
     questionnaire.save()
     assert not questionnaire.is_draft
-    user = utils.make_audited_user(questionnaire.control)
 
     files = get_files_for_export(questionnaire)
 
@@ -99,7 +100,6 @@ def test_send_response_file_list_does_not_contain_deleted_file(client):
     questionnaire.is_draft = False
     questionnaire.save()
     assert not questionnaire.is_draft
-    user = utils.make_audited_user(questionnaire.control)
 
     files = get_files_for_export(questionnaire)
 
@@ -118,8 +118,6 @@ def test_send_response_file_list_has_files_in_order_of_creation_date(client):
     questionnaire.is_draft = False
     questionnaire.save()
     assert not questionnaire.is_draft
-
-    user = utils.make_audited_user(questionnaire.control)
 
     files = get_files_for_export(questionnaire)
 
@@ -146,8 +144,6 @@ def test_send_response_file_list_has_files_in_order_of_question_numbering(client
     questionnaire.save()
     assert not questionnaire.is_draft
 
-    user = utils.make_audited_user(questionnaire.control)
-
     files = get_files_for_export(questionnaire)
 
     assert len(files) == 3
@@ -170,9 +166,7 @@ def test_send_response_file_list_does_not_contais_files_from_other_questionnaire
     assert not questionnaire_2.is_draft
     theme_2 = factories.ThemeFactory(questionnaire=questionnaire_2)
     question_2 = factories.QuestionFactory(theme=theme_2)
-    response_file_2 = factories.ResponseFileFactory(is_deleted=False, question=question_2)
-
-    user = utils.make_audited_user(questionnaire_1.control)
+    factories.ResponseFileFactory(is_deleted=False, question=question_2)
 
     files = get_files_for_export(questionnaire_1)
 

@@ -103,8 +103,8 @@ export default defineComponent({
     }
 
     const inspectorUsers = () => {
-      return users.value.filter(item => 
-        item.profile_type === 'inspector' && item.id !== sessionUser.value.id
+      return users.value.filter(item =>
+        item.profile_type === 'inspector' && item.id !== sessionUser.value.id,
       )
     }
 
@@ -144,4 +144,3 @@ export default defineComponent({
   },
 })
 </script>
-

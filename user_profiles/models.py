@@ -7,6 +7,7 @@ from annoying.fields import AutoOneToOneField
 
 from .managers import UserProfileQuerySet
 
+
 class UserIpAddress(models.Model):
     ip = models.CharField(max_length=30)
     username = models.EmailField(max_length=254)
@@ -15,6 +16,7 @@ class UserIpAddress(models.Model):
     class Meta:
         verbose_name = "Adresse IP Utilisateur"
         verbose_name_plural = "Adresses IP Utilisateurs"
+
 
 class UserProfile(models.Model):
     AUDITED = 'audited'
@@ -85,9 +87,10 @@ class OrphanUserPurgeHistory(models.Model):
     date_joined = models.DateTimeField(null=True, blank=True)
     is_physically_deleted = models.BooleanField(default=False)
     physical_deletion_date = models.DateTimeField(null=True, blank=True)
-   
+
     class Meta:
         db_table = "purge_histo_rep_orphelins"
+
 
 class PurgeEligibleRepOrphTrv(models.Model):
     user_id = models.IntegerField()
@@ -98,9 +101,10 @@ class PurgeEligibleRepOrphTrv(models.Model):
     status = models.CharField(max_length=255, null=True, blank=True)
     id_control_associe = models.CharField(max_length=255, null=True, blank=True)
     date_extraction = models.DateTimeField(null=True, blank=True)
-   
+
     class Meta:
         db_table = "purge_eligible_rep_orph_trv"
+
 
 class Access(models.Model):
     REPONDANT = 'repondant'

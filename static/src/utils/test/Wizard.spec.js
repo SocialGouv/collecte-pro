@@ -69,7 +69,7 @@ describe('Wizard.vue', () => {
         Wizard,
         {
           props: {
-            activeStepNumber: activeStepNumber,
+            activeStepNumber,
             stepTitles: ['Step the first', 'Step the second', 'Step the last'],
           },
         })
@@ -79,7 +79,7 @@ describe('Wizard.vue', () => {
 
       const emittedEvents = wrapper.emitted()
       expect(emittedEvents).toHaveProperty(emittedEventName)
-      expect(emittedEvents[emittedEventName].length).toEqual(1)
+      expect(emittedEvents[emittedEventName]).toHaveLength(1)
       const emittedEventPayload = emittedEvents[emittedEventName][0]
       expect(emittedEventPayload[0]).toEqual(clickedStepNumber)
     }
@@ -89,7 +89,7 @@ describe('Wizard.vue', () => {
         Wizard,
         {
           props: {
-            activeStepNumber: activeStepNumber,
+            activeStepNumber,
             stepTitles: ['Step the first', 'Step the second', 'Step the last'],
           },
         })
@@ -118,5 +118,4 @@ describe('Wizard.vue', () => {
     // If you click several steps backwards, 'previous' event is emitted
     runEmitTest(3, 1, 'previous')
   })
-
 })

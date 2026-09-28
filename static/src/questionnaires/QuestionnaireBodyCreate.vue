@@ -44,7 +44,6 @@
                   <button v-if="themes[themeIndex].questions.length === 0"
                           :id="'delete_theme_' + themeIndex + '_empty'"
                           @click.prevent="deleteTheme(themeIndex)"
-                          role="button"
                           type="button"
                           class="btn btn-link"
                           title="Supprimer le thème"
@@ -55,7 +54,6 @@
                   <button v-else
                           :id="'delete_theme_' + themeIndex + '_nonempty'"
                           class="btn btn-link"
-                          role="button"
                           type="button"
                           data-toggle="modal"
                           :data-target="themes.length > 1 ? '#deleteThemeConfirmModal' + themeIndex : '#deleteThemeConfirmModal_' + themeIndex + '_disabled'"
@@ -113,7 +111,6 @@
                     <button :class="{ disabled: qIndex === 0 }"
                       :tabindex="qIndex === 0 ? -1 : 0"
                       class="btn btn-secondary btn-sm move-up-button"
-                      role="button"
                       type="button"
                       title="Déplacer la question vers le haut"
                       @click="moveQuestionUp(themeIndex, qIndex)">
@@ -131,7 +128,6 @@
                     <button :class="{ disabled: qIndex === (theme.questions.length - 1) }"
                       :tabindex="qIndex === (theme.questions.length - 1) ? -1 : 0"
                       class="btn btn-secondary btn-sm move-down-button"
-                      role="button"
                       type="button"
                       title="Déplacer la question vers le bas"
                       @click="moveQuestionDown(themeIndex, qIndex)">
@@ -157,7 +153,6 @@
                             :id="'delete_question_' + themeIndex + '_' + qIndex"
                             @click.prevent="deleteQuestion(themeIndex, qIndex)"
                             class="btn btn-link"
-                            role="button"
                             type="button"
                             title="Supprimer la question"
                     >
@@ -167,7 +162,6 @@
                     <button v-else
                             :id="'delete_question_' + themeIndex + '_' + qIndex + '_modal'"
                             class="btn btn-link"
-                            role="button"
                             type="button"
                             title="Supprimer la question"
                             data-toggle="modal"
@@ -190,7 +184,7 @@
                     </confirm-modal>
                   </span>
 
-                  <question-file-upload :question="question"></question-file-upload>
+                  <question-file-upload :question="question" @file-uploaded="(file) => question.question_files.push(file)"></question-file-upload>
                 </div>
                 <div class="card-body">
                   <question-file-list :files="question.question_files" :with-delete="true">
@@ -203,7 +197,6 @@
               <button @click.prevent="addQuestion(themeIndex)"
                       :id="'add_question_' + themeIndex"
                       class="btn btn-primary"
-                      role="button"
                       type="button"
                       title="Ajouter une question">
                 <span class="fe fe-plus" aria-hidden="true"></span> Ajouter une question
@@ -218,7 +211,6 @@
               <button @click="addTheme()"
                       id="add_theme"
                       class="btn btn-primary"
-                      role="button"
                       type="button"
                       title="Ajouter un thème">
                 <span class="fe fe-plus" aria-hidden="true"></span>Ajouter un thème
@@ -293,11 +285,11 @@ export default {
       themes.value[themeIndex].questions.splice(qIndex, 1)
       SwapMixin.methods.swapMixin_updateOrderFields(themes.value[themeIndex].questions)
       if (themes.value[themeIndex].questions.length <= 1) {
-        $("#add_question_" + themeIndex).focus()
+        $('#add_question_' + themeIndex).focus()
       } else if (qIndex >= themes.value[themeIndex].questions.length) {
-        $("#delete_question_"+themeIndex+"_"+(qIndex-1)).focus()
+        $('#delete_question_' + themeIndex + '_' + (qIndex - 1)).focus()
       } else {
-        $("#delete_question_"+themeIndex+"_"+(qIndex+1)).focus()
+        $('#delete_question_' + themeIndex + '_' + (qIndex + 1)).focus()
       }
     }
 
@@ -305,11 +297,11 @@ export default {
       themes.value.splice(themeIndex, 1)
       SwapMixin.methods.swapMixin_updateOrderFields(themes.value)
       if (themes.value.length <= 1) {
-        setTimeout(() => { $("#add_theme").focus() }, 300)
+        setTimeout(() => { $('#add_theme').focus() }, 300)
       } else if (themeIndex >= themes.value.length) {
-        setTimeout(() => { $("#delete_theme_"+(themeIndex-1)).focus() }, 300)
+        setTimeout(() => { $('#delete_theme_' + (themeIndex - 1)).focus() }, 300)
       } else {
-        setTimeout(() => { $("#delete_theme_"+themeIndex).focus() }, 300)
+        setTimeout(() => { $('#delete_theme_' + themeIndex).focus() }, 300)
       }
     }
 

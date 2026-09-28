@@ -27,11 +27,12 @@
         <form @submit.prevent="updateUser" @keydown.esc="resetFormData">
           <div class="form-fieldset">
             <div class="form-group">
-              <label id="first-name-label" class="form-label">
+              <label id="first-name-label" for="update-user-first-name" class="form-label">
                 Prénom
                 <span class="form-required"></span>
               </label>
               <input type="text"
+                    id="update-user-first-name"
                     class="form-control"
                     v-bind:class="{ 'state-invalid': errors.first_name }"
                     v-model="localFirstName"
@@ -39,11 +40,12 @@
                     aria-labelledby="first-name-label">
             </div>
             <div class="form-group">
-              <label id="last-name-label" class="form-label">
+              <label id="last-name-label" for="update-user-last-name" class="form-label">
                 Nom
                 <span class="form-required"></span>
               </label>
               <input type="text"
+                    id="update-user-last-name"
                     class="form-control"
                     v-bind:class="{ 'state-invalid': errors.last_name }"
                     v-model="localLastName"
@@ -96,7 +98,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         return [];
       }
       const messages: string[] = [];
-      for (const [field, fieldErrors] of Object.entries(this.errors)) {
+      for (const [, fieldErrors] of Object.entries(this.errors)) {
         if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
           fieldErrors.forEach(err => {
             messages.push(err);
@@ -120,7 +122,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       },
       set(value) {
         this.$store.commit('setEditingUserField', { field: 'first_name', value })
-      }
+      },
     },
     localLastName: {
       get() {
@@ -128,7 +130,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       },
       set(value) {
         this.$store.commit('setEditingUserField', { field: 'last_name', value })
-      }
+      },
     },
   },
   methods: {
@@ -203,7 +205,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         return
       }
 
-      // NOTE: L'objet this.editingUser n'existe plus directement. 
+      // NOTE: L'objet this.editingUser n'existe plus directement.
       // Nous utilisons l'état actuel du store (this.$store.state.editingUser)
       const userToUpdate = this.$store.state.editingUser;
 
@@ -211,7 +213,7 @@ export default defineComponent({ // Remplacement de Vue.extend
         .then(response => {
           this.postResult = response.data
           // Utilisation de l'EventBus déprécié, mais conservé pour l'instant.
-          EventBus.$emit('users-changed', this.postResult) 
+          EventBus.$emit('users-changed', this.postResult)
           this.hideThisModal()
         })
         .catch((error) => {
@@ -219,6 +221,6 @@ export default defineComponent({ // Remplacement de Vue.extend
           this.errors = this.formatApiErrors(error)
         })
     },
-  }
+  },
 })
 </script>

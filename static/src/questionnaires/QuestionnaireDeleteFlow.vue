@@ -3,7 +3,7 @@
 
     <template v-slot:confirm-modal-form>
       <div class="modal-header border-bottom-0">
-        <div id="modal_title" class="modal-title">
+        <div id="confirm-modal-title" class="modal-title">
           <div class="mb-4">Vous êtes sur le point de supprimer :</div>
           <div>Questionnaire {{ questionnaire.numbering }} : {{ questionnaire.title }}</div>
         </div>

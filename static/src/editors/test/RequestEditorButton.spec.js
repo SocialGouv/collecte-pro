@@ -35,7 +35,7 @@ describe('RequestEditorButton.vue', () => {
           plugins: [store],
         },
         props: {
-          questionnaire: questionnaire,
+          questionnaire,
         },
       })
     expect(wrapper.exists()).toBeTruthy()
@@ -62,7 +62,7 @@ describe('RequestEditorButton.vue', () => {
             plugins: [store],
           },
           props: {
-            questionnaire: questionnaire,
+            questionnaire,
             window: mockWindow,
           },
         })

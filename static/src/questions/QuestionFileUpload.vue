@@ -11,10 +11,10 @@
     </label>
   </div>
   <div v-else>
-    <label class="btn btn-primary disabled" >
+    <span class="btn btn-primary disabled" >
       <span class="fe fe-upload mr-2" ></span>
       Ajouter un fichier annexe
-    </label>
+    </span>
     <div class="small">
       Pour pouvoir ajouter des annexes,
     </div>
@@ -42,10 +42,11 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['file-uploaded'],
   components: {
     ErrorBar,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const errorMessage = ref<string | undefined>(undefined)
     const file = ref<File | null>(null)
     const fileInput = ref<HTMLInputElement | null>(null)
@@ -66,13 +67,13 @@ export default defineComponent({
       const formData = new FormData()
       formData.append('file', file.value)
       formData.append('question', String(props.question.id))
-      
+
       try {
         const response = await axios.post(backendUrls.annexe(), formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
         const newFile = response.data
-        props.question.question_files.push(newFile)
+        emit('file-uploaded', newFile)
       } catch (error: any) {
         console.error('Error when posting question file', error)
         if (error.response && Array.isArray(error.response.data)) {

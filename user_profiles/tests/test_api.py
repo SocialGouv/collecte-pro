@@ -34,12 +34,12 @@ def test_logged_in_user_can_search_user_by_username():
     login_user = inspector.user
     target_user = factories.UserProfileFactory()
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
     )
-    target_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=target_user,
         control=control,
     )
@@ -56,12 +56,12 @@ def test_cannot_search_audited_user_by_username_if_associated_with_deleted_contr
     login_user = audited.user
     target_user = factories.UserProfileFactory()
     control = factories.ControlFactory()
-    audited_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=audited,
         control=control,
         access_type=Access.REPONDANT,
     )
-    target_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=target_user,
         control=control,
     )
@@ -91,10 +91,10 @@ def test_can_search_inspector_user_by_username_if_associated_with_deleted_contro
 
 
 def test_inspector_can_create_user():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
@@ -119,12 +119,12 @@ def test_inspector_can_update_an_existing_user():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     existing_user = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
     )
-    existing_user_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=existing_user,
         control=control,
     )
@@ -154,12 +154,12 @@ def test_inspector_can_update_an_existing_user_with_different_casing():
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
     existing_user = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
     )
-    existing_user_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=existing_user,
         control=control,
         access_type=Access.REPONDANT,
@@ -191,10 +191,10 @@ def test_inspector_can_update_an_existing_user_with_different_casing():
 
 
 def test_can_associate_a_control_to_an_existing_user():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
@@ -223,7 +223,7 @@ def test_audited_cannot_create_user():
     factories.ParameterFactory()
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     control = factories.ControlFactory()
-    audited_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=audited,
         control=control,
         access_type=Access.REPONDANT,
@@ -248,7 +248,7 @@ def test_cannot_create_user_when_control_is_deleted():
     factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
@@ -296,16 +296,16 @@ def test_inspector_cannot_alter_a_control_that_is_not_accessible_to_him():
 
 
 def test_inspector_can_remove_user_from_control():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     someone = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
     )
-    someone_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=someone,
         control=control,
         access_type=Access.REPONDANT,
@@ -329,10 +329,10 @@ def test_logged_in_user_can_get_current_user():
 
 
 def test_new_audited_user_should_have_the_file_reporting_flag_activated():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
@@ -356,10 +356,10 @@ def test_new_audited_user_should_have_the_file_reporting_flag_activated():
 
 
 def test_new_inspector_user_should_have_the_file_reporting_flag_activated():
-    parameter = factories.ParameterFactory()
+    factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,

@@ -11,7 +11,6 @@ from control.models import Control
 from .models import UserProfile, Access
 
 from keycloak import KeycloakAdmin
-from keycloak.exceptions import KeycloakError
 import json
 import logging
 
@@ -117,7 +116,8 @@ def handle_keycloak_error(e: Exception):
         message = error_description
     else:
         message = (
-            f"Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur. Veuillez vous rapprocher de votre administrateur."
+            "Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur. "
+            "Veuillez vous rapprocher de votre administrateur."
             f" (code : {error_code or 'inconnu'})."
         )
 
@@ -191,14 +191,9 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 code=status.HTTP_403_FORBIDDEN,
             )
             raise e
-        inspector_role = False
         access_type = 'repondant'
-       
-        if settings.KEYCLOAK_ACTIVE:
-            # Find keycloak inspector role
-            role = keycloak_admin.get_client_role(client_id=settings.KEYCLOAK_URL_CLIENT_ID, role_name=UserProfile.INSPECTOR)
+
         if profile_data.get('profile_type') == UserProfile.INSPECTOR:
-            inspector_role = True
             access_type = 'demandeur'
         if profile:
             if settings.KEYCLOAK_ACTIVE:
@@ -229,7 +224,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             if settings.KEYCLOAK_ACTIVE:
                 # Create keycloak user if doesn't exist
                 try:
-                    new_user = keycloak_admin.create_user(
+                    keycloak_admin.create_user(
                         {
                             "email": user_data['username'],
                             "username": user_data['username'],
@@ -262,6 +257,7 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             user_api_post_update.send(
                 sender=UserProfile, session_user=session_user, user_profile=profile)
         return profile
+
 
 class AccessSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='access.pk', read_only=True)

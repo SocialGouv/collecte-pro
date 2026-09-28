@@ -212,7 +212,7 @@ export default defineComponent({
 
       for (const control of this.controls) {
         const accessType = control.access_type || 'repondant'
-        
+
         const titleLine1 = control.reference_code
         const titleLine2 = control.depositing_organization || control.title
         const title = titleLine1 + '\n' + titleLine2
@@ -220,7 +220,7 @@ export default defineComponent({
         const controlMenu = {
           icon: accessType === 'demandeur' && control.is_model ? 'far fa-file-alt' : 'fa fa-archive',
           href: backend['control-detail'](control.id),
-          title: title,
+          title,
           ctrl_id: control.id,
           is_model: control.is_model,
           attributes: { title: accessType === 'demandeur' && control.is_model ? 'Espace de dépôt modèle' : '' },
@@ -230,7 +230,7 @@ export default defineComponent({
           controlMenu.badge = {
             icon: 'fas fa-thumbtack',
             class: `fas fa-thumbtack ${control.is_pinned ? '' : 'unpinned'}`,
-            attributes: { role: 'img', 'aria-label': 'épinglé', 'title': control.is_pinned ? 'épinglé' : 'épingler cet espace' },
+            attributes: { role: 'img', 'aria-label': 'épinglé', title: control.is_pinned ? 'épinglé' : 'épingler cet espace' },
           }
         }
 
@@ -496,11 +496,11 @@ export default defineComponent({
     background-color: #3473cb;
   }
  .vsm--badge.fas.fa-thumbtack {
-  color: gray; 
+  color: gray;
   }
 
 .vsm--badge.fas.fa-thumbtack:not(.unpinned) {
-  color: inherit; 
+  color: inherit;
   }
 
 </style>

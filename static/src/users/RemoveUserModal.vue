@@ -73,13 +73,13 @@ export default defineComponent({ // Remplacement de Vue.extend
       this.hasErrors = false
       this.error = undefined
 
-      var postData = { control: this.editingControl.id }
+      const postData = { control: this.editingControl.id }
       // NOTE: Le code utilise les champs du store (editingUser.id, editingControl.id)
       axios.post(backend.removeUserFromControl(this.editingUser.id), postData)
         .then(response => {
           this.postResult = response.data
           // Utilisation de l'EventBus global (conservé pour l'instant)
-          EventBus.$emit('users-changed', this.postResult) 
+          EventBus.$emit('users-changed', this.postResult)
           // Assurez-vous que jQuery/Bootstrap est disponible
           $('#removeUserModal').modal('hide')
         })
@@ -88,6 +88,6 @@ export default defineComponent({ // Remplacement de Vue.extend
           this.error = error
         })
     },
-  }
+  },
 })
 </script>

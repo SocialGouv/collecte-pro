@@ -14,7 +14,9 @@ if __name__ == "__main__":
         # issue is really that Django is missing to avoid masking other
         # exceptions on Python 2.
         try:
-            import django
+            # Only used to probe whether Django is installed at all, so we can
+            # raise a clearer error than the original ImportError below.
+            import django  # noqa: F401
         except ImportError:
             raise ImportError(
                 "Couldn't import Django. Are you sure it's installed and "
@@ -22,7 +24,7 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
-    BASE_DIR = Path('.').absolute()
-    env_path = BASE_DIR / '.env'
+    BASE_DIR = Path(".").absolute()
+    env_path = BASE_DIR / ".env"
     load_dotenv(dotenv_path=env_path, override=True)
     execute_from_command_line(sys.argv)

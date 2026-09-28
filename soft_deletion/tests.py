@@ -21,7 +21,7 @@ def test_inspector_can_delete_a_control():
     factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,
@@ -39,7 +39,7 @@ def test_audited_cannot_delete_a_control():
     factories.ParameterFactory()
     audited = factories.UserProfileFactory(profile_type=UserProfile.AUDITED)
     control = factories.ControlFactory()
-    audited_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=audited,
         control=control,
         access_type=Access.REPONDANT,
@@ -57,7 +57,7 @@ def test_delete_twice_raise_403():
     factories.ParameterFactory()
     inspector = factories.UserProfileFactory(profile_type=UserProfile.INSPECTOR)
     control = factories.ControlFactory()
-    inspector_access = factories.AccessFactory(
+    factories.AccessFactory(
         userprofile=inspector,
         control=control,
         access_type=Access.DEMANDEUR,

@@ -12,7 +12,7 @@
           <div>{{ user.first_name }} {{ user.last_name }}</div>
           <small><a :href="'mailto:' + user.email">{{ user.email }}</a></small>
         </div>
-        
+
         <template v-if="accessType === 'demandeur'">
           <button class="fe fe-edit btn btn-outline-primary mr-4"
                   title="Modifier l'utilisateur"
@@ -63,8 +63,8 @@ export default defineComponent({ // Remplacement de Vue.extend
       },
       set(user) {
         // Appelle la mutation 'setEditingUser' (ajoutée dans le store migré)
-        this.$store.commit('setEditingUser', user) 
-      }
+        this.$store.commit('setEditingUser', user)
+      },
     },
 
     // 2. Gère la lecture/écriture du champ 'editingControl' dans le store
@@ -75,7 +75,7 @@ export default defineComponent({ // Remplacement de Vue.extend
       set(control) {
         // Appelle la mutation 'setEditingControl' (ajoutée dans le store migré)
         this.$store.commit('setEditingControl', control)
-      }
+      },
     },
 
     // 3. Champ en lecture seule : utilisation de mapState
@@ -85,14 +85,14 @@ export default defineComponent({ // Remplacement de Vue.extend
     updateEditingState(user) {
       // Ces affectations appellent les SETTERS des propriétés calculées ci-dessus.
       // 1. Mise à jour de editingControl
-      this.editingControl = this.control 
-      
+      this.editingControl = this.control
+
       // 2. Mise à jour de editingUser (création d'une copie propre avant mutation)
-      // L'ancienne logique `this.editingUser = {}; Object.assign(this.editingUser, user)` 
+      // L'ancienne logique `this.editingUser = {}; Object.assign(this.editingUser, user)`
       // est remplacée par un envoi d'objet propre à la mutation.
       const userCopy = Object.assign({}, user);
       this.editingUser = userCopy;
     },
-  }
+  },
 })
 </script>

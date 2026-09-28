@@ -21,7 +21,7 @@
 -->
 <template>
   <div>
-    <empty-modal ref="confirmModal" class="confirm-modal" :no-close="true">
+    <empty-modal ref="confirmModal" class="confirm-modal" :no-close="true" title-id="confirm-modal-title">
       <error-bar v-if="error !== undefined" class="m-3">
         <!-- The "error-message" slot should be displayed if specified, otherwise display a default
         layout. -->
@@ -59,7 +59,8 @@
     </empty-modal>
 
     <empty-modal ref="successModal"
-                 :no-close="true">
+                 :no-close="true"
+                 title-id="success-modal-title">
       <!--
         This slot should contain the success modal.
       -->

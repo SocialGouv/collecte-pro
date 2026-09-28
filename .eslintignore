@@ -1,0 +1,4 @@
+node_modules/
+static/dist/
+staticfiles/
+static/src/utils/vuejs-datepicker-locale-fr.js

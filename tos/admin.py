@@ -9,7 +9,7 @@ from .models import CGUItem
 
 @admin.register(CGUItem)
 class CGUItemAdmin(SoftDeletedAdmin, OrderedModelAdmin):
-    list_display = ('id', 'title',  'slug', 'order', 'move_up_down_links')
+    list_display = ('id', 'title', 'slug', 'order', 'move_up_down_links')
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ('order',)
     list_filter = (IsActiveFilter,)

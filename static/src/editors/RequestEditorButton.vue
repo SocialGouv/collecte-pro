@@ -104,7 +104,7 @@ export default {
       callSwapEditorApi(sessionUser.value.id, props.questionnaire.id)
         .then((response) => {
           props.window.location.assign(
-            backendUrls['questionnaire-edit'](props.questionnaire.id)
+            backendUrls['questionnaire-edit'](props.questionnaire.id),
           )
         })
         .catch(() => {

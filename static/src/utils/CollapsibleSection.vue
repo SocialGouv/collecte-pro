@@ -24,6 +24,9 @@
 <script>
 import { defineComponent } from 'vue'
 
+// Module-level counter used to generate a unique id for each Section
+let nextCollapsibleId = 0
+
 export default defineComponent({
   name: 'CollapsibleButton',
   props: {
@@ -42,7 +45,7 @@ export default defineComponent({
     }
   },
   mounted() {
-    this.id = 'collapsible-' + Math.floor(Math.random() * 1000000)
+    this.id = 'collapsible-' + (nextCollapsibleId++)
   },
 })
 </script>
