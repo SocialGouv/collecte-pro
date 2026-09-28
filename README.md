@@ -14,11 +14,11 @@ La mise en place d’un outil dédié permet de simplifier la relation entre un 
 contrôle et des structures contrôlées afin de leur permettre de se concentrer sur les
 activités ayant le plus d’impact pour leurs usagers.
 
-## Descriptions fonctionnelles :
+## Descriptions fonctionnelles
 
-Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/ecollecte/blob/develop/docs/Description fonctionnelle de collecte-pro.odt).
+Les descriptions fonctionnelles sont disponibles [ici](https://github.com/SocialGouv/collecte-pro/blob/develop/docs/Description%20fonctionnelle.odt).
 
-### Les principaux gains pour les utilisateurs :
+### Les principaux gains pour les utilisateurs
 
 - Des tâches pénibles en moins : les centaines ou milliers de fichiers de réponses aux
     questionnaires sont classés et renommés automatiquement. Plus aucun agent n’a besoin
@@ -31,18 +31,17 @@ Les descriptions fonctionnelles sont disponibles [ici](https://github.com/Social
 
 ## Architecture du code et du repo
 
-Voir https://github.com/SocialGouv/ecollecte/blob/develop/docs/dev/architecture.md
-
+Voir <https://github.com/SocialGouv/collecte-pro/blob/develop/docs/dev/architecture.md>
 
 ## Pour développer
 
 Notre code review process pour collaborer dans la bonne humeur :
-https://github.com/SocialGouv/ecollecte/blob/develop/docs/Processus de revue de code.odt
+<https://github.com/SocialGouv/collecte-pro/blob/develop/docs/Processus%20de%20revue%20de%20code.odt>
 
 Comment installer son environnement pour développer collecte-pro :
-https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/dev_environment.md
+<https://github.com/SocialGouv/collecte-pro/blob/develop/docs/dev/dev_environment.md>
 
 Nous utilisons [github-flow](https://guides.github.com/introduction/flow/).
 Pour plus de détails sur comment commencer une nouvelle feature, et pour le processus de
 release, voir
-https://github.com/SocialGouve/ecollecte/blob/develop/docs/dev/dev_and_release_process.md
+<https://github.com/SocialGouv/collecte-pro/blob/develop/docs/dev/dev_and_release_process.md>
