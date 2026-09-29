@@ -10,6 +10,7 @@ node_modules/
 staticfiles/
 .env
 static/dist/
+.parcel-cache/
 
 # Unit test / coverage reports
 htmlcov/

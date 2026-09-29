@@ -2,7 +2,7 @@
 import mitt from 'mitt';
 
 type Events = {
-    [key: string]: any; // tu peux préciser des types si tu veux
+  [key: string]: any; // tu peux préciser des types si tu veux
 };
 
 const mittBus = mitt<Events>();

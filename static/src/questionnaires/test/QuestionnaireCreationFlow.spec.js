@@ -2,7 +2,7 @@ import { vi } from 'vitest'
 // Tests for the whole flow of questionnaire creation. These are not unit tests.
 
 import { mount } from '@vue/test-utils'
-import { when, resetAllWhenMocks } from 'jest-when'
+import { when } from 'vitest-when'
 
 import axios from 'axios'
 import { getField, updateField } from 'vuex-map-fields'
@@ -36,8 +36,7 @@ describe('Questionnaire creation flow', () => {
   beforeEach(() => {
     // Setup the questionnaire creation page.
     vi.resetModules()
-    vi.clearAllMocks()
-    resetAllWhenMocks()
+    vi.resetAllMocks()
 
     global.$ = vi.fn(() => ({
       addClass: vi.fn(),
@@ -110,7 +109,7 @@ describe('Questionnaire creation flow', () => {
 
     // Mock axios : save questionnaire
     when(axios.put).calledWith('/api/questionnaire/' + questionnaire.id + '/', expect.any(Object))
-      .mockImplementation((url, payload) => {
+      .thenDo((url, payload) => {
         return Promise.resolve({ data: payload })
       })
 
@@ -163,9 +162,7 @@ describe('Questionnaire creation flow', () => {
       '/api/annexe/',
       expect.any(FormData),
       expect.any(Object),
-    ).mockImplementation((url, payload) => {
-      return Promise.resolve({ data: file })
-    })
+    ).thenResolve({ data: file })
 
     expect(wrapper.findComponent(QuestionFileUpload).exists()).toBe(true)
     const questionFileUpload = wrapper.findComponent(QuestionFileUpload)
