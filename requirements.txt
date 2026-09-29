@@ -34,7 +34,7 @@ celery==5.6.3
 redis==7.4.0                       
 
 # --- CRYPTO / SÉCURITÉ ---
-cryptography==46.0.7               
+cryptography==48.0.1               
 pyOpenSSL==26.0.0                  
 
 # --- HTTP / RÉSEAU ---
