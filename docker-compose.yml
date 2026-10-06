@@ -34,6 +34,27 @@ services:
         read_only: true
     command: ["start-dev", "--import-realm"]
 
+  keycloak_oidc:
+    image: keycloak/keycloak:26.5.3
+    container_name: collecte-keycloak-oidc
+    ports:
+      - target: 8080
+        published: 8081
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      # Pin a fixed hostname so the issuer stays consistent whether the
+      # request comes from the browser (localhost:8081) or from the main
+      # Keycloak's backchannel calls (keycloak_oidc:8080), avoiding
+      # "Invalid token issuer" errors during identity brokering.
+      KC_HOSTNAME: http://localhost:8081
+    volumes:
+      - type: volume
+        source: keycloack-data-oidc
+        target: /opt/keycloak/data
+    command: ["start-dev", "--import-realm"]
+
 volumes:
   postgres_data_18:
   keycloack-data:
+  keycloack-data-oidc:
