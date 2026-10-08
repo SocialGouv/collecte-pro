@@ -34,6 +34,13 @@ services:
         read_only: true
     command: ["start-dev", "--import-realm"]
 
+  valkey:
+    image: valkey/valkey:8.1
+    container_name: collecte-valkey
+    ports:
+      - target: 6379
+        published: 6379
+
 volumes:
   postgres_data_18:
   keycloack-data:
