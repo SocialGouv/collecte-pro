@@ -162,7 +162,7 @@ La fréquence des envois est configurée dans django admin, avec l'application
 
 Pour démarrer celery beat, il y a la commande suivante:
 
-    celery worker --beat -A ecc -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler &
+    celery -A ecc worker --beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler &
 
 Un autre façon de faire, est d'installer un service systemd:
 
