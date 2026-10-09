@@ -1,7 +1,11 @@
+import csv
+import glob
 import logging
 import os
 import shutil
+import zipfile
 from collections import defaultdict
+from io import BytesIO, StringIO
 from statistics import mean
 from django.db import connection
 import time
@@ -33,6 +37,9 @@ ACTION_LOG_REPORT_VERB_NOT_SENT = "files report email not sent"
 ACTION_LOG_DUE_VERB_SENT = "due date report email sent"
 ACTION_LOG_DUE_VERB_NOT_SENT = "due date report email not sent"
 
+DISK_USAGE_REPORT_DIRNAME = "rapports_poids_fichiers"
+DISK_USAGE_REPORT_FILENAME_PREFIX = "collecte-pro_poids_fichiers_"
+
 
 def human_readable_size(size_bytes):
     """
@@ -40,9 +47,9 @@ def human_readable_size(size_bytes):
     la plus adaptée (octets, Ko, Mo, Go, To).
     """
     size = float(size_bytes)
-    for unit in ('octets', 'Ko', 'Mo', 'Go', 'To'):
-        if size < 1024 or unit == 'To':
-            if unit == 'octets':
+    for unit in ("octets", "Ko", "Mo", "Go", "To"):
+        if size < 1024 or unit == "To":
+            if unit == "octets":
                 return f"{int(size)} {unit}"
             return f"{size:.2f} {unit}"
         size /= 1024
@@ -270,18 +277,11 @@ def physical_delete_controls():
         logger.error(f"Erreur lors de l'exécution de la procédure stockée : {e}")
 
 
-@app.task(queue=settings.CELERY_QUEUE)
-def report_mean_file_size():
+def collect_file_sizes():
     """
-    Parcourt tous les fichiers de réponse stockés et calcule la taille moyenne
-    des fichiers par espace de dépôt (Control) et par questionnaire.
-    Le résultat est simplement loggé, il n'est pas persisté en base.
+    Parcourt tous les fichiers de réponse stockés et regroupe leur taille
+    par espace de dépôt (Control) et par questionnaire.
     """
-    logger.info(
-        "==================================================================================================================================="
-    )
-    logger.info("Démarrage du calcul de la taille moyenne des fichiers stockés.")
-
     sizes_by_control = defaultdict(list)
     sizes_by_questionnaire = defaultdict(list)
 
@@ -301,6 +301,18 @@ def report_mean_file_size():
         sizes_by_control[control].append(size)
         sizes_by_questionnaire[questionnaire].append(size)
 
+    return sizes_by_control, sizes_by_questionnaire
+
+
+@app.task(queue=settings.CELERY_QUEUE)
+def report_mean_file_size():
+    """
+    Log la taille moyenne des fichiers par espace de dépôt (Control) et par questionnaire.
+    """
+    logger.info("Démarrage du calcul de la taille moyenne des fichiers stockés.")
+
+    sizes_by_control, sizes_by_questionnaire = collect_file_sizes()
+
     logger.info("=== Taille moyenne des fichiers par espace de dépôt ===")
     for control, sizes in sizes_by_control.items():
         avg_size = human_readable_size(mean(sizes))
@@ -319,9 +331,7 @@ def report_mean_file_size():
         )
 
     if sizes_by_control:
-        mean_control_size = human_readable_size(
-            mean(sum(sizes) for sizes in sizes_by_control.values())
-        )
+        mean_control_size = human_readable_size(mean(sum(sizes) for sizes in sizes_by_control.values()))
         logger.info(
             f"Taille moyenne d'un espace de dépôt (toutes procédures confondues) : "
             f"{mean_control_size} ({len(sizes_by_control)} espace(s) de dépôt)"
@@ -330,9 +340,7 @@ def report_mean_file_size():
         logger.info("Aucun espace de dépôt avec fichiers, pas de taille moyenne calculable.")
 
     if sizes_by_questionnaire:
-        mean_questionnaire_size = human_readable_size(
-            mean(sum(sizes) for sizes in sizes_by_questionnaire.values())
-        )
+        mean_questionnaire_size = human_readable_size(mean(sum(sizes) for sizes in sizes_by_questionnaire.values()))
         logger.info(
             f"Taille moyenne d'un questionnaire (tous questionnaires confondus) : "
             f"{mean_questionnaire_size} ({len(sizes_by_questionnaire)} questionnaire(s))"
@@ -341,6 +349,114 @@ def report_mean_file_size():
         logger.info("Aucun questionnaire avec fichiers, pas de taille moyenne calculable.")
 
     logger.info("Fin du calcul de la taille moyenne des fichiers stockés.")
+
+
+def get_disk_usage_report_dir():
+    report_dir = os.path.join(settings.MEDIA_ROOT, DISK_USAGE_REPORT_DIRNAME)
+    os.makedirs(report_dir, exist_ok=True)
+    return report_dir
+
+
+def get_disk_usage_report_path():
+    """
+    Retourne le chemin complet du dernier rapport de poids des fichiers généré,
+    ou None si aucun rapport n'existe.
+    """
+    report_dir = get_disk_usage_report_dir()
+    pattern = os.path.join(report_dir, f"{DISK_USAGE_REPORT_FILENAME_PREFIX}*.zip")
+    existing_reports = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
+    return existing_reports[0] if existing_reports else None
+
+
+def clear_disk_usage_reports():
+    report_dir = get_disk_usage_report_dir()
+    pattern = os.path.join(report_dir, f"{DISK_USAGE_REPORT_FILENAME_PREFIX}*.zip")
+    for existing_report in glob.glob(pattern):
+        try:
+            os.remove(existing_report)
+        except OSError as e:
+            logger.error(f"Erreur lors de la suppression de l'ancien rapport {existing_report} : {e}")
+
+
+@app.task(queue=settings.CELERY_QUEUE)
+def generate_disk_usage_report_file():
+    """
+    Calcule le nombre de fichiers et la taille (totale et moyenne) des fichiers
+    de réponse stockés, par espace de dépôt (Control) et par questionnaire, et
+    écrit le résultat dans un fichier ZIP contenant deux CSV, dans le dossier
+    `MEDIA_ROOT/rapports_poids_fichiers/`.
+
+    Suprime les rapports précedents avant de générer le nouveau rapport.
+    """
+    logger.info("Démarrage de la génération du rapport de poids des fichiers.")
+
+    sizes_by_control, sizes_by_questionnaire = collect_file_sizes()
+
+    generation_date = date.today().strftime("%Y-%m-%d")
+    zip_buffer = BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
+        controls_csv_buffer = StringIO()
+        controls_csv_writer = csv.writer(controls_csv_buffer, delimiter=";")
+        controls_csv_writer.writerow([
+            "id_espace_depot",
+            "reference_code",
+            "titre",
+            "nombre_de_fichiers",
+            "taille_totale_octets",
+            "taille_moyenne_octets",
+            "date_de_creation",
+        ])
+        for control, sizes in sizes_by_control.items():
+            controls_csv_writer.writerow([
+                control.id,
+                control.reference_code,
+                control.title,
+                len(sizes),
+                sum(sizes),
+                round(mean(sizes)),
+                control.created_date,
+            ])
+        zip_file.writestr(f"poids_fichiers_espaces_depot_{generation_date}.csv", controls_csv_buffer.getvalue())
+
+        questionnaires_csv_buffer = StringIO()
+        questionnaires_csv_writer = csv.writer(questionnaires_csv_buffer, delimiter=";")
+        questionnaires_csv_writer.writerow([
+            "id_questionnaire",
+            "titre",
+            "id_espace_depot",
+            "reference_code_espace_depot",
+            "nombre_de_fichiers",
+            "taille_totale_octets",
+            "taille_moyenne_octets",
+            "date_de_creation",
+            "date_derniere_action_fichier_reponse",
+        ])
+        for questionnaire, sizes in sizes_by_questionnaire.items():
+            questionnaires_csv_writer.writerow([
+                questionnaire.id,
+                questionnaire.title,
+                questionnaire.control.id,
+                questionnaire.control.reference_code,
+                len(sizes),
+                sum(sizes),
+                round(mean(sizes)),
+                questionnaire.created_date,
+                questionnaire.last_response_file_action,
+            ])
+        zip_file.writestr(f"poids_fichiers_questionnaires_{generation_date}.csv", questionnaires_csv_buffer.getvalue())
+
+    clear_disk_usage_reports()
+
+    report_dir = get_disk_usage_report_dir()
+    report_path = os.path.join(report_dir, f"{DISK_USAGE_REPORT_FILENAME_PREFIX}{generation_date}.zip")
+    with open(report_path, "wb") as report_file:
+        report_file.write(zip_buffer.getvalue())
+
+    logger.info(f"Rapport de poids des fichiers écrit : {report_path}")
+    logger.info("Fin de la génération du rapport de poids des fichiers.")
+
+    return report_path
 
 
 def delete_media_directory(reference_code):

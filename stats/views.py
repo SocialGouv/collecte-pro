@@ -1,12 +1,15 @@
 import csv
+import os
 from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, FileResponse, Http404
 import zipfile
 from io import StringIO, BytesIO
+
+from reporting.tasks import generate_disk_usage_report_file, get_disk_usage_report_path
 
 
 ACTION_CREATED_CONTROL = "created control"
@@ -20,12 +23,12 @@ ACTION_NB_USERS = "nb users"
 class Stats(LoginRequiredMixin, TemplateView):
     template_name = "stats/stats.html"
     ACTIONS = {
-        'created': ACTION_CREATED_CONTROL,
-        'questionnaire': ACTION_PUBLISHED_QUESTIONNAIRE,
-        'question': ACTION_PUBLISHED_QUESTION,
-        'logged_in': ACTION_LOGGED_IN,
-        'uploaded_response_file': ACTION_UPLOADED_RESPONSE,
-        'nb_users': ACTION_NB_USERS,
+        "created": ACTION_CREATED_CONTROL,
+        "questionnaire": ACTION_PUBLISHED_QUESTIONNAIRE,
+        "question": ACTION_PUBLISHED_QUESTION,
+        "logged_in": ACTION_LOGGED_IN,
+        "uploaded_response_file": ACTION_UPLOADED_RESPONSE,
+        "nb_users": ACTION_NB_USERS,
     }
 
     @require_GET
@@ -33,27 +36,27 @@ class Stats(LoginRequiredMixin, TemplateView):
         current_week_number = datetime.now().strftime("%U")
         zip_buffer = BytesIO()
 
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as zip_file:
             data_types = [
-                ('espaces_de_depot_par_utilisateur', 'Nombre d\'espaces'),
-                ('questionnaires_par_utilisateur', 'Nombre de questionnaires'),
-                ('questions_par_utilisateur', 'Nombre de questions'),
-                ('themes_par_utilisateur', 'Nombre de themes')
+                ("espaces_de_depot_par_utilisateur", "Nombre d'espaces"),
+                ("questionnaires_par_utilisateur", "Nombre de questionnaires"),
+                ("questions_par_utilisateur", "Nombre de questions"),
+                ("themes_par_utilisateur", "Nombre de themes"),
             ]
 
             for data_type, data_label in data_types:
                 csv_buffer = StringIO()
-                csv_writer = csv.writer(csv_buffer, delimiter=';')
+                csv_writer = csv.writer(csv_buffer, delimiter=";")
                 with connection.cursor() as cursor:
-                    cursor.callproc('get_top_20', [data_type])
+                    cursor.callproc("get_top_20", [data_type])
                     results = cursor.fetchall()
-                    csv_writer.writerow(['Utilisateur', data_label])
+                    csv_writer.writerow(["Utilisateur", data_label])
                     csv_writer.writerows(results)
 
-                zip_file.writestr(f'collecte-pro_S{current_week_number}_TOP20_{data_type}.csv', csv_buffer.getvalue())
+                zip_file.writestr(f"collecte-pro_S{current_week_number}_TOP20_{data_type}.csv", csv_buffer.getvalue())
 
-        response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
-        response['Content-Disposition'] = f'attachment; filename="collecte-pro_S{current_week_number}_TOP20.zip"'
+        response = HttpResponse(zip_buffer.getvalue(), content_type="application/zip")
+        response["Content-Disposition"] = f'attachment; filename="collecte-pro_S{current_week_number}_TOP20.zip"'
 
         return response
 
@@ -61,94 +64,122 @@ class Stats(LoginRequiredMixin, TemplateView):
     def call_get_espace_depot_modele(request):
         generation_date = datetime.now().strftime("%Y-%m-%d")
         csv_buffer = StringIO()
-        csv_writer = csv.writer(csv_buffer, delimiter=';')
+        csv_writer = csv.writer(csv_buffer, delimiter=";")
 
         with connection.cursor() as cursor:
-            cursor.callproc('get_espace_depot_modele')
+            cursor.callproc("get_espace_depot_modele")
             results = cursor.fetchall()
             csv_writer.writerow([
-                'id_espace_depot', 'reference_code', 'nombre_de_duplication', 'date_derniere_duplication',
-                'top_model_coche',
+                "id_espace_depot",
+                "reference_code",
+                "nombre_de_duplication",
+                "date_derniere_duplication",
+                "top_model_coche",
             ])
             csv_writer.writerows(results)
 
-        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = f'attachment; filename="identification_modele_{generation_date}.csv"'
+        response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="identification_modele_{generation_date}.csv"'
 
         return response
 
     @require_GET
     def call_get_espace_depot_elig_supp(request):
         csv_buffer = StringIO()
-        csv_writer = csv.writer(csv_buffer, delimiter=';')
+        csv_writer = csv.writer(csv_buffer, delimiter=";")
 
         with connection.cursor() as cursor:
-            cursor.callproc('get_espace_depot_elig_supp')
+            cursor.callproc("get_espace_depot_elig_supp")
             results = cursor.fetchall()
             csv_writer.writerow([
-                'id_espace_depot', 'espace_depot', 'procedure', 'organisme_interroge', 'date_traitement',
+                "id_espace_depot",
+                "espace_depot",
+                "procedure",
+                "organisme_interroge",
+                "date_traitement",
             ])
             csv_writer.writerows(results)
 
-        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="espace_depot_elig_supp.csv"'
+        response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="espace_depot_elig_supp.csv"'
 
         return response
 
     @require_GET
     def call_get_repondants_orphelins(request):
         csv_buffer = StringIO()
-        csv_writer = csv.writer(csv_buffer, delimiter=';')
+        csv_writer = csv.writer(csv_buffer, delimiter=";")
 
         with connection.cursor() as cursor:
-            cursor.callproc('get_repondants_orphelins')
+            cursor.callproc("get_repondants_orphelins")
             results = cursor.fetchall()
             csv_writer.writerow([
-                'user_id',
-                'username',
-                'profile_type',
-                'date_inscription',
-                'date_derniere_connexion',
-                'status',
-                'id_control_associe',
-                'date_extraction'
+                "user_id",
+                "username",
+                "profile_type",
+                "date_inscription",
+                "date_derniere_connexion",
+                "status",
+                "id_control_associe",
+                "date_extraction",
             ])
 
             csv_writer.writerows(results)
 
-        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="repondants_orphelins.csv"'
+        response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="repondants_orphelins.csv"'
 
         return response
 
     @require_GET
     def call_get_liste_utilisateurs(request):
         csv_buffer = StringIO()
-        csv_writer = csv.writer(csv_buffer, delimiter=';')
+        csv_writer = csv.writer(csv_buffer, delimiter=";")
 
         with connection.cursor() as cursor:
-            cursor.callproc('get_liste_utilisateurs')
+            cursor.callproc("get_liste_utilisateurs")
             results = cursor.fetchall()
             csv_writer.writerow([
-                'type_profil',
-                'nom',
-                'prenom',
-                'mail',
-                'date_creation',
-                'actif',
-                'date_derniere_connexion'
+                "type_profil",
+                "nom",
+                "prenom",
+                "mail",
+                "date_creation",
+                "actif",
+                "date_derniere_connexion",
             ])
 
             csv_writer.writerows(results)
 
-        response = HttpResponse(csv_buffer.getvalue(), content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="liste_utilisateurs.csv"'
+        response = HttpResponse(csv_buffer.getvalue(), content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="liste_utilisateurs.csv"'
 
+        return response
+
+    @require_POST
+    def launch_disk_usage_report(request):
+        generate_disk_usage_report_file.delay()
+        return JsonResponse({"status": "launched"})
+
+    @require_GET
+    def check_disk_usage_report(request):
+        report_path = get_disk_usage_report_path()
+        if report_path:
+            return JsonResponse({"ready": True, "filename": os.path.basename(report_path)})
+        return JsonResponse({"ready": False})
+
+    @require_GET
+    def download_disk_usage_report(request):
+        report_path = get_disk_usage_report_path()
+        if not report_path:
+            raise Http404("Aucun rapport disponible.")
+        response = FileResponse(open(report_path, "rb"), content_type="application/zip")
+        response["Content-Disposition"] = f'attachment; filename="{os.path.basename(report_path)}"'
         return response
 
     def fetch_statistique_data(self, action):
         with connection.cursor() as cursor:
-            cursor.callproc('get_statistiques', [action])
+            cursor.callproc("get_statistiques", [action])
             results = cursor.fetchall()
 
         months = []
@@ -165,7 +196,7 @@ class Stats(LoginRequiredMixin, TemplateView):
 
         for action_name, action_value in self.ACTIONS.items():
             months, data = self.fetch_statistique_data(action_value)
-            context[f'months_{action_name}'] = months
-            context[f'data_{action_name}'] = data
+            context[f"months_{action_name}"] = months
+            context[f"data_{action_name}"] = data
 
         return context
