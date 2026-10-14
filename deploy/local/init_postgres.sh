@@ -31,6 +31,9 @@ FILES=(
   "${DEPLOY_DIR}/purge/script_identify_orphanUser.sql"
   "${DEPLOY_DIR}/purge/script_logical_delete_controls.sql"
   "${DEPLOY_DIR}/purge/script_physical_delete_controls.sql"
+  "${DEPLOY_DIR}/purge/init_last_response_file_action.sql"
+  "${DEPLOY_DIR}/purge/trigger_set_created_date_triggers.sql"
+  "${DEPLOY_DIR}/purge/trigger_update_last_response_file_action.sql"
 )
 
 echo "==> Waiting for '${DB_SERVICE}' to accept connections..."
