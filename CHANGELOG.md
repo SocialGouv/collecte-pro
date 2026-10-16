@@ -5,8 +5,10 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
 
-## [En cours]
-## 4.1.0 - 2026-09-23
+## 4.0.2
+### Modifications
+- CP-232 : Ajout d'un bouton sur la page des statistiques pour générer en tâche de fond un rapport de poids des fichiers par espace de dépôt et par questionnaire, avec téléchargement du fichier une fois prêt
+## 4.0.1 - 2026-09-23
 ### Modifications
 - CP-224 : Ajout d’une gauge pour la visualisation de l’espace de stockage utilisé par les fichiers déposés dans un espace de dépôt
 ## [4.0.0] - 2026-09-03

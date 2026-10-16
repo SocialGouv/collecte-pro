@@ -20,6 +20,15 @@
                     <button id="btn-espaces-depot-elig-supp" class="btn btn-primary">Espaces de dépôt éligibles à la suppression(.csv)</button>
                     <button id="btn-repondants-orphelins" class="btn btn-primary">Répondants orphelins(.csv)</button>
                     <button id="btn-liste-utilisateurs" class="btn btn-primary">Liste utilisateurs(.csv)</button>
+                    <div class="btn-group d-inline-flex mt-1" role="group">
+                        <button id="btn-launch-disk-usage-report" class="btn btn-primary">Générer le rapport d’espace disque (.zip)</button>
+                        <button id="btn-toggle-disk-usage-report-menu" type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                            <span class="sr-only">Menu du rapport poids fichiers</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                            <button id="btn-download-disk-usage-report" class="dropdown-item" disabled>Télécharger le rapport (.zip)</button>
+                        </div>
+                    </div>
 
                     <div id="result-container"></div>
                     <script>
@@ -157,6 +166,112 @@
                                     console.error('Erreur de requête :', error);
                                 });
                         });                                                                       
+
+                        function readCookie(name) {
+                            const nameEQ = name + '=';
+                            const ca = document.cookie.split(';');
+                            for (let c of ca) {
+                                c = c.trim();
+                                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length);
+                            }
+                            return '';
+                        }
+
+                        const btnLaunchDiskUsageReport = document.getElementById('btn-launch-disk-usage-report');
+                        const btnToggleDiskUsageReportMenu = document.getElementById('btn-toggle-disk-usage-report-menu');
+                        const btnDownloadDiskUsageReport = document.getElementById('btn-download-disk-usage-report');
+                        const defaultLaunchDiskUsageReportText = btnLaunchDiskUsageReport.textContent;
+                        let diskUsageReportPollingInterval = null;
+
+                        function pollDiskUsageReport() {
+                            fetch('/stats/check_disk_usage_report/')
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.ready) {
+                                        clearInterval(diskUsageReportPollingInterval);
+                                        diskUsageReportPollingInterval = null;
+                                        btnLaunchDiskUsageReport.disabled = false;
+                                        btnLaunchDiskUsageReport.textContent = defaultLaunchDiskUsageReportText;
+                                        btnToggleDiskUsageReportMenu.disabled = false;
+                                        btnDownloadDiskUsageReport.disabled = false;
+
+                                        const dateMatch = /(\d{4})-(\d{2})-(\d{2})/.exec(data.filename);
+                                        if (dateMatch) {
+                                            const [, year, month, day] = dateMatch;
+                                            btnDownloadDiskUsageReport.textContent = `Télécharger le rapport du ${day}-${month}-${year} (.zip)`;
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur lors de la vérification du rapport :', error);
+                                });
+                        }
+
+                        btnLaunchDiskUsageReport.addEventListener('click', function () {
+                            btnLaunchDiskUsageReport.disabled = true;
+                            btnLaunchDiskUsageReport.textContent = 'Génération en cours...';
+                            btnToggleDiskUsageReportMenu.disabled = true;
+                            btnDownloadDiskUsageReport.disabled = true;
+
+                            fetch('/stats/launch_disk_usage_report/', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRFToken': readCookie('csrftoken')
+                                }
+                            })
+                                .then(response => {
+                                    if (response.status === 200) {
+                                        if (diskUsageReportPollingInterval) {
+                                            clearInterval(diskUsageReportPollingInterval);
+                                        }
+                                        diskUsageReportPollingInterval = setInterval(pollDiskUsageReport, 3000);
+                                    } else {
+                                        btnLaunchDiskUsageReport.disabled = false;
+                                        btnLaunchDiskUsageReport.textContent = defaultLaunchDiskUsageReportText;
+                                        console.error('Erreur lors du lancement du rapport.');
+                                    }
+                                })
+                                .catch(error => {
+                                    btnLaunchDiskUsageReport.disabled = false;
+                                    btnLaunchDiskUsageReport.textContent = defaultLaunchDiskUsageReportText;
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });
+
+                        btnDownloadDiskUsageReport.addEventListener('click', function () {
+                            fetch('/stats/download_disk_usage_report/')
+                                .then(response => {
+                                    if (response.status === 200) {
+                                        response.blob().then(blob => {
+                                            const url = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                                            a.href = url;
+
+                                            const contentDisposition = response.headers.get('content-disposition');
+                                            const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                                            const filename = matches ? matches[1].replace(/['"]/g, '') : 'rapport_poids_fichiers.zip';
+
+                                            a.download = filename;
+                                            a.click();
+                                            window.URL.revokeObjectURL(url);
+                                        });
+                                    } else {
+                                        console.error('Erreur lors du téléchargement.');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Erreur de requête :', error);
+                                });
+                        });
+
+                        // Check report status on page load
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', function () {
+                                pollDiskUsageReport();
+                            });
+                        } else {
+                            pollDiskUsageReport();
+                        }
                                             </script>
                     </div>
                     </div>
