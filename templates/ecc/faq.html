@@ -9,7 +9,6 @@
 {% endblock site_title %}
 
 {% block page_main_container_with_sidebar %}
-<body>
   <div class="page-main flex-row">
     {% if user.is_authenticated %}
     <div id="sidebar-vm" class="border-right">
@@ -63,24 +62,31 @@
       </div>
     </main>
   </div>
-</body>
 {% endblock page_main_container_with_sidebar %}
 
-<!-- CSS -->
-<style>
-  a.evitement {
-    display: inline-block;
-    color: #555;
-    background: #fff;
-    padding: 0.5em;
-    position: absolute;
-    left: -9999rem;
-    z-index: 100;
-    transition: left 0.2s ease-in-out;
-  }
+{% block extra_static_header %}
+  {{ block.super }}
+  <!-- CSS -->
+  <style>
+    a.evitement {
+      display: inline-block;
+      color: #555;
+      background: #fff;
+      padding: 0.5em;
+      position: absolute;
+      left: -9999rem;
+      z-index: 100;
+      transition: left 0.2s ease-in-out;
+    }
 
-  a.evitement:focus {
-    left: 0;
-    top: 0;
-  }
-</style>
+    a.evitement:focus {
+      left: 0;
+      top: 0;
+    }
+
+    .card-body a,
+    .card-text a {
+      text-decoration: underline !important;
+    }
+  </style>
+{% endblock extra_static_header %}
