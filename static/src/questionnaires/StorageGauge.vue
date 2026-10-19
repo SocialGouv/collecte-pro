@@ -1,7 +1,7 @@
 <template>
   <div v-if="compact" class="storage-gauge storage-gauge-compact">
     <div class="progress">
-      <div class="progress-bar"
+      <div class="progress-bar" aria-label="Bar d’utilisation de l’espace de stockage"
            :class="colorClass"
            role="progressbar"
            :style="{ width: percent + '%' }"
@@ -18,7 +18,7 @@
         Espace utilisé pour le dépôt de fichiers : {{ label }}
       </div>
       <div class="progress">
-        <div class="progress-bar"
+        <div class="progress-bar" aria-label="Bar d’utilisation de l’espace de stockage"
              :class="colorClass"
              role="progressbar"
              :style="{ width: percent + '%' }"

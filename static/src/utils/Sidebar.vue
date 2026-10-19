@@ -488,12 +488,12 @@ export default defineComponent({
     height: 80px;
   }
 
-  .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 {
-    background-color: #3473cb;
+    .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--link_level-1.vsm--link_open {
+    background-color: #3473cb !important;
     color: #fff;
   }
-  .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
-    background-color: #3473cb;
+  .v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--link_level-1.vsm--link_open .vsm--icon {
+    background-color: #3473cb !important;
   }
  .vsm--badge.fas.fa-thumbtack {
   color: gray;
