@@ -13,7 +13,7 @@
     </div>
 
     <div v-else>
-      <span class="btn btn-primary disabled">
+      <span class="btn btn-primary disabled file-upload-disabled">
         <span class="fe fe-upload mr-2"></span>
         Ajouter une pièce jointe
       </span>
@@ -75,3 +75,12 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+.file-upload-disabled {
+  opacity: 1;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #fff;
+}
+</style>
