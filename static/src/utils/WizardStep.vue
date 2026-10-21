@@ -5,7 +5,7 @@
        class="wizard-step-graphics"
        href="javascript:void(0);"
        @click.prevent="$emit('clickedStep')"
-       aria-label="Aller à l'étape {{ number }}">
+       :aria-label="`Aller à l'étape ${number}`">
       <div class="wizard-step-thread"></div>
       <div class="wizard-step-bubble card-title">
         <span class="number">{{ number }}</span>
