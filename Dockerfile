@@ -58,6 +58,9 @@ RUN DEBUG=False \
     CELERY_BROKER_URL=redis://localhost:6379 \
     python manage.py collectstatic --noinput
 
+RUN chmod +x entrypoint.sh
+
 EXPOSE 8000
 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["uwsgi", "--ini", "uwsgi.ini"]
