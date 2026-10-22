@@ -1,4 +1,15 @@
 services:
+  app:
+    build: .
+    env_file: ./.env.docker
+    ports:
+      - "8000:8000"
+    depends_on: [postgres, valkey, keycloak]
+    volumes:
+      - type: volume
+        source: collecte_media
+        target: /media
+
   postgres:
     image: postgres:18-alpine
     container_name: collecte-db
@@ -44,3 +55,4 @@ services:
 volumes:
   postgres_data_18:
   keycloack-data:
+  collecte_media:

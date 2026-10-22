@@ -16,7 +16,6 @@ media_test
 staticfiles
 static/dist
 .parcel-cache
-logs
 .env
 .env.sample
 .test.env

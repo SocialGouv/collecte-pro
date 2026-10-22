@@ -9,6 +9,7 @@ media_test/
 node_modules/
 staticfiles/
 .env
+.env.docker
 static/dist/
 .parcel-cache/
 

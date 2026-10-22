@@ -22,7 +22,7 @@ WORKDIR /app
 
 # libmagic1 is required at runtime by python-magic
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libmagic1 \
+    && apt-get install -y --no-install-recommends libmagic1 build-essential \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
@@ -34,6 +34,11 @@ COPY . .
 # Replace static/dist with the compiled assets from the frontend-builder stage
 RUN rm -rf static/dist
 COPY --from=frontend-builder /app/static/dist ./static/dist
+
+# STATICFILES_DIRS also references these node_modules packages directly, so
+# bring just those over (not the full node_modules tree) from the builder.
+COPY --from=frontend-builder /app/node_modules/bootstrap/dist/js ./node_modules/bootstrap/dist/js
+COPY --from=frontend-builder /app/node_modules/jquery/dist ./node_modules/jquery/dist
 
 # Run collectstatic once at build time so it doesn't need to run on every
 # container startup. 
@@ -55,4 +60,4 @@ RUN DEBUG=False \
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0:8000"]
+CMD ["uwsgi", "--ini", "uwsgi.ini"]
