@@ -19,28 +19,30 @@ logger = logging.getLogger(__name__)
 
 # Mapping des codes d'erreur Keycloak vers des messages lisibles
 KEYCLOAK_ERROR_MESSAGES = {
-    'error-person-name-invalid-character': 'Le prénom ou le nom contient un ou plusieurs caractères non autorisés.',
-    'error-invalid-email': "L'adresse email est invalide.",
-    'User exists with same username': 'Un utilisateur avec ce username existe déjà.',
-    'User exists with same email': 'Un utilisateur avec cet email existe déjà.',
+    "error-person-name-invalid-character": "Le prénom ou le nom contient un ou plusieurs caractères non autorisés.",
+    "error-invalid-email": "L'adresse email est invalide.",
+    "User exists with same username": "Un utilisateur avec ce username existe déjà.",
+    "User exists with same email": "Un utilisateur avec cet email existe déjà.",
+    "invalid_grant": """Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur.
+    Veuillez vous rapprocher de votre administrateur.""",
 }
 
 
 def get_keycloak_field_label(field_name: str | None) -> str | None:
     """Return a user-friendly label for a Keycloak field name."""
-    if field_name == 'firstName':
-        return 'Prénom'
-    if field_name == 'lastName':
-        return 'Nom'
+    if field_name == "firstName":
+        return "Prénom"
+    if field_name == "lastName":
+        return "Nom"
     return None
 
 
 def get_serializer_field_name(field_name: str | None) -> str | None:
     """Map a Keycloak field name to the serializer field name."""
-    if field_name == 'firstName':
-        return 'first_name'
-    if field_name == 'lastName':
-        return 'last_name'
+    if field_name == "firstName":
+        return "first_name"
+    if field_name == "lastName":
+        return "last_name"
     return None
 
 
@@ -51,12 +53,12 @@ def resolve_keycloak_user_id(keycloak_admin: KeycloakAdmin, username_or_email: s
         return user_id
 
     try:
-        users = keycloak_admin.get_users(query={'email': username_or_email})
+        users = keycloak_admin.get_users(query={"email": username_or_email})
     except Exception:
         users = []
 
     if users:
-        return users[0].get('id')
+        return users[0].get("id")
     return None
 
 
@@ -72,45 +74,43 @@ def handle_keycloak_error(e: Exception):
     error_field = None
     try:
         body = json.loads(e.response_body)
-        errors = body.get('errors') or []
+        errors = body.get("errors") or []
         name_field_errors = {}
         for error in errors:
-            error_code = error.get('errorMessage') or error.get('error')
-            error_field = error.get('field')
+            error_code = error.get("errorMessage") or error.get("error")
+            error_field = error.get("field")
             if not error_field:
-                params = error.get('params') or []
+                params = error.get("params") or []
                 if params:
                     error_field = params[0]
 
-            if error_code == 'error-person-name-invalid-character':
+            if error_code == "error-person-name-invalid-character":
                 field_label = get_keycloak_field_label(error_field)
                 serializer_field = get_serializer_field_name(error_field)
                 if field_label and serializer_field:
                     name_field_errors[serializer_field] = [
-                        f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
+                        f"{field_label} : Un ou plusieurs caractères non autorisés ont été détectés"
                     ]
 
         if name_field_errors:
             raise ValidationError(name_field_errors)
 
-        error_code = body.get('errorMessage') or body.get('error')
-        error_description = body.get('error_description')
-        error_field = body.get('field')
+        error_code = body.get("errorMessage") or body.get("error")
+        error_description = body.get("error_description")
+        error_field = body.get("field")
     except ValidationError:
         raise
     except Exception:
-        error_code = getattr(e, 'error_message', None) or str(e)
+        error_code = getattr(e, "error_message", None) or str(e)
 
     if error_code in KEYCLOAK_ERROR_MESSAGES:
         message = KEYCLOAK_ERROR_MESSAGES[error_code]
-        if error_code == 'error-person-name-invalid-character':
+        if error_code == "error-person-name-invalid-character":
             field_label = get_keycloak_field_label(error_field)
             serializer_field = get_serializer_field_name(error_field)
             if field_label and serializer_field:
                 raise ValidationError({
-                    serializer_field: [
-                        f'{field_label} : Un ou plusieurs caractères non autorisés ont été détectés'
-                    ]
+                    serializer_field: [f"{field_label} : Un ou plusieurs caractères non autorisés ont été détectés"]
                 })
     elif error_description:
         message = error_description
@@ -122,8 +122,8 @@ def handle_keycloak_error(e: Exception):
         )
 
     raise ValidationError({
-        'keycloak_error': message,
-        'error_code': error_code or 'keycloak-unknown-error',
+        "keycloak_error": message,
+        "error_code": error_code or "keycloak-unknown-error",
     })
 
 
@@ -139,47 +139,62 @@ class RemoveControlSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
-    id = serializers.IntegerField(source='user.pk', read_only=True)
-    control = serializers.PrimaryKeyRelatedField(
-        queryset=Control.objects.all(), write_only=True, required=False)
-    first_name = serializers.CharField(source='user.first_name')
-    last_name = serializers.CharField(source='user.last_name')
-    email = serializers.EmailField(source='user.email')
-    access = serializers.PrimaryKeyRelatedField(
-        queryset=Access.objects.all(), write_only=True, required=False)
+    id = serializers.IntegerField(source="user.pk", read_only=True)
+    control = serializers.PrimaryKeyRelatedField(queryset=Control.objects.all(), write_only=True, required=False)
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+    email = serializers.EmailField(source="user.email")
+    access = serializers.PrimaryKeyRelatedField(queryset=Access.objects.all(), write_only=True, required=False)
 
     class Meta:
         model = UserProfile
         fields = (
-            'id', 'first_name', 'last_name', 'email', 'profile_type',
-            'organization', 'control', 'is_audited', 'is_inspector', 'access')
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "profile_type",
+            "organization",
+            "control",
+            "is_audited",
+            "is_inspector",
+            "access",
+        )
 
     def create(self, validated_data):
         if settings.KEYCLOAK_ACTIVE:
-            keycloak_admin = KeycloakAdmin(
-                server_url=settings.KEYCLOAK_URL,
-                username=settings.KEYCLOAK_ADMIN_USERNAME,
-                password=settings.KEYCLOAK_ADMIN_PASSWORD,
-                realm_name=settings.KEYCLOAK_REALM,
-                client_id=settings.OIDC_RP_CLIENT_ID,
-                client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
-                verify=False,
-            )
+            try:
+                keycloak_admin = KeycloakAdmin(
+                    server_url=settings.KEYCLOAK_URL,
+                    username=settings.KEYCLOAK_ADMIN_USERNAME,
+                    password=settings.KEYCLOAK_ADMIN_PASSWORD,
+                    realm_name=settings.KEYCLOAK_REALM,
+                    client_id=settings.OIDC_RP_CLIENT_ID,
+                    client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
+                    verify=False,
+                )
+                # KeycloakAdmin() does not authenticate eagerly: the admin token is only
+                # fetched lazily on the first real API call. Force that call now so a
+                # broken Keycloak admin account fails fast here, with a clear error,
+                # instead of surfacing later deep in create_user/update_user.
+                keycloak_admin.connection.get_token()
+            except Exception as e:
+                handle_keycloak_error(e)
         profile_data = validated_data
-        control = profile_data.pop('control', None)
-        user_data = profile_data.pop('user')
+        control = profile_data.pop("control", None)
+        user_data = profile_data.pop("user")
 
         # lowercase the email
-        email = user_data.get('email')
+        email = user_data.get("email")
         if email:
             email = email.lower()
-        user_data['username'] = email
+        user_data["username"] = email
 
         # Find if user already exists.
         profile = UserProfile.objects.filter(user__email=email).first()
 
-        session_user = self.context['request'].user
-        if control is not None and control not in session_user.profile.user_controls('demandeur'):
+        session_user = self.context["request"].user
+        if control is not None and control not in session_user.profile.user_controls("demandeur"):
             e = PermissionDenied(
                 detail=("Only Demandeur can create user."),
                 code=status.HTTP_403_FORBIDDEN,
@@ -191,32 +206,31 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 code=status.HTTP_403_FORBIDDEN,
             )
             raise e
-        access_type = 'repondant'
+        access_type = "repondant"
 
-        if profile_data.get('profile_type') == UserProfile.INSPECTOR:
-            access_type = 'demandeur'
+        if profile_data.get("profile_type") == UserProfile.INSPECTOR:
+            access_type = "demandeur"
         if profile:
             if settings.KEYCLOAK_ACTIVE:
-                user_id_keycloak = resolve_keycloak_user_id(keycloak_admin, user_data['username'])
+                user_id_keycloak = resolve_keycloak_user_id(keycloak_admin, user_data["username"])
                 if user_id_keycloak:
                     # Update keycloak user data if exist
                     try:
                         keycloak_admin.update_user(
                             user_id=user_id_keycloak,
-                            payload={'firstName': user_data.get('first_name'),
-                            'lastName': user_data.get('last_name')}
+                            payload={"firstName": user_data.get("first_name"), "lastName": user_data.get("last_name")},
                         )
                     except Exception as e:
                         handle_keycloak_error(e)
                 else:
                     raise ValidationError({
-                        'keycloak_error': "Utilisateur introuvable dans Keycloak.",
-                        'error_code': 'keycloak-user-not-found',
+                        "keycloak_error": "Utilisateur introuvable dans Keycloak.",
+                        "error_code": "keycloak-user-not-found",
                     })
-            profile.user.first_name = user_data.get('first_name')
-            profile.user.last_name = user_data.get('last_name')
-            profile.organization = profile_data.get('organization')
-            profile.profile_type = profile_data.get('profile_type')
+            profile.user.first_name = user_data.get("first_name")
+            profile.user.last_name = user_data.get("last_name")
+            profile.organization = profile_data.get("organization")
+            profile.profile_type = profile_data.get("profile_type")
             profile.send_files_report = True
             profile.user.save()
             profile.save()
@@ -226,19 +240,19 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 try:
                     keycloak_admin.create_user(
                         {
-                            "email": user_data['username'],
-                            "username": user_data['username'],
+                            "email": user_data["username"],
+                            "username": user_data["username"],
                             "enabled": True,
-                            "firstName": user_data['first_name'],
-                            "lastName": user_data['last_name']
+                            "firstName": user_data["first_name"],
+                            "lastName": user_data["last_name"],
                         },
-                        exist_ok=True
+                        exist_ok=True,
                     )
                 except Exception as e:
                     handle_keycloak_error(e)
             user = User.objects.create(**user_data)
-            profile_data['user'] = user
-            profile_data['send_files_report'] = True
+            profile_data["user"] = user
+            profile_data["send_files_report"] = True
             profile = UserProfile.objects.create(**profile_data)
         if control:
             access = Access.objects.filter(Q(control=control) & Q(userprofile=profile)).first()
@@ -250,23 +264,18 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             else:
                 access = Access.objects.create(access_type=access_type, userprofile=profile, control=control)
         if control:
-            user_api_post_add.send(
-                sender=UserProfile, session_user=session_user, user_profile=profile,
-                control=control)
+            user_api_post_add.send(sender=UserProfile, session_user=session_user, user_profile=profile, control=control)
         else:
-            user_api_post_update.send(
-                sender=UserProfile, session_user=session_user, user_profile=profile)
+            user_api_post_update.send(sender=UserProfile, session_user=session_user, user_profile=profile)
         return profile
 
 
 class AccessSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='access.pk', read_only=True)
+    id = serializers.IntegerField(source="access.pk", read_only=True)
     access_type = serializers.CharField()
-    control = serializers.PrimaryKeyRelatedField(
-        queryset=Control.objects.all())
-    userprofile = serializers.PrimaryKeyRelatedField(
-        queryset=UserProfile.objects.all())
+    control = serializers.PrimaryKeyRelatedField(queryset=Control.objects.all())
+    userprofile = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all())
 
     class Meta:
         model = Access
-        fields = ('id', 'access_type', 'control', 'userprofile')
+        fields = ("id", "access_type", "control", "userprofile")
