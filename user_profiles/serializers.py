@@ -23,10 +23,6 @@ KEYCLOAK_ERROR_MESSAGES = {
     "error-invalid-email": "L'adresse email est invalide.",
     "User exists with same username": "Un utilisateur avec ce username existe déjà.",
     "User exists with same email": "Un utilisateur avec cet email existe déjà.",
-    "invalid_grant": """Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur.
-    Veuillez vous rapprocher de votre administrateur.""",
-    "HTTP 403 Forbidden": """Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur.
-    Veuillez vous rapprocher de votre administrateur.""",
 }
 
 
@@ -112,18 +108,15 @@ def handle_keycloak_error(e: Exception):
                 raise ValidationError({
                     serializer_field: [f"{field_label} : Un ou plusieurs caractères non autorisés ont été détectés"]
                 })
-    elif error_description:
-        message = error_description
     else:
         message = (
             "Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur. "
             "Veuillez vous rapprocher de votre administrateur."
-            f" (code : {error_code or 'inconnu'})."
         )
 
     raise ValidationError({
         "keycloak_error": message,
-        "error_code": error_code or "keycloak-unknown-error",
+        "error_code": error_code if error_code in KEYCLOAK_ERROR_MESSAGES else "keycloak-unknown-error",
     })
 
 
