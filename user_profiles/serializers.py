@@ -155,24 +155,6 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
         )
 
     def create(self, validated_data):
-        if settings.KEYCLOAK_ACTIVE:
-            try:
-                keycloak_admin = KeycloakAdmin(
-                    server_url=settings.KEYCLOAK_URL,
-                    username=settings.KEYCLOAK_ADMIN_USERNAME,
-                    password=settings.KEYCLOAK_ADMIN_PASSWORD,
-                    realm_name=settings.KEYCLOAK_REALM,
-                    client_id=settings.OIDC_RP_CLIENT_ID,
-                    client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
-                    verify=False,
-                )
-                # KeycloakAdmin() does not authenticate eagerly: the admin token is only
-                # fetched lazily on the first real API call. Force that call now so a
-                # broken Keycloak admin account fails fast here, with a clear error,
-                # instead of surfacing later deep in create_user/update_user.
-                keycloak_admin.connection.get_token()
-            except Exception as e:
-                handle_keycloak_error(e)
         profile_data = validated_data
         control = profile_data.pop("control", None)
         user_data = profile_data.pop("user")
@@ -199,6 +181,24 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
                 code=status.HTTP_403_FORBIDDEN,
             )
             raise e
+        if settings.KEYCLOAK_ACTIVE:
+            try:
+                keycloak_admin = KeycloakAdmin(
+                    server_url=settings.KEYCLOAK_URL,
+                    username=settings.KEYCLOAK_ADMIN_USERNAME,
+                    password=settings.KEYCLOAK_ADMIN_PASSWORD,
+                    realm_name=settings.KEYCLOAK_REALM,
+                    client_id=settings.OIDC_RP_CLIENT_ID,
+                    client_secret_key=settings.OIDC_RP_CLIENT_SECRET,
+                    verify=False,
+                )
+                # KeycloakAdmin() does not authenticate eagerly: the admin token is only
+                # fetched lazily on the first real API call. Force that call now so a
+                # broken Keycloak admin account fails fast here, with a clear error,
+                # instead of surfacing later deep in create_user/update_user.
+                keycloak_admin.connection.get_token()
+            except Exception as e:
+                handle_keycloak_error(e)
         access_type = "repondant"
 
         if profile_data.get("profile_type") == UserProfile.INSPECTOR:
