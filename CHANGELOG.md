@@ -4,7 +4,9 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
-
+## 4.0.4 - TODO
+### Modifications
+- cp-233: Gestion des erreurs lors de l'ajout d'un répondant pour ne plus retourner d'erreur keycloak brute
 ## 4.0.3 - 2026-10-21
 ### Modifications
 - cp-227: Traitement de retour accessibilité Axe
