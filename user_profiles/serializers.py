@@ -25,6 +25,8 @@ KEYCLOAK_ERROR_MESSAGES = {
     "User exists with same email": "Un utilisateur avec cet email existe déjà.",
     "invalid_grant": """Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur.
     Veuillez vous rapprocher de votre administrateur.""",
+    "HTTP 403 Forbidden": """Erreur inattendue lors de la création ou de la mise à jour de l'utilisateur.
+    Veuillez vous rapprocher de votre administrateur.""",
 }
 
 
@@ -52,10 +54,7 @@ def resolve_keycloak_user_id(keycloak_admin: KeycloakAdmin, username_or_email: s
     if user_id:
         return user_id
 
-    try:
-        users = keycloak_admin.get_users(query={"email": username_or_email})
-    except Exception:
-        users = []
+    users = keycloak_admin.get_users(query={"email": username_or_email})
 
     if users:
         return users[0].get("id")
@@ -103,6 +102,7 @@ def handle_keycloak_error(e: Exception):
     except Exception:
         error_code = getattr(e, "error_message", None) or str(e)
 
+    logger.error("Erreur Keycloak with code [%s], description [%s]", error_code, error_description, exc_info=False)
     if error_code in KEYCLOAK_ERROR_MESSAGES:
         message = KEYCLOAK_ERROR_MESSAGES[error_code]
         if error_code == "error-person-name-invalid-character":
@@ -212,7 +212,10 @@ class UserProfileSerializer(serializers.ModelSerializer, KeycloakAdmin):
             access_type = "demandeur"
         if profile:
             if settings.KEYCLOAK_ACTIVE:
-                user_id_keycloak = resolve_keycloak_user_id(keycloak_admin, user_data["username"])
+                try:
+                    user_id_keycloak = resolve_keycloak_user_id(keycloak_admin, user_data["username"])
+                except Exception as e:
+                    handle_keycloak_error(e)
                 if user_id_keycloak:
                     # Update keycloak user data if exist
                     try:
