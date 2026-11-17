@@ -8,12 +8,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER set_created_date_trigger_control_control
+CREATE OR REPLACE TRIGGER set_created_date_trigger_control_control
 BEFORE INSERT ON control_control
 FOR EACH ROW
 EXECUTE FUNCTION trg_set_created_date();
 
-CREATE TRIGGER set_created_date_trigger_control_questionnaire
+CREATE OR REPLACE TRIGGER set_created_date_trigger_control_questionnaire
 BEFORE INSERT ON control_questionnaire
 FOR EACH ROW
 EXECUTE FUNCTION trg_set_created_date();

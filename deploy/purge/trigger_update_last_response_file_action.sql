@@ -14,7 +14,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_update_last_response_file_action
+CREATE OR REPLACE TRIGGER trg_update_last_response_file_action
 AFTER INSERT OR UPDATE ON control_responsefile
 FOR EACH ROW
 EXECUTE FUNCTION update_last_response_file_action();
