@@ -1,3 +1,22 @@
+include:
+  - project: socialgouv/commun/studio-tech-commun/sdpsn-devops-ci-utils
+    ref: main
+    file: ci-common/image-build.yml
+  - component: $CI_SERVER_FQDN/socialgouv/commun/studio-tech-commun/components/gitops-cd-component/trigger_app@0.7.0
+    inputs:
+      job_name: deploy-dev
+      gitops_project: socialgouv/produits-dnum/produits-internes/collecte-pro/collecte-pro-gitops
+      app_name: collecte-pro
+      deploy_action: dev
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
 .default-node:
   image: node:24.21-alpine
   cache:  # Cache modules in between jobs
@@ -35,6 +54,7 @@ stages:
   - lint
   - test
   - build
+  - deploy
 
 lint-node:
   extends: .default-node
@@ -87,3 +107,14 @@ test-python:
         coverage_format: cobertura
         path: coverage.xml
 
+build:
+  extends: .build-dind
+  interruptible: true
+  variables:
+    BUILD_IMAGE: "$CI_REGISTRY_IMAGE/main"
+    BUILD_TAGS: "sha-$CI_COMMIT_SHA,$CI_COMMIT_REF_SLUG"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH
+      variables:
+        BUILD_PUSH: "false"
