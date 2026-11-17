@@ -1,0 +1,89 @@
+.default-node:
+  image: node:24.21-alpine
+  cache:  # Cache modules in between jobs
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+.default-python:
+  image: python:3.14-slim
+  cache:  # Cache modules in between jobs
+    paths:
+      - .cache/pip
+  before_script:
+    - apt update
+    - apt-get install -y --no-install-recommends libmagic1 build-essential
+    - python -V
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+    - pip install -r requirements-dev.txt
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  POSTGRES_DB: ecc
+  POSTGRES_USER: ecc
+  POSTGRES_PASSWORD: ecc
+  DATABASE_URL: postgres://ecc:ecc@postgres:5432/ecc
+
+stages:
+  - lint
+  - test
+  - build
+
+lint-node:
+  extends: .default-node
+  stage: lint
+  script:
+    - npm run lint
+  artifacts:
+    reports:
+      codequality: gl-codequality.json
+
+test-node:
+  extends: .default-node
+  stage: test
+  script:
+    - npm run test:coverage
+  coverage: '/^Statements\s*:\s*([^%]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+
+build-node:
+  extends: .default-node
+  stage: build
+  script:
+    - npm run build-all
+
+lint-python:
+  extends: .default-python
+  stage: lint
+  script:
+    - ruff check --output-format=gitlab --output-file=code-quality-report.json
+  artifacts:
+    reports:
+      codequality: $CI_PROJECT_DIR/code-quality-report.json
+
+test-python:
+  extends: .default-python
+  stage: test
+  services:
+    - postgres:18-alpine
+  script:
+    - pytest
+    - coverage report
+  coverage: '/^TOTAL\s*\d*\s*\d*\s*(\d+)%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
