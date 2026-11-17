@@ -18,12 +18,14 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
+coverage/
 .cache
 nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+code-quality-report.json
 
 # Sphinx documentation
 docs/_build/

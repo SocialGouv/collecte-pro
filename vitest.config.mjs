@@ -12,5 +12,10 @@ export default defineConfig({
     include: ['static/src/**/*.spec.{js,ts}'],
     exclude: ['**/node_modules/**', '**/staticfiles/**', '**/static/dist/**'],
     css: false,
+    coverage: {
+      reporter: [
+        ['text-summary'], ['cobertura'],
+      ],
+    },
   },
 })

@@ -18,7 +18,8 @@
     "postinstall": "npm run build-all",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint static/src",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint static/src --format gitlab",
     "lint:fix": "eslint static/src --fix"
   },
   "targets": {
@@ -60,6 +61,7 @@
     "@vue/test-utils": "^2.5.1",
     "buffer": "^6.0.3",
     "eslint": "^9.39.5",
+    "eslint-formatter-gitlab": "^7.2.0",
     "eslint-plugin-vue": "^10.11.1",
     "flush-promises": "^1.0.2",
     "globals": "^17.12.0",
