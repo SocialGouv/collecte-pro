@@ -304,7 +304,7 @@ def collect_file_sizes():
     return sizes_by_control, sizes_by_questionnaire
 
 
-@app.task(queue=settings.CELERY_QUEUE)
+@app.task(queue=settings.CELERY_QUEUE, time_limit=settings.REPORT_MEAN_FILE_SIZE_TIME_LIMIT)
 def report_mean_file_size():
     """
     Log la taille moyenne des fichiers par espace de dépôt (Control) et par questionnaire.
@@ -378,7 +378,7 @@ def clear_disk_usage_reports():
             logger.error(f"Erreur lors de la suppression de l'ancien rapport {existing_report} : {e}")
 
 
-@app.task(queue=settings.CELERY_QUEUE)
+@app.task(queue=settings.CELERY_QUEUE, time_limit=settings.REPORT_MEAN_FILE_SIZE_TIME_LIMIT)
 def generate_disk_usage_report_file():
     """
     Calcule le nombre de fichiers et la taille (totale et moyenne) des fichiers
