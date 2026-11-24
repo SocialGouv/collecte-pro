@@ -4,13 +4,19 @@ Toutes les modifications notables de ce projet sont documentées dans ce fichier
 
 Ce format se base sur [keep a changelog](https://keepachangelog.com/fr/1.0.0/), et ce
 projet adhère à [la Gestion sémantique de version](https://semver.org/lang/fr/spec/v2.0.0.html).
+## 4.0.6 - 2026-11-24
+### Modifications
+- FIX: MAJ de la version dans le footer
+## 4.0.5 - 2026-11-19
+### Modifications
+- CP-232: Augmentation du timeout sur la generation du rapport et variabilisation
 ## 4.0.4 - 2026-11-12
 ### Modifications
-- cp-233: Gestion des erreurs lors de l'ajout d'un répondant pour ne plus retourner d'erreur keycloak brute
-- cp-236: Mise à jour des dépendances
+- CP-233: Gestion des erreurs lors de l'ajout d'un répondant pour ne plus retourner d'erreur keycloak brute
+- CP-236: Mise à jour des dépendances
 ## 4.0.3 - 2026-10-21
 ### Modifications
-- cp-227: Traitement de retour accessibilité Axe
+- CP-227: Traitement de retour accessibilité Axe
 ## 4.0.2 - 2026-10-16
 ### Modifications
 - CP-232 : Ajout d'un bouton sur la page des statistiques pour générer en tâche de fond un rapport de poids des fichiers par espace de dépôt et par questionnaire, avec téléchargement du fichier une fois prêt
